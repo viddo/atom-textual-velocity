@@ -1,0 +1,64 @@
+// The ui-variables file is provided by base themes provided by Atom.
+//
+// See https://github.com/atom/atom-dark-ui/blob/master/styles/ui-variables.less
+// for a full listing of what's available.
+@import "ui-variables";
+
+.atom-notational {
+  .search {
+    padding-top: 10px;
+    padding-left: 10px;
+    padding-right: 10px;
+  }
+
+  .search input {
+    background-color: @input-background-color;
+    color: @text-color;
+    width: 100%;
+    padding: 4px 5px;
+    border-radius: 5px;
+  }
+
+  .items {
+    table-layout: fixed;
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 1px;
+
+    th, td {
+      padding: 5px;
+      white-space: nowrap;
+      text-overflow: ellipsis;
+      overflow: hidden;
+    }
+
+    td:nth-child(1), th:nth-child(1) {
+      min-width: 200px;
+      max-width: 200px;
+    }
+    td:nth-child(2), th:nth-child(2) {
+      min-width: 200px;
+      max-width: 200px;
+    }
+
+    thead {
+      background: @pane-item-background-color;
+
+      tr {
+        position: relative;
+        display: block;
+      }
+
+      th {
+        font-weight: bold;
+      }
+    }
+
+    tbody {
+      display: block;
+      widht: 100%;
+      height: 200px;
+      overflow-y: auto;
+    }
+  }
+}
