@@ -10,6 +10,7 @@
   },
   "dependencies": {
     "baconjs": "^0.7.x",
+    "moment": "^2.10.2",
     "virtual-dom": "^2.x"
   }
 }

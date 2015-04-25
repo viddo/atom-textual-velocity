@@ -4,6 +4,7 @@
 // for a full listing of what's available.
 @import "ui-variables";
 
+
 .atom-notational {
   .search {
     padding-top: 10px;
@@ -11,7 +12,7 @@
     padding-right: 10px;
   }
 
-  .search input {
+  .input {
     background-color: @input-background-color;
     color: @text-color;
     width: 100%;
@@ -19,46 +20,45 @@
     border-radius: 5px;
   }
 
-  .items {
-    table-layout: fixed;
-    width: 100%;
-    border-collapse: separate;
-    border-spacing: 1px;
-
-    th, td {
-      padding: 5px;
-      white-space: nowrap;
-      text-overflow: ellipsis;
-      overflow: hidden;
+  .tcell {
+    padding: 5px;
+    margin-right: 1px;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    &.tcell-head {
+      font-weight: bold;
     }
-
-    td:nth-child(1), th:nth-child(1) {
-      min-width: 200px;
-      max-width: 200px;
+    &:last-child {
+      margin-right: 0;
     }
-    td:nth-child(2), th:nth-child(2) {
-      min-width: 200px;
-      max-width: 200px;
+  }
+
+  .trow {
+    display: flex;
+    &:nth-child(odd) {
+      background-color: lighten(@input-background-color, 10%);
     }
+    &:nth-child(even) {
+      background-color: lighten(@input-background-color, 5%);
+    }
+  }
 
-    thead {
-      background: @pane-item-background-color;
-
-      tr {
-        position: relative;
-        display: block;
+  .tbody {
+    position: relative;
+    overflow-y: auto;
+  }
+  .tinner-body {
+    position: relative;
+  }
+  .tbody.is-reversed-stripes {
+    .trow {
+      &:nth-child(even) {
+        background-color: lighten(@input-background-color, 10%);
       }
-
-      th {
-        font-weight: bold;
+      &:nth-child(odd) {
+        background-color: lighten(@input-background-color, 5%);
       }
-    }
-
-    tbody {
-      display: block;
-      widht: 100%;
-      height: 200px;
-      overflow-y: auto;
     }
   }
 }
