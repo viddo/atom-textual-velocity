@@ -20,45 +20,42 @@
     border-radius: 5px;
   }
 
-  .tcell {
+  .header {
+    overflow-y: scroll;
+  }
+
+  table {
+    width: 100%;
+  }
+  tr {
+    height: 25px;
+    &:nth-child(odd) { background-color: @base-background-color }
+    &:nth-child(even) { background-color: lighten(@base-background-color, 5%) }
+  }
+  .is-reversed-stripes {
+    tr {
+      &:nth-child(odd) { background-color: lighten(@base-background-color, 5%) }
+      &:nth-child(even) { background-color: @base-background-color }
+    }
+  }
+  td, th {
     padding: 5px;
-    margin-right: 1px;
     overflow: hidden;
     white-space: nowrap;
     text-overflow: ellipsis;
-    &.tcell-head {
-      font-weight: bold;
-    }
-    &:last-child {
-      margin-right: 0;
-    }
   }
-
-  .trow {
-    display: flex;
-    &:nth-child(odd) {
-      background-color: @base-background-color;
-    }
-    &:nth-child(even) {
-      background-color: lighten(@base-background-color, 5%);
+  .only-for-column-widths {
+    tr, td, th {
+      height: 0;
+      padding: 0;
     }
   }
 
   .tbody {
     position: relative;
-    overflow-y: auto;
+    overflow-y: scroll;
   }
   .tinner-body {
     position: relative;
-  }
-  .tbody.is-reversed-stripes {
-    .trow {
-      &:nth-child(odd) {
-        background-color: lighten(@base-background-color, 5%);
-      }
-      &:nth-child(even) {
-        background-color: @base-background-color;
-      }
-    }
   }
 }

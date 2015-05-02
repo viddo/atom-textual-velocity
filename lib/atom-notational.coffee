@@ -31,10 +31,19 @@ module.exports =
     rowHeightStream = fromAtomConfig('rowHeight')
     bodyHeightStream = fromAtomConfig('bodyHeight')
     scrollTopBus = new Bacon.Bus()
-    matchingItemsBus = new Bacon.Bus()
 
     # Application props
-    matchingItemsProp = matchingItemsBus.toProperty (for i in [1..100]
+    columns = Bacon.constant [{
+      title: 'Name'
+      width: 60
+    },{
+      title: 'Date created'
+      width: 20
+    },{
+      title: 'Date modified'
+      width: 20
+    }]
+    matchingItemsProp = Bacon.constant(for i in [1..100]
       {
         title: "item #{i}"
         dateCreated:  new Date
@@ -58,6 +67,7 @@ module.exports =
       topOffset: topOffsetProp
       reverseStripes: reverseStripesProp
       marginBottom: marginBottomProp
+      columns: columns
     }
     renderedTreeProp = Bacon.combineWith (data) ->
       renderRoot data, {
