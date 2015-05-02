@@ -37,10 +37,10 @@
   .trow {
     display: flex;
     &:nth-child(odd) {
-      background-color: lighten(@input-background-color, 10%);
+      background-color: @base-background-color;
     }
     &:nth-child(even) {
-      background-color: lighten(@input-background-color, 5%);
+      background-color: lighten(@base-background-color, 5%);
     }
   }
 
@@ -53,11 +53,11 @@
   }
   .tbody.is-reversed-stripes {
     .trow {
-      &:nth-child(even) {
-        background-color: lighten(@input-background-color, 10%);
-      }
       &:nth-child(odd) {
-        background-color: lighten(@input-background-color, 5%);
+        background-color: lighten(@base-background-color, 5%);
+      }
+      &:nth-child(even) {
+        background-color: @base-background-color;
       }
     }
   }
