@@ -1,6 +1,9 @@
 Bacon = require 'baconjs'
-App = require './app'
+createElement = require 'virtual-dom/create-element'
+diff = require 'virtual-dom/diff'
+patch = require 'virtual-dom/patch'
 renderRoot = require './virtual-dom/root'
+calcs = require './prop-calculations'
 
 fromAtomConfig = (settingName) ->
   Bacon.fromBinder (sink) ->
@@ -8,7 +11,9 @@ fromAtomConfig = (settingName) ->
     return -> disposable.dispose()
 
 module.exports =
-  app: undefined
+  panel: undefined
+  rootNode: undefined
+  prevTree: undefined
 
   config:
     bodyHeight:
@@ -23,52 +28,56 @@ module.exports =
 
   activate: (state) ->
     # Source streams
-    bodyHeightProp = fromAtomConfig('bodyHeight').toProperty()
-    rowHeightProp = fromAtomConfig('rowHeight').toProperty()
+    rowHeightStream = fromAtomConfig('rowHeight')
+    bodyHeightStream = fromAtomConfig('bodyHeight')
     scrollTopBus = new Bacon.Bus()
-    scrollTopProp = scrollTopBus.toProperty(0)
     matchingItemsBus = new Bacon.Bus()
+
+    # Application props
     matchingItemsProp = matchingItemsBus.toProperty (for i in [1..100]
       {
         title: "item #{i}"
-        dateCreated: new Date
+        dateCreated:  new Date
         dateModified: new Date
       })
-
-    # Application props
-    visibleBeginProp = Bacon.combineWith (scrollTop, rowHeight) ->
-      (scrollTop / rowHeight) | 0
-    , scrollTopProp, rowHeightProp
-    visibleEndProp = Bacon.combineWith (begin, bodyHeight, rowHeight) ->
-      begin + ((bodyHeight / rowHeight) | 0) + 2 # add to avoid visible gap when scrolling
-    , visibleBeginProp, bodyHeightProp, rowHeightProp
-    topOffsetProp = Bacon.combineWith (scrollTop, rowHeight) ->
-      -(scrollTop % rowHeight)
-    , scrollTopProp, rowHeightProp
-    marginBottom = Bacon.combineWith (items, rowHeight, scrollTop, bodyHeight) ->
-      items.length * rowHeight - scrollTop - bodyHeight
-    , matchingItemsProp, rowHeightProp, scrollTopProp, bodyHeightProp
-    visibleItemsProp = Bacon.combineWith (items, begin, end) ->
-      items.slice(begin, end)
-    , matchingItemsProp, visibleBeginProp, visibleEndProp
+    scrollTopProp = scrollTopBus.toProperty(0)
+    rowHeightProp = rowHeightStream.toProperty()
+    bodyHeightProp = bodyHeightStream.toProperty()
+    visibleBeginProp = Bacon.combineWith(calcs.visibleBeginOffset, scrollTopProp, rowHeightProp)
+    visibleEndProp = Bacon.combineWith(calcs.visibleEndOffset, visibleBeginProp, bodyHeightProp, rowHeightProp)
+    topOffsetProp = Bacon.combineWith(calcs.topOffset, scrollTopProp, rowHeightProp)
+    marginBottomProp = Bacon.combineWith(calcs.marginBottom, matchingItemsProp, rowHeightProp, scrollTopProp, bodyHeightProp)
+    visibleItemsProp = Bacon.combineWith(calcs.visibleItems, matchingItemsProp, visibleBeginProp, visibleEndProp)
     reverseStripesProp = visibleBeginProp.map (begin) -> begin % 2 == 0
 
-    # Side effects, setup tree rendering
-    renderedTree = Bacon.combineTemplate({
+    dataProp = Bacon.combineTemplate {
       items: visibleItemsProp
       bodyHeight: bodyHeightProp
       rowHeight: rowHeightProp
       scrollTop: scrollTopProp
       topOffset: topOffsetProp
       reverseStripes: reverseStripesProp
-      marginBottom: marginBottom
-    }).map (data) ->
+      marginBottom: marginBottomProp
+    }
+    renderedTreeProp = Bacon.combineWith (data) ->
       renderRoot data, {
         scrollTopBus: scrollTopBus
       }
+    , dataProp, Bacon.interval(1000, undefined)
 
-    @app = new App(renderedTree)
+    # Side effects, re-render
+    renderedTreeProp.onValue (newTree) =>
+      if @rootNode
+        @rootNode = patch(@rootNode, diff(@prevTree, newTree))
+      else
+        @rootNode = createElement(newTree)
+        @panel = atom.workspace.addTopPanel {
+          item: @rootNode
+        }
+      @prevTree = newTree
 
 
   deactivate: ->
-    @app.dispose()
+    @panel?.destroy()
+    @prevTree = null
+    @rootNode = null
