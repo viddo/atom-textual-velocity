@@ -23,12 +23,12 @@ module.exports =
 
   activate: (state) ->
     # Source streams
-    bodyHeight = fromAtomConfig('bodyHeight').toProperty()
-    rowHeight = fromAtomConfig('rowHeight').toProperty()
+    bodyHeightProp = fromAtomConfig('bodyHeight').toProperty()
+    rowHeightProp = fromAtomConfig('rowHeight').toProperty()
     scrollTopBus = new Bacon.Bus()
-    scrollTop = scrollTopBus.toProperty(0)
+    scrollTopProp = scrollTopBus.toProperty(0)
     matchingItemsBus = new Bacon.Bus()
-    matchingItems = matchingItemsBus.toProperty (for i in [1..100]
+    matchingItemsProp = matchingItemsBus.toProperty (for i in [1..100]
       {
         title: "item #{i}"
         dateCreated: new Date
@@ -36,31 +36,31 @@ module.exports =
       })
 
     # Application props
-    beginOffset = Bacon.combineWith (scrollTop, rowHeight) ->
+    visibleBeginProp = Bacon.combineWith (scrollTop, rowHeight) ->
       (scrollTop / rowHeight) | 0
-    , scrollTop, rowHeight
-    endOffset = Bacon.combineWith (begin, bodyHeight, rowHeight) ->
+    , scrollTopProp, rowHeightProp
+    visibleEndProp = Bacon.combineWith (begin, bodyHeight, rowHeight) ->
       begin + ((bodyHeight / rowHeight) | 0) + 2 # add to avoid visible gap when scrolling
-    , beginOffset, bodyHeight, rowHeight
-    topOffset = Bacon.combineWith (scrollTop, rowHeight) ->
+    , visibleBeginProp, bodyHeightProp, rowHeightProp
+    topOffsetProp = Bacon.combineWith (scrollTop, rowHeight) ->
       -(scrollTop % rowHeight)
-    , scrollTop, rowHeight
+    , scrollTopProp, rowHeightProp
     marginBottom = Bacon.combineWith (items, rowHeight, scrollTop, bodyHeight) ->
       items.length * rowHeight - scrollTop - bodyHeight
-    , matchingItems, rowHeight, scrollTop, bodyHeight
-    visibleItems = Bacon.combineWith (items, begin, end) ->
+    , matchingItemsProp, rowHeightProp, scrollTopProp, bodyHeightProp
+    visibleItemsProp = Bacon.combineWith (items, begin, end) ->
       items.slice(begin, end)
-    , matchingItems, beginOffset, endOffset
-    reverseStripes = beginOffset.map (begin) -> begin % 2 == 0
+    , matchingItemsProp, visibleBeginProp, visibleEndProp
+    reverseStripesProp = visibleBeginProp.map (begin) -> begin % 2 == 0
 
     # Side effects, setup tree rendering
     renderedTree = Bacon.combineTemplate({
-      items: visibleItems
-      bodyHeight: bodyHeight
-      rowHeight: rowHeight
-      scrollTop: scrollTop
-      topOffset: topOffset
-      reverseStripes: reverseStripes
+      items: visibleItemsProp
+      bodyHeight: bodyHeightProp
+      rowHeight: rowHeightProp
+      scrollTop: scrollTopProp
+      topOffset: topOffsetProp
+      reverseStripes: reverseStripesProp
       marginBottom: marginBottom
     }).map (data) ->
       renderRoot data, {
