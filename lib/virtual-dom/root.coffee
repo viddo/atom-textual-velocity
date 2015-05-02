@@ -1,6 +1,5 @@
 h = require 'virtual-dom/h'
 scrollableList = require './scrollable-list'
-row = require './row'
 th = require './th'
 
 module.exports = (data, buses) ->
@@ -19,7 +18,7 @@ module.exports = (data, buses) ->
     h 'div.header',
       h 'table',
         h 'thead',
-          h 'tr', columns.map ({ title, width }) ->
+          h 'tr', columns.map ({ width, title }) ->
             th width, title
 
     scrollableList(data, buses,
@@ -30,7 +29,7 @@ module.exports = (data, buses) ->
         h 'tbody', {
           className: 'is-reversed-stripes' if reverseStripes
         }, items.map (item) ->
-          row item, data
-      ]
+          h 'tr', columns.map ({ cellContent }) ->
+            h 'td', cellContent(item)      ]
     )
   ]

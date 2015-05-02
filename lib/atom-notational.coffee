@@ -4,6 +4,7 @@ diff = require 'virtual-dom/diff'
 patch = require 'virtual-dom/patch'
 renderRoot = require './virtual-dom/root'
 calcs = require './prop-calculations'
+moment = require("moment")
 
 fromAtomConfig = (settingName) ->
   Bacon.fromBinder (sink) ->
@@ -36,12 +37,15 @@ module.exports =
     columns = Bacon.constant [{
       title: 'Name'
       width: 60
+      cellContent: (item) -> item.title
     },{
       title: 'Date created'
       width: 20
+      cellContent: (item) -> moment(item.dateCreated).fromNow()
     },{
       title: 'Date modified'
       width: 20
+      cellContent: (item) -> moment(item.dateModified).fromNow()
     }]
     matchingItemsProp = Bacon.constant(for i in [1..100]
       {
