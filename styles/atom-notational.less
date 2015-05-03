@@ -43,9 +43,10 @@
   }
   td, th {
     padding: 5px;
+    max-width: 0; // required for overflow to work
     overflow: hidden;
-    white-space: nowrap;
     text-overflow: ellipsis;
+    white-space: nowrap;
   }
   .only-for-column-widths {
     tr, td, th {
