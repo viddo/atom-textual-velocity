@@ -32,6 +32,7 @@ module.exports =
     rowHeightStream = fromAtomConfig('rowHeight')
     bodyHeightStream = fromAtomConfig('bodyHeight')
     scrollTopBus = new Bacon.Bus()
+    bodyHeightBus = new Bacon.Bus()
 
     # Application props
     columns = Bacon.constant [{
@@ -55,7 +56,11 @@ module.exports =
       })
     scrollTopProp = scrollTopBus.toProperty(0)
     rowHeightProp = rowHeightStream.toProperty()
-    bodyHeightProp = bodyHeightStream.toProperty()
+    bodyHeightProp = bodyHeightStream
+      .merge(bodyHeightBus)
+      .skipDuplicates()
+      .filter (height) -> height > 0
+      .toProperty()
     visibleBeginProp = Bacon.combineWith(calcs.visibleBeginOffset, scrollTopProp, rowHeightProp)
     visibleEndProp = Bacon.combineWith(calcs.visibleEndOffset, visibleBeginProp, bodyHeightProp, rowHeightProp)
     topOffsetProp = Bacon.combineWith(calcs.topOffset, scrollTopProp, rowHeightProp)
@@ -76,6 +81,7 @@ module.exports =
     renderedTreeProp = Bacon.combineWith (data) ->
       renderRoot data, {
         scrollTopBus: scrollTopBus
+        bodyHeightBus: bodyHeightBus
       }
     , dataProp, Bacon.interval(1000, undefined)
 
@@ -90,6 +96,9 @@ module.exports =
         }
       @prevTree = newTree
 
+    # Persist new height
+    bodyHeightBus.debounce(500).onValue (newHeight) ->
+      atom.config.set('atom-notational.bodyHeight', newHeight)
 
   deactivate: ->
     @panel?.destroy()

@@ -1,9 +1,11 @@
 h = require 'virtual-dom/h'
 scrollableList = require './scrollable-list'
 th = require './th'
+fromResize = require '../baconjs/from-resize'
 
 module.exports = (data, buses) ->
-  { columns, items, reverseStripes } = data
+  { columns, items, reverseStripes, bodyHeight } = data
+  { bodyHeightBus } = buses
 
   return h 'div.atom-notational', [
     h 'div', {
@@ -21,7 +23,7 @@ module.exports = (data, buses) ->
           h 'tr', columns.map ({ width, title }) ->
             th width, title
 
-    scrollableList(data, buses,
+    scrollableList data, buses,
       h 'table', [
         h 'thead.only-for-column-widths',
           h 'tr', columns.map ({ width }) ->
@@ -30,6 +32,11 @@ module.exports = (data, buses) ->
           className: 'is-reversed-stripes' if reverseStripes
         }, items.map (item) ->
           h 'tr', columns.map ({ cellContent }) ->
-            h 'td', cellContent(item)      ]
-    )
+            h 'td', cellContent(item)
+      ]
+    h 'div.resize-handle', {
+      onmousedown: (ev) ->
+        fromResize(ev).onValue (diff) ->
+          bodyHeightBus.push bodyHeight + diff.clientY
+    }
   ]
