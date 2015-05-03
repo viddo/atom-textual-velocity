@@ -10,7 +10,8 @@
   },
   "dependencies": {
     "baconjs": "^0.7.x",
-    "moment": "^2.10.2",
+    "chokidar": "^1.0.x",
+    "moment": "^2.10.x",
     "virtual-dom": "^2.x"
   }
 }

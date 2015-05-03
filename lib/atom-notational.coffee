@@ -4,11 +4,12 @@ diff = require 'virtual-dom/diff'
 patch = require 'virtual-dom/patch'
 renderRoot = require './virtual-dom/root'
 calcs = require './prop-calculations'
-moment = require("moment")
+moment = require 'moment'
+chokidar = require 'chokidar'
 
-fromAtomConfig = (settingName) ->
+fromAtomConfig = (key) ->
   Bacon.fromBinder (sink) ->
-    disposable = atom.config.observe "atom-notational.#{settingName}", sink
+    disposable = atom.config.observe key, sink
     return -> disposable.dispose()
 
 module.exports =
@@ -29,31 +30,52 @@ module.exports =
 
   activate: (state) ->
     # Source streams
-    rowHeightStream = fromAtomConfig('rowHeight')
-    bodyHeightStream = fromAtomConfig('bodyHeight')
+    rowHeightStream = fromAtomConfig('atom-notational.rowHeight')
+    bodyHeightStream = fromAtomConfig('atom-notational.bodyHeight')
     scrollTopBus = new Bacon.Bus()
     bodyHeightBus = new Bacon.Bus()
+    filesStream = new Bacon.Bus()
 
-    # Application props
+    addFileBus = new Bacon.Bus()
+    removeFileBus = new Bacon.Bus()
+    ignored = atom.config.get('core.ignoredNames').concat(['node_modules']).map (item) ->
+      "**/#{item}**/*"
+    @watcher = chokidar.watch atom.project.getPaths(), {
+      ignored: ignored
+      persistent: true
+    }
+    @watcher.on 'add', (path) ->
+      addFileBus.push(path)
+    @watcher.on 'unlink', (path) ->
+      removeFileBus.push(path)
+
+
+    # Meta props
+    filesProp = Bacon.update [],
+      addFileBus, ((items, path) ->
+        items.push path
+        return items
+      ),
+      removeFileBus, (items, path) ->
+        items.splice items.indexOf(path), 1
+        return items
+
     columns = Bacon.constant [{
       title: 'Name'
       width: 60
-      cellContent: (item) -> item.title
+      cellContent: (item) -> item
     },{
       title: 'Date created'
       width: 20
-      cellContent: (item) -> moment(item.dateCreated).fromNow()
+      cellContent: (item) -> ''#moment(item.dateCreated).fromNow()
     },{
       title: 'Date modified'
       width: 20
-      cellContent: (item) -> moment(item.dateModified).fromNow()
+      cellContent: (item) -> ''#moment(item.dateModified).fromNow()
     }]
-    matchingItemsProp = Bacon.constant(for i in [1..100]
-      {
-        title: "item #{i}"
-        dateCreated:  new Date
-        dateModified: new Date
-      })
+
+    # View props
+    matchingItemsProp = filesProp
     scrollTopProp = scrollTopBus.toProperty(0)
     rowHeightProp = rowHeightStream.toProperty()
     bodyHeightProp = bodyHeightStream
@@ -85,6 +107,7 @@ module.exports =
       }
     , dataProp, Bacon.interval(1000, undefined)
 
+
     # Side effects, re-render
     renderedTreeProp.onValue (newTree) =>
       if @rootNode
@@ -104,3 +127,4 @@ module.exports =
     @panel?.destroy()
     @prevTree = null
     @rootNode = null
+    @watcher.close()
