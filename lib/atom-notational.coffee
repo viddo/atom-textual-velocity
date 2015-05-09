@@ -6,11 +6,8 @@ renderRoot = require './virtual-dom/root'
 calcs = require './prop-calculations'
 moment = require 'moment'
 chokidar = require 'chokidar'
-
-fromAtomConfig = (key) ->
-  Bacon.fromBinder (sink) ->
-    disposable = atom.config.observe key, sink
-    return -> disposable.dispose()
+atomProjectPaths = require './atom/project-paths.coffee'
+atomStreams = require './atom/streams.coffee'
 
 module.exports =
   panel: undefined
@@ -30,12 +27,6 @@ module.exports =
 
   activate: (state) ->
     # Source streams
-    rowHeightStream = fromAtomConfig('atom-notational.rowHeight')
-    bodyHeightStream = fromAtomConfig('atom-notational.bodyHeight')
-    scrollTopBus = new Bacon.Bus()
-    bodyHeightBus = new Bacon.Bus()
-    filesStream = new Bacon.Bus()
-
     addFileBus = new Bacon.Bus()
     removeFileBus = new Bacon.Bus()
     ignored = atom.config.get('core.ignoredNames').concat(['node_modules']).map (item) ->
@@ -48,6 +39,12 @@ module.exports =
       addFileBus.push(path)
     @watcher.on 'unlink', (path) ->
       removeFileBus.push(path)
+
+    rowHeightStream = atomStreams.fromConfig 'atom-notational.rowHeight'
+    bodyHeightStream = atomStreams.fromConfig 'atom-notational.bodyHeight'
+    scrollTopBus = new Bacon.Bus()
+    bodyHeightBus = new Bacon.Bus()
+    filesStream = new Bacon.Bus()
 
 
     # Meta props
