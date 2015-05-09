@@ -84,7 +84,7 @@ module.exports =
     topOffsetProp = Bacon.combineWith(calcs.topOffset, scrollTopProp, rowHeightProp)
     marginBottomProp = Bacon.combineWith(calcs.marginBottom, matchingItemsProp, rowHeightProp, scrollTopProp, bodyHeightProp)
     visibleItemsProp = Bacon.combineWith(calcs.visibleItems, matchingItemsProp, visibleBeginProp, visibleEndProp)
-    reverseStripesProp = visibleBeginProp.map (begin) -> begin % 2 == 0
+    reverseStripesProp = visibleBeginProp.map (begin) -> begin % 2 is 0
 
     dataProp = Bacon.combineTemplate {
       items: visibleItemsProp
