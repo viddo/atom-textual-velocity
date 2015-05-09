@@ -96,15 +96,18 @@ module.exports =
       marginBottom: marginBottomProp
       columns: columns
     }
-    renderedTreeProp = Bacon.combineWith (data) ->
+    renderedTreesProp = Bacon.combineWith (data) ->
       renderRoot data, {
         scrollTopBus: scrollTopBus
         bodyHeightBus: bodyHeightBus
       }
     , dataProp, Bacon.interval(1000, undefined)
+    .slidingWindow(2, 1)
 
-    # Side effects, re-render
-    renderedTreeProp.slidingWindow(2, 1).onValue ([currentTree, newTree]) =>
+
+    # Side effects
+    # Create panel/update element
+    renderedTreesProp.onValue ([currentTree, newTree]) =>
       if newTree
         @rootNode = patch(@rootNode, diff(currentTree, newTree))
       else
