@@ -33,7 +33,7 @@ module.exports =
     watchPathTasksProp = Bacon.update @watchPathTasks,
       [addStream], (tasks, path) ->
         task = new Task(require.resolve('./tasks/watch-path.coffee'))
-        task.on 'watch:newFile', (path) -> addFileBus.push(path)
+        task.on 'add', (path) -> addFileBus.push(path)
         task.start(path)
         tasks[path] = task
         return tasks
@@ -42,6 +42,7 @@ module.exports =
         delete tasks[path]
         return tasks
     watchPathTasksProp.log()
+
 
     # Source streams
     rowHeightStream = atomStreams.fromConfig 'atom-notational.rowHeight'
@@ -64,15 +65,15 @@ module.exports =
     columns = Bacon.constant [{
       title: 'Name'
       width: 60
-      cellContent: (item) -> item
+      cellContent: (item) -> item.relPath
     },{
       title: 'Date created'
       width: 20
-      cellContent: (item) -> ''#moment(item.dateCreated).fromNow()
+      cellContent: (item) -> moment(item.stats.birthtime).fromNow()
     },{
       title: 'Date modified'
       width: 20
-      cellContent: (item) -> ''#moment(item.dateModified).fromNow()
+      cellContent: (item) -> moment(item.stats.mtime).fromNow()
     }]
 
     # View props
