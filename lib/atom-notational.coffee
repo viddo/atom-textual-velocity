@@ -5,11 +5,12 @@ patch = require 'virtual-dom/patch'
 renderRoot = require './virtual-dom/root'
 calcs = require './prop-calculations'
 moment = require 'moment'
-chokidar = require 'chokidar'
 atomProjectPaths = require './atom/project-paths.coffee'
 atomStreams = require './atom/streams.coffee'
+{ Task } = require 'atom'
 
 module.exports =
+  watchPathTasks: {}
   panel: undefined
   rootNode: undefined
 
@@ -25,20 +26,24 @@ module.exports =
 
 
   activate: (state) ->
-    # Source streams
     addFileBus = new Bacon.Bus()
     removeFileBus = new Bacon.Bus()
-    ignored = atom.config.get('core.ignoredNames').concat(['node_modules']).map (item) ->
-      "**/#{item}**/*"
-    @watcher = chokidar.watch atom.project.getPaths(), {
-      ignored: ignored
-      persistent: true
-    }
-    @watcher.on 'add', (path) ->
-      addFileBus.push(path)
-    @watcher.on 'unlink', (path) ->
-      removeFileBus.push(path)
 
+    { addStream, removeStream } = atomProjectPaths()
+    watchPathTasksProp = Bacon.update @watchPathTasks,
+      [addStream], (tasks, path) ->
+        task = new Task(require.resolve('./tasks/watch-path.coffee'))
+        task.on 'watch:newFile', (path) -> addFileBus.push(path)
+        task.start(path)
+        tasks[path] = task
+        return tasks
+      , [removeStream], (tasks, path) ->
+        tasks[path].send()
+        delete tasks[path]
+        return tasks
+    watchPathTasksProp.log()
+
+    # Source streams
     rowHeightStream = atomStreams.fromConfig 'atom-notational.rowHeight'
     bodyHeightStream = atomStreams.fromConfig 'atom-notational.bodyHeight'
     scrollTopBus = new Bacon.Bus()
@@ -121,6 +126,8 @@ module.exports =
       atom.config.set('atom-notational.bodyHeight', newHeight)
 
   deactivate: ->
+    for path, task of @watchPathTasks
+      console.log "terminating #{path}…"
+      task.send('finish')
     @panel?.destroy()
     @rootNode = null
-    @watcher.close()
