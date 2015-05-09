@@ -12,7 +12,6 @@ atomStreams = require './atom/streams.coffee'
 module.exports =
   panel: undefined
   rootNode: undefined
-  prevTree: undefined
 
   config:
     bodyHeight:
@@ -104,17 +103,15 @@ module.exports =
       }
     , dataProp, Bacon.interval(1000, undefined)
 
-
     # Side effects, re-render
-    renderedTreeProp.onValue (newTree) =>
-      if @rootNode
-        @rootNode = patch(@rootNode, diff(@prevTree, newTree))
+    renderedTreeProp.slidingWindow(2, 1).onValue ([currentTree, newTree]) =>
+      if newTree
+        @rootNode = patch(@rootNode, diff(currentTree, newTree))
       else
-        @rootNode = createElement(newTree)
+        @rootNode = createElement(currentTree)
         @panel = atom.workspace.addTopPanel {
           item: @rootNode
         }
-      @prevTree = newTree
 
     # Persist new height
     bodyHeightBus.debounce(500).onValue (newHeight) ->
@@ -122,6 +119,5 @@ module.exports =
 
   deactivate: ->
     @panel?.destroy()
-    @prevTree = null
     @rootNode = null
     @watcher.close()
