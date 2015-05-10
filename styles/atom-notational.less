@@ -7,24 +7,29 @@
 
 .atom-notational {
   .search {
-    padding-top: 10px;
-    padding-left: 10px;
-    padding-right: 10px;
+    // padding-top: 10px;
+    // padding-left: 10px;
+    // padding-right: 10px;
   }
 
   .input {
     background-color: @input-background-color;
     color: @text-color;
     width: 100%;
-    padding: 4px 5px;
-    border-radius: 5px;
+    padding: 10px 5px 0 5px;
+    // border-radius: 5px;
+    border: 0;
   }
 
   .header {
     position: relative;
     overflow-y: scroll;
-    box-shadow: @pane-item-border-color 0 1px 3px;
+    box-shadow: @tree-view-border-color 0 1px 2px;
     z-index: @headerZindex;
+
+    tr {
+      background-color: @tree-view-background-color !important;
+    }
   }
 
   table {
@@ -32,13 +37,13 @@
   }
   tr {
     height: 25px;
-    &:nth-child(odd) { background-color: @base-background-color }
-    &:nth-child(even) { background-color: lighten(@base-background-color, 2%) }
+    &:nth-child(odd) { background-color: @tree-view-background-color }
+    &:nth-child(even) { background-color: lighten(@tree-view-background-color, 2%) }
   }
   .is-reversed-stripes {
     tr {
-      &:nth-child(odd) { background-color: lighten(@base-background-color, 2%) }
-      &:nth-child(even) { background-color: @base-background-color }
+      &:nth-child(odd) { background-color: lighten(@tree-view-background-color, 2%) }
+      &:nth-child(even) { background-color: @tree-view-background-color }
     }
   }
   td, th {
