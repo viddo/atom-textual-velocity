@@ -1,4 +1,4 @@
-h = require 'virtual-dom/h'
+h = require('virtual-dom/h')
 
 module.exports = (data, buses, content) ->
   { bodyHeight, topOffset, scrollTop, marginBottom, reverseStripes } = data

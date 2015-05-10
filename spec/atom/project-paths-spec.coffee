@@ -1,4 +1,4 @@
-projectPaths = require '../../lib/atom/project-paths'
+projectPaths = require('../../lib/atom/project-paths')
 
 describe 'projectPaths', ->
   beforeEach ->

@@ -1,13 +1,13 @@
-Bacon = require 'baconjs'
-createElement = require 'virtual-dom/create-element'
-diff = require 'virtual-dom/diff'
-patch = require 'virtual-dom/patch'
-renderRoot = require './virtual-dom/root'
-calcs = require './prop-calculations'
-moment = require 'moment'
-atomProjectPaths = require './atom/project-paths.coffee'
-atomStreams = require './atom/streams.coffee'
-{ Task } = require 'atom'
+Bacon = require('baconjs')
+createElement = require('virtual-dom/create-element')
+diff = require('virtual-dom/diff')
+patch = require('virtual-dom/patch')
+renderRoot = require('./virtual-dom/root')
+calcs = require('./prop-calculations')
+moment = require('moment')
+atomProjectPaths = require('./atom/project-paths.coffee')
+atomStreams = require('./atom/streams.coffee')
+{ Task } = require('atom')
 
 module.exports =
   panel: undefined

@@ -1,4 +1,4 @@
-Bacon = require 'baconjs'
+Bacon = require('baconjs')
 
 module.exports = {
 
@@ -9,6 +9,6 @@ module.exports = {
       return -> disposable.dispose()
 
   fromConfig: (key) ->
-    @fromDisposable atom.config, 'observe', key
+    @fromDisposable(atom.config, 'observe', key)
 
 }

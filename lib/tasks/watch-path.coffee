@@ -1,6 +1,6 @@
-Chokidar = require 'chokidar'
-FS = require 'fs'
-Path = require 'path'
+Chokidar = require('chokidar')
+FS = require('fs')
+Path = require('path')
 
 # @param {String} projectPath  Absolute path to be scanned for files -> items
 # @param ignoredNames {Array} list of relative file paths to ignore

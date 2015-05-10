@@ -1,7 +1,7 @@
-h = require 'virtual-dom/h'
-scrollableList = require './scrollable-list'
-th = require './th'
-fromResize = require '../baconjs/from-resize'
+h = require('virtual-dom/h')
+scrollableList = require('./scrollable-list')
+th = require('./th')
+fromResize = require('../baconjs/from-resize')
 
 module.exports = (data, buses) ->
   { columns, items, reverseStripes, bodyHeight } = data
