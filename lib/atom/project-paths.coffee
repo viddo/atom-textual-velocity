@@ -3,11 +3,11 @@ atomStreams = require './streams.coffee'
 
 filteredPathsStream = (pairwisePathsStream, filterFn) ->
   pairwisePathsStream.flatMap (pair) ->
-    Bacon.fromArray filterFn(pair)
+    Bacon.sequentially 0, filterFn(pair)
 
 module.exports = ->
   pathsStream = atomStreams.fromDisposable atom.project, 'onDidChangePaths'
-    .merge Bacon.fromArray [ [], atom.project.getPaths() ]
+    .merge Bacon.sequentially 0, [ [], atom.project.getPaths() ]
   lastProjectPathsProp = pathsStream.slidingWindow(2, 2)
 
   addStream = filteredPathsStream lastProjectPathsProp, ([currentPaths, newPaths]) ->
