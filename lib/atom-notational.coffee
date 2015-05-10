@@ -10,9 +10,9 @@ atomStreams = require './atom/streams.coffee'
 { Task } = require 'atom'
 
 module.exports =
-  watchPathTasks: {}
   panel: undefined
   rootNode: undefined
+  deactivateStream: undefined
 
   config:
     bodyHeight:
@@ -26,42 +26,47 @@ module.exports =
 
 
   activate: (state) ->
-    addFileBus = new Bacon.Bus()
-    removeFileBus = new Bacon.Bus()
+    @deactivateStream = new Bacon.Bus()
 
     { addStream, removeStream } = atomProjectPaths()
-    watchPathTasksProp = Bacon.update @watchPathTasks,
-      [addStream], (tasks, path) ->
-        task = new Task(require.resolve('./tasks/watch-path.coffee'))
-        task.on 'add', (path) -> addFileBus.push(path)
-        task.start(path)
-        tasks[path] = task
-        return tasks
-      , [removeStream], (tasks, path) ->
-        tasks[path].send()
-        delete tasks[path]
-        return tasks
-    watchPathTasksProp.log()
+    addProjectsStream = addStream.map (path) ->
+      task = new Task(require.resolve('./tasks/watch-path.coffee'))
+      task.start(path)
+      return {
+        path: path
+        task: task
+      }
 
+    projectsProp = Bacon.update [],
+      [addProjectsStream], (projects, project) -> projects.concat(project)
+      [removeStream], (projects, removedPath) ->
+        [removedProject] = projects.filter ({ path }) -> path is removedPath
+        removedProject.task.send('finish') if removedProject
+        projects.filter ({ path }) -> path isnt removedPath
+
+    terminateProjectsProp = projectsProp.sampledBy(@deactivateStream)
+    terminateProjectsProp.onValue (projects) ->
+      task.send('finish') for { task } in projects
+
+    addItemsStream = addProjectsStream.flatMap ({ task }) -> Bacon.fromEvent(task, 'add')
+    removeItemsStream = addProjectsStream.flatMap ({ task }) -> Bacon.fromEvent(task, 'unlink')
+
+    itemsProp = Bacon.update [],
+      [addItemsStream], (items, newItem) -> items.concat(newItem)
+      [removeItemsStream], (items, { relPath }) ->
+        items.filter (item) -> item.relPath isnt relPath
+      [removeStream], (items, removedPath) ->
+        items.filter ({ projectPath }) -> projectPath isnt removedPath
+
+    matchingItemsProp = itemsProp
 
     # Source streams
     rowHeightStream = atomStreams.fromConfig 'atom-notational.rowHeight'
     bodyHeightStream = atomStreams.fromConfig 'atom-notational.bodyHeight'
     scrollTopBus = new Bacon.Bus()
     bodyHeightBus = new Bacon.Bus()
-    filesStream = new Bacon.Bus()
-
 
     # Meta props
-    filesProp = Bacon.update [],
-      addFileBus, ((items, path) ->
-        items.push path
-        return items
-      ),
-      removeFileBus, (items, path) ->
-        items.splice items.indexOf(path), 1
-        return items
-
     columns = Bacon.constant [{
       title: 'Name'
       width: 60
@@ -77,7 +82,6 @@ module.exports =
     }]
 
     # View props
-    matchingItemsProp = filesProp
     scrollTopProp = scrollTopBus.toProperty(0)
     rowHeightProp = rowHeightStream.toProperty()
     bodyHeightProp = bodyHeightStream
@@ -127,8 +131,6 @@ module.exports =
       atom.config.set('atom-notational.bodyHeight', newHeight)
 
   deactivate: ->
-    for path, task of @watchPathTasks
-      console.log "terminating #{path}…"
-      task.send('finish')
+    @deactivateStream.push(true)
     @panel?.destroy()
     @rootNode = null
