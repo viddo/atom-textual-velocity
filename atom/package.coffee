@@ -1,15 +1,12 @@
 { Task } = require('atom')
 Bacon = require('baconjs')
-createElement = require('virtual-dom/create-element')
-diff = require('virtual-dom/diff')
-patch = require('virtual-dom/patch')
+bootstrapApp = require('../src/bootstrap-app.coffee')
 atoms = require('./streams.coffee')
-vdomTrees = require('../src/vdom-trees.coffee')
 
 module.exports =
   panel: undefined
-  rootNode: undefined
   deactivateStream: undefined
+  subscriptions: []
 
   config:
     bodyHeight:
@@ -24,10 +21,9 @@ module.exports =
 
   activate: (state) ->
     @deactivateStream = new Bacon.Bus()
-    scrollTopBus = new Bacon.Bus()
-    bodyHeightBus = new Bacon.Bus()
-
+    
     { addedStream, removedStream } = atoms.projectsPaths()
+
     watchedProjectsStream = addedStream.map (path) ->
       task = new Task(require.resolve('./watch-project-task.coffee'))
       task.start(path)
@@ -46,30 +42,24 @@ module.exports =
         projects.filter ({ path }) ->
           path isnt removedPath
 
-    vdomTreesProp = vdomTrees {
-      bodyHeightStream: atoms.fromConfig('atom-notational.bodyHeight').merge(bodyHeightBus)
+    { changedHeightStream, rootNodeProp } = bootstrapApp {
+      bodyHeightStream: atoms.fromConfig('atom-notational.bodyHeight')
       rowHeightStream: atoms.fromConfig 'atom-notational.rowHeight'
-      removedStream: removedStream
+      removedProjectStream: removedStream
       addItemsStream: watchedProjectsStream.flatMap ({ task }) ->
         Bacon.fromEvent(task, 'add')
       removeItemsStream: watchedProjectsStream.flatMap ({ task }) ->
         Bacon.fromEvent(task, 'unlink')
-    }, {
-      scrollTopBus: scrollTopBus
-      bodyHeightBus: bodyHeightBus
     }
 
     # Side effects
-    vdomTreesProp.onValue ([currentTree, newTree]) =>
-      if newTree
-        @rootNode = patch(@rootNode, diff(currentTree, newTree))
-      else
-        @rootNode = createElement(currentTree)
+    @subscriptions.push rootNodeProp.onValue (rootNode) =>
+      unless @panel
         @panel = atom.workspace.addTopPanel {
-          item: @rootNode
+          item: rootNode
         }
 
-    bodyHeightBus.debounce(500).onValue (newHeight) ->
+    @subscriptions.push changedHeightStream.debounce(500).onValue (newHeight) ->
       atom.config.set('atom-notational.bodyHeight', newHeight)
 
     terminateProjectsProp = projectsProp.sampledBy(@deactivateStream)
@@ -80,5 +70,5 @@ module.exports =
 
   deactivate: ->
     @deactivateStream.push(true)
+    unsubscribe() for unsubscribe in subscriptions
     @panel?.destroy()
-    @rootNode = null

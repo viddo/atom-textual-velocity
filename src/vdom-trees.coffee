@@ -2,7 +2,7 @@ Bacon = require('baconjs')
 renderRoot = require('./vdom/root.coffee')
 columns = require('./columns.coffee')
 
-module.exports = ({ bodyHeightStream, rowHeightStream, addItemsStream, removeItemsStream, removedStream }, buses) ->
+module.exports = ({ bodyHeightStream, rowHeightStream, addItemsStream, removeItemsStream, removedProjectStream }, buses) ->
   { scrollTopBus } = buses
   scrollTopProp = scrollTopBus.toProperty(0)
   rowHeightProp = rowHeightStream.toProperty()
@@ -17,7 +17,7 @@ module.exports = ({ bodyHeightStream, rowHeightStream, addItemsStream, removeIte
     [removeItemsStream], (items, { relPath }) ->
       items.filter (item) ->
         item.relPath isnt relPath
-    [removedStream], (items, removedPath) ->
+    [removedProjectStream], (items, removedPath) ->
       items.filter ({ projectPath }) ->
         projectPath isnt removedPath
 
