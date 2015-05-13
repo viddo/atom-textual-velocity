@@ -1,10 +1,10 @@
 h = require('virtual-dom/h')
 scrollableList = require('./scrollable-list')
 th = require('./th')
-fromResize = require('../baconjs/from-resize')
+{ mouseMoveDiff } = require('../dom-streams')
 
-module.exports = (data, buses) ->
-  { columns, items, reverseStripes, bodyHeight } = data
+module.exports = (data, columns, buses) ->
+  { items, reverseStripes, bodyHeight } = data
   { bodyHeightBus } = buses
 
   return h 'div.atom-notational', [
@@ -36,7 +36,7 @@ module.exports = (data, buses) ->
       ]
     h 'div.resize-handle', {
       onmousedown: (ev) ->
-        fromResize(ev).onValue (diff) ->
+        mouseMoveDiff(ev).onValue (diff) ->
           bodyHeightBus.push bodyHeight + diff.clientY
     }
   ]

@@ -1,13 +1,13 @@
-projectPaths = require('../../lib/atom/project-paths')
+atoms = require('../../atom/streams')
 
-describe 'projectPaths', ->
+describe 'Projects', ->
   beforeEach ->
-    atom.project.getPaths = -> ['/tmp/1st', '/tmp/2nd'] # Initial paths
-    { addStream, removeStream } = projectPaths()
-    @addSpy = jasmine.createSpy('addStream')
-    @removeSpy = jasmine.createSpy 'removeStream'
-    addStream.onValue(@addSpy)
-    removeStream.onValue(@removeSpy)
+    spyOn(atom.project, 'getPaths').andReturn(['/tmp/1st', '/tmp/2nd']) # Initial paths
+    { addedStream, removedStream } = atoms.projectsPaths()
+    @addSpy = jasmine.createSpy('addedStream')
+    @removeSpy = jasmine.createSpy('removedStream')
+    addedStream.onValue(@addSpy)
+    removedStream.onValue(@removeSpy)
 
     waitsFor =>
       @addSpy.calls.length is 2
