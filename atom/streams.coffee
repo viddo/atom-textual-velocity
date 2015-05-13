@@ -1,9 +1,5 @@
 Bacon = require('baconjs')
 
-fromFilteredPairs = (pairwiseStream, predicate) ->
-  pairwiseStream.flatMap (pair) ->
-    Bacon.sequentially(0, predicate(pair))
-
 module.exports = {
 
   fromDisposable: (obj, funcName, args...) ->
@@ -19,6 +15,10 @@ module.exports = {
     lastProjectPathsProp = Bacon.sequentially(0, [ [], atom.project.getPaths() ])
       .merge(@fromDisposable(atom.project, 'onDidChangePaths'))
       .slidingWindow(2, 2)
+
+    fromFilteredPairs = (pairwiseStream, predicate) ->
+      pairwiseStream.flatMap (pair) ->
+        Bacon.sequentially(0, predicate(pair))
 
     return {
       addedStream: fromFilteredPairs lastProjectPathsProp, ([currentPaths, newPaths]) ->

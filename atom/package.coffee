@@ -29,7 +29,7 @@ module.exports =
 
     { addedStream, removedStream } = atoms.projectsPaths()
     watchedProjectsStream = addedStream.map (path) ->
-      task = new Task(require.resolve('./tasks/watch-path.coffee'))
+      task = new Task(require.resolve('./watch-project-task.coffee'))
       task.start(path)
       return {
         path: path
