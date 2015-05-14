@@ -18,7 +18,7 @@ module.exports = (projectPath, ignoredNames, emit) ->
           stats: stats
         }
       if name is 'unlink'
-        emitEvent(stats)
+        emitEvent()
       else
         FS.stat Path.join(projectPath, relPath), (error, stats) ->
           emitEvent(stats) unless error
