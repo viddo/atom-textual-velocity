@@ -2,10 +2,10 @@ Chokidar = require('chokidar')
 FS = require('fs')
 Path = require('path')
 
-module.exports = (projectPath, ignoredNames, emit) ->
+module.exports = (projectPath, ignored, emit) ->
   watcher = Chokidar.watch '.', {
     cwd: projectPath
-    ignored: ignoredNames
+    ignored: ignored
     persistent: true
   }
 

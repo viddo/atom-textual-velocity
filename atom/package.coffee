@@ -26,7 +26,11 @@ module.exports =
 
     watchedProjectsStream = addedStream.map (path) ->
       task = new Task(require.resolve('./watch-project-task.coffee'))
-      task.start(path)
+      task.start(
+        path,
+        atom.config.get('core.ignoredNames'),
+        atom.config.get('core.excludeVcsIgnoredPaths')
+      )
       return {
         path: path
         task: task

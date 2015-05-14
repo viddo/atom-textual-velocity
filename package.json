@@ -11,6 +11,7 @@
   "dependencies": {
     "baconjs": "^0.7.x",
     "chokidar": "^1.0.x",
+    "gitignore-globs": "^0.1.1",
     "moment": "^2.10.x",
     "virtual-dom": "^2.x"
   }
