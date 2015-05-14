@@ -5,7 +5,7 @@ atoms = require('./streams.coffee')
 
 module.exports =
   panel: undefined
-  deactivateStream: undefined
+  deactivateBus: undefined
   subscriptions: []
 
   config:
@@ -20,7 +20,7 @@ module.exports =
 
 
   activate: (state) ->
-    @deactivateStream = new Bacon.Bus()
+    @deactivateBus = new Bacon.Bus()
 
     { addedStream, removedStream } = atoms.projectsPaths()
 
@@ -66,13 +66,14 @@ module.exports =
     @subscriptions.push newBodyHeightStream.debounce(500).onValue (newHeight) ->
       atom.config.set('atom-notational.bodyHeight', newHeight)
 
-    terminateProjectsProp = projectsProp.sampledBy(@deactivateStream)
+    terminateProjectsProp = projectsProp.sampledBy(@deactivateBus)
     terminateProjectsProp.onValue (projects) ->
       for { task } in projects
         task.send('finish')
+      return Bacon.noMore
 
 
   deactivate: ->
-    @deactivateStream.push(true)
-    unsubscribe() for unsubscribe in subscriptions
+    @deactivateBus.push(true)
+    unsubscribe() for unsubscribe in @subscriptions
     @panel?.destroy()
