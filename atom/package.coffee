@@ -21,7 +21,7 @@ module.exports =
 
   activate: (state) ->
     @deactivateStream = new Bacon.Bus()
-    
+
     { addedStream, removedStream } = atoms.projectsPaths()
 
     watchedProjectsStream = addedStream.map (path) ->
@@ -42,7 +42,7 @@ module.exports =
         projects.filter ({ path }) ->
           path isnt removedPath
 
-    { changedHeightStream, rootNodeProp } = bootstrapApp {
+    { rootNodeProp, newBodyHeightStream } = bootstrapApp {
       bodyHeightStream: atoms.fromConfig('atom-notational.bodyHeight')
       rowHeightStream: atoms.fromConfig 'atom-notational.rowHeight'
       removedProjectStream: removedStream
@@ -59,7 +59,7 @@ module.exports =
           item: rootNode
         }
 
-    @subscriptions.push changedHeightStream.debounce(500).onValue (newHeight) ->
+    @subscriptions.push newBodyHeightStream.debounce(500).onValue (newHeight) ->
       atom.config.set('atom-notational.bodyHeight', newHeight)
 
     terminateProjectsProp = projectsProp.sampledBy(@deactivateStream)

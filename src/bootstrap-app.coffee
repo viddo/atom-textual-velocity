@@ -3,12 +3,12 @@ createElement = require('virtual-dom/create-element')
 diff = require('virtual-dom/diff')
 patch = require('virtual-dom/patch')
 vdomTrees = require('../src/vdom-trees.coffee')
+_ = require 'underscore-plus'
 
 module.exports = (streams) ->
-  { bodyHeightStream } = streams
   bodyHeightBus = new Bacon.Bus()
   scrollTopBus = new Bacon.Bus()
-  bodyHeightStream = bodyHeightStream.merge(bodyHeightBus)
+  streams.bodyHeightStream = streams.bodyHeightStream.merge(bodyHeightBus)
 
   vdomTreesProp = vdomTrees streams, {
     scrollTopBus: scrollTopBus
@@ -16,7 +16,7 @@ module.exports = (streams) ->
   }
 
   return {
-    changedHeightStream: bodyHeightStream
+    newBodyHeightStream: streams.bodyHeightStream
 
     rootNodeProp: vdomTreesProp.scan undefined, (rootNode, [currentTree, newTree]) ->
       if newTree
