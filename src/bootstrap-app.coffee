@@ -3,7 +3,6 @@ createElement = require('virtual-dom/create-element')
 diff = require('virtual-dom/diff')
 patch = require('virtual-dom/patch')
 vdomTrees = require('../src/vdom-trees.coffee')
-_ = require 'underscore-plus'
 
 module.exports = (streams) ->
   bodyHeightBus = new Bacon.Bus()
