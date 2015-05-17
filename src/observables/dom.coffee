@@ -1,4 +1,4 @@
-Bacon = require('baconjs')
+Bacon = require 'baconjs'
 
 # Observe mouse move and provide callback functions to react accordingly
 #

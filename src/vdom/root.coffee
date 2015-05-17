@@ -1,7 +1,7 @@
-h = require('virtual-dom/h')
-scrollableList = require('./scrollable-list')
-th = require('./th')
-{ mouseMoveDiff } = require('../dom-streams')
+h = require 'virtual-dom/h'
+scrollableList = require './scrollable-list.coffee'
+th = require './th.coffee'
+{ mouseMoveDiff } = require '../observables/dom.coffee'
 
 module.exports = (data, columns, buses) ->
   { items, reverseStripes, bodyHeight, selectedItem } = data

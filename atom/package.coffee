@@ -1,8 +1,9 @@
-{ Task } = require('atom')
-Bacon = require('baconjs')
-atoms = require('./streams.coffee')
-vdomTree = require('../src/props/vdom-tree.coffee')
-rootNode = require('../src/props/root-node.coffee')
+{ Task } = require 'atom'
+Bacon = require 'baconjs'
+atoms = require './streams.coffee'
+projects = require '../src/observables/projects.coffee'
+vdomTree = require '../src/observables/vdom-tree.coffee'
+rootNode = require '../src/observables/root-node.coffee'
 
 module.exports =
   panel: undefined
@@ -37,15 +38,7 @@ module.exports =
         task: task
       }
 
-    projectsProp = Bacon.update [],
-      [watchedProjectsStream], (projects, project) ->
-        projects.concat(project)
-      [removedStream], (projects, removedPath) ->
-        [removedProject] = projects.filter ({ path }) ->
-          path is removedPath
-        removedProject.task.send('finish') if removedProject
-        projects.filter ({ path }) ->
-          path isnt removedPath
+    projectsProp = projects(watchedProjectsStream, removedStream)
 
     bodyHeightBus = new Bacon.Bus()
     selectedItemBus = new Bacon.Bus()

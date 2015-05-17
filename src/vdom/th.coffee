@@ -1,4 +1,4 @@
-h = require('virtual-dom/h')
+h = require 'virtual-dom/h'
 
 module.exports = (width, content = '') ->
   return h 'th', {
