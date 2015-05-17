@@ -7,11 +7,14 @@ vdomTrees = require('../src/vdom-trees.coffee')
 module.exports = (streams) ->
   bodyHeightBus = new Bacon.Bus()
   scrollTopBus = new Bacon.Bus()
+  searchBus = new Bacon.Bus()
   streams.bodyHeightStream = streams.bodyHeightStream.merge(bodyHeightBus)
 
   vdomTreesProp = vdomTrees streams, {
     scrollTopBus: scrollTopBus
     bodyHeightBus: bodyHeightBus
+    searchBus: searchBus
+    
   }
 
   return {

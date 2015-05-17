@@ -3,7 +3,7 @@ renderRoot = require('./vdom/root.coffee')
 columns = require('./columns.coffee')
 
 module.exports = ({ bodyHeightStream, rowHeightStream, addItemsStream, removeItemsStream, removedProjectStream }, buses) ->
-  { scrollTopBus } = buses
+  { scrollTopBus, searchBus } = buses
   scrollTopProp = scrollTopBus.toProperty(0)
   rowHeightProp = rowHeightStream.toProperty()
   bodyHeightProp = bodyHeightStream
@@ -20,6 +20,14 @@ module.exports = ({ bodyHeightStream, rowHeightStream, addItemsStream, removeIte
     [removedProjectStream], (items, removedPath) ->
       items.filter ({ projectPath }) ->
         projectPath isnt removedPath
+
+  matchedItemsProp = Bacon.combineWith (items, searchStr) ->
+    if searchStr
+      items.filter (item) ->
+        item.relPath.search(searchStr) isnt -1
+    else
+      items
+  , itemsProp, searchBus.toProperty('')
 
   visibleBeginProp = Bacon.combineWith (scrollTop, rowHeight) ->
     (scrollTop / rowHeight) | 0
@@ -41,13 +49,13 @@ module.exports = ({ bodyHeightStream, rowHeightStream, addItemsStream, removeIte
 
     marginBottom: Bacon.combineWith (items, rowHeight, scrollTop, bodyHeight) ->
       items.length * rowHeight - scrollTop - bodyHeight
-    , itemsProp, rowHeightProp, scrollTopProp, bodyHeightProp
+    , matchedItemsProp, rowHeightProp, scrollTopProp, bodyHeightProp
 
     reverseStripes: visibleBeginProp.map (begin) -> begin % 2 is 0
 
     items: Bacon.combineWith (items, begin, end) ->
       items.slice(begin, end)
-    , itemsProp, visibleBeginProp, visibleEndProp
+    , matchedItemsProp, visibleBeginProp, visibleEndProp
   }#, Bacon.interval(1000, undefined)
 
   return vdomTreesProp.slidingWindow(2, 1)

@@ -5,14 +5,18 @@ th = require('./th')
 
 module.exports = (data, columns, buses) ->
   { items, reverseStripes, bodyHeight } = data
-  { bodyHeightBus } = buses
+  { searchBus, bodyHeightBus } = buses
 
   return h 'div.atom-notational', [
     h 'atom-text-editor', {
-        placeholder: 'Search, or press enter to create a new untitled file'
-        attributes:
-          mini: 'true'
-      }
+      attributes: #custom ones
+        placeholdertext: 'Search, or press enter to create a new untitled file'
+        mini: 'true'
+      onkeydown: (ev) ->
+        setTimeout =>
+          searchBus.push @model.getText()
+        , 0
+    }
 
     h 'div.header',
       h 'table',
