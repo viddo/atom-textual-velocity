@@ -45,6 +45,14 @@
       &:nth-child(odd) { background-color: lighten(@tree-view-background-color, 2%) }
       &:nth-child(even) { background-color: @tree-view-background-color }
     }
+    tr.is-selected {
+      background-color: @background-color-selected;
+      color: @text-color-selected;
+    }
+  }
+  tr.is-selected {
+    background-color: @background-color-selected;
+    color: @text-color-selected;
   }
   td, th {
     padding: 5px;

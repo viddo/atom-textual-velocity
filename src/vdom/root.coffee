@@ -4,8 +4,8 @@ th = require('./th')
 { mouseMoveDiff } = require('../dom-streams')
 
 module.exports = (data, columns, buses) ->
-  { items, reverseStripes, bodyHeight } = data
-  { searchBus, bodyHeightBus } = buses
+  { items, reverseStripes, bodyHeight, selectedItem } = data
+  { searchBus, bodyHeightBus, selectedItemBus } = buses
 
   return h 'div.atom-notational', [
     h 'atom-text-editor', {
@@ -32,7 +32,11 @@ module.exports = (data, columns, buses) ->
         h 'tbody', {
           className: 'is-reversed-stripes' if reverseStripes
         }, items.map (item) ->
-          h 'tr', columns.map ({ cellContent }) ->
+          h 'tr', {
+            className: 'is-selected' if item is selectedItem
+            onclick: (ev) ->
+              selectedItemBus.push(item)
+          }, columns.map ({ cellContent }) ->
             h 'td', cellContent(item)
       ]
     h 'div.resize-handle', {

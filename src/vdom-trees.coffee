@@ -3,7 +3,7 @@ renderRoot = require('./vdom/root.coffee')
 columns = require('./columns.coffee')
 
 module.exports = ({ bodyHeightStream, rowHeightStream, addItemsStream, removeItemsStream, removedProjectStream }, buses) ->
-  { scrollTopBus, searchBus } = buses
+  { scrollTopBus, searchBus, selectedItemBus } = buses
   scrollTopProp = scrollTopBus.toProperty(0)
   rowHeightProp = rowHeightStream.toProperty()
   bodyHeightProp = bodyHeightStream
@@ -39,6 +39,7 @@ module.exports = ({ bodyHeightStream, rowHeightStream, addItemsStream, removeIte
   return Bacon.combineWith (data, _) ->
       renderRoot(data, columns, buses)
     , Bacon.combineTemplate {
+      selectedItem: selectedItemBus.toProperty({})
       bodyHeight: bodyHeightProp
       rowHeight: rowHeightProp
       scrollTop: scrollTopProp

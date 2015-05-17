@@ -8,12 +8,14 @@ module.exports = (streams) ->
   bodyHeightBus = new Bacon.Bus()
   scrollTopBus = new Bacon.Bus()
   searchBus = new Bacon.Bus()
+  selectedItemBus = new Bacon.Bus()
   streams.bodyHeightStream = streams.bodyHeightStream.merge(bodyHeightBus)
 
   vdomTreesProp = vdomTrees streams, {
     scrollTopBus: scrollTopBus
     bodyHeightBus: bodyHeightBus
     searchBus: searchBus
+    selectedItemBus: selectedItemBus
   }
 
   return {
