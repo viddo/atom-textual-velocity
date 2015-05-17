@@ -36,26 +36,24 @@ module.exports = ({ bodyHeightStream, rowHeightStream, addItemsStream, removeIte
     begin + ((bodyHeight / rowHeight) | 0) + 2 # add to avoid visible gap when scrolling
   , visibleBeginProp, bodyHeightProp, rowHeightProp
 
-  vdomTreesProp = Bacon.combineWith (data, _) ->
-    renderRoot(data, columns, buses)
-  , Bacon.combineTemplate {
-    bodyHeight: bodyHeightProp
-    rowHeight: rowHeightProp
-    scrollTop: scrollTopProp
+  return Bacon.combineWith (data, _) ->
+      renderRoot(data, columns, buses)
+    , Bacon.combineTemplate {
+      bodyHeight: bodyHeightProp
+      rowHeight: rowHeightProp
+      scrollTop: scrollTopProp
 
-    topOffset: Bacon.combineWith (scrollTop, rowHeight) ->
-      -(scrollTop % rowHeight)
-    , scrollTopProp, rowHeightProp
+      topOffset: Bacon.combineWith (scrollTop, rowHeight) ->
+        -(scrollTop % rowHeight)
+      , scrollTopProp, rowHeightProp
 
-    marginBottom: Bacon.combineWith (items, rowHeight, scrollTop, bodyHeight) ->
-      items.length * rowHeight - scrollTop - bodyHeight
-    , matchedItemsProp, rowHeightProp, scrollTopProp, bodyHeightProp
+      marginBottom: Bacon.combineWith (items, rowHeight, scrollTop, bodyHeight) ->
+        items.length * rowHeight - scrollTop - bodyHeight
+      , matchedItemsProp, rowHeightProp, scrollTopProp, bodyHeightProp
 
-    reverseStripes: visibleBeginProp.map (begin) -> begin % 2 is 0
+      reverseStripes: visibleBeginProp.map (begin) -> begin % 2 is 0
 
-    items: Bacon.combineWith (items, begin, end) ->
-      items.slice(begin, end)
-    , matchedItemsProp, visibleBeginProp, visibleEndProp
-  }#, Bacon.interval(1000, undefined)
-
-  return vdomTreesProp.slidingWindow(2, 1)
+      items: Bacon.combineWith (items, begin, end) ->
+        items.slice(begin, end)
+      , matchedItemsProp, visibleBeginProp, visibleEndProp
+    }#, Bacon.interval(1000, undefined)

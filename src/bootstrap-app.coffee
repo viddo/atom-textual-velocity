@@ -14,15 +14,15 @@ module.exports = (streams) ->
     scrollTopBus: scrollTopBus
     bodyHeightBus: bodyHeightBus
     searchBus: searchBus
-    
   }
 
   return {
     newBodyHeightStream: streams.bodyHeightStream
 
-    rootNodeProp: vdomTreesProp.scan undefined, (rootNode, [currentTree, newTree]) ->
-      if newTree
-        patch(rootNode, diff(currentTree, newTree))
-      else
-        createElement(currentTree)
+    rootNodeProp: vdomTreesProp.scan({}, ({rootNode, tree}, newTree) ->
+        return {
+          rootNode: if tree then patch(rootNode, diff(tree, newTree)) else createElement(newTree)
+          tree: newTree
+        }
+      ).map ({ rootNode }) -> rootNode
   }
