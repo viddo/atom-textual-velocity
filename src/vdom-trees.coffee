@@ -24,7 +24,7 @@ module.exports = ({ bodyHeightStream, rowHeightStream, addItemsStream, removeIte
   matchedItemsProp = Bacon.combineWith (items, searchStr) ->
     if searchStr
       items.filter (item) ->
-        item.relPath.search(searchStr) isnt -1
+        item.relPath.toLowerCase().search(searchStr) isnt -1
     else
       items
   , itemsProp, searchBus.toProperty('')
