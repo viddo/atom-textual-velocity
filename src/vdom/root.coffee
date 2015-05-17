@@ -9,6 +9,7 @@ module.exports = (data, columns, buses) ->
 
   return h 'div.atom-notational', [
     h 'atom-text-editor', {
+      className: 'atom-notational-search'
       attributes: #custom ones
         mini: 'true'
         'placeholder-text': 'Search, or press enter to create a new untitled file'

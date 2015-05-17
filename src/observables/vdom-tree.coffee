@@ -1,8 +1,9 @@
 Bacon = require 'baconjs'
 renderRoot = require '../vdom/root.coffee'
 columns = require '../columns.coffee'
+navArray = require '../navigate_array.coffee'
 
-module.exports = ({ bodyHeightStream, rowHeightStream, addItemsStream, removeItemsStream, removedProjectStream }, buses) ->
+module.exports = ({ bodyHeightStream, rowHeightStream, addItemsStream, removeItemsStream, removedProjectStream, changeSelectedStream}, buses) ->
   {scrollTopBus, searchBus, selectedItemBus} = buses
   scrollTopProp = scrollTopBus.toProperty(0)
   rowHeightProp = rowHeightStream.toProperty()
@@ -29,6 +30,17 @@ module.exports = ({ bodyHeightStream, rowHeightStream, addItemsStream, removeIte
       items
   , itemsProp, searchBus.toProperty('')
 
+  selectedItemProp = Bacon.update false,
+    [selectedItemBus], (currentItem, item) -> item
+    [changeSelectedStream, matchedItemsProp], (currentItem, relativeOffset, items) ->
+      selectedItemBus.push if currentItem
+                             navArray.byRelativeOffset items, relativeOffset, (item) -> currentItem is item
+                           else if relativeOffset < 0
+                             NavigateArray.byOffset(items, -1)
+                           else
+                             items[0]
+
+
   visibleBeginProp = Bacon.combineWith (scrollTop, rowHeight) ->
     (scrollTop / rowHeight) | 0
   , scrollTopProp, rowHeightProp
@@ -39,7 +51,7 @@ module.exports = ({ bodyHeightStream, rowHeightStream, addItemsStream, removeIte
   return Bacon.combineWith (data, _) ->
       renderRoot(data, columns, buses)
     , Bacon.combineTemplate {
-      selectedItem: selectedItemBus.toProperty({})
+      selectedItem: selectedItemProp
       bodyHeight: bodyHeightProp
       rowHeight: rowHeightProp
       scrollTop: scrollTopProp

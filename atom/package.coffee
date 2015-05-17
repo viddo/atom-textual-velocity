@@ -52,6 +52,11 @@ module.exports =
           Bacon.fromEvent(task, 'add')
         removeItemsStream: watchedProjectsStream.flatMap ({ task }) ->
           Bacon.fromEvent(task, 'unlink')
+        changeSelectedStream:
+          atoms.fromDisposable(atom.commands, 'add', '.atom-notational-search', 'core:move-down').map(1)
+          .merge(
+            atoms.fromDisposable(atom.commands, 'add', '.atom-notational-search', 'core:move-up').map(-1)
+          )
       }, {
         scrollTopBus: new Bacon.Bus()
         searchBus: new Bacon.Bus()
@@ -70,9 +75,10 @@ module.exports =
     @subscriptions.push bodyHeightBus.debounce(500).onValue (newHeight) ->
       atom.config.set('atom-notational.bodyHeight', newHeight)
 
-    @subscriptions.push selectedItemBus.onValue (item) ->
+    @subscriptions.push selectedItemBus.onValue (item) =>
       atom.workspace.getActivePaneItem()?.destroy()
-      atom.workspace.open Path.join(item.projectPath, item.relPath), searchAllPanes: true
+      atom.workspace.open Path.join(item.projectPath, item.relPath), searchAllPanes: true, activatePane: false
+      @panel.getItem().querySelector('.atom-notational-search').focus()
 
     terminateProjectsProp = projectsProp.sampledBy(@deactivateBus)
     terminateProjectsProp.onValue (projects) ->
