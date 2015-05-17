@@ -1,6 +1,6 @@
 Bacon = require('baconjs')
-renderRoot = require('./vdom/root.coffee')
-columns = require('./columns.coffee')
+renderRoot = require('../vdom/root.coffee')
+columns = require('../columns.coffee')
 
 module.exports = ({ bodyHeightStream, rowHeightStream, addItemsStream, removeItemsStream, removedProjectStream }, buses) ->
   { scrollTopBus, searchBus, selectedItemBus } = buses

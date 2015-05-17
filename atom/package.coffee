@@ -1,7 +1,8 @@
 { Task } = require('atom')
 Bacon = require('baconjs')
-bootstrapApp = require('../src/bootstrap-app.coffee')
 atoms = require('./streams.coffee')
+vdomTree = require('../src/props/vdom-tree.coffee')
+rootNode = require('../src/props/root-node.coffee')
 
 module.exports =
   panel: undefined
@@ -46,15 +47,24 @@ module.exports =
         projects.filter ({ path }) ->
           path isnt removedPath
 
-    { rootNodeProp, newBodyHeightStream } = bootstrapApp {
-      bodyHeightStream: atoms.fromConfig('atom-notational.bodyHeight')
-      rowHeightStream: atoms.fromConfig 'atom-notational.rowHeight'
-      removedProjectStream: removedStream
-      addItemsStream: watchedProjectsStream.flatMap ({ task }) ->
-        Bacon.fromEvent(task, 'add')
-      removeItemsStream: watchedProjectsStream.flatMap ({ task }) ->
-        Bacon.fromEvent(task, 'unlink')
-    }
+    bodyHeightBus = new Bacon.Bus()
+    selectedItemBus = new Bacon.Bus()
+
+    rootNodeProp = rootNode vdomTree({
+        bodyHeightStream: atoms.fromConfig('atom-notational.bodyHeight').merge(bodyHeightBus)
+        rowHeightStream: atoms.fromConfig('atom-notational.rowHeight')
+        removedProjectStream: removedStream
+        addItemsStream: watchedProjectsStream.flatMap ({ task }) ->
+          Bacon.fromEvent(task, 'add')
+        removeItemsStream: watchedProjectsStream.flatMap ({ task }) ->
+          Bacon.fromEvent(task, 'unlink')
+      }, {
+        scrollTopBus: new Bacon.Bus()
+        searchBus: new Bacon.Bus()
+        bodyHeightBus: bodyHeightBus
+        selectedItemBus: selectedItemBus
+      })
+
 
     # Side effects
     @subscriptions.push rootNodeProp.onValue (rootNode) =>
@@ -63,7 +73,7 @@ module.exports =
           item: rootNode
         }
 
-    @subscriptions.push newBodyHeightStream.debounce(500).onValue (newHeight) ->
+    @subscriptions.push bodyHeightBus.debounce(500).onValue (newHeight) ->
       atom.config.set('atom-notational.bodyHeight', newHeight)
 
     terminateProjectsProp = projectsProp.sampledBy(@deactivateBus)
