@@ -4,6 +4,7 @@ atoms = require './streams.coffee'
 projects = require '../src/observables/projects.coffee'
 vdomTree = require '../src/observables/vdom-tree.coffee'
 rootNode = require '../src/observables/root-node.coffee'
+Path = require 'path'
 
 module.exports =
   panel: undefined
@@ -68,6 +69,10 @@ module.exports =
 
     @subscriptions.push bodyHeightBus.debounce(500).onValue (newHeight) ->
       atom.config.set('atom-notational.bodyHeight', newHeight)
+
+    @subscriptions.push selectedItemBus.onValue (item) ->
+      atom.workspace.getActivePaneItem()?.destroy()
+      atom.workspace.open Path.join(item.projectPath, item.relPath), searchAllPanes: true
 
     terminateProjectsProp = projectsProp.sampledBy(@deactivateBus)
     terminateProjectsProp.onValue (projects) ->
