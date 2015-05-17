@@ -10,8 +10,8 @@ module.exports = (data, columns, buses) ->
   return h 'div.atom-notational', [
     h 'atom-text-editor', {
       attributes: #custom ones
-        placeholdertext: 'Search, or press enter to create a new untitled file'
         mini: 'true'
+        'placeholder-text': 'Search, or press enter to create a new untitled file'
       onkeydown: (ev) ->
         setTimeout =>
           searchBus.push @model.getText()
