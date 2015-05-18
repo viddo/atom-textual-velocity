@@ -1,6 +1,7 @@
-{ Task } = require 'atom'
+{Task} = require 'atom'
 Bacon = require 'baconjs'
 atoms = require './streams.coffee'
+PreviewEditor = require './preview-editor.coffee'
 projects = require '../src/observables/projects.coffee'
 vdomTree = require '../src/observables/vdom-tree.coffee'
 rootNode = require '../src/observables/root-node.coffee'
@@ -65,6 +66,21 @@ module.exports =
       })
 
 
+    # Preview handling, WIP
+    previewExt = '.nvpreview'
+    @previewOpener = atom.workspace.addOpener (uri) =>
+      if Path.extname(uri) is previewExt
+        unless @previewEditor
+          @previewEditor = new PreviewEditor()
+          @previewEditor.onDidDestroy =>
+            selectedItemBus.push(undefined)
+            @previewEditor = null
+        filePath = uri.replace(previewExt, '')
+        @previewEditor.setText filePath
+        @previewEditor.getBuffer().setPath uri
+        return @previewEditor
+
+
     # Side effects
     @subscriptions.push rootNodeProp.onValue (rootNode) =>
       unless @panel
@@ -75,10 +91,12 @@ module.exports =
     @subscriptions.push bodyHeightBus.debounce(500).onValue (newHeight) ->
       atom.config.set('atom-notational.bodyHeight', newHeight)
 
-    @subscriptions.push selectedItemBus.onValue (item) =>
-      atom.workspace.getActivePaneItem()?.destroy()
-      atom.workspace.open Path.join(item.projectPath, item.relPath), searchAllPanes: true, activatePane: false
-      @panel.getItem().querySelector('.atom-notational-search').focus()
+    @subscriptions.push selectedItemBus.filter((item) -> item).onValue (item) ->
+      atom.workspace.open Path.join(item.projectPath, item.relPath) + previewExt, searchAllPanes: true
+
+    @subscriptions.push atom.workspace.onDidOpen ({item}) =>
+      if item instanceof PreviewEditor
+        @panel.getItem().querySelector('.atom-notational-search').focus()
 
     terminateProjectsProp = projectsProp.sampledBy(@deactivateBus)
     terminateProjectsProp.onValue (projects) ->
@@ -88,6 +106,7 @@ module.exports =
 
 
   deactivate: ->
+    @previewOpener.dispose()
     @deactivateBus.push(true)
     unsubscribe() for unsubscribe in @subscriptions
     @panel?.destroy()
