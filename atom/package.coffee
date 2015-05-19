@@ -54,9 +54,9 @@ module.exports =
         removeItemsStream: watchedProjectsStream.flatMap ({ task }) ->
           Bacon.fromEvent(task, 'unlink')
         moveSelectedStream:
-          atoms.fromDisposable(atom.commands, 'add', '.atom-notational-search', 'core:move-down').map(1)
+          atoms.fromCommand('.atom-notational-search', 'core:move-down').map(1)
           .merge(
-            atoms.fromDisposable(atom.commands, 'add', '.atom-notational-search', 'core:move-up').map(-1)
+            atoms.fromCommand('.atom-notational-search', 'core:move-up').map(-1)
           )
       }, {
         scrollTopBus: new Bacon.Bus()

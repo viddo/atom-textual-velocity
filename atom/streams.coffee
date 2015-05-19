@@ -11,6 +11,9 @@ module.exports = {
   fromConfig: (key) ->
     @fromDisposable(atom.config, 'observe', key)
 
+  fromCommand: (context, command) ->
+    @fromDisposable(atom.commands, 'add', context, command)
+
   projectsPaths: ->
     lastProjectPathsProp = Bacon.sequentially(0, [ [], atom.project.getPaths() ])
       .merge(@fromDisposable(atom.project, 'onDidChangePaths'))
