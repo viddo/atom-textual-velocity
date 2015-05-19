@@ -53,7 +53,7 @@ module.exports =
           Bacon.fromEvent(task, 'add')
         removeItemsStream: watchedProjectsStream.flatMap ({ task }) ->
           Bacon.fromEvent(task, 'unlink')
-        changeSelectedStream:
+        moveSelectedStream:
           atoms.fromDisposable(atom.commands, 'add', '.atom-notational-search', 'core:move-down').map(1)
           .merge(
             atoms.fromDisposable(atom.commands, 'add', '.atom-notational-search', 'core:move-up').map(-1)
@@ -82,6 +82,15 @@ module.exports =
 
 
     # Side effects
+    @subscriptions.push(
+      rootNodeProp.map (rootNode) ->
+        rootNode.querySelector('.is-selected')
+      .filter (ifAnySelected) -> ifAnySelected
+      .onValue (selectedRow) ->
+        # Scroll item into the view if outside the visible border
+        selectedRow.scrollIntoViewIfNeeded(false) # false=only scroll the minimal necessary
+    )
+
     @subscriptions.push rootNodeProp.onValue (rootNode) =>
       unless @panel
         @panel = atom.workspace.addTopPanel {

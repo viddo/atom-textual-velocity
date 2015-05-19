@@ -2,10 +2,10 @@ Bacon = require 'baconjs'
 renderRoot = require '../vdom/root.coffee'
 columns = require '../columns.coffee'
 navArray = require '../navigate_array.coffee'
+selectedScrollTop = require './selected-scroll-top.coffee'
 
-module.exports = ({ bodyHeightStream, rowHeightStream, addItemsStream, removeItemsStream, removedProjectStream, changeSelectedStream}, buses) ->
+module.exports = ({ bodyHeightStream, rowHeightStream, addItemsStream, removeItemsStream, removedProjectStream, moveSelectedStream}, buses) ->
   {scrollTopBus, searchBus, selectedItemBus} = buses
-  scrollTopProp = scrollTopBus.toProperty(0)
   rowHeightProp = rowHeightStream.toProperty()
   bodyHeightProp = bodyHeightStream
     .skipDuplicates()
@@ -32,7 +32,7 @@ module.exports = ({ bodyHeightStream, rowHeightStream, addItemsStream, removeIte
 
   selectedItemProp = Bacon.update false,
     [selectedItemBus], (currentItem, item) -> item
-    [changeSelectedStream, matchedItemsProp], (currentItem, relativeOffset, items) ->
+    [moveSelectedStream, matchedItemsProp], (currentItem, relativeOffset, items) ->
       selectedItemBus.push if currentItem
                              navArray.byRelativeOffset items, relativeOffset, (item) -> currentItem is item
                            else if relativeOffset < 0
@@ -40,6 +40,16 @@ module.exports = ({ bodyHeightStream, rowHeightStream, addItemsStream, removeIte
                            else
                              items[0]
 
+  selectedScrollTopProp = selectedScrollTop(
+    matchingItemsProp: matchedItemsProp
+    selectedItemProp: selectedItemBus.toProperty(false)
+    rowHeightProp: rowHeightProp
+    scrollTopProp: scrollTopBus.toProperty(0)
+    bodyHeightProp: bodyHeightProp
+  )
+  scrollTopProp = Bacon.update 0,
+    [scrollTopBus], (prev, scrollTop) -> scrollTop
+    [selectedItemBus, selectedScrollTopProp], (prev, selectedItem, scrollTop) -> scrollTop
 
   visibleBeginProp = Bacon.combineWith (scrollTop, rowHeight) ->
     (scrollTop / rowHeight) | 0
