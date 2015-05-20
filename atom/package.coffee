@@ -51,14 +51,24 @@ module.exports =
       .filter (height) -> height > 0
       .toProperty()
 
+    addItemsStream = watchedProjectsStream.flatMap ({ task }) ->
+      Bacon.fromEvent(task, 'add')
+    removeItemsStream = watchedProjectsStream.flatMap ({ task }) ->
+      Bacon.fromEvent(task, 'unlink')
+    itemsProp = Bacon.update [],
+      [addItemsStream], (items, newItem) ->
+        items.concat(newItem)
+      [removeItemsStream], (items, { relPath }) ->
+        items.filter (item) ->
+          item.relPath isnt relPath
+      [removedStream], (items, removedPath) ->
+        items.filter ({ projectPath }) ->
+          projectPath isnt removedPath
+
     rootNodeProp = rootNode vdomTree({
         bodyHeightProp: bodyHeightProp
         rowHeightProp: atoms.fromConfig('atom-notational.rowHeight').toProperty()
-        removedProjectStream: removedStream
-        addItemsStream: watchedProjectsStream.flatMap ({ task }) ->
-          Bacon.fromEvent(task, 'add')
-        removeItemsStream: watchedProjectsStream.flatMap ({ task }) ->
-          Bacon.fromEvent(task, 'unlink')
+        itemsProp: itemsProp
         moveSelectedStream:
           atoms.fromCommand('.atom-notational-search', 'core:move-down').map(1)
           .merge(

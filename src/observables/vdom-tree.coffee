@@ -4,18 +4,8 @@ columns = require '../columns.coffee'
 navArray = require '../navigate_array.coffee'
 selectedScrollTop = require './selected-scroll-top.coffee'
 
-module.exports = ({ bodyHeightProp, rowHeightProp, addItemsStream, removeItemsStream, removedProjectStream, moveSelectedStream}, buses) ->
+module.exports = ({ bodyHeightProp, rowHeightProp, itemsProp, moveSelectedStream}, buses) ->
   {scrollTopBus, searchBus, selectedItemBus} = buses
-
-  itemsProp = Bacon.update [],
-    [addItemsStream], (items, newItem) ->
-      items.concat(newItem)
-    [removeItemsStream], (items, { relPath }) ->
-      items.filter (item) ->
-        item.relPath isnt relPath
-    [removedProjectStream], (items, removedPath) ->
-      items.filter ({ projectPath }) ->
-        projectPath isnt removedPath
 
   matchedItemsProp = Bacon.combineWith (items, searchStr) ->
     if searchStr
@@ -55,7 +45,6 @@ module.exports = ({ bodyHeightProp, rowHeightProp, addItemsStream, removeItemsSt
 
   return Bacon.combineTemplate(
     bodyHeight: bodyHeightProp
-
     selectedItem: selectedItemProp
     scrollTop: scrollTopProp
     topOffset: Bacon.combineWith (scrollTop, rowHeight) ->
