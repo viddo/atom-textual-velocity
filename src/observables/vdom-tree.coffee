@@ -1,16 +1,12 @@
 Bacon = require 'baconjs'
-renderRoot = require '../vdom/root.coffee'
+root = require '../vdom/root.coffee'
 columns = require '../columns.coffee'
 navArray = require '../navigate_array.coffee'
 selectedScrollTop = require './selected-scroll-top.coffee'
 
-module.exports = ({ bodyHeightStream, rowHeightStream, addItemsStream, removeItemsStream, removedProjectStream, moveSelectedStream}, buses) ->
+module.exports = ({ bodyHeightProp, rowHeightStream, addItemsStream, removeItemsStream, removedProjectStream, moveSelectedStream}, buses) ->
   {scrollTopBus, searchBus, selectedItemBus} = buses
   rowHeightProp = rowHeightStream.toProperty()
-  bodyHeightProp = bodyHeightStream
-    .skipDuplicates()
-    .filter (height) -> height > 0
-    .toProperty()
 
   itemsProp = Bacon.update [],
     [addItemsStream], (items, newItem) ->
@@ -59,8 +55,9 @@ module.exports = ({ bodyHeightStream, rowHeightStream, addItemsStream, removeIte
   , visibleBeginProp, bodyHeightProp, rowHeightProp
 
   return Bacon.combineTemplate(
-    selectedItem: selectedItemProp
     bodyHeight: bodyHeightProp
+
+    selectedItem: selectedItemProp
     scrollTop: scrollTopProp
     topOffset: Bacon.combineWith (scrollTop, rowHeight) ->
         -(scrollTop % rowHeight)
@@ -68,10 +65,10 @@ module.exports = ({ bodyHeightStream, rowHeightStream, addItemsStream, removeIte
     marginBottom: Bacon.combineWith (items, rowHeight, scrollTop, bodyHeight) ->
         items.length * rowHeight - scrollTop - bodyHeight
       , matchedItemsProp, rowHeightProp, scrollTopProp, bodyHeightProp
-    reverseStripes: visibleBeginProp.map (begin) -> 
+    reverseStripes: visibleBeginProp.map (begin) ->
       begin % 2 is 0
     items: Bacon.combineWith (items, begin, end) ->
         items.slice(begin, end)
       , matchedItemsProp, visibleBeginProp, visibleEndProp
   ).map (data) ->
-    renderRoot(data, columns, buses)
+    root(data, columns, buses)

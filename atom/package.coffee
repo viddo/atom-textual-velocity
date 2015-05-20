@@ -45,8 +45,14 @@ module.exports =
     bodyHeightBus = new Bacon.Bus()
     selectedItemBus = new Bacon.Bus()
 
+    bodyHeightProp = atoms.fromConfig('atom-notational.bodyHeight')
+      .merge(bodyHeightBus)
+      .skipDuplicates()
+      .filter (height) -> height > 0
+      .toProperty()
+
     rootNodeProp = rootNode vdomTree({
-        bodyHeightStream: atoms.fromConfig('atom-notational.bodyHeight').merge(bodyHeightBus)
+        bodyHeightProp: bodyHeightProp
         rowHeightStream: atoms.fromConfig('atom-notational.rowHeight')
         removedProjectStream: removedStream
         addItemsStream: watchedProjectsStream.flatMap ({ task }) ->
