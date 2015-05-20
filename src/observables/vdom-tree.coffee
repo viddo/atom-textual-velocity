@@ -4,9 +4,8 @@ columns = require '../columns.coffee'
 navArray = require '../navigate_array.coffee'
 selectedScrollTop = require './selected-scroll-top.coffee'
 
-module.exports = ({ bodyHeightProp, rowHeightStream, addItemsStream, removeItemsStream, removedProjectStream, moveSelectedStream}, buses) ->
+module.exports = ({ bodyHeightProp, rowHeightProp, addItemsStream, removeItemsStream, removedProjectStream, moveSelectedStream}, buses) ->
   {scrollTopBus, searchBus, selectedItemBus} = buses
-  rowHeightProp = rowHeightStream.toProperty()
 
   itemsProp = Bacon.update [],
     [addItemsStream], (items, newItem) ->

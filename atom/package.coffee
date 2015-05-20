@@ -53,7 +53,7 @@ module.exports =
 
     rootNodeProp = rootNode vdomTree({
         bodyHeightProp: bodyHeightProp
-        rowHeightStream: atoms.fromConfig('atom-notational.rowHeight')
+        rowHeightProp: atoms.fromConfig('atom-notational.rowHeight').toProperty()
         removedProjectStream: removedStream
         addItemsStream: watchedProjectsStream.flatMap ({ task }) ->
           Bacon.fromEvent(task, 'add')
