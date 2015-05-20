@@ -58,25 +58,20 @@ module.exports = ({ bodyHeightStream, rowHeightStream, addItemsStream, removeIte
     begin + ((bodyHeight / rowHeight) | 0) + 2 # add to avoid visible gap when scrolling
   , visibleBeginProp, bodyHeightProp, rowHeightProp
 
-  return Bacon.combineWith (data, _) ->
-      renderRoot(data, columns, buses)
-    , Bacon.combineTemplate {
-      selectedItem: selectedItemProp
-      bodyHeight: bodyHeightProp
-      rowHeight: rowHeightProp
-      scrollTop: scrollTopProp
-
-      topOffset: Bacon.combineWith (scrollTop, rowHeight) ->
+  return Bacon.combineTemplate(
+    selectedItem: selectedItemProp
+    bodyHeight: bodyHeightProp
+    scrollTop: scrollTopProp
+    topOffset: Bacon.combineWith (scrollTop, rowHeight) ->
         -(scrollTop % rowHeight)
       , scrollTopProp, rowHeightProp
-
-      marginBottom: Bacon.combineWith (items, rowHeight, scrollTop, bodyHeight) ->
+    marginBottom: Bacon.combineWith (items, rowHeight, scrollTop, bodyHeight) ->
         items.length * rowHeight - scrollTop - bodyHeight
       , matchedItemsProp, rowHeightProp, scrollTopProp, bodyHeightProp
-
-      reverseStripes: visibleBeginProp.map (begin) -> begin % 2 is 0
-
-      items: Bacon.combineWith (items, begin, end) ->
+    reverseStripes: visibleBeginProp.map (begin) -> 
+      begin % 2 is 0
+    items: Bacon.combineWith (items, begin, end) ->
         items.slice(begin, end)
       , matchedItemsProp, visibleBeginProp, visibleEndProp
-    }#, Bacon.interval(1000, undefined)
+  ).map (data) ->
+    renderRoot(data, columns, buses)
