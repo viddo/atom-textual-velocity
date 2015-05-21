@@ -1,7 +1,7 @@
 h = require 'virtual-dom/h'
 
 module.exports = ({bodyHeight, topOffset, scrollTop, marginBottom, content}, scrollTopBus) ->
-  return h 'div', {
+  h 'div', {
     className: 'tbody'
     style: height: "#{bodyHeight}px"
     onscroll: (ev) -> scrollTopBus.push(ev.srcElement.scrollTop)

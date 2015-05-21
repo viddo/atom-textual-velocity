@@ -1,7 +1,7 @@
 h = require 'virtual-dom/h'
 
 module.exports = (width, content = '') ->
-  return h 'th', {
+  h 'th', {
     style:
       width: "#{width}%"
   }, content

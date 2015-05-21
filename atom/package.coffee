@@ -136,7 +136,7 @@ module.exports =
     }).map (data) ->
       content(data, selectedItemBus)
 
-    bodyContentProp = Bacon.combineTemplate({
+    scrollableContentProp = Bacon.combineTemplate({
       bodyHeight: bodyHeightProp
       topOffset: topOffsetProp
       scrollTop: scrollTopProp
@@ -145,14 +145,13 @@ module.exports =
     }).map (data) ->
       scrollableContent(data, scrollTopBus)
 
-    rootProp = Bacon.combineWith (bodyContent, bodyHeight) ->
-      root(bodyContent, bodyHeight, {
+    rootProp = Bacon.combineWith (scrollableContent, bodyHeight) ->
+      root(scrollableContent, bodyHeight, {
         searchBus: searchBus
         bodyHeightBus: bodyHeightBus
       })
-    , bodyContentProp, bodyHeightProp
+    , scrollableContentProp, bodyHeightProp
     rootNodeProp = rootNode(rootProp)
-
 
     # Side effects
     @subscriptions.push(
