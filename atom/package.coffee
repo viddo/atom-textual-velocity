@@ -65,10 +65,19 @@ module.exports =
         items.filter ({ projectPath }) ->
           projectPath isnt removedPath
 
+    searchBus = new Bacon.Bus()
+    matchedItemsProp = Bacon.combineWith (items, searchStr) ->
+      if searchStr
+        items.filter (item) ->
+          item.relPath.toLowerCase().search(searchStr) isnt -1
+      else
+        items
+    , itemsProp, searchBus.toProperty('')
+
     rootNodeProp = rootNode vdomTree({
         bodyHeightProp: bodyHeightProp
         rowHeightProp: atoms.fromConfig('atom-notational.rowHeight').toProperty()
-        itemsProp: itemsProp
+        matchedItemsProp: matchedItemsProp
         moveSelectedStream:
           atoms.fromCommand('.atom-notational-search', 'core:move-down').map(1)
           .merge(
@@ -76,7 +85,7 @@ module.exports =
           )
       }, {
         scrollTopBus: new Bacon.Bus()
-        searchBus: new Bacon.Bus()
+        searchBus: searchBus
         bodyHeightBus: bodyHeightBus
         selectedItemBus: selectedItemBus
       })

@@ -4,16 +4,8 @@ columns = require '../columns.coffee'
 navArray = require '../navigate_array.coffee'
 selectedScrollTop = require './selected-scroll-top.coffee'
 
-module.exports = ({ bodyHeightProp, rowHeightProp, itemsProp, moveSelectedStream}, buses) ->
+module.exports = ({ bodyHeightProp, rowHeightProp, matchedItemsProp, moveSelectedStream}, buses) ->
   {scrollTopBus, searchBus, selectedItemBus} = buses
-
-  matchedItemsProp = Bacon.combineWith (items, searchStr) ->
-    if searchStr
-      items.filter (item) ->
-        item.relPath.toLowerCase().search(searchStr) isnt -1
-    else
-      items
-  , itemsProp, searchBus.toProperty('')
 
   selectedItemProp = Bacon.update false,
     [selectedItemBus], (currentItem, item) -> item
