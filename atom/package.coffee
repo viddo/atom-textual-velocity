@@ -3,13 +3,15 @@ Bacon = require 'baconjs'
 atoms = require './streams.coffee'
 projects = require '../src/observables/projects.coffee'
 selectedScrollTop = require '../src/observables/selected-scroll-top.coffee'
+search = require '../src/vdom/search.coffee'
+header = require '../src/vdom/header.coffee'
 content = require '../src/vdom/content.coffee'
 scrollableContent = require '../src/vdom/scrollable-content.coffee'
-root = require '../src/vdom/root.coffee'
+resizeHandle = require '../src/vdom/resize-handle.coffee'
+h = require 'virtual-dom/h'
 rootNode = require '../src/observables/root-node.coffee'
 navArray = require '../src/navigate_array.coffee'
 Path = require 'path'
-
 
 module.exports =
   panel: undefined
@@ -145,12 +147,17 @@ module.exports =
     }).map (data) ->
       scrollableContent(data, scrollTopBus)
 
-    rootProp = Bacon.combineWith (scrollableContent, bodyHeight) ->
-      root(scrollableContent, bodyHeight, {
-        searchBus: searchBus
-        bodyHeightBus: bodyHeightBus
-      })
-    , scrollableContentProp, bodyHeightProp
+    resizeHandleProp = bodyHeightProp.map (bodyHeight) ->
+      resizeHandle(bodyHeight, bodyHeightBus)
+
+    rootProp = Bacon.combineWith (scrollableContent, resizeHandle) ->
+      h 'div.atom-notational', [
+        search(searchBus)
+        header()
+        scrollableContent
+        resizeHandle
+      ]
+    , scrollableContentProp, resizeHandleProp
     rootNodeProp = rootNode(rootProp)
 
     # Side effects
