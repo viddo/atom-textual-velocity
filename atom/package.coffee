@@ -176,13 +176,6 @@ module.exports =
     @subscriptions.push bodyHeightBus.debounce(500).onValue (newHeight) ->
       atom.config.set('atom-notational.bodyHeight', newHeight)
 
-    @subscriptions.push selectedItemBus.filter((item) -> item).onValue (item) ->
-      atom.workspace.open Path.join(item.projectPath, item.relPath) + previewExt, searchAllPanes: true
-
-    @subscriptions.push atom.workspace.onDidOpen ({item}) =>
-      if item instanceof PreviewEditor
-        @panel.getItem().querySelector('.atom-notational-search').focus()
-
     terminateProjectsProp = projectsProp.sampledBy(@deactivateBus)
     terminateProjectsProp.onValue (projects) ->
       for { task } in projects
