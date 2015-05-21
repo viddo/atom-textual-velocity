@@ -1,7 +1,6 @@
 {Task} = require 'atom'
 Bacon = require 'baconjs'
 atoms = require './streams.coffee'
-PreviewEditor = require './preview-editor.coffee'
 projects = require '../src/observables/projects.coffee'
 vdomTree = require '../src/observables/vdom-tree.coffee'
 rootNode = require '../src/observables/root-node.coffee'
@@ -142,19 +141,6 @@ module.exports =
     })
 
 
-    # Preview handling, WIP
-    previewExt = '.nvpreview'
-    @previewOpener = atom.workspace.addOpener (uri) =>
-      if Path.extname(uri) is previewExt
-        unless @previewEditor
-          @previewEditor = new PreviewEditor()
-          @previewEditor.onDidDestroy =>
-            selectedItemBus.push(undefined)
-            @previewEditor = null
-        filePath = uri.replace(previewExt, '')
-        @previewEditor.setText filePath
-        @previewEditor.getBuffer().setPath uri
-        return @previewEditor
 
 
     # Side effects
