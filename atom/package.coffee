@@ -2,11 +2,14 @@
 Bacon = require 'baconjs'
 atoms = require './streams.coffee'
 projects = require '../src/observables/projects.coffee'
-vdomTree = require '../src/observables/vdom-tree.coffee'
-rootNode = require '../src/observables/root-node.coffee'
 selectedScrollTop = require '../src/observables/selected-scroll-top.coffee'
+content = require '../src/vdom/content.coffee'
+scrollableContent = require '../src/vdom/scrollable-content.coffee'
+root = require '../src/vdom/root.coffee'
+rootNode = require '../src/observables/root-node.coffee'
 navArray = require '../src/navigate_array.coffee'
 Path = require 'path'
+
 
 module.exports =
   panel: undefined
@@ -125,22 +128,30 @@ module.exports =
         items.length * rowHeight - scrollTop - bodyHeight
       , matchedItemsProp, rowHeightProp, scrollTopProp, bodyHeightProp
 
-    rootNodeProp = rootNode vdomTree({
-      bodyHeightProp: bodyHeightProp
-      itemsProp: visibleItemsProp
-      reverseStripesProp: reverseStripesProp
-      marginBottomProp: marginBottomProp
-      selectedItemProp: selectedItemProp
-      scrollTopProp: scrollTopProp
-      topOffsetProp: topOffsetProp
-    }, {
-      scrollTopBus: scrollTopBus
-      searchBus: searchBus
-      bodyHeightBus: bodyHeightBus
-      selectedItemBus: selectedItemBus
-    })
 
+    contentProp = Bacon.combineTemplate({
+      reverseStripes: reverseStripesProp
+      items: visibleItemsProp
+      selectedItem: selectedItemProp
+    }).map (data) ->
+      content(data, selectedItemBus)
 
+    bodyContentProp = Bacon.combineTemplate({
+      bodyHeight: bodyHeightProp
+      topOffset: topOffsetProp
+      scrollTop: scrollTopProp
+      marginBottom: marginBottomProp
+      content: contentProp
+    }).map (data) ->
+      scrollableContent(data, scrollTopBus)
+
+    rootProp = Bacon.combineWith (bodyContent, bodyHeight) ->
+      root(bodyContent, bodyHeight, {
+        searchBus: searchBus
+        bodyHeightBus: bodyHeightBus
+      })
+    , bodyContentProp, bodyHeightProp
+    rootNodeProp = rootNode(rootProp)
 
 
     # Side effects
