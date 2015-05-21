@@ -5,6 +5,8 @@ PreviewEditor = require './preview-editor.coffee'
 projects = require '../src/observables/projects.coffee'
 vdomTree = require '../src/observables/vdom-tree.coffee'
 rootNode = require '../src/observables/root-node.coffee'
+selectedScrollTop = require '../src/observables/selected-scroll-top.coffee'
+navArray = require '../src/navigate_array.coffee'
 Path = require 'path'
 
 module.exports =
@@ -43,7 +45,6 @@ module.exports =
     projectsProp = projects(watchedProjectsStream, removedStream)
 
     bodyHeightBus = new Bacon.Bus()
-    selectedItemBus = new Bacon.Bus()
 
     bodyHeightProp = atoms.fromConfig('atom-notational.bodyHeight')
       .merge(bodyHeightBus)
@@ -74,21 +75,71 @@ module.exports =
         items
     , itemsProp, searchBus.toProperty('')
 
+    rowHeightProp = atoms.fromConfig('atom-notational.rowHeight').toProperty()
+
+    scrollTopBus = new Bacon.Bus()
+
+    moveSelectedStream = atoms.fromCommand('.atom-notational-search', 'core:move-down').map(1)
+      .merge(atoms.fromCommand('.atom-notational-search', 'core:move-up').map(-1))
+    selectedItemBus = new Bacon.Bus()
+    selectedItemProp = Bacon.update false,
+      [selectedItemBus], (currentItem, item) -> item
+      [moveSelectedStream, matchedItemsProp], (currentItem, relativeOffset, items) ->
+        selectedItemBus.push if currentItem
+                               navArray.byRelativeOffset items, relativeOffset, (item) -> currentItem is item
+                             else if relativeOffset < 0
+                               NavigateArray.byOffset(items, -1)
+                             else
+                               items[0]
+    selectedScrollTopProp = selectedScrollTop(
+      bodyHeightProp: bodyHeightProp
+      rowHeightProp: rowHeightProp
+      matchingItemsProp: matchedItemsProp
+      selectedItemProp: selectedItemBus.toProperty(false)
+      scrollTopProp: scrollTopBus.toProperty(0)
+    )
+    scrollTopProp = Bacon.update 0,
+      [scrollTopBus], (prev, scrollTop) -> scrollTop
+      [selectedItemBus, selectedScrollTopProp], (prev, selectedItem, scrollTop) -> scrollTop
+    topOffsetProp = Bacon.combineWith (scrollTop, rowHeight) ->
+      -(scrollTop % rowHeight)
+    , scrollTopProp, rowHeightProp
+
+    visibleBeginProp = Bacon.combineWith (scrollTop, rowHeight) ->
+      (scrollTop / rowHeight) | 0
+    , scrollTopProp, rowHeightProp
+    visibleEndProp = Bacon.combineWith (begin, bodyHeight, rowHeight) ->
+      begin + ((bodyHeight / rowHeight) | 0) + 2 # add to avoid visible gap when scrolling
+    , visibleBeginProp, bodyHeightProp, rowHeightProp
+
+    visibleItemsProp = Bacon.combineWith (items, begin, end) ->
+      items.slice(begin, end)
+    , matchedItemsProp, visibleBeginProp, visibleEndProp
+
+    reverseStripesProp = visibleBeginProp.map (begin) ->
+      begin % 2 is 0
+
+    topOffset: Bacon.combineWith (scrollTop, rowHeight) ->
+        -(scrollTop % rowHeight)
+      , scrollTopProp, rowHeightProp
+    marginBottomProp = Bacon.combineWith (items, rowHeight, scrollTop, bodyHeight) ->
+        items.length * rowHeight - scrollTop - bodyHeight
+      , matchedItemsProp, rowHeightProp, scrollTopProp, bodyHeightProp
+
     rootNodeProp = rootNode vdomTree({
-        bodyHeightProp: bodyHeightProp
-        rowHeightProp: atoms.fromConfig('atom-notational.rowHeight').toProperty()
-        matchedItemsProp: matchedItemsProp
-        moveSelectedStream:
-          atoms.fromCommand('.atom-notational-search', 'core:move-down').map(1)
-          .merge(
-            atoms.fromCommand('.atom-notational-search', 'core:move-up').map(-1)
-          )
-      }, {
-        scrollTopBus: new Bacon.Bus()
-        searchBus: searchBus
-        bodyHeightBus: bodyHeightBus
-        selectedItemBus: selectedItemBus
-      })
+      bodyHeightProp: bodyHeightProp
+      itemsProp: visibleItemsProp
+      reverseStripesProp: reverseStripesProp
+      marginBottomProp: marginBottomProp
+      selectedItemProp: selectedItemProp
+      scrollTopProp: scrollTopProp
+      topOffsetProp: topOffsetProp
+    }, {
+      scrollTopBus: scrollTopBus
+      searchBus: searchBus
+      bodyHeightBus: bodyHeightBus
+      selectedItemBus: selectedItemBus
+    })
 
 
     # Preview handling, WIP
