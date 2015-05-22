@@ -8,7 +8,7 @@ module.exports = {
   mouseMoveDiff: (initialEvent) ->
     mouseUpStream = Bacon.fromEvent(document, 'mouseup')
     mouseUpStream.onValue -> Bacon.noMore # to stop listening to events
-    return Bacon.fromEvent(document, 'mousemove')
+    Bacon.fromEvent(document, 'mousemove')
       .takeUntil(mouseUpStream)
       .map (event) ->
         if event.which is 1 # left button

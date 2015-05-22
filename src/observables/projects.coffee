@@ -1,7 +1,7 @@
 Bacon = require 'baconjs'
 
 module.exports = (watchedProjectsStream, removedStream) ->
-  return Bacon.update [],
+  Bacon.update [],
     [watchedProjectsStream], (projects, project) ->
       projects.concat(project)
     [removedStream], (projects, removedPath) ->
