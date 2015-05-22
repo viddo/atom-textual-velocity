@@ -1,6 +1,6 @@
-Chokidar = require('chokidar')
-FS = require('fs')
-Path = require('path')
+Chokidar = require 'chokidar'
+FS = require 'fs'
+Path = require 'path'
 
 module.exports = (projectPath, ignored, emit) ->
   watcher = Chokidar.watch '.', {

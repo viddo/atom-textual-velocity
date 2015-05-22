@@ -1,4 +1,4 @@
-Bacon = require('baconjs')
+Bacon = require 'baconjs'
 
 module.exports = {
 

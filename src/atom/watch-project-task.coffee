@@ -1,5 +1,5 @@
-watchProject = require('../src/watch-project.coffee')
-Path = require('path')
+watchProject = require '../watch-project.coffee'
+Path = require 'path'
 gitignoreGlobs = require 'gitignore-globs'
 
 # @param {String} projectPath  Absolute path to be scanned for files -> items

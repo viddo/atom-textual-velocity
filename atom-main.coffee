@@ -1,16 +1,16 @@
 {Task} = require 'atom'
 Bacon = require 'baconjs'
-atoms = require './streams.coffee'
-projects = require '../src/observables/projects.coffee'
-selectedScrollTop = require '../src/observables/selected-scroll-top.coffee'
-search = require '../src/vdom/search.coffee'
-header = require '../src/vdom/header.coffee'
-content = require '../src/vdom/content.coffee'
-scrollableContent = require '../src/vdom/scrollable-content.coffee'
-resizeHandle = require '../src/vdom/resize-handle.coffee'
+atoms = require './src/atom/streams.coffee'
+projects = require './src/observables/projects.coffee'
+selectedScrollTop = require './src/observables/selected-scroll-top.coffee'
+search = require './src/vdom/search.coffee'
+header = require './src/vdom/header.coffee'
+content = require './src/vdom/content.coffee'
+scrollableContent = require './src/vdom/scrollable-content.coffee'
+resizeHandle = require './src/vdom/resize-handle.coffee'
 h = require 'virtual-dom/h'
-rootNode = require '../src/observables/root-node.coffee'
-navArray = require '../src/navigate_array.coffee'
+rootNode = require './src/observables/root-node.coffee'
+navArray = require './src/navigate_array.coffee'
 Path = require 'path'
 
 module.exports =
@@ -35,7 +35,7 @@ module.exports =
     { addedStream, removedStream } = atoms.projectsPaths()
 
     watchedProjectsStream = addedStream.map (path) ->
-      task = new Task(require.resolve('./watch-project-task.coffee'))
+      task = new Task(require.resolve('./src/atom/watch-project-task.coffee'))
       task.start(
         path,
         atom.config.get('core.ignoredNames'),
