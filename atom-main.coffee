@@ -150,7 +150,7 @@ module.exports =
     resizeHandleProp = bodyHeightProp.map (bodyHeight) ->
       resizeHandle(bodyHeight, bodyHeightBus)
 
-    rootProp = Bacon.combineWith (scrollableContent, resizeHandle) ->
+    vdomTreeProp = Bacon.combineWith (scrollableContent, resizeHandle) ->
       h 'div.atom-notational', [
         search(searchBus)
         header()
@@ -158,22 +158,18 @@ module.exports =
         resizeHandle
       ]
     , scrollableContentProp, resizeHandleProp
-    rootNodeProp = rootNode(rootProp)
+    rootNodeProp = rootNode(vdomTreeProp).doAction (node) ->
+      # Scroll item into the view if outside the visible border
+      selectedRow = node.querySelector('.is-selected')
+      if selectedRow
+        selectedRow.scrollIntoViewIfNeeded(false) # false=only scroll the minimal necessary
+
 
     # Side effects
-    @subscriptions.push(
-      rootNodeProp.map (rootNode) ->
-        rootNode.querySelector('.is-selected')
-      .filter (ifAnySelected) -> ifAnySelected
-      .onValue (selectedRow) ->
-        # Scroll item into the view if outside the visible border
-        selectedRow.scrollIntoViewIfNeeded(false) # false=only scroll the minimal necessary
-    )
-
-    @subscriptions.push rootNodeProp.onValue (rootNode) =>
+    @subscriptions.push rootNodeProp.onValue (node) =>
       unless @panel
         @panel = atom.workspace.addTopPanel {
-          item: rootNode
+          item: node
         }
 
     @subscriptions.push bodyHeightBus.debounce(500).onValue (newHeight) ->
