@@ -108,7 +108,7 @@ module.exports = ({itemsProp, bodyHeightStream, rowHeightStream, moveSelectedStr
   , scrollableContentProp, resizeHandleProp
   elementProp = vdomTreeToElement(vdomTreeProp)
 
-  unsubscribe = Bacon.when([selectItemStream, elementProp], (..., el) ->
+  unsubscribeSelectedScrollAdjuster = Bacon.when([selectItemStream, elementProp], (..., el) ->
     # Scroll item into the view if outside the visible border and was triggered by selectItem change
     selectedRow = el.querySelector('.is-selected')
     if selectedRow
@@ -118,5 +118,6 @@ module.exports = ({itemsProp, bodyHeightStream, rowHeightStream, moveSelectedStr
   return {
     elementProp: elementProp
     resizedBodyHeightProp: bodyHeightProp
-    unsubscribe: unsubscribe
+    selectedItemProp: selectedItemProp
+    unsubscribeSelectedScrollAdjuster: unsubscribeSelectedScrollAdjuster
   }

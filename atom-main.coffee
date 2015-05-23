@@ -56,13 +56,18 @@ module.exports =
     moveSelectedStream = atoms.fromCommand('.atom-notational-search', 'core:move-down').map(1)
       .merge(atoms.fromCommand('.atom-notational-search', 'core:move-up').map(-1))
 
-    {elementProp, resizedBodyHeightProp, unsubscribe} = setupPanel(
+    {
+      elementProp
+      resizedBodyHeightProp
+      selectedItemProp
+      unsubscribeSelectedScrollAdjuster
+    } = setupPanel(
       itemsProp: itemsProp
       bodyHeightStream: atoms.fromConfig('atom-notational.bodyHeight')
       rowHeightStream: atoms.fromConfig('atom-notational.rowHeight')
       moveSelectedStream: moveSelectedStream
     )
-    @_subscribe(unsubscribe)
+    @_subscribe(unsubscribeSelectedScrollAdjuster)
 
     # Side effects
     # Create panel 1st time the element is created
@@ -75,6 +80,12 @@ module.exports =
     @_subscribe(
       resizedBodyHeightProp.debounce(500).onValue (newHeight) ->
         atom.config.set('atom-notational.bodyHeight', newHeight)
+    )
+
+    # Handle selected item
+    @_subscribe(
+      selectedItemProp.onValue (selectedItem) ->
+        console.info selectedItem
     )
 
     # Setup atom disose
