@@ -1,6 +1,6 @@
-watchProject = require '../watch-project.coffee'
 Path = require 'path'
 gitignoreGlobs = require 'gitignore-globs'
+watchPath = require '../watch-path.coffee'
 
 # @param {String} projectPath  Absolute path to be scanned for files -> items
 # @param {Array} ignoredNames list of relative file paths to ignore
@@ -18,7 +18,12 @@ module.exports = (projectPath, ignoredNames, excludeVcsIgnoredPaths) ->
     .map (name) ->
       Path.join(projectPath, name)
 
-  watcher = watchProject(projectPath, ignored, emit)
+  watcher = watchPath projectPath, ignored, (eventName, relPath, stats=undefined) ->
+    emit(eventName, {
+      relPath: relPath
+      projectPath: projectPath
+      stats: stats
+    })
 
   process.on 'message', ->
     watcher.close()

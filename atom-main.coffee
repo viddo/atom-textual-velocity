@@ -1,17 +1,18 @@
 {Task} = require 'atom'
 Bacon = require 'baconjs'
-atoms = require './src/atom/streams.coffee'
-adjustScrollTopForSelectedItem = require './src/observables/adjust-scroll-top-for-selected-item.coffee'
-selectedScrollTop = require './src/observables/selected-scroll-top.coffee'
-search = require './src/vdom/search.coffee'
-header = require './src/vdom/header.coffee'
-content = require './src/vdom/content.coffee'
-scrollableContent = require './src/vdom/scrollable-content.coffee'
-resizeHandle = require './src/vdom/resize-handle.coffee'
 h = require 'virtual-dom/h'
-vdomTreeToElement = require './src/observables/vdom-tree-to-element.coffee'
-navArray = require './src/navigate_array.coffee'
 Path = require 'path'
+atoms = require './src/atom/streams.coffee'
+
+adjustScrollTopForSelectedItem = require './src/notational/adjust-scroll-top-for-selected-item.coffee'
+selectedScrollTop = require './src/notational/selected-scroll-top.coffee'
+search = require './src/notational/vdom/search.coffee'
+header = require './src/notational/vdom/header.coffee'
+content = require './src/notational/vdom/content.coffee'
+scrollableContent = require './src/notational/vdom/scrollable-content.coffee'
+resizeHandle = require './src/notational/vdom/resize-handle.coffee'
+vdomTreeToElement = require './src/notational/vdom-tree-to-element.coffee'
+navArray = require './src/notational/navigate_array.coffee'
 
 module.exports =
   panel: undefined
@@ -135,7 +136,7 @@ module.exports =
         items.length * rowHeight - scrollTop - bodyHeight
       , matchedItemsProp, rowHeightProp, scrollTopProp, bodyHeightProp
 
-
+    # vdom props
     contentProp = Bacon.combineTemplate({
       reverseStripes: reverseStripesProp
       items: visibleItemsProp
@@ -156,7 +157,7 @@ module.exports =
       resizeHandle(bodyHeight, bodyHeightBus)
 
     vdomTreeProp = Bacon.combineWith (scrollableContent, resizeHandle) ->
-      h 'div.atom-notational', [
+      h 'div.atom-notational-panel', [
         search(searchBus)
         header()
         scrollableContent
@@ -165,7 +166,6 @@ module.exports =
     , scrollableContentProp, resizeHandleProp
     elementProp = vdomTreeToElement(vdomTreeProp)
 
-    # Side effects
     # TODO: this should probably be moved, since not specific to atom
     @_subscribe(
       Bacon.when([selectItemStream, elementProp], (..., el) ->
@@ -176,6 +176,7 @@ module.exports =
       ).onValue() # no-op to setup the listener
     )
 
+    # Side effects
     @_subscribe(
       elementProp.onValue (el) =>
         @panel = atom.workspace.addTopPanel(item: el) unless @panel
@@ -196,7 +197,6 @@ module.exports =
     @subscriptions.push(subscription)
 
   deactivate: ->
-    @previewOpener.dispose()
     @deactivateBus.push(true)
     unsubscribe() for unsubscribe in @subscriptions
     @panel?.destroy()

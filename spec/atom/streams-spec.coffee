@@ -1,4 +1,4 @@
-atoms = require('../../atom/streams')
+atoms = require '../../src/atom/streams'
 
 describe 'Projects', ->
   beforeEach ->
