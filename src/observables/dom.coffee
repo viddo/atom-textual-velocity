@@ -1,10 +1,12 @@
 Bacon = require 'baconjs'
 
-# Observe mouse move and provide callback functions to react accordingly
-#
-# @param initialEvent: {Event} Initial event that should be called prior to starting to observe changes here
 module.exports = {
 
+  # Observe mouse move and provide callback functions to react accordingly
+  #
+  # @param {Event} initialEvent mousedown event that should trigger this observer
+  # @return {Stream} containing an object w/ clientX/Y values, diffing with the {initialEvent} mouse position
+  #   Stream stops when a mouse-up event is triggered on the document.
   mouseMoveDiff: (initialEvent) ->
     mouseUpStream = Bacon.fromEvent(document, 'mouseup')
     mouseUpStream.onValue -> Bacon.noMore # to stop listening to events

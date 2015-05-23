@@ -1,5 +1,8 @@
 Bacon = require 'baconjs'
 
+# @param {Stream} watchedProjectsStream objects containing a path {String} and a task {Task}
+# @param {Stream} removedStream paths that are removed
+# @return {Property} array of projects
 module.exports = (watchedProjectsStream, removedStream) ->
   Bacon.update [],
     [watchedProjectsStream], (projects, project) ->
