@@ -3,7 +3,7 @@ atoms = require '../../src/atom/streams'
 describe 'Projects', ->
   beforeEach ->
     spyOn(atom.project, 'getPaths').andReturn(['/tmp/1st', '/tmp/2nd']) # Initial paths
-    { addedStream, removedStream } = atoms.projectsPaths()
+    {addedStream, removedStream} = atoms.projectsPaths()
     @addSpy = jasmine.createSpy('addedStream')
     @removeSpy = jasmine.createSpy('removedStream')
     addedStream.onValue(@addSpy)

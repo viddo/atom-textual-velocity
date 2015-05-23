@@ -5,9 +5,9 @@ watchPath = require '../watch-path.coffee'
 # @param {String} projectPath  Absolute path to be scanned for files -> items
 # @param {Array} ignoredNames list of relative file paths to ignore
 # @param {Boolean} excludeVcsIgnoredPaths
-# @emits add { projectPath, relPath, stats }
-# @emits change { projectPath, relPath, stats }
-# @emits unlink { projectPath, relPath }
+# @emits add {projectPath, relPath, stats}
+# @emits change {projectPath, relPath, stats}
+# @emits unlink {projectPath, relPath}
 module.exports = (projectPath, ignoredNames, excludeVcsIgnoredPaths) ->
   terminate = @async()
 

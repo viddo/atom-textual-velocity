@@ -41,8 +41,8 @@ module.exports =
       [watchedProjectsStream], (projects, project) ->
         projects.concat(project)
       [removedStream], (projects, removedPath) ->
-        [removedProject] = projects.filter ({ path }) ->
+        [removedProject] = projects.filter ({path}) ->
           path is removedPath
-        removedProject.task.send('finish') if removedProject
-        projects.filter ({ path }) ->
+        removedProject.task.send('dispose') if removedProject
+        projects.filter ({path}) ->
           path isnt removedPath

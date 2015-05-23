@@ -6,5 +6,5 @@ module.exports = ->
   h 'div.header',
     h 'table',
       h 'thead',
-        h 'tr', columns.map ({ width, title }) ->
+        h 'tr', columns.map ({width, title}) ->
           th width, title
