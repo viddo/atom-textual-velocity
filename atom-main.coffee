@@ -9,7 +9,7 @@ content = require './src/vdom/content.coffee'
 scrollableContent = require './src/vdom/scrollable-content.coffee'
 resizeHandle = require './src/vdom/resize-handle.coffee'
 h = require 'virtual-dom/h'
-rootNode = require './src/observables/root-node.coffee'
+vdomTreeToElement = require './src/observables/vdom-tree-to-element.coffee'
 navArray = require './src/navigate_array.coffee'
 Path = require 'path'
 
@@ -158,18 +158,18 @@ module.exports =
         resizeHandle
       ]
     , scrollableContentProp, resizeHandleProp
-    rootNodeProp = rootNode(vdomTreeProp).doAction (node) ->
+    elementProp = vdomTreeToElement(vdomTreeProp).doAction (el) ->
       # Scroll item into the view if outside the visible border
-      selectedRow = node.querySelector('.is-selected')
+      selectedRow = el.querySelector('.is-selected')
       if selectedRow
         selectedRow.scrollIntoViewIfNeeded(false) # false=only scroll the minimal necessary
 
 
     # Side effects
-    @subscriptions.push rootNodeProp.onValue (node) =>
+    @subscriptions.push elementProp.onValue (el) =>
       unless @panel
         @panel = atom.workspace.addTopPanel {
-          item: node
+          item: el
         }
 
     @subscriptions.push bodyHeightBus.debounce(500).onValue (newHeight) ->
