@@ -1,0 +1,60 @@
+Bacon = require 'baconjs'
+{Task} = require 'atom'
+Path = require 'path'
+atoms = require './streams.coffee'
+
+# @param {Stream} watchedProjectsStream objects containing a path {String} and a task {Task}
+# @param {Stream} removedStream paths that are removed
+# @return {Property} array of projects
+projects = (watchedProjectsStream, removedStream) ->
+  Bacon.update [],
+    [watchedProjectsStream], (projects, project) ->
+      projects.concat(project)
+    [removedStream], (projects, removedPath) ->
+      [removedProject] = projects.filter ({path}) ->
+        path is removedPath
+      removedProject.task.send('dispose') if removedProject
+      projects.filter ({path}) ->
+        path isnt removedPath
+
+module.exports = ->
+  {addedStream, removedStream} = atoms.projectsPaths()
+
+  watchedProjectsStream = addedStream.map (path) ->
+    task = new Task(require.resolve('./watch-project-task.coffee'))
+    task.start(
+      path,
+      atom.config.get('core.ignoredNames'),
+      atom.config.get('core.excludeVcsIgnoredPaths')
+    )
+    return {
+      path: path
+      task: task
+    }
+
+  # Only used to manage
+  projectsProp = projects(watchedProjectsStream, removedStream)
+  deactivateBus = new Bacon.Bus()
+  projectsProp.sampledBy(deactivateBus).onValue (projects) ->
+    task.send('dispose') for {task} in projects
+    return Bacon.noMore
+
+  addItemsStream = watchedProjectsStream.flatMap ({task}) ->
+    Bacon.fromEvent(task, 'add')
+  removeItemsStream = watchedProjectsStream.flatMap ({task}) ->
+    Bacon.fromEvent(task, 'unlink')
+
+  return {
+    itemsProp: Bacon.update [],
+      [addItemsStream], (items, newItem) ->
+        items.concat(newItem)
+      [removeItemsStream], (items, {relPath}) ->
+        items.filter (item) ->
+          item.relPath isnt relPath
+      [removedStream], (items, removedPath) ->
+        items.filter ({projectPath}) ->
+          projectPath isnt removedPath
+
+    disposeProjectWatchers: ->
+      deactivateBus.push('dispose')
+  }
