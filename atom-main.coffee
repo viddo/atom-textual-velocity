@@ -2,6 +2,7 @@
 Bacon = require 'baconjs'
 atoms = require './src/atom/streams.coffee'
 projects = require './src/observables/projects.coffee'
+adjustScrollTopForSelectedItem = require './src/observables/adjust-scroll-top-for-selected-item.coffee'
 selectedScrollTop = require './src/observables/selected-scroll-top.coffee'
 search = require './src/vdom/search.coffee'
 header = require './src/vdom/header.coffee'
@@ -87,24 +88,28 @@ module.exports =
       .merge(atoms.fromCommand('.atom-notational-search', 'core:move-up').map(-1))
     selectedItemBus = new Bacon.Bus()
     selectedItemProp = Bacon.update false,
-      [selectedItemBus], (currentItem, item) -> item
+      [selectedItemBus], (..., item) -> item
       [moveSelectedStream, matchedItemsProp], (currentItem, relativeOffset, items) ->
         selectedItemBus.push if currentItem
-                               navArray.byRelativeOffset items, relativeOffset, (item) -> currentItem is item
+                               navArray.byRelativeOffset items, relativeOffset, (item) ->
+                                 currentItem is item
                              else if relativeOffset < 0
-                               NavigateArray.byOffset(items, -1)
+                               navArray.byOffset(items, -1)
                              else
                                items[0]
-    selectedScrollTopProp = selectedScrollTop(
+    adjustedScrollTopForSelectedItemProp = adjustScrollTopForSelectedItem(
       bodyHeightProp: bodyHeightProp
       rowHeightProp: rowHeightProp
-      matchingItemsProp: matchedItemsProp
-      selectedItemProp: selectedItemBus.toProperty(false)
-      scrollTopProp: scrollTopBus.toProperty(0)
+      currentScrollTopProp: scrollTopBus.toProperty(0)
+      selectedScrollTopProp: selectedScrollTop(
+          itemsProp: matchedItemsProp
+          selectedItemProp: selectedItemProp
+          rowHeightProp: rowHeightProp
+        )
     )
     scrollTopProp = Bacon.update 0,
-      [scrollTopBus], (prev, scrollTop) -> scrollTop
-      [selectedItemBus, selectedScrollTopProp], (prev, selectedItem, scrollTop) -> scrollTop
+      [scrollTopBus], (..., scrollTop) -> scrollTop
+      [selectedItemBus, adjustedScrollTopForSelectedItemProp], (..., adjustedScrollTop) -> adjustedScrollTop
     topOffsetProp = Bacon.combineWith (scrollTop, rowHeight) ->
       -(scrollTop % rowHeight)
     , scrollTopProp, rowHeightProp
