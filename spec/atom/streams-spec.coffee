@@ -1,37 +1,102 @@
 atoms = require '../../src/atom/streams'
 
-describe 'Projects', ->
-  beforeEach ->
-    spyOn(atom.project, 'getPaths').andReturn(['/tmp/1st', '/tmp/2nd']) # Initial paths
-    {addedStream, removedStream} = atoms.projectsPaths()
-    @addSpy = jasmine.createSpy('addedStream')
-    @removeSpy = jasmine.createSpy('removedStream')
-    addedStream.onValue(@addSpy)
-    removedStream.onValue(@removeSpy)
+describe 'Atom streams', ->
+  describe '.fromConfig', ->
+    describe 'when setting does not have any initial value', ->
+      beforeEach ->
+        @spy = jasmine.createSpy('onValue')
+        atoms.fromConfig('atom-notational.test').onValue(@spy)
 
-    waitsFor =>
-      @addSpy.calls.length is 2
+        waitsFor =>
+          @spy.calls.length is 1
 
-    runs ->
-      # Simulate adding/removing some paths after initialized
-      atom.project.emitter.emit('did-change-paths', ['/tmp/1st', '/tmp/2nd', '/tmp/3rd']) # add 3rd
-      atom.project.emitter.emit('did-change-paths', ['/tmp/1st', '/tmp/3rd']) # remove 2nd
-      atom.project.emitter.emit('did-change-paths', ['/tmp/3rd', '/tmp/4th', '/tmp/5th']) # remove 1st, add 4th and 5th
+      it 'returns a stream with no initial event', ->
+        expect(@spy).toHaveBeenCalled()
+        expect(@spy.calls[0].args[0]).toBeUndefined()
 
-    waitsFor =>
-      @addSpy.calls.length is 5
+      it 'returned stream gets new values when config is updated', ->
+        atom.config.set('atom-notational.test', 123)
 
-  it 'triggers an add event for each initial path', ->
-    expect(@addSpy).toHaveBeenCalled()
-    expect(@addSpy.calls[0].args[0]).toEqual('/tmp/1st')
-    expect(@addSpy.calls[1].args[0]).toEqual('/tmp/2nd')
+        waitsFor =>
+          @spy.calls.length is 2
+        runs =>
+          expect(@spy.calls[1].args[0]).toEqual(123)
+          atom.config.set('atom-notational.test', 456)
 
-  it 'triggers an add event for each new path added after that', ->
-    expect(@addSpy.calls[2].args[0]).toEqual('/tmp/3rd')
-    expect(@addSpy.calls[3].args[0]).toEqual('/tmp/4th')
-    expect(@addSpy.calls[4].args[0]).toEqual('/tmp/5th')
+        waitsFor =>
+          @spy.calls.length is 3
+        runs =>
+          expect(@spy.calls[2].args[0]).toEqual(456)
 
-  it 'triggers a remove event for each path removed after that', ->
-    expect(@removeSpy).toHaveBeenCalled()
-    expect(@removeSpy.calls[0].args[0]).toEqual('/tmp/2nd')
-    expect(@removeSpy.calls[1].args[0]).toEqual('/tmp/1st')
+    describe 'when setting has an value already', ->
+      beforeEach ->
+        atom.config.set('atom-notational.test', 123)
+        @spy = jasmine.createSpy('onValue')
+        atoms.fromConfig('atom-notational.test').onValue(@spy)
+
+        waitsFor =>
+          @spy.calls.length is 1
+
+      it 'creates a stream with the initial value as 1st event', ->
+        expect(@spy).toHaveBeenCalled()
+        expect(@spy.calls[0].args[0]).toEqual(123)
+
+
+  describe '.fromCommand', ->
+    beforeEach ->
+      @workspaceView = atom.views.getView(atom.workspace)
+      @workspaceView.className = '.test'
+      jasmine.attachToDOM(@workspaceView)
+      @spy = jasmine.createSpy('cmd')
+      atoms.fromCommand('atom-workspace', 'cat:cmd').onValue(@spy)
+
+    it 'returns a stream that gets command events when command is matched', ->
+      atom.commands.dispatch(@workspaceView, 'cat:whatever')
+      atom.commands.dispatch(@workspaceView, 'cat:cmd') #match
+      atom.commands.dispatch(@workspaceView, 'cat:other')
+      atom.commands.dispatch(@workspaceView, 'cat:cmd') #match
+
+      waitsFor =>
+        @spy.calls.length is 2
+
+      runs =>
+        expect(@spy.calls[0].args[0]).not.toBeUndefined()
+        expect(@spy.calls[1].args[0]).not.toBeUndefined()
+        expect(@spy.calls.length).toEqual(2)
+
+
+  describe '.projectPaths', ->
+    beforeEach ->
+      spyOn(atom.project, 'getPaths').andReturn(['/tmp/1st', '/tmp/2nd']) # Initial paths
+      {addedStream, removedStream} = atoms.projectsPaths()
+      @addSpy = jasmine.createSpy('addedStream')
+      @removeSpy = jasmine.createSpy('removedStream')
+      addedStream.onValue(@addSpy)
+      removedStream.onValue(@removeSpy)
+
+      waitsFor =>
+        @addSpy.calls.length is 2
+
+      runs ->
+        # Simulate adding/removing some paths after initialized
+        atom.project.emitter.emit('did-change-paths', ['/tmp/1st', '/tmp/2nd', '/tmp/3rd']) # add 3rd
+        atom.project.emitter.emit('did-change-paths', ['/tmp/1st', '/tmp/3rd']) # remove 2nd
+        atom.project.emitter.emit('did-change-paths', ['/tmp/3rd', '/tmp/4th', '/tmp/5th']) # remove 1st, add 4th and 5th
+
+      waitsFor =>
+        @addSpy.calls.length is 5
+
+    it 'triggers an add event for each initial path', ->
+      expect(@addSpy).toHaveBeenCalled()
+      expect(@addSpy.calls[0].args[0]).toEqual('/tmp/1st')
+      expect(@addSpy.calls[1].args[0]).toEqual('/tmp/2nd')
+
+    it 'triggers an add event for each new path added after that', ->
+      expect(@addSpy.calls[2].args[0]).toEqual('/tmp/3rd')
+      expect(@addSpy.calls[3].args[0]).toEqual('/tmp/4th')
+      expect(@addSpy.calls[4].args[0]).toEqual('/tmp/5th')
+
+    it 'triggers a remove event for each path removed after that', ->
+      expect(@removeSpy).toHaveBeenCalled()
+      expect(@removeSpy.calls[0].args[0]).toEqual('/tmp/2nd')
+      expect(@removeSpy.calls[1].args[0]).toEqual('/tmp/1st')
