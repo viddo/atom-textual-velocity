@@ -4,7 +4,6 @@ Bacon = require 'baconjs'
 # @return {Property} adjusted scrollTop value so selected item appear within the visible bounds
 module.exports = ({bodyHeightProp, rowHeightProp, currentScrollTopProp, selectedScrollTopProp}) ->
   Bacon.combineWith (bodyHeight, rowHeight, currentScrollTop, selectedScrollTop) ->
-    console.warn 'adjust  …', arguments
     # ....[...].... no selected item, just return current scrollTop value
     return currentScrollTop unless selectedScrollTop >= 0
 

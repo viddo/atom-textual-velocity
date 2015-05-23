@@ -86,11 +86,12 @@ module.exports =
 
     moveSelectedStream = atoms.fromCommand('.atom-notational-search', 'core:move-down').map(1)
       .merge(atoms.fromCommand('.atom-notational-search', 'core:move-up').map(-1))
-    selectedItemBus = new Bacon.Bus()
-    selectedItemProp = Bacon.update false,
-      [selectedItemBus], (..., item) -> item
+    selectItemBus = new Bacon.Bus()
+    selectItemStream = selectItemBus.filter (item) -> item
+    selectedItemProp = Bacon.update undefined,
+      [selectItemStream], (..., item) -> item
       [moveSelectedStream, matchedItemsProp], (currentItem, relativeOffset, items) ->
-        selectedItemBus.push if currentItem
+        selectItemBus.push if currentItem
                                navArray.byRelativeOffset items, relativeOffset, (item) ->
                                  currentItem is item
                              else if relativeOffset < 0
@@ -109,7 +110,7 @@ module.exports =
     )
     scrollTopProp = Bacon.update 0,
       [scrollTopBus], (..., scrollTop) -> scrollTop
-      [selectedItemBus, adjustedScrollTopForSelectedItemProp], (..., adjustedScrollTop) -> adjustedScrollTop
+      [selectItemStream, adjustedScrollTopForSelectedItemProp], (..., adjustedScrollTop) -> adjustedScrollTop
     topOffsetProp = Bacon.combineWith (scrollTop, rowHeight) ->
       -(scrollTop % rowHeight)
     , scrollTopProp, rowHeightProp
@@ -141,7 +142,7 @@ module.exports =
       items: visibleItemsProp
       selectedItem: selectedItemProp
     }).map (data) ->
-      content(data, selectedItemBus)
+      content(data, selectItemBus)
 
     scrollableContentProp = Bacon.combineTemplate({
       bodyHeight: bodyHeightProp
@@ -163,22 +164,28 @@ module.exports =
         resizeHandle
       ]
     , scrollableContentProp, resizeHandleProp
-    elementProp = vdomTreeToElement(vdomTreeProp).doAction (el) ->
-      # Scroll item into the view if outside the visible border
-      selectedRow = el.querySelector('.is-selected')
-      if selectedRow
-        selectedRow.scrollIntoViewIfNeeded(false) # false=only scroll the minimal necessary
-
+    elementProp = vdomTreeToElement(vdomTreeProp)
 
     # Side effects
-    @subscriptions.push elementProp.onValue (el) =>
-      unless @panel
-        @panel = atom.workspace.addTopPanel {
-          item: el
-        }
+    # TODO: this should probably be moved, since not specific to atom
+    @_subscribe(
+      Bacon.when([selectItemStream, elementProp], (..., el) ->
+        # Scroll item into the view if outside the visible border and was triggered by selectItem change
+        selectedRow = el.querySelector('.is-selected')
+        if selectedRow
+          selectedRow.scrollIntoViewIfNeeded(false) # false=only scroll the minimal necessary
+      ).onValue() # no-op to setup the listener
+    )
 
-    @subscriptions.push bodyHeightBus.debounce(500).onValue (newHeight) ->
-      atom.config.set('atom-notational.bodyHeight', newHeight)
+    @_subscribe(
+      elementProp.onValue (el) =>
+        @panel = atom.workspace.addTopPanel(item: el) unless @panel
+    )
+
+    @_subscribe(
+      bodyHeightBus.debounce(500).onValue (newHeight) ->
+        atom.config.set('atom-notational.bodyHeight', newHeight)
+    )
 
     terminateProjectsProp = projectsProp.sampledBy(@deactivateBus)
     terminateProjectsProp.onValue (projects) ->
@@ -186,6 +193,8 @@ module.exports =
         task.send('finish')
       return Bacon.noMore
 
+  _subscribe: (subscription) ->
+    @subscriptions.push(subscription)
 
   deactivate: ->
     @previewOpener.dispose()
