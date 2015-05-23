@@ -1,7 +1,6 @@
 {Task} = require 'atom'
 Bacon = require 'baconjs'
 atoms = require './src/atom/streams.coffee'
-projects = require './src/observables/projects.coffee'
 adjustScrollTopForSelectedItem = require './src/observables/adjust-scroll-top-for-selected-item.coffee'
 selectedScrollTop = require './src/observables/selected-scroll-top.coffee'
 search = require './src/vdom/search.coffee'
@@ -47,7 +46,7 @@ module.exports =
         task: task
       }
 
-    projectsProp = projects(watchedProjectsStream, removedStream)
+    projectsProp = atoms.projects(watchedProjectsStream, removedStream)
 
     bodyHeightBus = new Bacon.Bus()
 

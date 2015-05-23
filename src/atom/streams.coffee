@@ -1,6 +1,6 @@
 Bacon = require 'baconjs'
 
-module.exports = {
+module.exports =
 
   fromDisposable: (obj, funcName, args...) ->
     Bacon.fromBinder (sink) ->
@@ -33,4 +33,16 @@ module.exports = {
           newPaths.indexOf(path) < 0
     }
 
-}
+  # @param {Stream} watchedProjectsStream objects containing a path {String} and a task {Task}
+  # @param {Stream} removedStream paths that are removed
+  # @return {Property} array of projects
+  projects: (watchedProjectsStream, removedStream) ->
+    Bacon.update [],
+      [watchedProjectsStream], (projects, project) ->
+        projects.concat(project)
+      [removedStream], (projects, removedPath) ->
+        [removedProject] = projects.filter ({ path }) ->
+          path is removedPath
+        removedProject.task.send('finish') if removedProject
+        projects.filter ({ path }) ->
+          path isnt removedPath
