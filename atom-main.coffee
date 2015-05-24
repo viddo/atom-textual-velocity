@@ -26,6 +26,7 @@ module.exports =
       columnsProp: atomAdaptions.columnsProp
       bodyHeightStream: atoms.fromConfig('atom-notational.bodyHeight')
       rowHeightStream: atoms.fromConfig('atom-notational.rowHeight')
+      resetStream: atoms.fromCommand('atom-text-editor.atom-notational-search', 'atom-notational:reset')
       moveSelectedStream: atoms.fromCommand('.atom-notational-search', 'core:move-down').map(1)
         .merge(atoms.fromCommand('.atom-notational-search', 'core:move-up').map(-1))
     )

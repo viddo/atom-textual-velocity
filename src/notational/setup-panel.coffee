@@ -11,7 +11,7 @@ resizeHandle = require './vdom/resize-handle.coffee'
 vdomTreeToElement = require './vdom-tree-to-element.coffee'
 
 # Encapsulates the general logic
-module.exports = ({itemsProp, columnsProp, bodyHeightStream, rowHeightStream, moveSelectedStream}) ->
+module.exports = ({itemsProp, columnsProp, bodyHeightStream, rowHeightStream, resetStream, moveSelectedStream}) ->
   rowHeightProp = rowHeightStream.toProperty()
   bodyHeightBus = new Bacon.Bus()
   bodyHeightProp = bodyHeightStream.merge(bodyHeightBus)
@@ -33,8 +33,9 @@ module.exports = ({itemsProp, columnsProp, bodyHeightStream, rowHeightStream, mo
   selectItemStream = selectItemBus.filter (item) -> item
   unselectItemStream = selectItemBus.filter (item) -> !item
   selectedItemProp = Bacon.update undefined,
-    [selectItemStream], (..., item) -> item
+    [resetStream], -> undefined
     [unselectItemStream], -> undefined
+    [selectItemStream], (..., item) -> item
     [moveSelectedStream, matchedItemsProp], (currentItem, relativeOffset, items) ->
       selectItemBus.push if currentItem
                            navArray.byRelativeOffset items, relativeOffset, (item) ->

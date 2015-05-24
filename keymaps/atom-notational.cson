@@ -9,3 +9,6 @@
 # https://atom.io/docs/latest/advanced/keymaps
 'atom-workspace':
   'ctrl-alt-o': 'atom-notational:toggle'
+
+'atom-text-editor.atom-notational-search':
+  'escape': 'atom-notational:reset'
