@@ -55,6 +55,5 @@ module.exports =
 
 
   deactivate: ->
-    @disposeProjectWatchers()
     unsubscribe() for unsubscribe in @subscriptions
     @panel?.destroy()
