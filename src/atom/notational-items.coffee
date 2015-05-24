@@ -1,7 +1,7 @@
 Bacon = require 'baconjs'
 {Task} = require 'atom'
 Path = require 'path'
-atoms = require './streams.coffee'
+{projectsPaths} = require './streams.coffee'
 columns = require './columns.coffee'
 
 # @param {Stream} watchedProjectsStream objects containing a path {String} and a task {Task}
@@ -18,13 +18,10 @@ projects = (watchedProjectsStream, removedStream) ->
       projects.filter ({path}) ->
         path isnt removedPath
 
-module.exports = ->
-  {addedStream, removedStream} = atoms.projectsPaths()
-
-  watchedProjectsStream = addedStream.map (path) ->
+watchedProjects = (addedStream) ->
+  addedStream.map (path) ->
     task = new Task(require.resolve('./watch-project-task.coffee'))
-    task.start(
-      path,
+    task.start(path,
       atom.config.get('core.ignoredNames'),
       atom.config.get('core.excludeVcsIgnoredPaths')
     )
@@ -33,12 +30,17 @@ module.exports = ->
       task: task
     }
 
-  # Only used to manage
-  projectsProp = projects(watchedProjectsStream, removedStream)
+
+module.exports = ->
+  {addedStream, removedStream} = projectsPaths()
+  watchedProjectsStream = watchedProjects(addedStream)
+
   deactivateBus = new Bacon.Bus()
-  projectsProp.sampledBy(deactivateBus).onValue (projects) ->
-    task.send('dispose') for {task} in projects
-    return Bacon.noMore
+  projects(watchedProjectsStream, removedStream)
+    .sampledBy(deactivateBus)
+    .onValue (projects) ->
+      task.send('dispose') for {task} in projects
+      return Bacon.noMore
 
   addItemsStream = watchedProjectsStream.flatMap ({task}) ->
     Bacon.fromEvent(task, 'add')
