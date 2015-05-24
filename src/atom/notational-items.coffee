@@ -2,6 +2,7 @@ Bacon = require 'baconjs'
 {Task} = require 'atom'
 Path = require 'path'
 atoms = require './streams.coffee'
+columns = require './columns.coffee'
 
 # @param {Stream} watchedProjectsStream objects containing a path {String} and a task {Task}
 # @param {Stream} removedStream paths that are removed
@@ -54,6 +55,8 @@ module.exports = ->
       [removedStream], (items, removedPath) ->
         items.filter ({projectPath}) ->
           projectPath isnt removedPath
+
+    columnsProp: Bacon.sequentially(0, [columns]).toProperty([])
 
     disposeProjectWatchers: ->
       deactivateBus.push('dispose')
