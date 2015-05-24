@@ -1,8 +1,7 @@
 h = require 'virtual-dom/h'
 th = require './th.coffee'
-columns = require '../columns.coffee'
 
-module.exports = ->
+module.exports = (columns) ->
   h 'div.header',
     h 'table',
       h 'thead',

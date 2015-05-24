@@ -1,8 +1,7 @@
 h = require 'virtual-dom/h'
 th = require './th.coffee'
-columns = require '../columns.coffee'
 
-module.exports = ({reverseStripes, items, selectedItem}, selectItemBus) ->
+module.exports = ({columns, reverseStripes, items, selectedItem}, selectItemBus) ->
   h 'table', [
     h 'thead.only-for-column-widths',
       h 'tr', columns.map ({width}) ->

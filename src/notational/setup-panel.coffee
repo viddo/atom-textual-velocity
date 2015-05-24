@@ -10,7 +10,7 @@ scrollableContent = require './vdom/scrollable-content.coffee'
 resizeHandle = require './vdom/resize-handle.coffee'
 vdomTreeToElement = require './vdom-tree-to-element.coffee'
 
-module.exports = ({itemsProp, bodyHeightStream, rowHeightStream, moveSelectedStream}) ->
+module.exports = ({itemsProp, columnsProp, bodyHeightStream, rowHeightStream, moveSelectedStream}) ->
   rowHeightProp = rowHeightStream.toProperty()
   bodyHeightBus = new Bacon.Bus()
   bodyHeightProp = bodyHeightStream.merge(bodyHeightBus)
@@ -80,6 +80,7 @@ module.exports = ({itemsProp, bodyHeightStream, rowHeightStream, moveSelectedStr
 
   # vdom props
   contentProp = Bacon.combineTemplate({
+    columns: columnsProp
     reverseStripes: reverseStripesProp
     items: visibleItemsProp
     selectedItem: selectedItemProp
@@ -98,14 +99,17 @@ module.exports = ({itemsProp, bodyHeightStream, rowHeightStream, moveSelectedStr
   resizeHandleProp = bodyHeightProp.map (bodyHeight) ->
     resizeHandle(bodyHeight, bodyHeightBus)
 
-  vdomTreeProp = Bacon.combineWith (scrollableContent, resizeHandle) ->
+  headerProp = columnsProp.map (columns) ->
+    header(columns)
+
+  vdomTreeProp = Bacon.combineWith (contentHeader, scrollableContent, resizeHandle) ->
     h 'div.atom-notational-panel', [
       search(searchBus)
-      header()
+      contentHeader
       scrollableContent
       resizeHandle
     ]
-  , scrollableContentProp, resizeHandleProp
+  , headerProp, scrollableContentProp, resizeHandleProp
   elementProp = vdomTreeToElement(vdomTreeProp)
 
   unsubscribeSelectedScrollAdjuster = Bacon.when([selectItemStream, elementProp], (..., el) ->
