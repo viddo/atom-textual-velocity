@@ -20,13 +20,14 @@ module.exports = ({itemsProp, columnsProp, bodyHeightStream, rowHeightStream, re
     .toProperty()
 
   searchBus = new Bacon.Bus()
+  searchProp = Bacon.update '',
+    [searchBus], (..., str) -> str
+    [resetStream], -> ''
   matchedItemsProp = Bacon.combineWith (items, searchStr) ->
-    if searchStr
-      items.filter (item) ->
-        item.relPath.toLowerCase().search(searchStr) isnt -1
-    else
-      items
-  , itemsProp, searchBus.toProperty('')
+    return items unless searchStr
+    items.filter (item) ->
+      item.relPath.toLowerCase().search(searchStr) isnt -1
+  , itemsProp, searchProp
 
   scrollTopBus = new Bacon.Bus()
   selectItemBus = new Bacon.Bus()
@@ -117,14 +118,19 @@ module.exports = ({itemsProp, columnsProp, bodyHeightStream, rowHeightStream, re
   , headerProp, scrollableContentProp, resizeHandleProp
   elementProp = vdomTreeToElement(vdomTreeProp)
 
-  dispose = Bacon.when([selectItemStream, elementProp], (..., el) ->
-    # Scroll item into the view if outside the visible border and was triggered by selectItem change
-    selectedRow = el.querySelector('.is-selected')
-    if selectedRow
-      selectedRow.scrollIntoViewIfNeeded(false) # false=only scroll the minimal necessary
+  dispose = Bacon.when(
+    [selectItemStream, elementProp], (..., el) ->
+      # Scroll item into the view if outside the visible border and was triggered by selectItem change
+      selectedRow = el.querySelector('.is-selected')
+      if selectedRow
+        selectedRow.scrollIntoViewIfNeeded(false) # false=only scroll the minimal necessary
 
-    # Focus on input view
-    el.querySelector('.atom-notational-search').focus()
+      # Focus and reset search input
+      el.querySelector('.atom-notational-search').focus()
+      # el.querySelector('.atom-notational-search').getModel().setText('')
+    [resetStream, elementProp], (..., el) ->
+      # TODO: getModel/setText are really internals of atom-text-editor.. can be done in a better way?
+      el.querySelector('.atom-notational-search').getModel().setText('')
   ).onValue() # no-op to setup the listener
 
   dispose.elementProp = elementProp
