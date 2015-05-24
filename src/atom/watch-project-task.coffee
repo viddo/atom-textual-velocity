@@ -13,7 +13,13 @@ module.exports = (projectPath, ignoredNames, excludeVcsIgnoredPaths) ->
 
   # massage from atom to chokidar-friendly ignored item
   ignored = ignoredNames
-    .concat if excludeVcsIgnoredPaths then gitignoreGlobs(Path.join(projectPath, '.gitignore')) else []
+    .concat if excludeVcsIgnoredPaths
+        try
+          gitignoreGlobs(Path.join(projectPath, '.gitignore'))
+        catch
+          []
+      else
+        []
     .concat if excludeVcsIgnoredPaths then ['.gitignore'] else []
     .map (name) ->
       Path.join(projectPath, name)
