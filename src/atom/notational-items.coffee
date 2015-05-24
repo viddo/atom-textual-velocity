@@ -47,19 +47,19 @@ module.exports = ->
   removeItemsStream = watchedProjectsStream.flatMap ({task}) ->
     Bacon.fromEvent(task, 'unlink')
 
-  return {
-    itemsProp: Bacon.update [],
-      [addItemsStream], (items, newItem) ->
-        items.concat(newItem)
-      [removeItemsStream], (items, {relPath}) ->
-        items.filter (item) ->
-          item.relPath isnt relPath
-      [removedStream], (items, removedPath) ->
-        items.filter ({projectPath}) ->
-          projectPath isnt removedPath
+  dispose = ->
+    deactivateBus.push('dispose')
 
-    columnsProp: Bacon.sequentially(0, [columns]).toProperty([])
+  dispose.itemsProp = Bacon.update [],
+    [addItemsStream], (items, newItem) ->
+      items.concat(newItem)
+    [removeItemsStream], (items, {relPath}) ->
+      items.filter (item) ->
+        item.relPath isnt relPath
+    [removedStream], (items, removedPath) ->
+      items.filter ({projectPath}) ->
+        projectPath isnt removedPath
 
-    disposeProjectWatchers: ->
-      deactivateBus.push('dispose')
-  }
+  dispose.columnsProp = Bacon.sequentially(0, [columns]).toProperty([])
+
+  return dispose

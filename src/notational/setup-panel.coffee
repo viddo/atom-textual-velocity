@@ -112,16 +112,15 @@ module.exports = ({itemsProp, columnsProp, bodyHeightStream, rowHeightStream, mo
   , headerProp, scrollableContentProp, resizeHandleProp
   elementProp = vdomTreeToElement(vdomTreeProp)
 
-  unsubscribeSelectedScrollAdjuster = Bacon.when([selectItemStream, elementProp], (..., el) ->
+  dispose = Bacon.when([selectItemStream, elementProp], (..., el) ->
     # Scroll item into the view if outside the visible border and was triggered by selectItem change
     selectedRow = el.querySelector('.is-selected')
     if selectedRow
       selectedRow.scrollIntoViewIfNeeded(false) # false=only scroll the minimal necessary
   ).onValue() # no-op to setup the listener
 
-  return {
-    elementProp: elementProp
-    resizedBodyHeightProp: bodyHeightProp
-    selectedItemProp: selectedItemProp
-    unsubscribeSelectedScrollAdjuster: unsubscribeSelectedScrollAdjuster
-  }
+  dispose.elementProp = elementProp
+  dispose.resizedBodyHeightProp = bodyHeightProp
+  dispose.selectedItemProp = selectedItemProp
+
+  return dispose
