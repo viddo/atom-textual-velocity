@@ -10,6 +10,7 @@ scrollableContent = require './vdom/scrollable-content.coffee'
 resizeHandle = require './vdom/resize-handle.coffee'
 vdomTreeToElement = require './vdom-tree-to-element.coffee'
 
+# Encapsulates the general logic
 module.exports = ({itemsProp, columnsProp, bodyHeightStream, rowHeightStream, moveSelectedStream}) ->
   rowHeightProp = rowHeightStream.toProperty()
   bodyHeightBus = new Bacon.Bus()
@@ -30,16 +31,18 @@ module.exports = ({itemsProp, columnsProp, bodyHeightStream, rowHeightStream, mo
   scrollTopBus = new Bacon.Bus()
   selectItemBus = new Bacon.Bus()
   selectItemStream = selectItemBus.filter (item) -> item
+  unselectItemStream = selectItemBus.filter (item) -> !item
   selectedItemProp = Bacon.update undefined,
     [selectItemStream], (..., item) -> item
+    [unselectItemStream], -> undefined
     [moveSelectedStream, matchedItemsProp], (currentItem, relativeOffset, items) ->
       selectItemBus.push if currentItem
-                             navArray.byRelativeOffset items, relativeOffset, (item) ->
-                               currentItem is item
-                           else if relativeOffset < 0
-                             navArray.byOffset(items, -1)
-                           else
-                             items[0]
+                           navArray.byRelativeOffset items, relativeOffset, (item) ->
+                             currentItem is item
+                         else if relativeOffset < 0
+                           navArray.byOffset(items, -1)
+                         else
+                           items[0]
   adjustedScrollTopForSelectedItemProp = adjustScrollTopForSelectedItem(
     bodyHeightProp: bodyHeightProp
     rowHeightProp: rowHeightProp
@@ -53,6 +56,7 @@ module.exports = ({itemsProp, columnsProp, bodyHeightStream, rowHeightStream, mo
   scrollTopProp = Bacon.update 0,
     [scrollTopBus], (..., scrollTop) -> scrollTop
     [selectItemStream, adjustedScrollTopForSelectedItemProp], (..., adjustedScrollTop) -> adjustedScrollTop
+    [unselectItemStream], -> 0 # reset
   topOffsetProp = Bacon.combineWith (scrollTop, rowHeight) ->
     -(scrollTop % rowHeight)
   , scrollTopProp, rowHeightProp

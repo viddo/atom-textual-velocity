@@ -41,7 +41,8 @@ module.exports =
 
     # Handle selected item
     @subscriptions.push notationalPanel.selectedItemProp.onValue (selectedItem) ->
-      console.info selectedItem
+      if selectedItem
+        console.info selectedItem
 
 
   deactivate: ->
