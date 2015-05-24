@@ -121,6 +121,9 @@ module.exports = ({itemsProp, columnsProp, bodyHeightStream, rowHeightStream, mo
     selectedRow = el.querySelector('.is-selected')
     if selectedRow
       selectedRow.scrollIntoViewIfNeeded(false) # false=only scroll the minimal necessary
+
+    # Focus on input view
+    el.querySelector('.atom-notational-search').focus()
   ).onValue() # no-op to setup the listener
 
   dispose.elementProp = elementProp
