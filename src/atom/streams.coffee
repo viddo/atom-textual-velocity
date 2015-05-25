@@ -14,7 +14,7 @@ module.exports =
     fromDisposable(atom.commands, 'add', context, command)
 
   projectsPaths: ->
-    lastProjectPathsProp = Bacon.sequentially(0, [ [], atom.project.getPaths() ])
+    lastProjectPathsProp = Bacon.sequentially(0, [[], atom.project.getPaths()])
       .merge(fromDisposable(atom.project, 'onDidChangePaths'))
       .slidingWindow(2, 2)
 

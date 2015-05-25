@@ -20,8 +20,14 @@ module.exports = ({itemsProp, columnsProp, bodyHeightStream, rowHeightStream, re
     .toProperty()
 
   searchBus = new Bacon.Bus()
+  searchChangeStream = Bacon.sequentially(0, ['', ''])
+    .merge(searchBus)
+    .slidingWindow(2, 2)
+    .toEventStream()
+    .filter ([prev, last]) ->
+      last isnt prev
   searchProp = Bacon.update '',
-    [searchBus], (..., str) -> str
+    [searchChangeStream], (..., [..., lastStr]) -> lastStr
     [resetStream], -> ''
   matchedItemsProp = Bacon.combineWith (items, searchStr) ->
     return items unless searchStr
@@ -34,6 +40,7 @@ module.exports = ({itemsProp, columnsProp, bodyHeightStream, rowHeightStream, re
   selectItemStream = selectItemBus.filter (item) -> item
   unselectItemStream = selectItemBus.filter (item) -> !item
   selectedItemProp = Bacon.update undefined,
+    [searchChangeStream], -> undefined
     [resetStream], -> undefined
     [unselectItemStream], -> undefined
     [selectItemStream], (..., item) -> item
