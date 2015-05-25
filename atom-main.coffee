@@ -19,9 +19,9 @@ module.exports =
 
 
   activate: (state) ->
-    @subscriptions.push atomAdaptions = notationalItems()
+    atomAdaptions = notationalItems()
 
-    @subscriptions.push notationalPanel = setupPanel(
+    notationalPanel = setupPanel(
       itemsProp: atomAdaptions.itemsProp
       columnsProp: atomAdaptions.columnsProp
       bodyHeightStream: atoms.fromConfig('atom-notational.bodyHeight')
@@ -31,20 +31,24 @@ module.exports =
         .merge(atoms.fromCommand('.atom-notational-search', 'core:move-up').map(-1))
     )
 
-    # Side effects
-    # Create panel 1st time the element is created
-    @subscriptions.push notationalPanel.elementProp.onValue (el) =>
-      @panel = atom.workspace.addTopPanel(item: el) unless @panel
+    @subscriptions.push.apply(@subscriptions, [
+      atomAdaptions
+      notationalPanel
 
-    # Persist resized body height
-    @subscriptions.push notationalPanel.resizedBodyHeightProp.debounce(500).onValue (newHeight) ->
-      atom.config.set('atom-notational.bodyHeight', newHeight)
+      # Side effects
+      # Create panel 1st time the element is created
+      notationalPanel.elementProp.onValue (el) =>
+        @panel = atom.workspace.addTopPanel(item: el) unless @panel
 
-    # Handle selected item
-    @subscriptions.push notationalPanel.selectedItemProp.onValue (selectedItem) ->
-      if selectedItem
-        console.info selectedItem
+      # Persist resized body height
+      notationalPanel.resizedBodyHeightProp.debounce(500).onValue (newHeight) ->
+        atom.config.set('atom-notational.bodyHeight', newHeight)
 
+      # Handle selected item
+      notationalPanel.selectedItemProp.onValue (selectedItem) ->
+        if selectedItem
+          console.info selectedItem
+    ])
 
   deactivate: ->
     unsubscribe() for unsubscribe in @subscriptions
