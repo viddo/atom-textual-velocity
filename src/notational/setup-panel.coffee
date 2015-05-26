@@ -65,7 +65,7 @@ module.exports = ({itemsProp, columnsProp, bodyHeightStream, rowHeightStream, re
   scrollTopProp = Bacon.update 0,
     [scrollTopBus], (..., scrollTop) -> scrollTop
     [selectItemStream, adjustedScrollTopForSelectedItemProp], (..., adjustedScrollTop) -> adjustedScrollTop
-    [unselectItemStream], -> 0 # reset
+
   topOffsetProp = Bacon.combineWith (scrollTop, rowHeight) ->
     -(scrollTop % rowHeight)
   , scrollTopProp, rowHeightProp
@@ -131,13 +131,12 @@ module.exports = ({itemsProp, columnsProp, bodyHeightStream, rowHeightStream, re
       selectedRow = el.querySelector('.is-selected')
       if selectedRow
         selectedRow.scrollIntoViewIfNeeded(false) # false=only scroll the minimal necessary
-
-      # Focus and reset search input
       el.querySelector('.atom-notational-search').focus()
-      # el.querySelector('.atom-notational-search').getModel().setText('')
     [resetStream, elementProp], (..., el) ->
       # TODO: getModel/setText are really internals of atom-text-editor.. can be done in a better way?
       el.querySelector('.atom-notational-search').getModel().setText('')
+    [resetStream.merge(searchChangeStream), elementProp], (..., el) ->
+      el.querySelector('.tbody').scrollTop = 0 #return to top
   ).onValue() # no-op to setup the listener
 
   dispose.elementProp = elementProp
