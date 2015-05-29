@@ -130,7 +130,7 @@ module.exports = ({itemsProp, columnsProp, bodyHeightStream, rowHeightStream, re
       # Scroll item into the view if outside the visible border and was triggered by selectItem change
       selectedRow = el.querySelector('.is-selected')
       if selectedRow
-        selectedRow.scrollIntoViewIfNeeded(false) # false=only scroll the minimal necessary
+        selectedRow.scrollIntoViewIfNeeded(false) # centerIfNeeded=false => croll minimal possible to avoid jumps
       el.querySelector('.atom-notational-search').focus()
     [resetStream, elementProp], (..., el) ->
       # TODO: getModel/setText are really internals of atom-text-editor.. can be done in a better way?
