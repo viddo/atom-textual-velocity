@@ -1,3 +1,4 @@
+{CompositeDisposable, Disposable} = require 'atom'
 Bacon = require 'baconjs'
 atoms = require './src/atom/streams.coffee'
 setupPanel = require './src/notational/setup-panel.coffee'
@@ -5,7 +6,7 @@ notationalItems = require './src/atom/notational-items.coffee'
 
 module.exports =
   panel: undefined
-  subscriptions: []
+  disposables: undefined
 
   config:
     bodyHeight:
@@ -19,6 +20,7 @@ module.exports =
 
 
   activate: (state) ->
+    @disposables = new CompositeDisposable
     atomAdaptions = notationalItems()
 
     notationalPanel = setupPanel(
@@ -31,25 +33,32 @@ module.exports =
         .merge(atoms.fromCommand('.atom-notational-search', 'core:move-up').map(-1))
     )
 
-    @subscriptions.push.apply(@subscriptions, [
-      atomAdaptions
-      notationalPanel
+    @disposables.add atomAdaptions
+    @disposables.add notationalPanel
 
-      # Side effects
-      # Create panel 1st time the element is created
-      notationalPanel.elementProp.onValue (el) =>
-        @panel = atom.workspace.addTopPanel(item: el) unless @panel
+    # Side effects
+    # Create panel 1st time the element is created
+    @disposableAdd notationalPanel.elementProp.onValue (el) =>
+      @panel = atom.workspace.addTopPanel(item: el) unless @panel
+      @disposableAdd @panel.onDidChangeVisible (visible) =>
+        if visible then @panel.getItem().querySelector('.atom-notational-search').focus()
 
-      # Persist resized body height
-      notationalPanel.resizedBodyHeightProp.debounce(500).onValue (newHeight) ->
-        atom.config.set('atom-notational.bodyHeight', newHeight)
+    # Persist resized body height
+    @disposableAdd notationalPanel.resizedBodyHeightProp.debounce(500).onValue (newHeight) ->
+      atom.config.set('atom-notational.bodyHeight', newHeight)
 
-      # Handle selected item
-      notationalPanel.selectedItemProp.onValue (selectedItem) ->
-        if selectedItem
-          console.info selectedItem
-    ])
+    # Handle selected item
+    @disposableAdd notationalPanel.selectedItemProp.onValue (selectedItem) ->
+      if selectedItem
+        console.info selectedItem
+
+    # Handle panel
+    @disposables.add atom.commands.add 'atom-workspace', 'atom-notational:toggle-panel', =>
+      if @panel.isVisible() then @panel.hide() else @panel.show()
+
+  disposableAdd: (disposalAction) ->
+    new Disposable(disposalAction)
 
   deactivate: ->
-    unsubscribe() for unsubscribe in @subscriptions
+    @disposables.dispose()
     @panel?.destroy()
