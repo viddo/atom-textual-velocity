@@ -54,6 +54,11 @@ module.exports =
       if selectedItem
         console.info selectedItem
 
+    openStream = atoms.fromCommand('atom-text-editor.atom-notational-search', 'atom-notational:open')
+    @disposableAdd notationalPanel.selectedItemProp.sampledBy(openStream).onValue (selectedItem) ->
+      if selectedItem
+        atom.workspace.open(selectedItem.relPath)
+
     # Handle panel
     @disposables.add atom.commands.add 'atom-workspace', 'atom-notational:toggle-panel', =>
       if @panel.isVisible()
