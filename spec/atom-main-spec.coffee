@@ -9,7 +9,7 @@ describe 'atom-notational', ->
        expect(topPanels.length).toEqual(1)
        expect(topPanels[0].getItem().className).toContain('atom-notational-panel')
 
-    describe 'when package is desactivated', ->
+    fdescribe 'when package is desactivated', ->
       beforeEach ->
         atom.packages.deactivatePackage('atom-notational')
 

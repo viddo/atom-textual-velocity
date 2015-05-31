@@ -51,8 +51,7 @@ module.exports =
 
     # Handle selected item
     @disposableAdd notationalPanel.selectedItemProp.onValue (selectedItem) ->
-      if selectedItem
-        console.info selectedItem
+      # TODO: preview selected item
 
     openStream = atoms.fromCommand('atom-text-editor.atom-notational-search', 'atom-notational:open')
     @disposableAdd notationalPanel.selectedItemProp.sampledBy(openStream).onValue (selectedItem) ->
@@ -84,7 +83,6 @@ module.exports =
     console.warn "could not reg #{toggleShortcut}" unless ret
 
     window.addEventListener 'beforeunload', ->
-      console.info 'unloading…'
       if globalShortcut.isRegistered(toggleShortcut)
         globalShortcut.unregister(toggleShortcut)
 
@@ -94,6 +92,5 @@ module.exports =
 
 
   deactivate: ->
-    console.info 'deactivating…'
     @disposables.dispose()
     @panel?.destroy()
