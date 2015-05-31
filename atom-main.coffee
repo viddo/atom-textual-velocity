@@ -3,6 +3,8 @@ Bacon = require 'baconjs'
 atoms = require './src/atom/streams.coffee'
 setupPanel = require './src/notational/setup-panel.coffee'
 notationalItems = require './src/atom/notational-items.coffee'
+remote = require 'remote'
+toggleShortcut = 'cmd+alt+space'
 
 module.exports =
   panel: undefined
@@ -54,11 +56,39 @@ module.exports =
 
     # Handle panel
     @disposables.add atom.commands.add 'atom-workspace', 'atom-notational:toggle-panel', =>
-      if @panel.isVisible() then @panel.hide() else @panel.show()
+      if @panel.isVisible()
+        @panel.hide()
+      else
+        @panel.show()
+        @panel.getItem().querySelector('.atom-notational-search').focus()
+
+    @disposables.add atom.commands.add 'atom-workspace', 'atom-notational:focus', =>
+      @panel.show() unless @panel.isVisible()
+      @panel.getItem().querySelector('.atom-notational-search').focus()
+
+    # global shortcut
+    globalShortcut = remote.require('global-shortcut')
+    ret = globalShortcut.register toggleShortcut, ->
+      if atom.getCurrentWindow().isFocused()
+        atom.hide()
+      else
+        atom.show()
+        atom.focus()
+        target = document.body.querySelector('atom-workspace')
+        atom.commands.dispatch(target, 'atom-notational:focus')
+    console.warn "could not reg #{toggleShortcut}" unless ret
+
+    window.addEventListener 'beforeunload', ->
+      console.info 'unloading…'
+      if globalShortcut.isRegistered(toggleShortcut)
+        globalShortcut.unregister(toggleShortcut)
+
 
   disposableAdd: (disposalAction) ->
     new Disposable(disposalAction)
 
+
   deactivate: ->
+    console.info 'deactivating…'
     @disposables.dispose()
     @panel?.destroy()
