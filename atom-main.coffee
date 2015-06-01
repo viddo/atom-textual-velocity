@@ -35,15 +35,13 @@ module.exports =
         .merge(atoms.fromCommand('.atom-notational-search', 'core:move-up').map(-1))
     )
 
-    @disposables.add atomAdaptions
-    @disposables.add notationalPanel
+    @disposableAdd atomAdaptions
+    @disposableAdd notationalPanel
 
     # Side effects
     # Create panel 1st time the element is created
     @disposableAdd notationalPanel.elementProp.onValue (el) =>
       @panel = atom.workspace.addTopPanel(item: el) unless @panel
-      @disposableAdd @panel.onDidChangeVisible (visible) =>
-        if visible then @panel.getItem().querySelector('.atom-notational-search').focus()
 
     # Persist resized body height
     @disposableAdd notationalPanel.resizedBodyHeightProp.debounce(500).onValue (newHeight) ->
