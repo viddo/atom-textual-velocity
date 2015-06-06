@@ -37,21 +37,20 @@ module.exports = ({itemsProp, columnsProp, bodyHeightStream, rowHeightStream, re
 
   scrollTopBus = new Bacon.Bus()
   selectItemBus = new Bacon.Bus()
-  selectItemStream = selectItemBus.filter (item) -> item
-  unselectItemStream = selectItemBus.filter (item) -> !item
   selectedItemProp = Bacon.update undefined,
     [searchChangeStream], -> undefined
     [resetStream], -> undefined
-    [unselectItemStream], -> undefined
-    [selectItemStream], (..., item) -> item
+    [selectItemBus], (..., item) -> item
     [moveSelectedStream, matchedItemsProp], (currentItem, relativeOffset, items) ->
-      selectItemBus.push if currentItem
-                           navArray.byRelativeOffset items, relativeOffset, (item) ->
-                             currentItem is item
-                         else if relativeOffset < 0
-                           navArray.byOffset(items, -1)
-                         else
-                           items[0]
+      if currentItem
+        navArray.byRelativeOffset items, relativeOffset, (item) ->
+          currentItem is item
+      else if relativeOffset < 0
+        navArray.byOffset(items, -1)
+      else
+        items[0]
+  selectItemStream = selectedItemProp.toEventStream()
+
   adjustedScrollTopForSelectedItemProp = adjustScrollTopForSelectedItem(
     bodyHeightProp: bodyHeightProp
     rowHeightProp: rowHeightProp
