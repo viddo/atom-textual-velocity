@@ -19,14 +19,8 @@ module.exports = ({itemsProp, columnsProp, bodyHeightStream, rowHeightStream, re
     .toProperty()
 
   searchBus = new Bacon.Bus()
-  searchChangeStream = Bacon.sequentially(0, ['', ''])
-    .merge(searchBus)
-    .slidingWindow(2, 2)
-    .toEventStream()
-    .filter ([prev, last]) ->
-      last isnt prev
   searchProp = Bacon.update '',
-    [searchChangeStream], (..., [..., lastStr]) -> lastStr
+    [searchBus.skipDuplicates()], (..., lastStr) -> lastStr
     [resetStream], -> ''
   matchedItemsProp = Bacon.combineWith (items, searchStr) ->
     return items unless searchStr
@@ -37,8 +31,7 @@ module.exports = ({itemsProp, columnsProp, bodyHeightStream, rowHeightStream, re
   scrollTopBus = new Bacon.Bus()
   selectItemBus = new Bacon.Bus()
   selectedItemProp = Bacon.update(undefined,
-    [searchChangeStream], -> undefined
-    [resetStream], -> undefined
+    [searchProp.changes()], -> undefined
     [selectItemBus], (..., newItem) -> newItem
     [moveSelectedStream, matchedItemsProp], selectItemByRelativeOffset
   ).skipDuplicates()
@@ -103,7 +96,7 @@ module.exports = ({itemsProp, columnsProp, bodyHeightStream, rowHeightStream, re
     [resetStream, elementProp], (..., el) ->
       # TODO: getModel/setText are really internals of atom-text-editor.. can be done in a better way?
       el.querySelector('.atom-notational-search').getModel().setText('')
-    [resetStream.merge(searchChangeStream), elementProp], (..., el) ->
+    [searchProp.changes(), elementProp], (..., el) ->
       el.querySelector('.tbody').scrollTop = 0 #return to top
   ).onValue() # no-op to setup the listener
 
