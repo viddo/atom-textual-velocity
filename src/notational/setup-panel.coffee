@@ -1,7 +1,6 @@
 Bacon = require 'baconjs'
 h = require 'virtual-dom/h'
 adjustScrollTopForSelectedItem = require './adjust-scroll-top-for-selected-item.coffee'
-selectedScrollTop = require './selected-scroll-top.coffee'
 navArray = require './navigate_array.coffee'
 search = require './vdom/search.coffee'
 header = require './vdom/header.coffee'
@@ -37,7 +36,7 @@ module.exports = ({itemsProp, columnsProp, bodyHeightStream, rowHeightStream, re
 
   scrollTopBus = new Bacon.Bus()
   selectItemBus = new Bacon.Bus()
-  selectedItemProp = Bacon.update undefined,
+  selectedItemProp = Bacon.update(undefined,
     [searchChangeStream], -> undefined
     [resetStream], -> undefined
     [selectItemBus], (..., item) -> item
@@ -49,21 +48,11 @@ module.exports = ({itemsProp, columnsProp, bodyHeightStream, rowHeightStream, re
         navArray.byOffset(items, -1)
       else
         items[0]
-  selectItemStream = selectedItemProp.toEventStream()
+  ).skipDuplicates()
 
-  adjustedScrollTopForSelectedItemProp = adjustScrollTopForSelectedItem(
-    bodyHeightProp: bodyHeightProp
-    rowHeightProp: rowHeightProp
-    currentScrollTopProp: scrollTopBus.toProperty(0)
-    selectedScrollTopProp: selectedScrollTop(
-        itemsProp: matchedItemsProp
-        selectedItemProp: selectedItemProp
-        rowHeightProp: rowHeightProp
-      )
-  )
   scrollTopProp = Bacon.update 0,
     [scrollTopBus], (..., scrollTop) -> scrollTop
-    [selectItemStream, adjustedScrollTopForSelectedItemProp], (..., adjustedScrollTop) -> adjustedScrollTop
+    [selectedItemProp.changes(), matchedItemsProp, rowHeightProp, bodyHeightProp], adjustScrollTopForSelectedItem
 
   topOffsetProp = Bacon.combineWith (scrollTop, rowHeight) ->
     -(scrollTop % rowHeight)
@@ -125,7 +114,7 @@ module.exports = ({itemsProp, columnsProp, bodyHeightStream, rowHeightStream, re
   elementProp = vdomTreeToElement(vdomTreeProp)
 
   dispose = Bacon.when(
-    [selectItemStream, elementProp], (..., el) ->
+    [selectedItemProp.changes(), elementProp], (..., el) ->
       # Scroll item into the view if outside the visible border and was triggered by selectItem change
       selectedRow = el.querySelector('.is-selected')
       if selectedRow

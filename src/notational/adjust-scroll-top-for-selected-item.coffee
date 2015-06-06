@@ -1,23 +1,21 @@
-Bacon = require 'baconjs'
+module.exports = (currentScrollTop, selectedItem, items, rowHeight, bodyHeight) ->
+  return currentScrollTop unless selectedItem
 
-# @param {Object} of properties
-# @return {Property} adjusted scrollTop value so selected item appear within the visible bounds
-module.exports = ({bodyHeightProp, rowHeightProp, currentScrollTopProp, selectedScrollTopProp}) ->
-  Bacon.combineWith (bodyHeight, rowHeight, currentScrollTop, selectedScrollTop) ->
-    # ....[...].... no selected item, just return current scrollTop value
-    return currentScrollTop unless selectedScrollTop >= 0
+  for item, idx in items
+    if item is selectedItem
+      selectedScrollTop = idx * rowHeight
+      break
 
-    if selectedScrollTop < currentScrollTop
-      # selected item is located before the visible bounds
-      # .X..[...]....
-      # .[X..].......
-      selectedScrollTop
-    else if currentScrollTop + bodyHeight <= selectedScrollTop
-      # selected item is located after the visible bounds
-      # ....[...]..X.
-      # .......[..X].
-      selectedScrollTop - bodyHeight + rowHeight
-    else
-      # ....[.X.].... selected item is located within the visible bounds, just return the current scrollTop value
-      currentScrollTop
-  , bodyHeightProp, rowHeightProp, currentScrollTopProp, selectedScrollTopProp
+  if currentScrollTop > selectedScrollTop
+    # selected item is located before the visible bounds
+    # from: .X..[...]....
+    # to:   .[X..].......
+    selectedScrollTop
+  else if currentScrollTop + bodyHeight <= selectedScrollTop
+    # selected item is located after the visible bounds
+    # from: ....[...]..X.
+    # to:   .......[..X].
+     selectedScrollTop - bodyHeight + rowHeight
+  else
+    # selected item is located within the visible bounds, just return the current scrollTop value
+    currentScrollTop
