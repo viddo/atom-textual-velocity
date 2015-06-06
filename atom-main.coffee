@@ -3,6 +3,7 @@ Bacon = require 'baconjs'
 atoms = require './src/atom/streams.coffee'
 setupPanel = require './src/notational/setup-panel.coffee'
 notationalItems = require './src/atom/notational-items.coffee'
+Path = require 'path'
 
 module.exports =
   panel: undefined
@@ -52,7 +53,7 @@ module.exports =
     openStream = atoms.fromCommand('atom-text-editor.atom-notational-search', 'atom-notational:open')
     @disposableAdd notationalPanel.selectedItemProp.sampledBy(openStream).onValue (selectedItem) ->
       if selectedItem
-        atom.workspace.open(selectedItem.relPath)
+        atom.workspace.open Path.join(selectedItem.projectPath, selectedItem.relPath)
 
     # Handle panel
     @disposables.add atom.commands.add 'atom-workspace', 'atom-notational:toggle-panel', =>
