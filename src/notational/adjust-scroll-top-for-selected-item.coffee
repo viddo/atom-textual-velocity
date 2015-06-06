@@ -1,10 +1,7 @@
 module.exports = (currentScrollTop, selectedItem, items, rowHeight, bodyHeight) ->
   return currentScrollTop unless selectedItem
 
-  for item, idx in items
-    if item is selectedItem
-      selectedScrollTop = idx * rowHeight
-      break
+  selectedScrollTop = items.indexOf(selectedItem) * rowHeight
 
   if currentScrollTop > selectedScrollTop
     # selected item is located before the visible bounds
