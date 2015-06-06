@@ -14,4 +14,4 @@ describe 'atom-notational', ->
 
     it 'removes the top panel', ->
      topPanels = atom.workspace.getTopPanels()
-     expect(topPanels.length).toEqual(0)
+     expect(topPanels).toEqual([])

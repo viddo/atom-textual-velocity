@@ -68,7 +68,7 @@ module.exports =
 
 
   disposableAdd: (disposalAction) ->
-    new Disposable(disposalAction)
+    @disposables.add new Disposable(disposalAction)
 
 
   deactivate: ->
