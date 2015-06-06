@@ -47,10 +47,6 @@ module.exports = ({itemsProp, columnsProp, bodyHeightStream, rowHeightStream, re
     [scrollTopBus], (..., scrollTop) -> scrollTop
     [selectedItemProp.changes(), matchedItemsProp, rowHeightProp, bodyHeightProp], adjustScrollTopForSelectedItem
 
-  topOffsetProp = Bacon.combineWith (scrollTop, rowHeight) ->
-    -(scrollTop % rowHeight)
-  , scrollTopProp, rowHeightProp
-
   visibleBeginProp = Bacon.combineWith (scrollTop, rowHeight) ->
     (scrollTop / rowHeight) | 0
   , scrollTopProp, rowHeightProp
@@ -58,35 +54,26 @@ module.exports = ({itemsProp, columnsProp, bodyHeightStream, rowHeightStream, re
     begin + ((bodyHeight / rowHeight) | 0) + 2 # add to avoid visible gap when scrolling
   , visibleBeginProp, bodyHeightProp, rowHeightProp
 
-  visibleItemsProp = Bacon.combineWith (items, begin, end) ->
-    items.slice(begin, end)
-  , matchedItemsProp, visibleBeginProp, visibleEndProp
-
-  reverseStripesProp = visibleBeginProp.map (begin) ->
-    begin % 2 is 0
-
-  topOffset: Bacon.combineWith (scrollTop, rowHeight) ->
-      -(scrollTop % rowHeight)
-    , scrollTopProp, rowHeightProp
-  marginBottomProp = Bacon.combineWith (items, rowHeight, scrollTop, bodyHeight) ->
-      items.length * rowHeight - scrollTop - bodyHeight
-    , matchedItemsProp, rowHeightProp, scrollTopProp, bodyHeightProp
-
   # vdom props
-  contentProp = Bacon.combineTemplate({
-    columns: columnsProp
-    reverseStripes: reverseStripesProp
-    items: visibleItemsProp
-    selectedItem: selectedItemProp
-  }).map (data) ->
-    content(data, selectItemBus)
-
   scrollableContentProp = Bacon.combineTemplate({
     bodyHeight: bodyHeightProp
-    topOffset: topOffsetProp
     scrollTop: scrollTopProp
-    marginBottom: marginBottomProp
-    content: contentProp
+    content: Bacon.combineTemplate({
+        columns: columnsProp
+        selectedItem: selectedItemProp
+        reverseStripes: visibleBeginProp.map (begin) ->
+          begin % 2 is 0
+        items: Bacon.combineWith (items, begin, end) ->
+          items.slice(begin, end)
+        , matchedItemsProp, visibleBeginProp, visibleEndProp
+      }).map (data) ->
+        content(data, selectItemBus)
+    topOffset: Bacon.combineWith (scrollTop, rowHeight) ->
+        -(scrollTop % rowHeight)
+      , scrollTopProp, rowHeightProp
+    marginBottom: Bacon.combineWith (items, rowHeight, scrollTop, bodyHeight) ->
+        items.length * rowHeight - scrollTop - bodyHeight
+      , matchedItemsProp, rowHeightProp, scrollTopProp, bodyHeightProp
   }).map (data) ->
     scrollableContent(data, scrollTopBus)
 
