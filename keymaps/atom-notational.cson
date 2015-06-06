@@ -11,6 +11,5 @@
 #   'cmd-shift-,': 'atom-notational:toggle'
 
 'atom-text-editor.atom-notational-search':
-  'escape': 'atom-notational:reset'
-'atom-text-editor.atom-notational-search':
   'enter': 'atom-notational:open'
+  'escape': 'atom-notational:reset'
