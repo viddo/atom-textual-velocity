@@ -1,7 +1,7 @@
 Bacon = require 'baconjs'
 h = require 'virtual-dom/h'
 adjustScrollTopForSelectedItem = require './adjust-scroll-top-for-selected-item.coffee'
-navArray = require './navigate_array.coffee'
+selectItemByRelativeOffset = require './select-item-by-relative-offset.coffee'
 search = require './vdom/search.coffee'
 header = require './vdom/header.coffee'
 content = require './vdom/content.coffee'
@@ -39,15 +39,8 @@ module.exports = ({itemsProp, columnsProp, bodyHeightStream, rowHeightStream, re
   selectedItemProp = Bacon.update(undefined,
     [searchChangeStream], -> undefined
     [resetStream], -> undefined
-    [selectItemBus], (..., item) -> item
-    [moveSelectedStream, matchedItemsProp], (currentItem, relativeOffset, items) ->
-      if currentItem
-        navArray.byRelativeOffset items, relativeOffset, (item) ->
-          currentItem is item
-      else if relativeOffset < 0
-        navArray.byOffset(items, -1)
-      else
-        items[0]
+    [selectItemBus], (..., newItem) -> newItem
+    [moveSelectedStream, matchedItemsProp], selectItemByRelativeOffset
   ).skipDuplicates()
 
   scrollTopProp = Bacon.update 0,
