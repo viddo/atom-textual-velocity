@@ -92,3 +92,4 @@ module.exports =
   deactivate: ->
     @disposables.dispose()
     @panel?.destroy()
+    @panel = null
