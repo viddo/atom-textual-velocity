@@ -1,6 +1,6 @@
 Path = require 'path'
 gitignoreGlobs = require 'gitignore-globs'
-watchPath = require '../watch-path.coffee'
+watchPath = require '../watch-path'
 
 # @param {String} projectPath  Absolute path to be scanned for files -> items
 # @param {Array} ignoredNames list of relative file paths to ignore

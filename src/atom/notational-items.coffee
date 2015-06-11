@@ -1,8 +1,8 @@
 Bacon = require 'baconjs'
 {Task} = require 'atom'
 Path = require 'path'
-{projectsPaths} = require './streams.coffee'
-columns = require './columns.coffee'
+{projectsPaths} = require './streams'
+columns = require './columns'
 
 # @param {Stream} watchedProjectsStream objects containing a path {String} and a task {Task}
 # @param {Stream} removedStream paths that are removed

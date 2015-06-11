@@ -1,5 +1,5 @@
 h = require 'virtual-dom/h'
-{mouseMoveDiff} = require '../dom.coffee'
+{mouseMoveDiff} = require '../dom'
 
 module.exports = (bodyHeight, bodyHeightBus) ->
   h 'div.resize-handle', {

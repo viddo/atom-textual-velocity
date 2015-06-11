@@ -1,5 +1,5 @@
 h = require 'virtual-dom/h'
-th = require './th.coffee'
+th = require './th'
 
 module.exports = ({columns, reverseStripes, items, selectedItem}, selectItemBus) ->
   h 'table', [

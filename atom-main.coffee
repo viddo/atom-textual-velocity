@@ -1,8 +1,8 @@
 {CompositeDisposable, Disposable} = require 'atom'
 Bacon = require 'baconjs'
-atoms = require './src/atom/streams.coffee'
-setupPanel = require './src/notational/setup-panel.coffee'
-notationalItems = require './src/atom/notational-items.coffee'
+atoms = require './src/atom/streams'
+setupPanel = require './src/notational/setup-panel'
+notationalItems = require './src/atom/notational-items'
 Path = require 'path'
 
 module.exports =

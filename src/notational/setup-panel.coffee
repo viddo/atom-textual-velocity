@@ -1,13 +1,13 @@
 Bacon = require 'baconjs'
 h = require 'virtual-dom/h'
-adjustScrollTopForSelectedItem = require './adjust-scroll-top-for-selected-item.coffee'
-selectItemByRelativeOffset = require './select-item-by-relative-offset.coffee'
-search = require './vdom/search.coffee'
-header = require './vdom/header.coffee'
-content = require './vdom/content.coffee'
-scrollableContent = require './vdom/scrollable-content.coffee'
-resizeHandle = require './vdom/resize-handle.coffee'
-vdomTreeToElement = require './vdom-tree-to-element.coffee'
+adjustScrollTopForSelectedItem = require './adjust-scroll-top-for-selected-item'
+selectItemByRelativeOffset = require './select-item-by-relative-offset'
+search = require './vdom/search'
+header = require './vdom/header'
+content = require './vdom/content'
+scrollableContent = require './vdom/scrollable-content'
+resizeHandle = require './vdom/resize-handle'
+vdomTreeToElement = require './vdom-tree-to-element'
 
 # Encapsulates the general logic
 module.exports = ({itemsProp, columnsProp, bodyHeightStream, rowHeightStream}) ->
