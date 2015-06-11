@@ -29,9 +29,6 @@ module.exports =
       columnsProp: atomAdaptions.columnsProp
       bodyHeightStream: atoms.fromConfig('atom-notational.bodyHeight')
       rowHeightStream: atoms.fromConfig('atom-notational.rowHeight')
-      resetStream: atoms.fromCommand('atom-text-editor.atom-notational-search', 'atom-notational:reset')
-      moveSelectedStream: atoms.fromCommand('.atom-notational-search', 'core:move-down').map(1)
-        .merge(atoms.fromCommand('.atom-notational-search', 'core:move-up').map(-1))
     )
 
     @disposableAdd atomAdaptions
@@ -50,8 +47,8 @@ module.exports =
     @disposableAdd notationalPanel.selectedItemProp.onValue (selectedItem) ->
       # TODO: preview selected item
 
-    openStream = atoms.fromCommand('atom-text-editor.atom-notational-search', 'atom-notational:open')
-    @disposableAdd notationalPanel.selectedItemProp.sampledBy(openStream).onValue (selectedItem) ->
+    # TODO: move sampleBy inside panel?
+    @disposableAdd notationalPanel.selectedItemProp.sampledBy(notationalPanel.openSelectedStream).onValue (selectedItem) ->
       if selectedItem
         atom.workspace.open Path.join(selectedItem.projectPath, selectedItem.relPath)
 
@@ -61,11 +58,11 @@ module.exports =
         @panel.hide()
       else
         @panel.show()
-        @panel.getItem().querySelector('.atom-notational-search').focus()
+        @panel.getItem().querySelector('.search').focus()
 
     @disposables.add atom.commands.add 'atom-workspace', 'atom-notational:focus', =>
       @panel.show() unless @panel.isVisible()
-      @panel.getItem().querySelector('.atom-notational-search').focus()
+      @panel.getItem().querySelector('.search').focus()
 
 
   disposableAdd: (disposalAction) ->

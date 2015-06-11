@@ -10,13 +10,19 @@ resizeHandle = require './vdom/resize-handle.coffee'
 vdomTreeToElement = require './vdom-tree-to-element.coffee'
 
 # Encapsulates the general logic
-module.exports = ({itemsProp, columnsProp, bodyHeightStream, rowHeightStream, resetStream, moveSelectedStream}) ->
+module.exports = ({itemsProp, columnsProp, bodyHeightStream, rowHeightStream}) ->
   rowHeightProp = rowHeightStream.toProperty()
   bodyHeightBus = new Bacon.Bus()
   bodyHeightProp = bodyHeightStream.merge(bodyHeightBus)
-    .skipDuplicates()
-    .filter (height) -> height > 0
-    .toProperty()
+                                   .skipDuplicates()
+                                   .filter (height) -> height > 0
+                                   .toProperty()
+
+  keyInputBus = new Bacon.Bus()
+  resetStream        = keyInputBus.filter (ev) -> ev.keyCode is 27 #esc
+  openSelectedStream = keyInputBus.filter (ev) -> ev.keyCode is 13 #enter
+  moveSelectedStream = keyInputBus.filter((ev) -> ev.keyCode is 38).doAction((ev) -> ev.preventDefault()).map(-1) #up
+                .merge(keyInputBus.filter((ev) -> ev.keyCode is 40).doAction((ev) -> ev.preventDefault()).map(1)) #down
 
   searchBus = new Bacon.Bus()
   searchProp = Bacon.update '',
@@ -78,7 +84,7 @@ module.exports = ({itemsProp, columnsProp, bodyHeightStream, rowHeightStream, re
 
   vdomTreeProp = Bacon.combineWith (contentHeader, scrollableContent, resizeHandle) ->
     h 'div.atom-notational-panel', [
-      search(searchBus)
+      search(searchBus, keyInputBus)
       contentHeader
       scrollableContent
       resizeHandle
@@ -92,10 +98,9 @@ module.exports = ({itemsProp, columnsProp, bodyHeightStream, rowHeightStream, re
       selectedRow = el.querySelector('.is-selected')
       if selectedRow
         selectedRow.scrollIntoViewIfNeeded(false) # centerIfNeeded=false => croll minimal possible to avoid jumps
-      el.querySelector('.atom-notational-search').focus()
+      el.querySelector('.search').focus()
     [resetStream, elementProp], (..., el) ->
-      # TODO: getModel/setText are really internals of atom-text-editor.. can be done in a better way?
-      el.querySelector('.atom-notational-search').getModel().setText('')
+      el.querySelector('.search').value = ''
     [searchProp.changes(), elementProp], (..., el) ->
       el.querySelector('.tbody').scrollTop = 0 #return to top
   ).onValue() # no-op to setup the listener
@@ -103,5 +108,6 @@ module.exports = ({itemsProp, columnsProp, bodyHeightStream, rowHeightStream, re
   dispose.elementProp = elementProp
   dispose.resizedBodyHeightProp = bodyHeightProp
   dispose.selectedItemProp = selectedItemProp
+  dispose.openSelectedStream = openSelectedStream
 
   return dispose

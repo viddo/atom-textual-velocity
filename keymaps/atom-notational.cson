@@ -9,7 +9,3 @@
 # https://atom.io/docs/latest/advanced/keymaps
 # 'atom-workspace':
 #   'cmd-shift-,': 'atom-notational:toggle'
-
-'atom-text-editor.atom-notational-search':
-  'enter': 'atom-notational:open'
-  'escape': 'atom-notational:reset'

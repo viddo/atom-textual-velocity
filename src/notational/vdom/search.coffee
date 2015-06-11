@@ -1,13 +1,13 @@
 h = require 'virtual-dom/h'
 
-module.exports = (searchBus) ->
-  h 'atom-text-editor', {
-    className: 'atom-notational-search'
-    attributes: #custom ones
-      mini: 'true'
-      'placeholder-text': 'Search, or press enter to create a new untitled file'
+module.exports = (searchBus, keyInputBus) ->
+  h 'input', {
+    type: 'text'
+    tabIndex: '-1'
+    className: 'search native-key-bindings'
+    placeholder: 'Search, or press enter to create a new untitled file'
     onkeydown: (ev) ->
-      setTimeout =>
-        searchBus.push @model.getText()
-      , 0
+      keyInputBus.push ev
+    oninput: (ev) ->
+      searchBus.push @value
   }
