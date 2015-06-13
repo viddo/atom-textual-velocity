@@ -81,8 +81,11 @@ module.exports = ({itemsProp, columnsProp, bodyHeightStream, rowHeightStream}) -
   headerProp = columnsProp.map (columns) ->
     header(columns)
 
+  focusBus = new Bacon.Bus()
   vdomTreeProp = Bacon.combineWith (contentHeader, scrollableContent, resizeHandle) ->
-    h 'div.atom-notational-panel', [
+    h 'div.atom-notational-panel', {
+      onclick: -> focusBus.push undefined
+    }, [
       search(searchBus, keyInputBus)
       contentHeader
       scrollableContent
@@ -92,7 +95,7 @@ module.exports = ({itemsProp, columnsProp, bodyHeightStream, rowHeightStream}) -
   elementProp = vdomTreeToElement(vdomTreeProp)
 
   dispose = Bacon.when(
-    [selectedItemProp.changes(), elementProp], (..., el) ->
+    [selectedItemProp.changes().merge(focusBus), elementProp], (..., el) ->
       # Scroll item into the view if outside the visible border and was triggered by selectItem change
       selectedRow = el.querySelector('.is-selected')
       if selectedRow
