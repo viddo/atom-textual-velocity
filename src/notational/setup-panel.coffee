@@ -30,7 +30,7 @@ module.exports = ({itemsProp, columnsProp, bodyHeightStream, rowHeightStream}) -
   matchedItemsProp = Bacon.combineWith (items, searchStr) ->
     return items unless searchStr
     items.filter (item) ->
-      item.relPath.toLowerCase().search(searchStr) isnt -1
+      item.relPath.toLowerCase().search(searchStr.toLowerCase()) isnt -1
   , itemsProp, searchProp
 
   scrollTopBus = new Bacon.Bus()
