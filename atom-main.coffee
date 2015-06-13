@@ -3,6 +3,7 @@ Bacon = require 'baconjs'
 atoms = require './src/atom/streams'
 setupPanel = require './src/notational/setup-panel'
 notationalItems = require './src/atom/notational-items'
+focusStream = require './src/atom/focus-stream'
 Path = require 'path'
 
 module.exports =
@@ -45,7 +46,11 @@ module.exports =
 
     # Handle selected item
     @disposableAdd notationalPanel.selectedItemProp.onValue (selectedItem) ->
-      # TODO: preview selected item
+      # TODO: for now only preview files if the preview tabs are enabled
+      if atom.config.get('tabs.usePreviewTabs') and selectedItem
+        atom.workspace.open Path.join(selectedItem.projectPath, selectedItem.relPath), {
+          activatePane: false # keep focus in the top-pane
+        }
 
     # TODO: move sampleBy inside panel?
     @disposableAdd notationalPanel.selectedItemProp.sampledBy(notationalPanel.openSelectedStream).onValue (selectedItem) ->
@@ -53,16 +58,15 @@ module.exports =
         atom.workspace.open Path.join(selectedItem.projectPath, selectedItem.relPath)
 
     # Handle panel
-    @disposables.add atom.commands.add 'atom-workspace', 'atom-notational:toggle-panel', =>
-      if @panel.isVisible()
-        @panel.hide()
-      else
-        @panel.show()
-        @panel.getItem().querySelector('.search').focus()
+    @disposables.add notationalPanel.hideStream.onValue =>
+      @panel.hide()
+      atom.workspace.getActivePane()?.activate()
 
-    @disposables.add atom.commands.add 'atom-workspace', 'atom-notational:focus', =>
+    @disposables.add focusStream().onValue =>
       @panel.show() unless @panel.isVisible()
-      @panel.getItem().querySelector('.search').focus()
+      input = @panel.getItem().querySelector('.search')
+      input.select()
+      input.focus()
 
 
   disposableAdd: (disposalAction) ->

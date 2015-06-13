@@ -17,7 +17,6 @@ module.exports = ({itemsProp, columnsProp, bodyHeightStream, rowHeightStream}) -
                                    .skipDuplicates()
                                    .filter (height) -> height > 0
                                    .toProperty()
-
   keyInputBus = new Bacon.Bus()
   resetStream        = keyInputBus.filter (ev) -> ev.keyCode is 27 #esc
   openSelectedStream = keyInputBus.filter (ev) -> ev.keyCode is 13 #enter
@@ -109,5 +108,6 @@ module.exports = ({itemsProp, columnsProp, bodyHeightStream, rowHeightStream}) -
   dispose.resizedBodyHeightProp = bodyHeightProp
   dispose.selectedItemProp = selectedItemProp
   dispose.openSelectedStream = openSelectedStream
+  dispose.hideStream = resetStream.bufferWithTimeOrCount(300, 2).filter (x) => x.length is 2
 
   return dispose
