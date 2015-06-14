@@ -10,33 +10,24 @@ resizeHandle = require './vdom/resize-handle'
 vdomTreeToElement = require './vdom-tree-to-element'
 
 # Encapsulates the general logic
-module.exports = ({itemsProp, columnsProp, bodyHeightStream, rowHeightStream}) ->
+module.exports = ({matchedItemsProp, searchBus, columnsProp, bodyHeightStream, rowHeightStream}) ->
   rowHeightProp = rowHeightStream.toProperty()
   bodyHeightBus = new Bacon.Bus()
   bodyHeightProp = bodyHeightStream.merge(bodyHeightBus)
                                    .skipDuplicates()
                                    .filter (height) -> height > 0
                                    .toProperty()
-  keyInputBus = new Bacon.Bus()
-  resetStream        = keyInputBus.filter (ev) -> ev.keyCode is 27 #esc
-  openSelectedStream = keyInputBus.filter (ev) -> ev.keyCode is 13 #enter
-  moveSelectedStream = keyInputBus.filter((ev) -> ev.keyCode is 38).doAction((ev) -> ev.preventDefault()).map(-1) #up
-                .merge(keyInputBus.filter((ev) -> ev.keyCode is 40).doAction((ev) -> ev.preventDefault()).map(1)) #down
 
-  searchBus = new Bacon.Bus()
-  searchProp = Bacon.update '',
-    [searchBus.skipDuplicates()], (..., lastStr) -> lastStr
-    [resetStream], -> ''
-  matchedItemsProp = Bacon.combineWith (items, searchStr) ->
-    return items unless searchStr
-    items.filter (item) ->
-      item.relPath.toLowerCase().search(searchStr.toLowerCase()) isnt -1
-  , itemsProp, searchProp
+  keydownBus = new Bacon.Bus()
+  resetStream        = keydownBus.filter (ev) -> ev.keyCode is 27 #esc
+  openSelectedStream = keydownBus.filter (ev) -> ev.keyCode is 13 #enter
+  moveSelectedStream = keydownBus.filter((ev) -> ev.keyCode is 38).doAction((ev) -> ev.preventDefault()).map(-1) #up
+                .merge(keydownBus.filter((ev) -> ev.keyCode is 40).doAction((ev) -> ev.preventDefault()).map(1)) #down
 
   scrollTopBus = new Bacon.Bus()
   selectItemBus = new Bacon.Bus()
   selectedItemProp = Bacon.update(undefined,
-    [searchProp.changes()], -> undefined
+    [searchBus], -> undefined
     [selectItemBus], (..., newItem) -> newItem
     [moveSelectedStream, matchedItemsProp], selectItemByRelativeOffset
   ).skipDuplicates()
@@ -86,7 +77,7 @@ module.exports = ({itemsProp, columnsProp, bodyHeightStream, rowHeightStream}) -
     h 'div.atom-notational-panel', {
       onclick: -> focusBus.push undefined
     }, [
-      search(searchBus, keyInputBus)
+      search(searchBus, keydownBus)
       contentHeader
       scrollableContent
       resizeHandle
@@ -103,7 +94,7 @@ module.exports = ({itemsProp, columnsProp, bodyHeightStream, rowHeightStream}) -
       el.querySelector('.search').focus()
     [resetStream, elementProp], (..., el) ->
       el.querySelector('.search').value = ''
-    [searchProp.changes(), elementProp], (..., el) ->
+    [searchBus, elementProp], (..., el) ->
       el.querySelector('.tbody').scrollTop = 0 #return to top
   ).onValue() # no-op to setup the listener
 

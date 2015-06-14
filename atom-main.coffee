@@ -26,7 +26,8 @@ module.exports =
     atomAdaptions = notationalItems()
 
     notationalPanel = setupPanel(
-      itemsProp: atomAdaptions.itemsProp
+      matchedItemsProp: atomAdaptions.matchedItemsProp
+      searchBus: atomAdaptions.searchBus
       columnsProp: atomAdaptions.columnsProp
       bodyHeightStream: atoms.fromConfig('atom-notational.bodyHeight')
       rowHeightStream: atoms.fromConfig('atom-notational.rowHeight')

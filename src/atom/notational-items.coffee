@@ -50,7 +50,7 @@ module.exports = ->
   dispose = ->
     deactivateBus.push('dispose')
 
-  dispose.itemsProp = Bacon.update [],
+  itemsProp = Bacon.update [],
     [addItemsStream], (items, newItem) ->
       items.concat(newItem)
     [removeItemsStream], (items, {relPath}) ->
@@ -59,6 +59,15 @@ module.exports = ->
     [removedStream], (items, removedPath) ->
       items.filter ({projectPath}) ->
         projectPath isnt removedPath
+
+  dispose.searchBus = new Bacon.Bus()
+  searchProp = dispose.searchBus.map('.target.value').skipDuplicates().toProperty('')
+
+  dispose.matchedItemsProp = Bacon.combineWith (items, searchStr) ->
+    return items unless searchStr
+    items.filter (item) ->
+      item.relPath.toLowerCase().search(searchStr.toLowerCase()) isnt -1
+  , itemsProp, searchProp
 
   dispose.columnsProp = Bacon.sequentially(0, [columns]).toProperty([])
 
