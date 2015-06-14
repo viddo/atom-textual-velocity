@@ -58,11 +58,11 @@ module.exports =
         atom.workspace.open Path.join(selectedItem.projectPath, selectedItem.relPath)
 
     # Handle panel
-    @disposables.add notationalPanel.hideStream.onValue =>
+    @disposableAdd notationalPanel.hideStream.onValue =>
       @panel.hide()
       atom.workspace.getActivePane()?.activate()
 
-    @disposables.add focusStream().onValue =>
+    @disposableAdd focusStream().onValue =>
       @panel.show() unless @panel.isVisible()
       input = @panel.getItem().querySelector('.search')
       input.select()
