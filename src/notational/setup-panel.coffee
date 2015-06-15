@@ -86,11 +86,11 @@ module.exports = ({matchedItemsProp, searchBus, columnsProp, bodyHeightStream, r
   elementProp = vdomTreeToElement(vdomTreeProp)
 
   dispose = Bacon.when(
-    [selectedItemProp.changes().merge(focusBus), elementProp], (..., el) ->
+    [selectedItemProp.changes(), elementProp], (..., el) ->
       # Scroll item into the view if outside the visible border and was triggered by selectItem change
-      selectedRow = el.querySelector('.is-selected')
-      if selectedRow
+      if selectedRow = el.querySelector('.is-selected')
         selectedRow.scrollIntoViewIfNeeded(false) # centerIfNeeded=false => croll minimal possible to avoid jumps
+    [focusBus, elementProp], (..., el) ->
       el.querySelector('.search').focus()
     [resetStream, elementProp], (..., el) ->
       el.querySelector('.search').value = ''
