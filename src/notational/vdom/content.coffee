@@ -1,4 +1,4 @@
-h = require 'virtual-dom/h'
+h  = require 'virtual-dom/h'
 th = require './th'
 
 module.exports = ({columns, reverseStripes, items, selectedItem}, selectItemBus) ->

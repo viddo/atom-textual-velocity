@@ -1,7 +1,7 @@
-Bacon = require 'baconjs'
+Bacon  = require 'baconjs'
 moment = require 'moment'
-h = require 'virtual-dom/h'
-Path = require 'path'
+h      = require 'virtual-dom/h'
+Path   = require 'path'
 
 module.exports = [
   {

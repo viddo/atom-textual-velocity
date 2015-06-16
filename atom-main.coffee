@@ -1,36 +1,36 @@
 {CompositeDisposable, Disposable} = require 'atom'
-Bacon = require 'baconjs'
-atoms = require './src/atom/streams'
-setupPanel = require './src/notational/setup-panel'
-notationalItems = require './src/atom/notational-items'
-focusStream = require './src/atom/focus-stream'
-Path = require 'path'
+Bacon                             = require 'baconjs'
+atoms                             = require './src/atom/streams'
+setupPanel                        = require './src/notational/setup-panel'
+notationalItems                   = require './src/atom/notational-items'
+focusStream                       = require './src/atom/focus-stream'
+Path                              = require 'path'
 
 module.exports =
-  panel: undefined
-  disposables: undefined
+  panel       : undefined
+  disposables : undefined
 
   config:
     bodyHeight:
-      type: 'number'
-      default: 200
-      minimum: 0
+      type    : 'number'
+      default : 200
+      minimum : 0
     rowHeight:
-      type: 'number'
-      default: 25
-      minimum: 0
+      type    : 'number'
+      default : 25
+      minimum : 0
 
 
   activate: (state) ->
-    @disposables = new CompositeDisposable
+    @disposables  = new CompositeDisposable
     atomAdaptions = notationalItems()
 
     notationalPanel = setupPanel(
-      matchedItemsProp: atomAdaptions.matchedItemsProp
-      searchBus: atomAdaptions.searchBus
-      columnsProp: atomAdaptions.columnsProp
-      bodyHeightStream: atoms.fromConfig('atom-notational.bodyHeight')
-      rowHeightStream: atoms.fromConfig('atom-notational.rowHeight')
+      matchedItemsProp : atomAdaptions.matchedItemsProp
+      searchBus        : atomAdaptions.searchBus
+      columnsProp      : atomAdaptions.columnsProp
+      bodyHeightStream : atoms.fromConfig('atom-notational.bodyHeight')
+      rowHeightStream  : atoms.fromConfig('atom-notational.rowHeight')
     )
 
     # Side effects

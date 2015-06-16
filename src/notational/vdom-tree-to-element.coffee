@@ -1,6 +1,6 @@
 createElement = require 'virtual-dom/create-element'
-diff = require 'virtual-dom/diff'
-patch = require 'virtual-dom/patch'
+diff          = require 'virtual-dom/diff'
+patch         = require 'virtual-dom/patch'
 
 # @param {Property} vdomTreeProp root
 # @return a prop with an HTML element

@@ -1,13 +1,13 @@
-Bacon = require 'baconjs'
-h = require 'virtual-dom/h'
+Bacon                          = require 'baconjs'
+h                              = require 'virtual-dom/h'
 adjustScrollTopForSelectedItem = require './adjust-scroll-top-for-selected-item'
-selectItemByRelativeOffset = require './select-item-by-relative-offset'
-search = require './vdom/search'
-header = require './vdom/header'
-content = require './vdom/content'
-scrollableContent = require './vdom/scrollable-content'
-resizeHandle = require './vdom/resize-handle'
-vdomTreeToElement = require './vdom-tree-to-element'
+selectItemByRelativeOffset     = require './select-item-by-relative-offset'
+search                         = require './vdom/search'
+header                         = require './vdom/header'
+content                        = require './vdom/content'
+scrollableContent              = require './vdom/scrollable-content'
+resizeHandle                   = require './vdom/resize-handle'
+vdomTreeToElement              = require './vdom-tree-to-element'
 
 # Encapsulates the general logic
 module.exports = ({matchedItemsProp, searchBus, columnsProp, bodyHeightStream, rowHeightStream}) ->
@@ -103,10 +103,10 @@ module.exports = ({matchedItemsProp, searchBus, columnsProp, bodyHeightStream, r
       el.querySelector('.tbody').scrollTop = 0 #return to top
   ).onValue() # no-op to setup the listener
 
-  dispose.elementProp = elementProp
+  dispose.elementProp           = elementProp
   dispose.resizedBodyHeightProp = bodyHeightProp
-  dispose.selectedItemProp = selectedItemProp
-  dispose.openSelectedStream = openSelectedStream
-  dispose.hideStream = resetStream.bufferWithTimeOrCount(300, 2).filter (x) => x.length is 2
+  dispose.selectedItemProp      = selectedItemProp
+  dispose.openSelectedStream    = openSelectedStream
+  dispose.hideStream            = resetStream.bufferWithTimeOrCount(300, 2).filter (x) => x.length is 2
 
   return dispose
