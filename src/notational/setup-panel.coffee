@@ -94,6 +94,7 @@ module.exports = ({matchedItemsProp, searchBus, columnsProp, bodyHeightStream, r
       el.querySelector('.search').focus()
     [resetStream, elementProp], (..., el) ->
       el.querySelector('.search').value = ''
+      searchBus.push('')
     [searchBus, elementProp], (..., el) ->
       el.querySelector('.tbody').scrollTop = 0 #return to top
   ).onValue() # no-op to setup the listener
