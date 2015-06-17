@@ -11,7 +11,7 @@ vdomTreeToElement              = require './vdom-tree-to-element'
 
 # Encapsulates the general logic
 module.exports = ({matchedItemsProp, searchBus, columnsProp, bodyHeightStream, rowHeightStream}) ->
-  buses = {
+  bus = {
     bodyHeight : new Bacon.Bus()
     keydown    : new Bacon.Bus()
     scrollTop  : new Bacon.Bus()
@@ -21,24 +21,24 @@ module.exports = ({matchedItemsProp, searchBus, columnsProp, bodyHeightStream, r
   }
   rowHeightProp = rowHeightStream.toProperty()
 
-  bodyHeightProp = bodyHeightStream.merge(buses.bodyHeight)
+  bodyHeightProp = bodyHeightStream.merge(bus.bodyHeight)
     .skipDuplicates()
     .filter (height) -> height > 0
     .toProperty()
 
-  resetStream        = buses.keydown.filter (ev) -> ev.keyCode is 27 #esc
-  openSelectedStream = buses.keydown.filter (ev) -> ev.keyCode is 13 #enter
-  moveSelectedStream = buses.keydown.filter((ev) -> ev.keyCode is 38).doAction((ev) -> ev.preventDefault()).map(-1) #up
-                .merge(buses.keydown.filter((ev) -> ev.keyCode is 40).doAction((ev) -> ev.preventDefault()).map(1)) #down
+  resetStream        = bus.keydown.filter (ev) -> ev.keyCode is 27 #esc
+  openSelectedStream = bus.keydown.filter (ev) -> ev.keyCode is 13 #enter
+  moveSelectedStream = bus.keydown.filter((ev) -> ev.keyCode is 38).doAction((ev) -> ev.preventDefault()).map(-1) #up
+                .merge(bus.keydown.filter((ev) -> ev.keyCode is 40).doAction((ev) -> ev.preventDefault()).map(1)) #down
 
   selectedItemProp = Bacon.update(undefined,
-    [buses.search], -> undefined
-    [buses.selectItem], (..., newItem) -> newItem
+    [bus.search], -> undefined
+    [bus.selectItem], (..., newItem) -> newItem
     [moveSelectedStream, matchedItemsProp], selectItemByRelativeOffset
   ).skipDuplicates()
 
   scrollTopProp = Bacon.update 0,
-    [buses.scrollTop], (..., scrollTop) -> scrollTop
+    [bus.scrollTop], (..., scrollTop) -> scrollTop
     [selectedItemProp.changes(), matchedItemsProp, rowHeightProp, bodyHeightProp], adjustScrollTopForSelectedItem
 
   visibleBeginProp = Bacon.combineWith (scrollTop, rowHeight) ->
@@ -61,7 +61,7 @@ module.exports = ({matchedItemsProp, searchBus, columnsProp, bodyHeightStream, r
           items.slice(begin, end)
         , matchedItemsProp, visibleBeginProp, visibleEndProp
       }).map (data) ->
-        content(data, buses.selectItem)
+        content(data, bus.selectItem)
     topOffset: Bacon.combineWith (scrollTop, rowHeight) ->
         -(scrollTop % rowHeight)
       , scrollTopProp, rowHeightProp
@@ -69,19 +69,19 @@ module.exports = ({matchedItemsProp, searchBus, columnsProp, bodyHeightStream, r
         items.length * rowHeight - scrollTop - bodyHeight
       , matchedItemsProp, rowHeightProp, scrollTopProp, bodyHeightProp
   }).map (data) ->
-    scrollableContent(data, buses.scrollTop)
+    scrollableContent(data, bus.scrollTop)
 
   resizeHandleProp = bodyHeightProp.map (bodyHeight) ->
-    resizeHandle(bodyHeight, buses.bodyHeight)
+    resizeHandle(bodyHeight, bus.bodyHeight)
 
   headerProp = columnsProp.map (columns) ->
     header(columns)
 
   vdomTreeProp = Bacon.combineWith (contentHeader, scrollableContent, resizeHandle) ->
     h 'div.atom-notational-panel', {
-      onclick: -> buses.focus.push undefined
+      onclick: -> bus.focus.push undefined
     }, [
-      search(buses.search, buses.keydown)
+      search(bus.search, bus.keydown)
       contentHeader
       scrollableContent
       resizeHandle
@@ -94,12 +94,12 @@ module.exports = ({matchedItemsProp, searchBus, columnsProp, bodyHeightStream, r
       # Scroll item into the view if outside the visible border and was triggered by selectItem change
       if selectedRow = el.querySelector('.is-selected')
         selectedRow.scrollIntoViewIfNeeded(false) # centerIfNeeded=false => croll minimal possible to avoid jumps
-    [buses.focus, elementProp], (..., el) ->
+    [bus.focus, elementProp], (..., el) ->
       el.querySelector('.search').focus()
     [resetStream, elementProp], (..., el) ->
       el.querySelector('.search').value = ''
-      buses.search.push('')
-    [buses.search, elementProp], (..., el) ->
+      bus.search.push('')
+    [bus.search, elementProp], (..., el) ->
       el.querySelector('.tbody').scrollTop = 0 #return to top
   )
 
