@@ -7,7 +7,7 @@ focusStream                       = require './src/atom/focus-stream'
 Path                              = require 'path'
 
 module.exports =
-  panel       : undefined
+  topPanel    : undefined
   disposables : undefined
 
   config:
@@ -25,7 +25,7 @@ module.exports =
     @disposables  = new CompositeDisposable
     atomAdaptions = notationalItems()
 
-    notationalPanel = setupPanel(
+    panel = setupPanel(
       matchedItemsProp : atomAdaptions.matchedItemsProp
       searchBus        : atomAdaptions.searchBus
       columnsProp      : atomAdaptions.columnsProp
@@ -36,18 +36,18 @@ module.exports =
     # Side effects
     @disposableAdds [
       atomAdaptions
-      notationalPanel
+      panel.sideEffectsProp.onValue() # no-op, but enforce side-effects being setup
 
       # Create panel 1st time the element is created
-      notationalPanel.elementProp.onValue (el) =>
-            @panel = atom.workspace.addTopPanel(item: el) unless @panel
+      panel.elementProp.onValue (el) =>
+            @topPanel = atom.workspace.addTopPanel(item: el) unless @topPanel
 
       # Persist resized body height
-      notationalPanel.resizedBodyHeightProp.debounce(500).onValue (newHeight) ->
+      panel.resizedBodyHeightProp.debounce(500).onValue (newHeight) ->
         atom.config.set('atom-notational.bodyHeight', newHeight)
 
       # Handle selected item
-      notationalPanel.selectedItemProp.onValue (selectedItem) ->
+      panel.selectedItemProp.onValue (selectedItem) ->
         # TODO: for now only preview files if the preview tabs are enabled
         if atom.config.get('tabs.usePreviewTabs') and selectedItem
           atom.workspace.open Path.join(selectedItem.projectPath, selectedItem.relPath), {
@@ -56,19 +56,19 @@ module.exports =
 
       # Open item on selected event
       # TODO: move sampleBy inside panel?
-      notationalPanel.selectedItemProp.sampledBy(notationalPanel.openSelectedStream).onValue (selectedItem) ->
+      panel.selectedItemProp.sampledBy(panel.openSelectedStream).onValue (selectedItem) ->
         if selectedItem
           atom.workspace.open Path.join(selectedItem.projectPath, selectedItem.relPath)
 
       # Hide panel on hide evnt
-      notationalPanel.hideStream.onValue =>
-        @panel.hide()
+      panel.hideStream.onValue =>
+        @topPanel.hide()
         atom.workspace.getActivePane()?.activate()
 
       # Show panel and focus on input on event
       focusStream().onValue =>
-        @panel.show() unless @panel.isVisible()
-        input = @panel.getItem().querySelector('.search')
+        @topPanel.show() unless @topPanel.isVisible()
+        input = @topPanel.getItem().querySelector('.search')
         input.select()
         input.focus()
     ]
@@ -77,12 +77,17 @@ module.exports =
   disposableAdds: (disposalActions) ->
     @disposableAdd(fn) for fn in disposalActions
 
-  disposableAdd: (disposalAction) ->
-    throw new Error('must be a function') if typeof disposalAction isnt 'function'
-    @disposables.add new Disposable(disposalAction)
+  disposableAdd: (o) ->
+    unless typeof o.dispose is 'function'
+      if typeof o is 'function'
+        o = new Disposable(o)
+      else
+        throw new Error('must be a function')
+
+    @disposables.add(o)
 
 
   deactivate: ->
     @disposables.dispose()
-    @panel?.destroy()
-    @panel = null
+    @topPanel?.destroy()
+    @topPanel = null

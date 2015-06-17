@@ -22,9 +22,9 @@ module.exports = ({matchedItemsProp, searchBus, columnsProp, bodyHeightStream, r
   rowHeightProp = rowHeightStream.toProperty()
 
   bodyHeightProp = bodyHeightStream.merge(buses.bodyHeight)
-                                   .skipDuplicates()
-                                   .filter (height) -> height > 0
-                                   .toProperty()
+    .skipDuplicates()
+    .filter (height) -> height > 0
+    .toProperty()
 
   resetStream        = buses.keydown.filter (ev) -> ev.keyCode is 27 #esc
   openSelectedStream = buses.keydown.filter (ev) -> ev.keyCode is 13 #enter
@@ -89,7 +89,7 @@ module.exports = ({matchedItemsProp, searchBus, columnsProp, bodyHeightStream, r
   , headerProp, scrollableContentProp, resizeHandleProp
   elementProp = vdomTreeToElement(vdomTreeProp)
 
-  dispose = Bacon.when(
+  sideEffectsProp = Bacon.when(
     [selectedItemProp.changes(), elementProp], (..., el) ->
       # Scroll item into the view if outside the visible border and was triggered by selectItem change
       if selectedRow = el.querySelector('.is-selected')
@@ -101,12 +101,17 @@ module.exports = ({matchedItemsProp, searchBus, columnsProp, bodyHeightStream, r
       buses.search.push('')
     [buses.search, elementProp], (..., el) ->
       el.querySelector('.tbody').scrollTop = 0 #return to top
-  ).onValue() # no-op to setup the listener
+  )
 
-  dispose.elementProp           = elementProp
-  dispose.resizedBodyHeightProp = bodyHeightProp
-  dispose.selectedItemProp      = selectedItemProp
-  dispose.openSelectedStream    = openSelectedStream
-  dispose.hideStream            = resetStream.bufferWithTimeOrCount(300, 2).filter (x) => x.length is 2
+  # double-key press within 300ms triggers a hide event
+  hideStream = resetStream.bufferWithTimeOrCount(300, 2).filter (x) ->
+    x.length is 2
 
-  return dispose
+  return {
+    elementProp           : elementProp
+    resizedBodyHeightProp : bodyHeightProp
+    selectedItemProp      : selectedItemProp
+    openSelectedStream    : openSelectedStream
+    hideStream            : hideStream
+    sideEffectsProp       : sideEffectsProp
+  }
