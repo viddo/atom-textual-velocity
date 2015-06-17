@@ -1,7 +1,7 @@
 {CompositeDisposable, Disposable} = require 'atom'
 Bacon                             = require 'baconjs'
 atoms                             = require './src/atom/streams'
-setupPanel                        = require './src/notational/setup-panel'
+createPanel                       = require './src/notational/create-panel'
 notationalItems                   = require './src/atom/notational-items'
 focusStream                       = require './src/atom/focus-stream'
 Path                              = require 'path'
@@ -25,7 +25,7 @@ module.exports =
     @disposables  = new CompositeDisposable
     atomAdaptions = notationalItems()
 
-    panel = setupPanel(
+    panel = createPanel(
       matchedItemsProp : atomAdaptions.matchedItemsProp
       searchBus        : atomAdaptions.searchBus
       columnsProp      : atomAdaptions.columnsProp
