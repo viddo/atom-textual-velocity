@@ -1,5 +1,8 @@
 Bacon                          = require 'baconjs'
 h                              = require 'virtual-dom/h'
+createElement                  = require 'virtual-dom/create-element'
+diff                           = require 'virtual-dom/diff'
+patch                          = require 'virtual-dom/patch'
 adjustScrollTopForSelectedItem = require './adjust-scroll-top-for-selected-item'
 selectItemByRelativeOffset     = require './select-item-by-relative-offset'
 search                         = require './vdom/search'
@@ -7,7 +10,6 @@ header                         = require './vdom/header'
 content                        = require './vdom/content'
 scrollableContent              = require './vdom/scrollable-content'
 resizeHandle                   = require './vdom/resize-handle'
-vdomTreeToElement              = require './vdom-tree-to-element'
 
 # Encapsulates the general logic
 module.exports = ({matchedItemsProp, searchBus, columnsProp, bodyHeightStream, rowHeightStream}) ->
@@ -87,31 +89,41 @@ module.exports = ({matchedItemsProp, searchBus, columnsProp, bodyHeightStream, r
       resizeHandle
     ]
   , headerProp, scrollableContentProp, resizeHandleProp
-  elementProp = vdomTreeToElement(vdomTreeProp)
 
-  sideEffectsProp = Bacon.when(
-    [selectedItemProp.changes(), elementProp], (..., el) ->
+  initialTree = h 'div.atom-notational-panel'
+  renderProp = Bacon.update {
+    el   : createElement(initialTree)
+    tree : initialTree
+  },
+    [vdomTreeProp.changes()], ({el, tree}, newTree) ->
+      return {
+        el   : patch(el, diff(tree, newTree))
+        tree : newTree
+      }
+    [selectedItemProp.changes()], (current, ...) ->
       # Scroll item into the view if outside the visible border and was triggered by selectItem change
-      if selectedRow = el.querySelector('.is-selected')
+      if selectedRow = current.el.querySelector('.is-selected')
         selectedRow.scrollIntoViewIfNeeded(false) # centerIfNeeded=false => croll minimal possible to avoid jumps
-    [bus.focus, elementProp], (..., el) ->
-      el.querySelector('.search').focus()
-    [resetStream, elementProp], (..., el) ->
-      el.querySelector('.search').value = ''
+      return current
+    [bus.focus], (current, ...) ->
+      current.el.querySelector('.search').focus()
+      return current
+    [resetStream], (current, ...) ->
+      current.el.querySelector('.search').value = ''
       bus.search.push('')
-    [bus.search, elementProp], (..., el) ->
-      el.querySelector('.tbody').scrollTop = 0 #return to top
-  )
+      return current
+    [bus.search], (current, ...) ->
+      current.el.querySelector('.tbody').scrollTop = 0 #return to top
+      return current
 
   # double-key press within 300ms triggers a hide event
   hideStream = resetStream.bufferWithTimeOrCount(300, 2).filter (x) ->
     x.length is 2
 
   return {
-    elementProp           : elementProp
+    elementProp           : renderProp.map('.el').filter (el) -> el # to avoid 1st value when it's undefined
     resizedBodyHeightProp : bodyHeightProp
     selectedItemProp      : selectedItemProp
     openSelectedStream    : openSelectedStream
     hideStream            : hideStream
-    sideEffectsProp       : sideEffectsProp
   }

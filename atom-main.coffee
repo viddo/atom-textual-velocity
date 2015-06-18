@@ -36,11 +36,10 @@ module.exports =
     # Side effects
     @disposableAdds [
       atomAdaptions
-      panel.sideEffectsProp.onValue() # no-op, but enforce side-effects being setup
 
       # Create panel 1st time the element is created
       panel.elementProp.onValue (el) =>
-            @topPanel = atom.workspace.addTopPanel(item: el) unless @topPanel
+        @topPanel = atom.workspace.addTopPanel(item: el) unless @topPanel
 
       # Persist resized body height
       panel.resizedBodyHeightProp.debounce(500).onValue (newHeight) ->
