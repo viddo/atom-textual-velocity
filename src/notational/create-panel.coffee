@@ -12,45 +12,44 @@ scrollableContent              = require './vdom/scrollable-content'
 resizeHandle                   = require './vdom/resize-handle'
 
 # Encapsulates the general logic
-module.exports = ({matchedItemsProp, searchBus, columnsProp, bodyHeightStream, rowHeightStream}) ->
-  bus = {
-    bodyHeight : new Bacon.Bus()
-    keydown    : new Bacon.Bus()
-    scrollTop  : new Bacon.Bus()
-    selectItem : new Bacon.Bus()
-    focus      : new Bacon.Bus()
-    search     : searchBus
-  }
-  rowHeightProp = rowHeightStream.toProperty()
+module.exports = ({matchedItemsProp, columnsProp, bodyHeightProp, rowHeightProp, searchBus}) ->
+  bodyHeightBus = new Bacon.Bus()
+  keydownBus    = new Bacon.Bus()
+  scrollTopBus  = new Bacon.Bus()
+  selectItemBus = new Bacon.Bus()
+  focusBus      = new Bacon.Bus()
 
-  bodyHeightProp = bodyHeightStream.merge(bus.bodyHeight)
+  # Setup streams for search key inputs
+  resetStream        = keydownBus.filter (ev) -> ev.keyCode is 27 #esc
+  openSelectedStream = keydownBus.filter (ev) -> ev.keyCode is 13 #enter
+  moveSelectedStream = keydownBus.filter((ev) -> ev.keyCode is 38).doAction((ev) -> ev.preventDefault()).map(-1) #up
+                .merge(keydownBus.filter((ev) -> ev.keyCode is 40).doAction((ev) -> ev.preventDefault()).map(1)) #down
+
+  selectedItemProp = Bacon.update(undefined,
+    [searchBus], -> undefined
+    [selectItemBus], (..., newItem) -> newItem
+    [moveSelectedStream, matchedItemsProp], selectItemByRelativeOffset
+  ).skipDuplicates()
+
+  # Setup props related to the scrollable content
+  bodyHeightProp = bodyHeightBus.merge(bodyHeightProp.changes())
     .skipDuplicates()
     .filter (height) -> height > 0
     .toProperty()
 
-  resetStream        = bus.keydown.filter (ev) -> ev.keyCode is 27 #esc
-  openSelectedStream = bus.keydown.filter (ev) -> ev.keyCode is 13 #enter
-  moveSelectedStream = bus.keydown.filter((ev) -> ev.keyCode is 38).doAction((ev) -> ev.preventDefault()).map(-1) #up
-                .merge(bus.keydown.filter((ev) -> ev.keyCode is 40).doAction((ev) -> ev.preventDefault()).map(1)) #down
-
-  selectedItemProp = Bacon.update(undefined,
-    [bus.search], -> undefined
-    [bus.selectItem], (..., newItem) -> newItem
-    [moveSelectedStream, matchedItemsProp], selectItemByRelativeOffset
-  ).skipDuplicates()
-
   scrollTopProp = Bacon.update 0,
-    [bus.scrollTop], (..., scrollTop) -> scrollTop
+    [scrollTopBus], (..., scrollTop) -> scrollTop
     [selectedItemProp.changes(), matchedItemsProp, rowHeightProp, bodyHeightProp], adjustScrollTopForSelectedItem
 
   visibleBeginProp = Bacon.combineWith (scrollTop, rowHeight) ->
     (scrollTop / rowHeight) | 0
   , scrollTopProp, rowHeightProp
+
   visibleEndProp = Bacon.combineWith (begin, bodyHeight, rowHeight) ->
     begin + ((bodyHeight / rowHeight) | 0) + 2 # add to avoid visible gap when scrolling
   , visibleBeginProp, bodyHeightProp, rowHeightProp
 
-  # vdom props
+  # Setup vdom of scrollable content
   scrollableContentProp = Bacon.combineTemplate({
     bodyHeight: bodyHeightProp
     scrollTop: scrollTopProp
@@ -63,7 +62,7 @@ module.exports = ({matchedItemsProp, searchBus, columnsProp, bodyHeightStream, r
           items.slice(begin, end)
         , matchedItemsProp, visibleBeginProp, visibleEndProp
       }).map (data) ->
-        content(data, bus.selectItem)
+        content(data, selectItemBus)
     topOffset: Bacon.combineWith (scrollTop, rowHeight) ->
         -(scrollTop % rowHeight)
       , scrollTopProp, rowHeightProp
@@ -71,24 +70,18 @@ module.exports = ({matchedItemsProp, searchBus, columnsProp, bodyHeightStream, r
         items.length * rowHeight - scrollTop - bodyHeight
       , matchedItemsProp, rowHeightProp, scrollTopProp, bodyHeightProp
   }).map (data) ->
-    scrollableContent(data, bus.scrollTop)
+    scrollableContent(data, scrollTopBus)
 
-  resizeHandleProp = bodyHeightProp.map (bodyHeight) ->
-    resizeHandle(bodyHeight, bus.bodyHeight)
-
-  headerProp = columnsProp.map (columns) ->
-    header(columns)
-
-  vdomTreeProp = Bacon.combineWith (contentHeader, scrollableContent, resizeHandle) ->
+  vdomTreeProp = Bacon.combineWith (columns, scrollableContent, bodyHeight) ->
     h 'div.atom-notational-panel', {
-      onclick: -> bus.focus.push undefined
+      onclick: -> focusBus.push undefined
     }, [
-      search(bus.search, bus.keydown)
-      contentHeader
+      search(searchBus, keydownBus)
+      header(columns)
       scrollableContent
-      resizeHandle
+      resizeHandle(bodyHeight, bodyHeightBus)
     ]
-  , headerProp, scrollableContentProp, resizeHandleProp
+  , columnsProp, scrollableContentProp, bodyHeightProp
 
   initialTree = h 'div.atom-notational-panel'
   renderProp = Bacon.update {
@@ -105,14 +98,14 @@ module.exports = ({matchedItemsProp, searchBus, columnsProp, bodyHeightStream, r
       if selectedRow = current.el.querySelector('.is-selected')
         selectedRow.scrollIntoViewIfNeeded(false) # centerIfNeeded=false => croll minimal possible to avoid jumps
       return current
-    [bus.focus], (current, ...) ->
+    [focusBus], (current, ...) ->
       current.el.querySelector('.search').focus()
       return current
     [resetStream], (current, ...) ->
       current.el.querySelector('.search').value = ''
-      bus.search.push('')
+      searchBus.push('')
       return current
-    [bus.search], (current, ...) ->
+    [searchBus], (current, ...) ->
       current.el.querySelector('.tbody').scrollTop = 0 #return to top
       return current
 

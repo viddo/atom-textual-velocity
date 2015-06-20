@@ -27,10 +27,10 @@ module.exports =
 
     panel = createPanel(
       matchedItemsProp : atomAdaptions.matchedItemsProp
-      searchBus        : atomAdaptions.searchBus
       columnsProp      : atomAdaptions.columnsProp
-      bodyHeightStream : atoms.fromConfig('atom-notational.bodyHeight')
-      rowHeightStream  : atoms.fromConfig('atom-notational.rowHeight')
+      bodyHeightProp   : atoms.fromConfig('atom-notational.bodyHeight').toProperty()
+      rowHeightProp    : atoms.fromConfig('atom-notational.rowHeight').toProperty()
+      searchBus        : atomAdaptions.searchBus
     )
 
     # Side effects
