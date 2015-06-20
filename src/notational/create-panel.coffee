@@ -121,7 +121,7 @@ module.exports = ({matchedItemsProp, searchBus, columnsProp, bodyHeightStream, r
     x.length is 2
 
   return {
-    elementProp           : renderProp.map('.el').filter (el) -> el # to avoid 1st value when it's undefined
+    elementProp           : renderProp.map('.el')
     resizedBodyHeightProp : bodyHeightProp
     selectedItemProp      : selectedItemProp
     openSelectedStream    : openSelectedStream
