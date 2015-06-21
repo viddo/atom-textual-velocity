@@ -24,12 +24,13 @@ module.exports = (projectPath, ignoredNames, excludeVcsIgnoredPaths) ->
     .map (name) ->
       Path.join(projectPath, name)
 
-  watcher = watchPath projectPath, ignored, (eventName, relPath, stats=undefined) ->
+  watcher = watchPath(projectPath, ignored, (eventName, relPath, stats=undefined) ->
     emit(eventName, {
-      relPath: relPath
-      projectPath: projectPath
-      stats: stats
+      relPath     : relPath
+      projectPath : projectPath
+      stats       : stats
     })
+  )
 
   process.on 'message', ->
     watcher.close()

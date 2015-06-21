@@ -1,20 +1,20 @@
 Chokidar = require 'chokidar'
-FS = require 'fs'
-Path = require 'path'
+FS       = require 'fs'
+Path     = require 'path'
 
 module.exports = (rootPath, ignored, emitEvent) ->
   watcher = Chokidar.watch('.', {
-    cwd: rootPath
-    ignored: ignored
-    persistent: true
+    cwd        : rootPath
+    ignored    : ignored
+    persistent : true
   })
 
-  ['add', 'change', 'unlink'].forEach (name) ->
-    watcher.on name, (relPath) ->
-      if name is 'unlink'
-        emitEvent(name, relPath)
-      else
-        FS.stat Path.join(rootPath, relPath), (error, stats) ->
-          emitEvent(name, relPath, stats) unless error
+  ['add', 'change'].forEach (eventName) ->
+    watcher.on eventName, (relPath) ->
+      FS.stat Path.join(rootPath, relPath), (error, stats) ->
+        emitEvent(eventName, relPath, stats) unless error
+
+  watcher.on 'unlink', (relPath) ->
+    emitEvent('unlink', relPath)
 
   return watcher
