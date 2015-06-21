@@ -12,7 +12,7 @@ scrollableContent              = require './vdom/scrollable-content'
 resizeHandle                   = require './vdom/resize-handle'
 
 # Encapsulates the general logic
-module.exports = ({matchedItemsProp, columnsProp, bodyHeightProp, rowHeightProp, searchBus}) ->
+module.exports = ({matchedItemsProp, columnsProp, rowHeightProp, bodyHeightStream, searchBus}) ->
   bodyHeightBus = new Bacon.Bus()
   keydownBus    = new Bacon.Bus()
   scrollTopBus  = new Bacon.Bus()
@@ -32,10 +32,10 @@ module.exports = ({matchedItemsProp, columnsProp, bodyHeightProp, rowHeightProp,
   ).skipDuplicates()
 
   # Setup props related to the scrollable content
-  bodyHeightProp = bodyHeightBus.merge(bodyHeightProp.changes())
+  bodyHeightProp = bodyHeightBus.merge(bodyHeightStream)
     .skipDuplicates()
     .filter (height) -> height > 0
-    .toProperty()
+    .toProperty(100)
 
   scrollTopProp = Bacon.update 0,
     [scrollTopBus], (..., scrollTop) -> scrollTop
@@ -88,7 +88,7 @@ module.exports = ({matchedItemsProp, columnsProp, bodyHeightProp, rowHeightProp,
     el   : createElement(initialTree)
     tree : initialTree
   },
-    [vdomTreeProp.changes()], ({el, tree}, newTree) ->
+    [vdomTreeProp.toEventStream()], ({el, tree}, newTree) ->
       return {
         el   : patch(el, diff(tree, newTree))
         tree : newTree

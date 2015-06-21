@@ -28,8 +28,8 @@ module.exports =
     panel = createPanel(
       matchedItemsProp : atomAdaptions.matchedItemsProp
       columnsProp      : atomAdaptions.columnsProp
-      bodyHeightProp   : atoms.fromConfig('atom-notational.bodyHeight').toProperty()
       rowHeightProp    : atoms.fromConfig('atom-notational.rowHeight').toProperty()
+      bodyHeightStream : atoms.fromConfig('atom-notational.bodyHeight')
       searchBus        : atomAdaptions.searchBus
     )
 
