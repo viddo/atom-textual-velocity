@@ -3,7 +3,6 @@ Bacon                             = require 'baconjs'
 atoms                             = require './src/atom/streams'
 createPanel                       = require './src/notational/create-panel'
 notationalItems                   = require './src/atom/notational-items'
-focusStream                       = require './src/atom/focus-stream'
 Path                              = require 'path'
 
 module.exports =
@@ -65,7 +64,7 @@ module.exports =
         atom.workspace.getActivePane()?.activate()
 
       # Show panel and focus on input on event
-      focusStream().onValue =>
+      atoms.cancelCommand().onValue =>
         @topPanel.show() unless @topPanel.isVisible()
         input = @topPanel.getItem().querySelector('.search')
         input.select()

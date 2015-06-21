@@ -31,3 +31,10 @@ module.exports =
         currentPaths.filter (path) ->
           newPaths.indexOf(path) < 0
     }
+
+  cancelCommand: ->
+    resetVimCommandStream = @fromCommand 'atom-text-editor.vim-mode', 'vim-mode:reset-command-mode'
+    coreCancelStream      = @fromCommand 'atom-text-editor', 'core:cancel'
+    resetVimCommandStream.merge(coreCancelStream)
+      .bufferWithTimeOrCount(300, 2)
+      .filter (x) -> x.length is 2
