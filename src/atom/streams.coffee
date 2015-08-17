@@ -33,8 +33,9 @@ module.exports =
     }
 
   cancelCommand: ->
-    resetVimCommandStream = @fromCommand 'atom-text-editor.vim-mode', 'vim-mode:reset-command-mode'
-    coreCancelStream      = @fromCommand 'atom-text-editor', 'core:cancel'
-    resetVimCommandStream.merge(coreCancelStream)
+    # double esc to trigger
+    resetVimStream   = @fromCommand 'atom-text-editor.vim-mode', 'vim-mode:reset-normal-mode'
+    coreCancelStream = @fromCommand 'atom-text-editor', 'core:cancel'
+    resetVimStream.merge(coreCancelStream)
       .bufferWithTimeOrCount(300, 2)
       .filter (x) -> x.length is 2
