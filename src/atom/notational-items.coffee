@@ -1,22 +1,22 @@
-Bacon           = require 'baconjs'
-{Task}          = require 'atom'
-Path            = require 'path'
-{projectsPaths} = require './streams'
-columns         = require './columns'
+Bacon   = require 'baconjs'
+{Task}  = require 'atom'
+Path    = require 'path'
+atoms   = require './streams'
+columns = require './columns'
+R       = require 'ramda'
 
 # @param {Stream} watchedProjectsStream objects containing a path {String} and a task {Task}
 # @param {Stream} removedStream paths that are removed
 # @return {Property} array of projects
-projects = (watchedProjectsStream, removedStream) ->
+createProjectsProp = (watchedProjectsStream, removedStream) ->
   Bacon.update [],
-    [watchedProjectsStream], (projects, project) ->
-      projects.concat(project)
+    [watchedProjectsStream], R.flip(R.invoker(1, 'concat'))
     [removedStream], (projects, removedPath) ->
-      [removedProject] = projects.filter ({path}) ->
-        path is removedPath
-      removedProject.task.send('dispose') if removedProject
-      projects.filter ({path}) ->
-        path isnt removedPath
+      equalsRemovedPath = R.propEq('path', removedPath)
+      removedProject = R.find(equalsRemovedPath, projects)
+      if removedProject
+        removedProject.task.send('dispose')
+      projects.filter(R.compose(R.not equalsRemovedPath))
 
 watchedProjects = (addedStream) ->
   addedStream.map (path) ->
@@ -32,11 +32,11 @@ watchedProjects = (addedStream) ->
 
 
 module.exports = ->
-  {addedStream, removedStream} = projectsPaths()
+  {addedStream, removedStream} = atoms.projectsPaths()
   watchedProjectsStream = watchedProjects(addedStream)
 
   deactivateBus = new Bacon.Bus()
-  projects(watchedProjectsStream, removedStream)
+  createProjectsProp(watchedProjectsStream, removedStream)
     .sampledBy(deactivateBus)
     .onValue (projects) ->
       task.send('dispose') for {task} in projects
