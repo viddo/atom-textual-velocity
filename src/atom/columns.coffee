@@ -2,6 +2,9 @@ Bacon  = require 'baconjs'
 moment = require 'moment'
 h      = require 'virtual-dom/h'
 Path   = require 'path'
+R      = require 'ramda'
+
+dateFromNow = R.pipe R.path(R.__), moment, R.invoker(0, 'fromNow')
 
 module.exports = [
   {
@@ -10,19 +13,20 @@ module.exports = [
     cellContent: (item) ->
       pieces = item.relPath.split(Path.sep)
       [
-        h 'span.text-subtle', [
-          pieces.slice(0, -1).join(Path.sep)
-          Path.sep
-        ] if pieces.length > 1
+        if pieces.length > 1
+          h 'span.text-subtle', [
+            pieces.slice(0, -1).join(Path.sep)
+            Path.sep
+          ]
         pieces.slice(-1)
       ]
   },{
     title: 'Date created'
     width: 20
-    cellContent: (item) -> moment(item.stats.birthtime).fromNow()
+    cellContent: dateFromNow(['stats' ,'birthtime'])
   },{
     title: 'Date modified'
     width: 20
-    cellContent: (item) -> moment(item.stats.mtime).fromNow()
+    cellContent: dateFromNow(['stats' ,'mtime'])
   }
 ]
