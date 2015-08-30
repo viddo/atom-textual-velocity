@@ -32,14 +32,15 @@ watchedProjects = (addedStream) ->
 
 
 module.exports = ->
-  {addedStream, removedStream} = atoms.projectsPaths()
-  watchedProjectsStream = watchedProjects(addedStream)
+  projectsPaths = atoms.projectsPaths()
+  watchedProjectsStream = watchedProjects(projectsPaths.addedStream)
 
   deactivateBus = new Bacon.Bus()
-  createProjectsProp(watchedProjectsStream, removedStream)
+  createProjectsProp(watchedProjectsStream, projectsPaths.removedStream)
     .sampledBy(deactivateBus)
     .onValue (projects) ->
-      task.send('dispose') for {task} in projects
+      for {task} in projects
+        task.send('dispose')
       return Bacon.noMore
 
   addItemsStream = watchedProjectsStream.flatMap ({task}) ->
@@ -56,7 +57,7 @@ module.exports = ->
     [removeItemsStream], (items, {relPath}) ->
       items.filter (item) ->
         item.relPath isnt relPath
-    [removedStream], (items, removedPath) ->
+    [projectsPaths.removedStream], (items, removedPath) ->
       items.filter ({projectPath}) ->
         projectPath isnt removedPath
 
