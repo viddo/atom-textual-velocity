@@ -2,7 +2,7 @@
 Bacon                             = require 'baconjs'
 atoms                             = require './src/atom/streams'
 createPanel                       = require './src/notational/create-panel'
-notationalItems                   = require './src/atom/notational-items'
+NotationalItems                   = require './src/atom/notational-items'
 Path                              = require 'path'
 
 module.exports =
@@ -22,20 +22,18 @@ module.exports =
 
   activate: (state) ->
     @disposables  = new CompositeDisposable
-    atomAdaptions = notationalItems()
+    @atomAdaptions = new NotationalItems()
 
     panel = createPanel(
-      matchedItemsProp : atomAdaptions.matchedItemsProp
-      columnsProp      : atomAdaptions.columnsProp
+      matchedItemsProp : @atomAdaptions.matchedItemsProp
+      columnsProp      : @atomAdaptions.columnsProp
+      searchBus        : @atomAdaptions.searchBus
       rowHeightProp    : atoms.fromConfig('atom-notational.rowHeight').toProperty()
       bodyHeightStream : atoms.fromConfig('atom-notational.bodyHeight')
-      searchBus        : atomAdaptions.searchBus
     )
 
     # Side effects
     @disposableAdds [
-      atomAdaptions
-
       # Create panel 1st time the element is created
       panel.elementProp.onValue (el) =>
         @topPanel = atom.workspace.addTopPanel(item: el) unless @topPanel
@@ -86,6 +84,7 @@ module.exports =
 
 
   deactivate: ->
+    @atomAdaptions.dispose()
     @disposables.dispose()
     @topPanel?.destroy()
     @topPanel = null
