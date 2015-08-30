@@ -5,12 +5,14 @@ atoms   = require './streams'
 columns = require './columns'
 R       = require 'ramda'
 
+concatNewItem = R.flip(R.invoker(1, 'concat'))
+
 # @param {Stream} watchedProjectsStream objects containing a path {String} and a task {Task}
 # @param {Stream} removedStream paths that are removed
 # @return {Property} array of projects
 createProjectsProp = (watchedProjectsStream, removedStream) ->
   Bacon.update [],
-    [watchedProjectsStream], R.flip(R.invoker(1, 'concat'))
+    [watchedProjectsStream], concatNewItem
     [removedStream], (projects, removedPath) ->
       equalsRemovedPath = R.propEq('path', removedPath)
       removedProject = R.find(equalsRemovedPath, projects)
@@ -43,6 +45,7 @@ module.exports = ->
         task.send('dispose')
       return Bacon.noMore
 
+
   addItemsStream = watchedProjectsStream.flatMap ({task}) ->
     Bacon.fromEvent(task, 'add')
   removeItemsStream = watchedProjectsStream.flatMap ({task}) ->
@@ -52,8 +55,7 @@ module.exports = ->
     deactivateBus.push('dispose')
 
   itemsProp = Bacon.update [],
-    [addItemsStream], (items, newItem) ->
-      items.concat(newItem)
+    [addItemsStream], concatNewItem
     [removeItemsStream], (items, {relPath}) ->
       items.filter (item) ->
         item.relPath isnt relPath
