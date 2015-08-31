@@ -13,7 +13,7 @@ class NotationalItems
       [closeProjectsStream], (items, item) ->
         items.filter R.compose(R.not, R.eqProps('projectPath', item, R.__))
 
-    searchProp = searchStream.map('.target.value').skipDuplicates().toProperty('')
+    searchProp = searchStream.skipDuplicates().toProperty('')
 
     @matchedItemsProp = Bacon.combineWith (items, searchStr) ->
       return items unless searchStr

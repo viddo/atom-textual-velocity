@@ -56,13 +56,7 @@ describe 'notational-items', ->
 
     describe 'when a search string is given', ->
       it 'filters out the items that matches string', ->
-        @searchBus.push {
-          target:
-            value: 'd'
-        }
+        @searchBus.push 'd'
         expect(@matchedItemsPropSpy.mostRecentCall.args[0]).toEqual @items.slice(3)
-        @searchBus.push {
-          target:
-            value: 'd4'
-        }
+        @searchBus.push 'd4'
         expect(@matchedItemsPropSpy.mostRecentCall.args[0]).toEqual @items.slice(3,4)

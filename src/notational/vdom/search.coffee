@@ -9,5 +9,5 @@ module.exports = (searchBus, keydownBus) ->
     onkeydown: (ev) ->
       keydownBus.push ev
     oninput: (ev) ->
-      searchBus.push ev
+      searchBus.push ev.target.value
   }
