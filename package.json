@@ -13,6 +13,7 @@
     "chokidar": "^1.0.x",
     "gitignore-globs": "^0.1.1",
     "moment": "^2.10.x",
+    "ramda": "^0.17.1",
     "virtual-dom": "^2.x"
   }
 }

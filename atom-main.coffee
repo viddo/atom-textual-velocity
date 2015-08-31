@@ -1,9 +1,9 @@
-{CompositeDisposable, Disposable} = require 'atom'
-Bacon                             = require 'baconjs'
-atoms                             = require './src/atom/streams'
-createPanel                       = require './src/notational/create-panel'
-NotationalItems                   = require './src/atom/notational-items'
-Path                              = require 'path'
+{CompositeDisposable, Disposable, Task} = require 'atom'
+Bacon                                   = require 'baconjs'
+Path                                    = require 'path'
+atoms                                   = require './src/atom/streams'
+createPanel                             = require './src/notational/create-panel'
+NotationalItems                         = require './src/atom/notational-items'
 
 module.exports =
   topPanel    : undefined
@@ -22,12 +22,22 @@ module.exports =
 
   activate: (state) ->
     @disposables  = new CompositeDisposable
-    @atomAdaptions = new NotationalItems()
+    @tasks = {}
+
+    searchBus = new Bacon.Bus()
+    projectsPaths = atoms.projectsPaths()
+    watchPathsStream = projectsPaths.addedStream.map(@createWatchPathTask.bind(this))
+    atomAdaptions = new NotationalItems(
+      searchStream        : searchBus
+      addItemsStream      : watchPathsStream.flatMap (task) -> Bacon.fromEvent(task, 'add')
+      removeItemsStream   : watchPathsStream.flatMap (task) -> Bacon.fromEvent(task, 'unlink')
+      closeProjectsStream : projectsPaths.removedStream.map(@destroyWatchPathTask.bind(this))
+    )
 
     panel = createPanel(
-      matchedItemsProp : @atomAdaptions.matchedItemsProp
-      columnsProp      : @atomAdaptions.columnsProp
-      searchBus        : @atomAdaptions.searchBus
+      matchedItemsProp : atomAdaptions.matchedItemsProp
+      columnsProp      : atomAdaptions.columnsProp
+      searchBus        : searchBus
       rowHeightProp    : atoms.fromConfig('atom-notational.rowHeight').toProperty()
       bodyHeightStream : atoms.fromConfig('atom-notational.bodyHeight')
     )
@@ -82,9 +92,24 @@ module.exports =
 
     @disposables.add(o)
 
+  createWatchPathTask: (path) ->
+    @tasks[path] = task = new Task(require.resolve('./src/atom/watch-project-task.coffee'))
+    task.projectPath = path # projectPath to match src/atom/watch-project-task.coffee definition
+    task.start(path,
+      atom.config.get('core.ignoredNames'),
+      atom.config.get('core.excludeVcsIgnoredPaths')
+    )
+    return task
+
+  destroyWatchPathTask: (path) ->
+    task = @tasks[path]
+    task.send('dispose')
+    return task
 
   deactivate: ->
-    @atomAdaptions.dispose()
+    for path, task of @tasks
+      @destroyPathWatchTask(path)
+    @tasks = null
     @disposables.dispose()
     @topPanel?.destroy()
     @topPanel = null
