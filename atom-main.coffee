@@ -25,22 +25,8 @@ module.exports =
     @disposables  = new CompositeDisposable
     @tasks = {}
 
-    projectsPaths       = atoms.projectsPaths()
-    watchPathsStream    = projectsPaths.addedStream.map(@createWatchPathTask.bind(this))
-    addItemsStream      = watchPathsStream.flatMap (task) -> Bacon.fromEvent(task, 'add')
-    removeItemsStream   = watchPathsStream.flatMap (task) -> Bacon.fromEvent(task, 'unlink')
-    closeProjectsStream = projectsPaths.removedStream.map(@destroyWatchPathTask.bind(this))
-    concatNewItem       = R.flip(R.invoker(1, 'concat'))
-
-    itemsProp = Bacon.update [],
-      [addItemsStream], concatNewItem
-      [removeItemsStream], (items, item) ->
-        items.filter R.compose(R.not, R.eqProps('relPath', item, R.__))
-      [closeProjectsStream], (items, item) ->
-        items.filter R.compose(R.not, R.eqProps('projectPath', item, R.__))
-
     panel = new Panel(
-      itemsProp        : itemsProp
+      itemsProp        : @createItemsProp()
       columnsProp      : Bacon.sequentially(0, [columns]).toProperty([])
       rowHeightStream  : atoms.fromConfig('atom-notational.rowHeight')
       bodyHeightStream : atoms.fromConfig('atom-notational.bodyHeight')
@@ -95,6 +81,21 @@ module.exports =
         throw new Error('must be a function')
 
     @disposables.add(o)
+
+  createItemsProp: ->
+    projectsPaths       = atoms.projectsPaths()
+    watchPathsStream    = projectsPaths.addedStream.map(@createWatchPathTask.bind(this))
+    addItemsStream      = watchPathsStream.flatMap (task) -> Bacon.fromEvent(task, 'add')
+    removeItemsStream   = watchPathsStream.flatMap (task) -> Bacon.fromEvent(task, 'unlink')
+    closeProjectsStream = projectsPaths.removedStream.map(@destroyWatchPathTask.bind(this))
+    concatNewItem       = R.flip(R.invoker(1, 'concat'))
+
+    itemsProp = Bacon.update [],
+      [addItemsStream], concatNewItem
+      [removeItemsStream], (items, item) ->
+        items.filter R.compose(R.not, R.eqProps('relPath', item, R.__))
+      [closeProjectsStream], (items, item) ->
+        items.filter R.compose(R.not, R.eqProps('projectPath', item, R.__))
 
   createWatchPathTask: (path) ->
     @tasks[path] = task = new Task(require.resolve('./src/atom/watch-project-task.coffee'))
