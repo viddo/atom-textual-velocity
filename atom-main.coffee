@@ -1,10 +1,11 @@
-{CompositeDisposable, Disposable, Task} = require 'atom'
-Bacon                                   = require 'baconjs'
-Path                                    = require 'path'
-atoms                                   = require './src/atom/streams'
-columns                                 = require './src/atom/columns'
-Panel                                   = require './src/notational/panel'
-R                                       = require 'ramda'
+{CompositeDisposable, Disposable} = require 'atom'
+Bacon                             = require 'baconjs'
+R                                 = require 'ramda'
+Path                              = require 'path'
+atoms                             = require './src/atom/streams'
+columns                           = require './src/atom/columns'
+Projects                          = require './src/atom/projects'
+Panel                             = require './src/notational/panel'
 
 module.exports =
   topPanel    : undefined
@@ -23,14 +24,12 @@ module.exports =
 
   activate: (state) ->
     @disposables  = new CompositeDisposable
-    @tasks = {}
 
     searchBus = new Bacon.Bus()
-    searchProp = searchBus.skipDuplicates().toProperty('')
-
+    @projects = new Projects(searchBus)
     panel = new Panel(
       searchBus        : searchBus
-      matchedItemsProp : Bacon.combineWith(@filterItemsBySearch, @createItemsProp(), searchProp)
+      matchedItemsProp : @projects.matchedItemsProp
       columnsProp      : Bacon.sequentially(0, [columns]).toProperty([])
       rowHeightStream  : atoms.fromConfig('atom-notational.rowHeight')
       bodyHeightStream : atoms.fromConfig('atom-notational.bodyHeight')
@@ -73,7 +72,6 @@ module.exports =
         input.focus()
     ]
 
-
   disposableAdds: (disposalActions) ->
     @disposableAdd(fn) for fn in disposalActions
 
@@ -83,47 +81,12 @@ module.exports =
         o = new Disposable(o)
       else
         throw new Error('must be a function')
-
     @disposables.add(o)
 
-  filterItemsBySearch: (items, searchStr) ->
-    return items unless searchStr
-    items.filter (item) ->
-      item.relPath.toLowerCase().search(searchStr.toLowerCase()) isnt -1
-
-  createItemsProp: ->
-    projectsPaths       = atoms.projectsPaths()
-    watchPathsStream    = projectsPaths.addedStream.map(@createWatchPathTask.bind(this))
-    addItemsStream      = watchPathsStream.flatMap (task) -> Bacon.fromEvent(task, 'add')
-    removeItemsStream   = watchPathsStream.flatMap (task) -> Bacon.fromEvent(task, 'unlink')
-    closeProjectsStream = projectsPaths.removedStream.map(@destroyWatchPathTask.bind(this))
-    concatNewItem       = R.flip(R.invoker(1, 'concat'))
-
-    itemsProp = Bacon.update [],
-      [addItemsStream], concatNewItem
-      [removeItemsStream], (items, item) ->
-        items.filter R.compose(R.not, R.eqProps('relPath', item, R.__))
-      [closeProjectsStream], (items, item) ->
-        items.filter R.compose(R.not, R.eqProps('projectPath', item, R.__))
-
-  createWatchPathTask: (path) ->
-    @tasks[path] = task = new Task(require.resolve('./src/atom/watch-project-task.coffee'))
-    task.projectPath = path # projectPath to match src/atom/watch-project-task.coffee definition
-    task.start(path,
-      atom.config.get('core.ignoredNames'),
-      atom.config.get('core.excludeVcsIgnoredPaths')
-    )
-    return task
-
-  destroyWatchPathTask: (path) ->
-    task = @tasks[path]
-    task.send('dispose')
-    return task
-
   deactivate: ->
-    for path, task of @tasks
-      @destroyPathWatchTask(path)
-    @tasks = null
     @disposables.dispose()
+    @disposables = null
+    @projects.dispose()
+    @projects = null
     @topPanel?.destroy()
     @topPanel = null
