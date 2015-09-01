@@ -2,6 +2,7 @@
 Bacon                                   = require 'baconjs'
 Path                                    = require 'path'
 atoms                                   = require './src/atom/streams'
+columns                                 = require './src/atom/columns'
 createPanel                             = require './src/notational/create-panel'
 NotationalItems                         = require './src/atom/notational-items'
 
@@ -36,7 +37,7 @@ module.exports =
 
     panel = createPanel(
       matchedItemsProp : atomAdaptions.matchedItemsProp
-      columnsProp      : atomAdaptions.columnsProp
+      columnsProp      : Bacon.sequentially(0, [columns]).toProperty([])
       searchBus        : searchBus
       rowHeightProp    : atoms.fromConfig('atom-notational.rowHeight').toProperty()
       bodyHeightStream : atoms.fromConfig('atom-notational.bodyHeight')

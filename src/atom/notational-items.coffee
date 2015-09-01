@@ -1,5 +1,4 @@
 Bacon   = require 'baconjs'
-columns = require './columns'
 R       = require 'ramda'
 
 module.exports =
@@ -20,8 +19,6 @@ class NotationalItems
       items.filter (item) ->
         item.relPath.toLowerCase().search(searchStr.toLowerCase()) isnt -1
     , itemsProp, searchProp
-
-    @columnsProp = Bacon.sequentially(0, [columns]).toProperty([])
 
   # (items, item) -> items.concat(item)
   concatNewItem: R.flip(R.invoker(1, 'concat'))

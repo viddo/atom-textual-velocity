@@ -16,12 +16,9 @@ describe 'notational-items', ->
 
     @matchedItemsPropSpy = jasmine.createSpy('matchedItemsProp')
     @obj.matchedItemsProp.onValue @matchedItemsPropSpy
-    @columnsPropSpy = jasmine.createSpy('columnsProp')
-    @obj.columnsProp.onValue @columnsPropSpy
 
   it 'have expects props to create panel', ->
     expect(@matchedItemsPropSpy.calls[0].args[0]).toEqual([])
-    expect(@columnsPropSpy.calls[0].args[0]).toEqual([])
 
   describe 'when items are added', ->
     beforeEach ->
