@@ -1,10 +1,10 @@
-Bacon         = require 'baconjs'
-Path          = require 'path'
-atoms         = require './src/atom/streams'
-columns       = require './src/atom/columns'
-Projects      = require './src/atom/projects'
-AttachedPanel = require './src/atom/attached-panel'
-Panel         = require './src/notational/panel'
+Bacon            = require 'baconjs'
+Path             = require 'path'
+atoms            = require './src/atom-streams'
+columns          = require './src/integrations/atom/columns'
+Projects         = require './src/integrations/atom/projects'
+Panel            = require './src/integrations/atom/panel'
+NotationalWindow = require './src/notational/window'
 
 module.exports =
   config:
@@ -21,17 +21,17 @@ module.exports =
   activate: (state) ->
     searchBus = new Bacon.Bus()
     @projects = new Projects(searchBus)
-    panel = new Panel(
+    notationalWindow = new NotationalWindow(
       searchBus        : searchBus
       matchedItemsProp : @projects.matchedItemsProp
       columnsProp      : Bacon.sequentially(0, [columns]).toProperty([])
       rowHeightStream  : atoms.fromConfig('atom-notational.rowHeight')
       bodyHeightStream : atoms.fromConfig('atom-notational.bodyHeight')
     )
-    @attachedPanel = new AttachedPanel(panel)
+    @panel = new Panel(notationalWindow)
 
   deactivate: ->
     @projects.dispose()
     @projects = null
-    @attachedPanel.dispose()
-    @attachedPanel = null
+    @panel.dispose()
+    @panel = null

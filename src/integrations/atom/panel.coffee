@@ -1,17 +1,19 @@
 {Disposable, CompositeDisposable} = require 'atom'
 R                                 = require 'ramda'
-atoms                             = require './streams'
+Path                              = require 'path'
+atoms                             = require '../../atom-streams'
 
 module.exports =
-class AttachedPanel
-  constructor: (panel) ->
+class Panel
+  constructor: (notationalWindow) ->
+    nw = notationalWindow;
     @disposables = new CompositeDisposable
 
-    @add panel.elementProp.onValue @createTopPanel
-    @add panel.resizedBodyHeightProp.debounce(500).onValue @saveResizedBodyHeight
-    @add panel.selectedItemProp.onValue @previewSelectedItem
-    @add panel.selectedItemProp.sampledBy(panel.openSelectedStream).onValue @openSelectedItem
-    @add panel.hideStream.onValue R.pipe(@hideTopPanel, @activateTextEditor)
+    @add nw.elementProp.onValue @createTopPanel
+    @add nw.resizedBodyHeightProp.debounce(500).onValue @saveResizedBodyHeight
+    @add nw.selectedItemProp.onValue @previewSelectedItem
+    @add nw.selectedItemProp.sampledBy(nw.openSelectedStream).onValue @openSelectedItem
+    @add nw.hideStream.onValue R.pipe(@hideTopPanel, @activateTextEditor)
 
     @add atoms.cancelCommand().onValue R.pipe(@showTopPanel, @getSearchInput, @selectAndFocus)
 

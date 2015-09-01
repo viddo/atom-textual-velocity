@@ -13,7 +13,7 @@ resizeHandle                   = require './vdom/resize-handle'
 
 # Encapsulates the general logic
 module.exports =
-class Panel
+class Window
   constructor: ({matchedItemsProp, searchBus, columnsProp, rowHeightStream, bodyHeightStream}) ->
     bodyHeightBus = new Bacon.Bus()
     keydownBus    = new Bacon.Bus()

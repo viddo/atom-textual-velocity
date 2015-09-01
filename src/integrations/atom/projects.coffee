@@ -1,7 +1,7 @@
 {Task} = require 'atom'
 Bacon  = require 'baconjs'
 R      = require 'ramda'
-atoms  = require './streams'
+atoms  = require '../../atom-streams'
 
 module.exports =
 class Projects

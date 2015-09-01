@@ -1,5 +1,5 @@
 Bacon   = require 'baconjs'
-Panel   = require '../../src/notational/panel'
+Window   = require '../../src/notational/window'
 columns = require '../../src/atom/columns'
 
 describe 'Panel', ->
@@ -10,7 +10,7 @@ describe 'Panel', ->
     @rowHeightBus    = new Bacon.Bus()
     @columnsBus      = new Bacon.Bus()
 
-    @panel = new Panel(
+    @nw = new Window(
       searchBus        : @searchBus
       matchedItemsProp : @matchedItemsBus.toProperty([])
       columnsProp      : @columnsBus.toProperty([])
@@ -19,16 +19,16 @@ describe 'Panel', ->
     )
 
   it 'has a set of expected attrs', ->
-    expect(@panel.elementProp).toBeDefined()
-    expect(@panel.resizedBodyHeightProp).toBeDefined()
-    expect(@panel.selectedItemProp).toBeDefined()
-    expect(@panel.openSelectedStream).toBeDefined()
-    expect(@panel.hideStream).toBeDefined()
+    expect(@nw.elementProp).toBeDefined()
+    expect(@nw.resizedBodyHeightProp).toBeDefined()
+    expect(@nw.selectedItemProp).toBeDefined()
+    expect(@nw.openSelectedStream).toBeDefined()
+    expect(@nw.hideStream).toBeDefined()
 
   describe 'when have some columns', ->
     beforeEach ->
       @elementSpy = jasmine.createSpy('el')
-      @panel.elementProp.onValue(@elementSpy)
+      @nw.elementProp.onValue(@elementSpy)
       @columnsBus.push [{
         title: 'head1'
         width: 45

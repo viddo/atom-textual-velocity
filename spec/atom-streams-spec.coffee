@@ -1,4 +1,4 @@
-atoms = require '../../src/atom/streams'
+atoms = require '../src/atom-streams'
 
 describe 'Atom streams', ->
   describe '.fromConfig', ->
