@@ -25,8 +25,12 @@ module.exports =
     @disposables  = new CompositeDisposable
     @tasks = {}
 
+    searchBus = new Bacon.Bus()
+    searchProp = searchBus.skipDuplicates().toProperty('')
+
     panel = new Panel(
-      itemsProp        : @createItemsProp()
+      searchBus        : searchBus
+      matchedItemsProp : Bacon.combineWith(@filterItemsBySearch, @createItemsProp(), searchProp)
       columnsProp      : Bacon.sequentially(0, [columns]).toProperty([])
       rowHeightStream  : atoms.fromConfig('atom-notational.rowHeight')
       bodyHeightStream : atoms.fromConfig('atom-notational.bodyHeight')
@@ -81,6 +85,11 @@ module.exports =
         throw new Error('must be a function')
 
     @disposables.add(o)
+
+  filterItemsBySearch: (items, searchStr) ->
+    return items unless searchStr
+    items.filter (item) ->
+      item.relPath.toLowerCase().search(searchStr.toLowerCase()) isnt -1
 
   createItemsProp: ->
     projectsPaths       = atoms.projectsPaths()

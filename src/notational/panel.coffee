@@ -14,21 +14,12 @@ resizeHandle                   = require './vdom/resize-handle'
 # Encapsulates the general logic
 module.exports =
 class Panel
-  constructor: ({itemsProp, columnsProp, rowHeightStream, bodyHeightStream}) ->
+  constructor: ({matchedItemsProp, searchBus, columnsProp, rowHeightStream, bodyHeightStream}) ->
     bodyHeightBus = new Bacon.Bus()
     keydownBus    = new Bacon.Bus()
     scrollTopBus  = new Bacon.Bus()
     selectItemBus = new Bacon.Bus()
     focusBus      = new Bacon.Bus()
-    searchBus     = new Bacon.Bus()
-
-    searchProp = searchBus.skipDuplicates().toProperty('')
-
-    matchedItemsProp = Bacon.combineWith (items, searchStr) ->
-      return items unless searchStr
-      items.filter (item) ->
-        item.relPath.toLowerCase().search(searchStr.toLowerCase()) isnt -1
-    , itemsProp, searchProp
 
     # Setup streams for search key inputs
     resetStream         = keydownBus.filter (ev) -> ev.keyCode is 27 #esc

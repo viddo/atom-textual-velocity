@@ -4,13 +4,15 @@ columns = require '../../src/atom/columns'
 
 describe 'Panel', ->
   beforeEach ->
-    @itemsBus      = new Bacon.Bus()
-    @bodyHeightBus = new Bacon.Bus()
-    @rowHeightBus  = new Bacon.Bus()
-    @columnsBus    = new Bacon.Bus()
+    @searchBus       = new Bacon.Bus()
+    @matchedItemsBus = new Bacon.Bus()
+    @bodyHeightBus   = new Bacon.Bus()
+    @rowHeightBus    = new Bacon.Bus()
+    @columnsBus      = new Bacon.Bus()
 
     @panel = new Panel(
-      itemsProp        : @itemsBus.toProperty([])
+      searchBus        : @searchBus
+      matchedItemsProp : @matchedItemsBus.toProperty([])
       columnsProp      : @columnsBus.toProperty([])
       bodyHeightStream : @bodyHeightBus
       rowHeightStream  : @rowHeightBus
