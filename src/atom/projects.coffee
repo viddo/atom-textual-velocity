@@ -1,7 +1,7 @@
 {Task} = require 'atom'
-Bacon = require 'baconjs'
-R     = require 'ramda'
-atoms = require './streams'
+Bacon  = require 'baconjs'
+R      = require 'ramda'
+atoms  = require './streams'
 
 module.exports =
 class Projects
@@ -49,3 +49,4 @@ class Projects
     for path, task of @tasks
       @destroyPathWatchTask(path)
     @tasks = null
+    @matchedItemsProp = null
