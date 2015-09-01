@@ -1,23 +1,22 @@
-Bacon = require 'baconjs'
-createPanel = require '../../src/notational/create-panel'
+Bacon   = require 'baconjs'
+Panel   = require '../../src/notational/panel'
+columns = require '../../src/atom/columns'
 
-describe 'create-panel', ->
+describe 'Panel', ->
   beforeEach ->
-    @matchedItemsBus = new Bacon.Bus()
-    @columnsBus      = new Bacon.Bus()
-    @bodyHeightBus   = new Bacon.Bus()
-    @rowHeightBus    = new Bacon.Bus()
-    @searchBus       = new Bacon.Bus()
+    @itemsBus      = new Bacon.Bus()
+    @bodyHeightBus = new Bacon.Bus()
+    @rowHeightBus  = new Bacon.Bus()
+    @columnsBus    = new Bacon.Bus()
 
-    @panel = createPanel({
-      matchedItemsProp : @matchedItemsBus.toProperty([])
+    @panel = new Panel(
+      itemsProp        : @itemsBus.toProperty([])
       columnsProp      : @columnsBus.toProperty([])
-      rowHeightProp    : @rowHeightBus.toProperty(25)
       bodyHeightStream : @bodyHeightBus
-      searchBus        : @searchBus
-    })
+      rowHeightStream  : @rowHeightBus
+    )
 
-  it 'creates a panel with a set of props and streams', ->
+  it 'has a set of expected attrs', ->
     expect(@panel.elementProp).toBeDefined()
     expect(@panel.resizedBodyHeightProp).toBeDefined()
     expect(@panel.selectedItemProp).toBeDefined()

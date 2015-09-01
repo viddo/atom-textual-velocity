@@ -3,8 +3,8 @@ Bacon                                   = require 'baconjs'
 Path                                    = require 'path'
 atoms                                   = require './src/atom/streams'
 columns                                 = require './src/atom/columns'
-createPanel                             = require './src/notational/create-panel'
-NotationalItems                         = require './src/atom/notational-items'
+Panel                                   = require './src/notational/panel'
+R                                       = require 'ramda'
 
 module.exports =
   topPanel    : undefined
@@ -25,21 +25,24 @@ module.exports =
     @disposables  = new CompositeDisposable
     @tasks = {}
 
-    searchBus = new Bacon.Bus()
-    projectsPaths = atoms.projectsPaths()
-    watchPathsStream = projectsPaths.addedStream.map(@createWatchPathTask.bind(this))
-    atomAdaptions = new NotationalItems(
-      searchStream        : searchBus
-      addItemsStream      : watchPathsStream.flatMap (task) -> Bacon.fromEvent(task, 'add')
-      removeItemsStream   : watchPathsStream.flatMap (task) -> Bacon.fromEvent(task, 'unlink')
-      closeProjectsStream : projectsPaths.removedStream.map(@destroyWatchPathTask.bind(this))
-    )
+    projectsPaths       = atoms.projectsPaths()
+    watchPathsStream    = projectsPaths.addedStream.map(@createWatchPathTask.bind(this))
+    addItemsStream      = watchPathsStream.flatMap (task) -> Bacon.fromEvent(task, 'add')
+    removeItemsStream   = watchPathsStream.flatMap (task) -> Bacon.fromEvent(task, 'unlink')
+    closeProjectsStream = projectsPaths.removedStream.map(@destroyWatchPathTask.bind(this))
+    concatNewItem       = R.flip(R.invoker(1, 'concat'))
 
-    panel = createPanel(
-      matchedItemsProp : atomAdaptions.matchedItemsProp
+    itemsProp = Bacon.update [],
+      [addItemsStream], concatNewItem
+      [removeItemsStream], (items, item) ->
+        items.filter R.compose(R.not, R.eqProps('relPath', item, R.__))
+      [closeProjectsStream], (items, item) ->
+        items.filter R.compose(R.not, R.eqProps('projectPath', item, R.__))
+
+    panel = new Panel(
+      itemsProp        : itemsProp
       columnsProp      : Bacon.sequentially(0, [columns]).toProperty([])
-      searchBus        : searchBus
-      rowHeightProp    : atoms.fromConfig('atom-notational.rowHeight').toProperty()
+      rowHeightStream  : atoms.fromConfig('atom-notational.rowHeight')
       bodyHeightStream : atoms.fromConfig('atom-notational.bodyHeight')
     )
 
