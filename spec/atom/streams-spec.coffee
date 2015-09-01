@@ -68,11 +68,11 @@ describe 'Atom streams', ->
   describe '.projectPaths', ->
     beforeEach ->
       spyOn(atom.project, 'getPaths').andReturn(['/tmp/1st', '/tmp/2nd']) # Initial paths
-      {addedStream, removedStream} = atoms.projectsPaths()
-      @addSpy = jasmine.createSpy('addedStream')
-      @removeSpy = jasmine.createSpy('removedStream')
-      addedStream.onValue(@addSpy)
-      removedStream.onValue(@removeSpy)
+      {openStream, closeStream} = atoms.projectsPaths()
+      @addSpy = jasmine.createSpy('openStream')
+      @removeSpy = jasmine.createSpy('closeStream')
+      openStream.onValue(@addSpy)
+      closeStream.onValue(@removeSpy)
 
       waitsFor =>
         @addSpy.calls.length is 2

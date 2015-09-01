@@ -23,11 +23,11 @@ module.exports =
         Bacon.sequentially(0, predicate(pair))
 
     return {
-      addedStream: fromFilteredPairs lastProjectPathsProp, ([currentPaths, newPaths]) ->
+      openStream: fromFilteredPairs lastProjectPathsProp, ([currentPaths, newPaths]) ->
         newPaths.filter (path) ->
           currentPaths.indexOf(path) < 0
 
-      removedStream: fromFilteredPairs lastProjectPathsProp, ([currentPaths, newPaths]) ->
+      closeStream: fromFilteredPairs lastProjectPathsProp, ([currentPaths, newPaths]) ->
         currentPaths.filter (path) ->
           newPaths.indexOf(path) < 0
     }

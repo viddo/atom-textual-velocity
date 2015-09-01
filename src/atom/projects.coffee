@@ -17,10 +17,10 @@ class Projects
 
   createItemsProp: ->
     projectsPaths       = atoms.projectsPaths()
-    watchPathsStream    = projectsPaths.addedStream.map(@createWatchPathTask.bind(this))
+    watchPathsStream    = projectsPaths.openStream.map(@createWatchPathTask.bind(this))
     addItemsStream      = watchPathsStream.flatMap (task) -> Bacon.fromEvent(task, 'add')
     removeItemsStream   = watchPathsStream.flatMap (task) -> Bacon.fromEvent(task, 'unlink')
-    closeProjectsStream = projectsPaths.removedStream.map(@destroyWatchPathTask.bind(this))
+    closeProjectsStream = projectsPaths.closeStream.map(@destroyWatchPathTask.bind(this))
 
     return Bacon.update [],
       [addItemsStream], @concatNewItem
