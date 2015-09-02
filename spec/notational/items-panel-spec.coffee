@@ -2,7 +2,7 @@ Bacon      = require 'baconjs'
 ItemsPanel = require '../../src/notational/items-panel'
 columns    = require '../../src/integrations/atom/columns'
 
-describe 'Panel', ->
+describe 'ItemsPanel', ->
   beforeEach ->
     @focusBus           = new Bacon.Bus()
     @searchBus          = new Bacon.Bus()
