@@ -8,6 +8,7 @@ module.exports =
 class SearchPanel
 
   constructor: ({focusBus, searchBus}) ->
+    @searchBus = searchBus
     keydownBus = new Bacon.Bus()
     isKeyCode  = R.propEq('keyCode')
     @keyDownStreams   = {
@@ -26,9 +27,9 @@ class SearchPanel
     el.querySelector('.search').focus()
     return el
 
-  resetSearch: (el, ...)->
+  resetSearch: (el, ...) =>
     el.querySelector('.search').value = ''
-    searchBus.push('')
+    @searchBus.push('')
     return el
 
   dispose: ->
