@@ -18,7 +18,7 @@ class Panels
     dblEscOnSearchInput = searchPanel.keyDownStreams.esc.bufferWithTimeOrCount(300, 2).filter R.propEq('length', 2)
     @add dblEscOnSearchInput.onValue R.pipe(@hideItemsPanel, @hideSearchPanel, @activateTextEditor)
 
-    @add atoms.cancelCommand().onValue R.pipe(@showItemsPanel, @getSearchInput, @selectAndFocus)
+    @add atoms.cancelCommand().onValue R.pipe(@showItemsPanel, @showSearchPanel, @getSearchInput, @selectAndFocus)
 
   selectAndFocus: (input) ->
     input.select()
@@ -37,7 +37,10 @@ class Panels
     @itemsPanel.hide()
 
   showItemsPanel: ->
-    @itemsPanel.show() unless @itemsPanel.isVisible()
+    @itemsPanel.show()
+
+  showSearchPanel: ->
+    @searchPanel.show()
 
   createSearchPanel: (el) ->
     unless @itemsPanel
