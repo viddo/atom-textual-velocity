@@ -17,10 +17,10 @@ class Projects
 
   createItemsProp: ->
     projectsPaths       = atoms.projectsPaths()
-    watchPathsStream    = projectsPaths.openStream.map(@createWatchPathTask.bind(this))
+    watchPathsStream    = projectsPaths.openStream.map @createWatchPathTask
     addItemsStream      = watchPathsStream.flatMap (task) -> Bacon.fromEvent(task, 'add')
     removeItemsStream   = watchPathsStream.flatMap (task) -> Bacon.fromEvent(task, 'unlink')
-    closeProjectsStream = projectsPaths.closeStream.map(@destroyWatchPathTask.bind(this))
+    closeProjectsStream = projectsPaths.closeStream.map @destroyWatchPathTask
 
     return Bacon.update [],
       [addItemsStream], @concatNewItem
@@ -31,7 +31,7 @@ class Projects
 
   concatNewItem: R.flip(R.invoker(1, 'concat'))
 
-  createWatchPathTask: (path) ->
+  createWatchPathTask: (path) =>
     @tasks[path] = task = new Task(require.resolve('./watch-project-task.coffee'))
     task.projectPath = path # projectPath to match src/atom/watch-project-task.coffee definition
     task.start(path,
@@ -40,7 +40,7 @@ class Projects
     )
     return task
 
-  destroyWatchPathTask: (path) ->
+  destroyWatchPathTask: (path) =>
     task = @tasks[path]
     task.send('dispose')
     return task
