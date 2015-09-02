@@ -97,30 +97,30 @@ class ItemsPanel
     @resizedBodyHeightProp = @bodyHeightProp
 
 
-selectItemByRelativeOffset: (currentItem, relativeOffset, items) ->
-  offset = items.indexOf(currentItem) + relativeOffset
-  return items[switch
-    when currentItem and offset < 0 then 0                # stay on 1st item if has a selected item
-    when offset < 0                 then items.length - 1 # cycle to last item
-    when offset >= items.length     then offset - 1       # stay on last item
-    else                                 offset           # offset is within bounds, just pass it
-  ]
+  selectItemByRelativeOffset: (currentItem, relativeOffset, items) ->
+    offset = items.indexOf(currentItem) + relativeOffset
+    return items[switch
+      when currentItem and offset < 0 then 0                # stay on 1st item if has a selected item
+      when offset < 0                 then items.length - 1 # cycle to last item
+      when offset >= items.length     then offset - 1       # stay on last item
+      else                                 offset           # offset is within bounds, just pass it
+    ]
 
-adjustScrollTopForSelectedItem: (currentScrollTop, selectedItem, items, rowHeight, bodyHeight) ->
-  return currentScrollTop unless selectedItem
+  adjustScrollTopForSelectedItem: (currentScrollTop, selectedItem, items, rowHeight, bodyHeight) ->
+    return currentScrollTop unless selectedItem
 
-  selectedScrollTop = items.indexOf(selectedItem) * rowHeight
+    selectedScrollTop = items.indexOf(selectedItem) * rowHeight
 
-  if currentScrollTop > selectedScrollTop
-    # selected item is located before the visible bounds
-    # from: .X..[...]....
-    # to:   .[X..].......
-    selectedScrollTop
-  else if currentScrollTop + bodyHeight <= selectedScrollTop
-    # selected item is located after the visible bounds
-    # from: ....[...]..X.
-    # to:   .......[..X].
-     selectedScrollTop - bodyHeight + rowHeight
-  else
-    # selected item is located within the visible bounds, just return the current scrollTop value
-    currentScrollTop
+    if currentScrollTop > selectedScrollTop
+      # selected item is located before the visible bounds
+      # from: .X..[...]....
+      # to:   .[X..].......
+      selectedScrollTop
+    else if currentScrollTop + bodyHeight <= selectedScrollTop
+      # selected item is located after the visible bounds
+      # from: ....[...]..X.
+      # to:   .......[..X].
+       selectedScrollTop - bodyHeight + rowHeight
+    else
+      # selected item is located within the visible bounds, just return the current scrollTop value
+      currentScrollTop
