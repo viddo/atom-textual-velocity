@@ -1,34 +1,36 @@
-Bacon   = require 'baconjs'
-Window   = require '../../src/notational/window'
-columns = require '../../src/atom/columns'
+Bacon      = require 'baconjs'
+ItemsPanel = require '../../src/notational/items-panel'
+columns    = require '../../src/integrations/atom/columns'
 
 describe 'Panel', ->
   beforeEach ->
-    @searchBus       = new Bacon.Bus()
-    @matchedItemsBus = new Bacon.Bus()
-    @bodyHeightBus   = new Bacon.Bus()
-    @rowHeightBus    = new Bacon.Bus()
-    @columnsBus      = new Bacon.Bus()
+    @focusBus           = new Bacon.Bus()
+    @searchBus          = new Bacon.Bus()
+    @matchedItemsBus    = new Bacon.Bus()
+    @bodyHeightBus      = new Bacon.Bus()
+    @rowHeightBus       = new Bacon.Bus()
+    @columnsBus         = new Bacon.Bus()
+    @moveSelectedStream = new Bacon.Bus()
 
-    @nw = new Window(
+    @p = new ItemsPanel(
+      focusBus         : @focusBus
       searchBus        : @searchBus
       matchedItemsProp : @matchedItemsBus.toProperty([])
       columnsProp      : @columnsBus.toProperty([])
       bodyHeightStream : @bodyHeightBus
       rowHeightStream  : @rowHeightBus
+      moveSelectedStream: @moveSelectedStream
     )
 
   it 'has a set of expected attrs', ->
-    expect(@nw.elementProp).toBeDefined()
-    expect(@nw.resizedBodyHeightProp).toBeDefined()
-    expect(@nw.selectedItemProp).toBeDefined()
-    expect(@nw.openSelectedStream).toBeDefined()
-    expect(@nw.hideStream).toBeDefined()
+    expect(@p.elementProp).toBeDefined()
+    expect(@p.resizedBodyHeightProp).toBeDefined()
+    expect(@p.selectedItemProp).toBeDefined()
 
   describe 'when have some columns', ->
     beforeEach ->
       @elementSpy = jasmine.createSpy('el')
-      @nw.elementProp.onValue(@elementSpy)
+      @p.elementProp.onValue(@elementSpy)
       @columnsBus.push [{
         title: 'head1'
         width: 45

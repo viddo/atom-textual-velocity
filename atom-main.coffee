@@ -1,37 +1,55 @@
-Bacon            = require 'baconjs'
-Path             = require 'path'
-atoms            = require './src/atom-streams'
-columns          = require './src/integrations/atom/columns'
-Projects         = require './src/integrations/atom/projects'
-Panel            = require './src/integrations/atom/panel'
-NotationalWindow = require './src/notational/window'
+Path        = require 'path'
+Bacon       = require 'baconjs'
+R           = require 'ramda'
+atoms       = require './src/atom-streams'
+columns     = require './src/integrations/atom/columns'
+Projects    = require './src/integrations/atom/projects'
+Panels      = require './src/integrations/atom/panels'
+SearchPanel = require './src/notational/search-panel'
+ItemsPanel  = require './src/notational/items-panel'
 
 module.exports =
   config:
     bodyHeight:
-      type    : 'number'
-      default : 200
-      minimum : 0
+      type: 'number'
+      default: 200
+      minimum: 0
     rowHeight:
-      type    : 'number'
-      default : 25
-      minimum : 0
-
+      type: 'number'
+      default: 25
+      minimum: 0
 
   activate: (state) ->
+    focusBus  = new Bacon.Bus()
     searchBus = new Bacon.Bus()
     @projects = new Projects(searchBus)
-    notationalWindow = new NotationalWindow(
-      searchBus        : searchBus
-      matchedItemsProp : @projects.matchedItemsProp
-      columnsProp      : Bacon.sequentially(0, [columns]).toProperty([])
-      rowHeightStream  : atoms.fromConfig('atom-notational.rowHeight')
-      bodyHeightStream : atoms.fromConfig('atom-notational.bodyHeight')
+
+    searchPanel = new SearchPanel(
+      focusBus  : focusBus
+      searchBus : searchBus
     )
-    @panel = new Panel(notationalWindow)
+
+    preventDefault = R.invoker(0, 'preventDefault')
+    moveSelectedStream = searchPanel.keyDownStreams.up.doAction(preventDefault).map(-1)
+      .merge(searchPanel.keyDownStreams.down.doAction(preventDefault).map(1))
+
+    itemsPanel = new ItemsPanel(
+      focusBus           : focusBus
+      searchBus          : searchBus
+      matchedItemsProp   : @projects.matchedItemsProp
+      moveSelectedStream : moveSelectedStream
+      columnsProp        : Bacon.sequentially(0, [columns]).toProperty([])
+      rowHeightStream    : atoms.fromConfig('atom-notational.rowHeight')
+      bodyHeightStream   : atoms.fromConfig('atom-notational.bodyHeight')
+    )
+
+    @panels = new Panels(
+      searchPanel : searchPanel
+      itemsPanel  : itemsPanel
+    )
 
   deactivate: ->
     @projects.dispose()
     @projects = null
-    @panel.dispose()
-    @panel = null
+    @panels.dispose()
+    @panels = null

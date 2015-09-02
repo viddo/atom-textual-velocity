@@ -3,34 +3,23 @@ h                              = require 'virtual-dom/h'
 createElement                  = require 'virtual-dom/create-element'
 diff                           = require 'virtual-dom/diff'
 patch                          = require 'virtual-dom/patch'
-adjustScrollTopForSelectedItem = require './adjust-scroll-top-for-selected-item'
-selectItemByRelativeOffset     = require './select-item-by-relative-offset'
-search                         = require './vdom/search'
 header                         = require './vdom/header'
 content                        = require './vdom/content'
 scrollableContent              = require './vdom/scrollable-content'
 resizeHandle                   = require './vdom/resize-handle'
 
-# Encapsulates the general logic
 module.exports =
-class Window
-  constructor: ({matchedItemsProp, searchBus, columnsProp, rowHeightStream, bodyHeightStream}) ->
+class ItemsPanel
+
+  constructor: ({matchedItemsProp, searchBus, focusBus, moveSelectedStream, columnsProp, rowHeightStream, bodyHeightStream}) ->
     bodyHeightBus = new Bacon.Bus()
-    keydownBus    = new Bacon.Bus()
     scrollTopBus  = new Bacon.Bus()
     selectItemBus = new Bacon.Bus()
-    focusBus      = new Bacon.Bus()
-
-    # Setup streams for search key inputs
-    resetStream         = keydownBus.filter (ev) -> ev.keyCode is 27 #esc
-    @openSelectedStream = keydownBus.filter (ev) -> ev.keyCode is 13 #enter
-    moveSelectedStream  = keydownBus.filter((ev) -> ev.keyCode is 38).doAction((ev) -> ev.preventDefault()).map(-1) #up
-                   .merge(keydownBus.filter((ev) -> ev.keyCode is 40).doAction((ev) -> ev.preventDefault()).map(1)) #down
 
     @selectedItemProp = Bacon.update(undefined,
       [searchBus], -> undefined
       [selectItemBus], (..., newItem) -> newItem
-      [moveSelectedStream, matchedItemsProp], selectItemByRelativeOffset
+      [moveSelectedStream, matchedItemsProp], @selectItemByRelativeOffset
     ).skipDuplicates()
 
     # Setup props related to the scrollable content
@@ -42,7 +31,7 @@ class Window
 
     scrollTopProp = Bacon.update 0,
       [scrollTopBus], (..., scrollTop) -> scrollTop
-      [@selectedItemProp.changes(), matchedItemsProp, rowHeightProp, @bodyHeightProp], adjustScrollTopForSelectedItem
+      [@selectedItemProp.changes(), matchedItemsProp, rowHeightProp, @bodyHeightProp], @adjustScrollTopForSelectedItem
 
     visibleBeginProp = Bacon.combineWith (scrollTop, rowHeight) ->
       (scrollTop / rowHeight) | 0
@@ -79,7 +68,6 @@ class Window
       h 'div.atom-notational-panel', {
         onclick: -> focusBus.push undefined
       }, [
-        search(searchBus, keydownBus)
         header(columns)
         scrollableContent
         resizeHandle(bodyHeight, bodyHeightBus)
@@ -101,20 +89,38 @@ class Window
         if selectedRow = current.el.querySelector('.is-selected')
           selectedRow.scrollIntoViewIfNeeded(false) # centerIfNeeded=false => croll minimal possible to avoid jumps
         return current
-      [focusBus], (current, ...) ->
-        current.el.querySelector('.search').focus()
-        return current
-      [resetStream], (current, ...) ->
-        current.el.querySelector('.search').value = ''
-        searchBus.push('')
-        return current
       [searchBus], (current, ...) ->
         current.el.querySelector('.tbody').scrollTop = 0 #return to top
         return current
 
-    # double-key press within 300ms triggers a hide event
-    @hideStream = resetStream.bufferWithTimeOrCount(300, 2).filter (x) ->
-      x.length is 2
-
     @elementProp = renderProp.map('.el')
     @resizedBodyHeightProp = @bodyHeightProp
+
+
+selectItemByRelativeOffset: (currentItem, relativeOffset, items) ->
+  offset = items.indexOf(currentItem) + relativeOffset
+  return items[switch
+    when currentItem and offset < 0 then 0                # stay on 1st item if has a selected item
+    when offset < 0                 then items.length - 1 # cycle to last item
+    when offset >= items.length     then offset - 1       # stay on last item
+    else                                 offset           # offset is within bounds, just pass it
+  ]
+
+adjustScrollTopForSelectedItem: (currentScrollTop, selectedItem, items, rowHeight, bodyHeight) ->
+  return currentScrollTop unless selectedItem
+
+  selectedScrollTop = items.indexOf(selectedItem) * rowHeight
+
+  if currentScrollTop > selectedScrollTop
+    # selected item is located before the visible bounds
+    # from: .X..[...]....
+    # to:   .[X..].......
+    selectedScrollTop
+  else if currentScrollTop + bodyHeight <= selectedScrollTop
+    # selected item is located after the visible bounds
+    # from: ....[...]..X.
+    # to:   .......[..X].
+     selectedScrollTop - bodyHeight + rowHeight
+  else
+    # selected item is located within the visible bounds, just return the current scrollTop value
+    currentScrollTop
