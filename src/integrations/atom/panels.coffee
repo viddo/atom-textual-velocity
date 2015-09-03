@@ -15,18 +15,20 @@ class Panels
     @add itemsPanel.selectedItemProp.onValue @previewSelectedItem
     @add itemsPanel.selectedItemProp.sampledBy(searchPanel.keyDownStreams.enter).onValue @openSelectedItem
 
-    dblEscInSearchInput = searchPanel.keyDownStreams.esc.bufferWithTimeOrCount(300, 2).filter R.propEq('length', 2)
-    @add dblEscInSearchInput.onValue R.pipe(@hideItemsPanel, @hideSearchPanel, @activateTextEditor)
+    @add @doubleEsc(searchPanel.keyDownStreams.esc).onValue R.pipe(
+      @hideItemsPanel
+      @hideSearchPanel
+      -> atom.workspace.getActivePane()?.activate()
+    )
+    @add @doubleEsc(atoms.cancelCommand()).onValue R.pipe(
+      @showItemsPanel,
+      @showSearchPanel,
+      @getSearchInput,
+      (input) -> input.select() and input.focus()
+    )
 
-    dblEscInTextEditor = atoms.cancelCommand().bufferWithTimeOrCount(300, 2).filter R.propEq('length', 2)
-    @add dblEscInTextEditor.onValue R.pipe(@showItemsPanel, @showSearchPanel, @getSearchInput, @selectAndFocus)
-
-  selectAndFocus: (input) ->
-    input.select()
-    input.focus()
-
-  activateTextEditor: ->
-    atom.workspace.getActivePane()?.activate()
+  doubleEsc: (stream) ->
+    stream.bufferWithTimeOrCount(300, 2).filter R.propEq('length', 2)
 
   getSearchInput: ->
     @searchPanel.getItem().querySelector('.search')
