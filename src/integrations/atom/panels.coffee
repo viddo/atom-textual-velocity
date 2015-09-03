@@ -15,10 +15,11 @@ class Panels
     @add itemsPanel.selectedItemProp.onValue @previewSelectedItem
     @add itemsPanel.selectedItemProp.sampledBy(searchPanel.keyDownStreams.enter).onValue @openSelectedItem
 
-    dblEscOnSearchInput = searchPanel.keyDownStreams.esc.bufferWithTimeOrCount(300, 2).filter R.propEq('length', 2)
-    @add dblEscOnSearchInput.onValue R.pipe(@hideItemsPanel, @hideSearchPanel, @activateTextEditor)
+    dblEscInSearchInput = searchPanel.keyDownStreams.esc.bufferWithTimeOrCount(300, 2).filter R.propEq('length', 2)
+    @add dblEscInSearchInput.onValue R.pipe(@hideItemsPanel, @hideSearchPanel, @activateTextEditor)
 
-    @add atoms.cancelCommand().onValue R.pipe(@showItemsPanel, @showSearchPanel, @getSearchInput, @selectAndFocus)
+    dblEscInTextEditor = atoms.cancelCommand().bufferWithTimeOrCount(300, 2).filter R.propEq('length', 2)
+    @add dblEscInTextEditor.onValue R.pipe(@showItemsPanel, @showSearchPanel, @getSearchInput, @selectAndFocus)
 
   selectAndFocus: (input) ->
     input.select()
