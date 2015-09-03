@@ -6,7 +6,7 @@ vDOM          = require './vdom'
 module.exports =
 class SearchPanel
 
-  constructor: ({focusBus, searchBus}) ->
+  constructor: ({focusStream, searchBus}) ->
     @searchBus = searchBus
     keydownBus = new Bacon.Bus()
     isKeyCode  = R.propEq('keyCode')
@@ -19,7 +19,7 @@ class SearchPanel
 
     vdomTree = vDOM.rootNode vDOM.search(searchBus, keydownBus)
     @elementProp = Bacon.update createElement(vdomTree),
-      [focusBus], @focusOnSearchInput
+      [focusStream], @focusOnSearchInput
       [@keyDownStreams.esc], @resetSearch
 
   focusOnSearchInput: (el, ...) ->

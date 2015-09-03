@@ -25,8 +25,8 @@ module.exports =
     @projects = new Projects(searchBus)
 
     searchPanel = new SearchPanel(
-      focusBus  : focusBus
-      searchBus : searchBus
+      focusStream : focusBus
+      searchBus   : searchBus
     )
 
     preventDefault = R.invoker(0, 'preventDefault')
@@ -34,11 +34,11 @@ module.exports =
       .merge(searchPanel.keyDownStreams.down.doAction(preventDefault).map(1))
 
     itemsPanel = new ItemsPanel(
-      focusBus           : focusBus
-      searchBus          : searchBus
       matchedItemsProp   : @projects.matchedItemsProp
-      moveSelectedStream : moveSelectedStream
       columnsProp        : Bacon.sequentially(0, [columns]).toProperty([])
+      focusBus           : focusBus
+      searchStream       : searchBus
+      moveSelectedStream : moveSelectedStream
       rowHeightStream    : atoms.fromConfig('atom-notational.rowHeight')
       bodyHeightStream   : atoms.fromConfig('atom-notational.bodyHeight')
     )

@@ -7,13 +7,13 @@ vDOM          = require './vdom'
 module.exports =
 class ItemsPanel
 
-  constructor: ({matchedItemsProp, searchBus, focusBus, moveSelectedStream, columnsProp, rowHeightStream, bodyHeightStream}) ->
+  constructor: ({columnsProp, matchedItemsProp, focusBus, searchStream, moveSelectedStream, rowHeightStream, bodyHeightStream}) ->
     bodyHeightBus = new Bacon.Bus()
     scrollTopBus  = new Bacon.Bus()
     selectItemBus = new Bacon.Bus()
 
     @selectedItemProp = Bacon.update(undefined,
-      [searchBus], -> undefined
+      [searchStream], -> undefined
       [selectItemBus], (..., newItem) -> newItem
       [moveSelectedStream, matchedItemsProp], @selectItemByRelativeOffset
     ).skipDuplicates()
@@ -83,7 +83,7 @@ class ItemsPanel
         if selectedRow = current.el.querySelector('.is-selected')
           selectedRow.scrollIntoViewIfNeeded(false) # centerIfNeeded=false => croll minimal possible to avoid jumps
         return current
-      [searchBus], (current, ...) ->
+      [searchStream], (current, ...) ->
         current.el.querySelector('.tbody').scrollTop = 0 #return to top
         return current
 

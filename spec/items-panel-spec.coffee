@@ -4,22 +4,22 @@ columns    = require '../src/integrations/atom/columns'
 
 describe 'ItemsPanel', ->
   beforeEach ->
+    @matchedItemsBus    = new Bacon.Bus()
+    @columnsBus         = new Bacon.Bus()
     @focusBus           = new Bacon.Bus()
     @searchBus          = new Bacon.Bus()
-    @matchedItemsBus    = new Bacon.Bus()
-    @bodyHeightBus      = new Bacon.Bus()
-    @rowHeightBus       = new Bacon.Bus()
-    @columnsBus         = new Bacon.Bus()
     @moveSelectedStream = new Bacon.Bus()
+    @rowHeightBus       = new Bacon.Bus()
+    @bodyHeightBus      = new Bacon.Bus()
 
     @p = new ItemsPanel(
-      focusBus         : @focusBus
-      searchBus        : @searchBus
-      matchedItemsProp : @matchedItemsBus.toProperty([])
-      columnsProp      : @columnsBus.toProperty([])
-      bodyHeightStream : @bodyHeightBus
-      rowHeightStream  : @rowHeightBus
-      moveSelectedStream: @moveSelectedStream
+      matchedItemsProp   : @matchedItemsBus.toProperty([])
+      columnsProp        : @columnsBus.toProperty([])
+      focusBus           : @focusBus
+      searchStream       : @searchBus
+      moveSelectedStream : @moveSelectedStream
+      rowHeightStream    : @rowHeightBus
+      bodyHeightStream   : @bodyHeightBus
     )
 
   it 'has a set of expected attrs', ->

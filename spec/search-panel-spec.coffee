@@ -9,8 +9,8 @@ describe 'SearchPanel', ->
     @searchBus.onValue @searchBusSpy
 
     @p = new SearchPanel(
-      focusBus  : @focusBus
-      searchBus : @searchBus
+      focusStream : @focusBus
+      searchBus   : @searchBus
     )
     @rootElSpy = jasmine.createSpy('element')
     @p.elementProp.onValue @rootElSpy
