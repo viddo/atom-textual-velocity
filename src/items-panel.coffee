@@ -1,12 +1,8 @@
-Bacon                          = require 'baconjs'
-h                              = require 'virtual-dom/h'
-createElement                  = require 'virtual-dom/create-element'
-diff                           = require 'virtual-dom/diff'
-patch                          = require 'virtual-dom/patch'
-header                         = require './vdom/header'
-content                        = require './vdom/content'
-scrollableContent              = require './vdom/scrollable-content'
-resizeHandle                   = require './vdom/resize-handle'
+Bacon         = require 'baconjs'
+createElement = require 'virtual-dom/create-element'
+diff          = require 'virtual-dom/diff'
+patch         = require 'virtual-dom/patch'
+vDOM          = require './vdom'
 
 module.exports =
 class ItemsPanel
@@ -54,7 +50,7 @@ class ItemsPanel
             items.slice(begin, end)
           , matchedItemsProp, visibleBeginProp, visibleEndProp
         }).map (data) ->
-          content(data, selectItemBus)
+          vDOM.content(data, selectItemBus)
       topOffset: Bacon.combineWith (scrollTop, rowHeight) ->
           -(scrollTop % rowHeight)
         , scrollTopProp, rowHeightProp
@@ -62,19 +58,17 @@ class ItemsPanel
           items.length * rowHeight - scrollTop - bodyHeight
         , matchedItemsProp, rowHeightProp, scrollTopProp, @bodyHeightProp
     }).map (data) ->
-      scrollableContent(data, scrollTopBus)
+      vDOM.scrollableContent(data, scrollTopBus)
 
     vdomTreeProp = Bacon.combineWith (columns, scrollableContent, bodyHeight) ->
-      h 'div.atom-notational-panel', {
-        onclick: -> focusBus.push undefined
-      }, [
-        header(columns)
+      vDOM.rootNode [
+        vDOM.header(columns)
         scrollableContent
-        resizeHandle(bodyHeight, bodyHeightBus)
-      ]
+        vDOM.resizeHandle(bodyHeight, bodyHeightBus)
+      ], {onclick: -> focusBus.push undefined}
     , columnsProp, scrollableContentProp, @bodyHeightProp
 
-    initialTree = h 'div.atom-notational-panel'
+    initialTree = vDOM.rootNode()
     renderProp = Bacon.update {
       el   : createElement(initialTree)
       tree : initialTree

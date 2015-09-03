@@ -1,8 +1,7 @@
 Bacon         = require 'baconjs'
 R             = require 'ramda'
-h             = require 'virtual-dom/h'
 createElement = require 'virtual-dom/create-element'
-search        = require './vdom/search'
+vDOM          = require './vdom'
 
 module.exports =
 class SearchPanel
@@ -18,7 +17,7 @@ class SearchPanel
       down  : keydownBus.filter isKeyCode(40)
     }
 
-    vdomTree = h 'div.atom-notational-panel', {}, search(searchBus, keydownBus)
+    vdomTree = vDOM.rootNode vDOM.search(searchBus, keydownBus)
     @elementProp = Bacon.update createElement(vdomTree),
       [focusBus], @focusOnSearchInput
       [@keyDownStreams.esc], @resetSearch

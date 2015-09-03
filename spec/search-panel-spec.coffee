@@ -1,5 +1,5 @@
 Bacon       = require 'baconjs'
-SearchPanel = require '../../src/notational/search-panel'
+SearchPanel = require '../src/search-panel'
 
 describe 'SearchPanel', ->
   beforeEach ->
