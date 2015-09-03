@@ -62,7 +62,7 @@ module.exports = {
 
   resizeHandle: (bodyHeight, bodyHeightBus) ->
     h 'div.resize-handle', {
-      onmousedown: (ev) ->
+      onmousedown: (ev) =>
         @mouseMoveDiff(ev).onValue (diff) ->
           bodyHeightBus.push bodyHeight + diff.clientY
     }
