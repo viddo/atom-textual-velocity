@@ -14,10 +14,6 @@ module.exports =
       type: 'number'
       default: 200
       minimum: 0
-    rowHeight:
-      type: 'number'
-      default: 25
-      minimum: 0
 
   activate: (state) ->
     focusBus  = new Bacon.Bus()
@@ -39,7 +35,6 @@ module.exports =
       focusBus           : focusBus
       searchStream       : searchBus
       moveSelectedStream : moveSelectedStream
-      rowHeightStream    : atoms.fromConfig('atom-notational.rowHeight')
       bodyHeightStream   : atoms.fromConfig('atom-notational.bodyHeight')
     )
 

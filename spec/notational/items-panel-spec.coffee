@@ -9,7 +9,6 @@ describe 'ItemsPanel', ->
     @focusBus           = new Bacon.Bus()
     @searchBus          = new Bacon.Bus()
     @moveSelectedStream = new Bacon.Bus()
-    @rowHeightBus       = new Bacon.Bus()
     @bodyHeightBus      = new Bacon.Bus()
 
     @p = new ItemsPanel(
@@ -18,7 +17,6 @@ describe 'ItemsPanel', ->
       focusBus           : @focusBus
       searchStream       : @searchBus
       moveSelectedStream : @moveSelectedStream
-      rowHeightStream    : @rowHeightBus
       bodyHeightStream   : @bodyHeightBus
     )
 

@@ -7,7 +7,7 @@ vDOM          = require './vdom'
 module.exports =
 class ItemsPanel
 
-  constructor: ({columnsProp, matchedItemsProp, focusBus, searchStream, moveSelectedStream, rowHeightStream, bodyHeightStream}) ->
+  constructor: ({columnsProp, matchedItemsProp, focusBus, searchStream, moveSelectedStream, bodyHeightStream}) ->
     bodyHeightBus = new Bacon.Bus()
     scrollTopBus  = new Bacon.Bus()
     selectItemBus = new Bacon.Bus()
@@ -19,7 +19,7 @@ class ItemsPanel
     ).skipDuplicates()
 
     # Setup props related to the scrollable content
-    rowHeightProp = rowHeightStream.toProperty(25)
+    rowHeightProp = Bacon.constant(25)
     @bodyHeightProp = bodyHeightBus.merge(bodyHeightStream)
       .skipDuplicates()
       .filter (height) -> height > 0
