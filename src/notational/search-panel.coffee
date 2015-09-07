@@ -19,17 +19,15 @@ class SearchPanel
 
     vdomTree = vDOM.rootNode vDOM.search(searchBus, keydownBus)
     @elementProp = Bacon.update createElement(vdomTree),
-      [focusStream], @focusOnSearchInput
-      [@keyDownStreams.esc], @resetSearch
+      [focusStream], R.tap @focusOnSearchInput
+      [@keyDownStreams.esc], R.tap @resetSearch
 
-  focusOnSearchInput: (el, ...) ->
+  focusOnSearchInput: (el) ->
     el.querySelector('.search').focus()
-    return el
 
-  resetSearch: (el, ...) =>
+  resetSearch: (el) =>
     el.querySelector('.search').value = ''
     @searchBus.push('')
-    return el
 
   dispose: ->
     @elementProp = null
