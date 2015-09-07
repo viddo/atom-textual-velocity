@@ -5,10 +5,10 @@ atoms  = require '../../atom-streams'
 
 module.exports =
 class Projects
-  constructor: (searchBus) ->
+  constructor: (searchStream) ->
     @tasks = {}
-    searchProp = searchBus.skipDuplicates().toProperty('')
-    @matchedItemsProp = Bacon.combineWith(@filterItemsBySearch, @createItemsProp(), searchProp)
+    searchProp = searchStream.skipDuplicates().toProperty('')
+    @matchedItemsProp = Bacon.combineWith @filterItemsBySearch, @createItemsProp(), searchProp
 
   filterItemsBySearch: (items, searchStr) ->
     return items unless searchStr
