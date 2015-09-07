@@ -1,12 +1,12 @@
 Path        = require 'path'
 Bacon       = require 'baconjs'
 R           = require 'ramda'
-atoms       = require './src/atom-streams'
-SearchPanel = require './src/search-panel'
-ItemsPanel  = require './src/items-panel'
-columns     = require './src/integrations/atom/columns'
-Projects    = require './src/integrations/atom/projects'
-Panels      = require './src/integrations/atom/panels'
+ItemsPanel  = require './notational/items-panel'
+SearchPanel = require './notational/search-panel'
+atoms       = require './atom-streams'
+columns     = require './columns'
+Panels      = require './panels'
+Projects    = require './projects'
 
 module.exports =
   config:

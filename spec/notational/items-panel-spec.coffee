@@ -1,6 +1,6 @@
 Bacon      = require 'baconjs'
-ItemsPanel = require '../src/items-panel'
-columns    = require '../src/integrations/atom/columns'
+ItemsPanel = require '../../src/notational/items-panel'
+columns    = require '../../src/columns'
 
 describe 'ItemsPanel', ->
   beforeEach ->

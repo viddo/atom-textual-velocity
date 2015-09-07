@@ -1,6 +1,6 @@
 {
   "name": "atom-notational",
-  "main": "./atom-main",
+  "main": "./src/main",
   "version": "0.0.0",
   "description": "A short description of your package",
   "repository": "https://github.com/atom/atom-notational",

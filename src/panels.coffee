@@ -1,7 +1,7 @@
 {Disposable, CompositeDisposable} = require 'atom'
 R                                 = require 'ramda'
 Path                              = require 'path'
-atoms                             = require '../../atom-streams'
+atoms                             = require './atom-streams'
 
 module.exports =
 class Panels
