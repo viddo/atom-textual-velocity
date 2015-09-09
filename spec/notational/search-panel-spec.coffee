@@ -50,7 +50,7 @@ describe 'SearchPanel', ->
       it 'pushes an empty string', ->
         expect(@searchBusSpy.mostRecentCall.args[0]).toEqual('')
 
-  describe '.keydownStreams', ->
+  describe '.keyDownStreams', ->
     keys = {
       'enter' : 13
       'esc'   : 27

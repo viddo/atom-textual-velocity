@@ -1,12 +1,12 @@
-Path        = require 'path'
-Bacon       = require 'baconjs'
-R           = require 'ramda'
-ItemsPanel  = require './notational/items-panel'
-SearchPanel = require './notational/search-panel'
-atoms       = require './atom-streams'
-columns     = require './columns'
-Panels      = require './panels'
-Projects    = require './projects'
+Path     = require 'path'
+Bacon    = require 'baconjs'
+R        = require 'ramda'
+atoms    = require './atom-streams'
+columns  = require './columns'
+Panels   = require './panels'
+Projects = require './projects'
+search   = require './notational/search'
+items    = require './notational/items'
 
 module.exports =
   config:
@@ -20,7 +20,7 @@ module.exports =
     searchBus = new Bacon.Bus()
     @projects = new Projects(searchBus)
 
-    searchPanel = new SearchPanel(
+    search = search(
       focusStream : focusBus
       searchBus   : searchBus
     )
@@ -29,7 +29,7 @@ module.exports =
     moveSelectedStream = searchPanel.keyDownStreams.up.doAction(preventDefault).map(-1)
       .merge(searchPanel.keyDownStreams.down.doAction(preventDefault).map(1))
 
-    itemsPanel = new ItemsPanel(
+    items = items(
       matchedItemsProp   : @projects.matchedItemsProp
       columnsProp        : Bacon.sequentially(0, [columns]).toProperty([])
       focusBus           : focusBus
