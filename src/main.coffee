@@ -26,8 +26,8 @@ module.exports =
     )
 
     preventDefault = R.invoker(0, 'preventDefault')
-    moveSelectedStream = searchPanel.keyDownStreams.up.doAction(preventDefault).map(-1)
-      .merge(searchPanel.keyDownStreams.down.doAction(preventDefault).map(1))
+    moveSelectedStream = search.keyDownStreams.up.doAction(preventDefault).map(-1)
+      .merge(search.keyDownStreams.down.doAction(preventDefault).map(1))
 
     items = items(
       matchedItemsProp   : @projects.matchedItemsProp
@@ -39,8 +39,8 @@ module.exports =
     )
 
     @panels = new Panels(
-      searchPanel : searchPanel
-      itemsPanel  : itemsPanel
+      search : search
+      items  : items
     )
 
   deactivate: ->

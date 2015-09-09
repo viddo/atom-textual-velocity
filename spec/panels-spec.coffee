@@ -7,7 +7,7 @@ xdescribe 'Panels', ->
     @enterKeyDownBus  = new Bacon.Bus()
     @escKeyDownBus    = new Bacon.Bus()
 
-    @searchPanel = {
+    @search = {
       elementProp: @searchElementBus.toProperty()
       keyDownStreams: {
         enter: @enterKeyDownBus
@@ -19,15 +19,15 @@ xdescribe 'Panels', ->
     @resizedBodyBus   = new Bacon.Bus()
     @selectedItemsBus = new Bacon.Bus()
 
-    @itemsPanel = {
+    @items = {
       elementProp           : @itemsElementBus.toProperty()
       selectedItemProp      : @selectedItemsBus.toProperty()
       resizedBodyHeightProp : @resizedBodyBus.toProperty(123)
     }
 
     @p = new Panels(
-      searchPanel : @searchPanel
-      itemsPanel  : @itemsPanel
+      search : @search
+      items  : @items
     )
 
   describe 'when the body height is resized', ->

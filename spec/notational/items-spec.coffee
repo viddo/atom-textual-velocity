@@ -1,8 +1,8 @@
-Bacon      = require 'baconjs'
-ItemsPanel = require '../../src/notational/items-panel'
-columns    = require '../../src/columns'
+Bacon   = require 'baconjs'
+items   = require '../../src/notational/items'
+columns = require '../../src/columns'
 
-describe 'ItemsPanel', ->
+describe 'Items', ->
   beforeEach ->
     @matchedItemsBus    = new Bacon.Bus()
     @columnsBus         = new Bacon.Bus()
@@ -11,7 +11,7 @@ describe 'ItemsPanel', ->
     @moveSelectedStream = new Bacon.Bus()
     @bodyHeightBus      = new Bacon.Bus()
 
-    @p = new ItemsPanel(
+    @items = items(
       matchedItemsProp   : @matchedItemsBus.toProperty([])
       columnsProp        : @columnsBus.toProperty([])
       focusBus           : @focusBus
@@ -21,14 +21,14 @@ describe 'ItemsPanel', ->
     )
 
   it 'has a set of expected attrs', ->
-    expect(@p.elementProp).toBeDefined()
-    expect(@p.resizedBodyHeightProp).toBeDefined()
-    expect(@p.selectedItemProp).toBeDefined()
+    expect(@items.elementProp).toBeDefined()
+    expect(@items.resizedBodyHeightProp).toBeDefined()
+    expect(@items.selectedItemProp).toBeDefined()
 
   describe 'when have some columns', ->
     beforeEach ->
       @elementSpy = jasmine.createSpy('el')
-      @p.elementProp.onValue(@elementSpy)
+      @items.elementProp.onValue(@elementSpy)
       @columnsBus.push [{
         title: 'head1'
         width: 45

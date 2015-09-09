@@ -5,17 +5,17 @@ atoms                             = require './atom-streams'
 
 module.exports =
 class Panels
-  constructor: ({searchPanel, itemsPanel}) ->
+  constructor: ({search, items}) ->
     @disposables = new CompositeDisposable
 
     # double-key press within 300ms triggers a hide event
-    @add searchPanel.elementProp.onValue @createSearchPanel
-    @add itemsPanel.elementProp.onValue @createItemsPanel
-    @add itemsPanel.resizedBodyHeightProp.debounce(500).onValue @saveResizedBodyHeight
-    @add itemsPanel.selectedItemProp.onValue @previewSelectedItem
-    @add itemsPanel.selectedItemProp.sampledBy(searchPanel.keyDownStreams.enter).onValue @openSelectedItem
+    @add search.elementProp.onValue @createSearchPanel
+    @add items.elementProp.onValue @createItemsPanel
+    @add items.resizedBodyHeightProp.debounce(500).onValue @saveResizedBodyHeight
+    @add items.selectedItemProp.onValue @previewSelectedItem
+    @add items.selectedItemProp.sampledBy(search.keyDownStreams.enter).onValue @openSelectedItem
 
-    @add @doubleEsc(searchPanel.keyDownStreams.esc).onValue R.pipe(
+    @add @doubleEsc(search.keyDownStreams.esc).onValue R.pipe(
       @hideItemsPanel
       @hideSearchPanel
       -> atom.workspace.getActivePane()?.activate()

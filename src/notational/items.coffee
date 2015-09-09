@@ -11,7 +11,7 @@ module.exports = ({columnsProp, matchedItemsProp, focusBus, searchStream, moveSe
   scrollTopBus  = new Bacon.Bus()
   selectItemBus = new Bacon.Bus()
 
-  @selectedItemProp = Bacon.update(undefined,
+  selectedItemProp = Bacon.update(undefined,
     [searchStream], -> undefined
     [selectItemBus], (..., newItem) -> newItem
     [moveSelectedStream, matchedItemsProp], selectItemByRelativeOffset
@@ -19,14 +19,14 @@ module.exports = ({columnsProp, matchedItemsProp, focusBus, searchStream, moveSe
 
   # Setup props related to the scrollable content
   rowHeightProp = Bacon.constant(25)
-  @bodyHeightProp = bodyHeightBus.merge(bodyHeightStream)
+  bodyHeightProp = bodyHeightBus.merge(bodyHeightStream)
     .skipDuplicates()
     .filter (height) -> height > 0
     .toProperty(100)
 
   scrollTopProp = Bacon.update 0,
     [scrollTopBus], (..., scrollTop) -> scrollTop
-    [@selectedItemProp.changes(), matchedItemsProp, rowHeightProp, @bodyHeightProp], adjustScrollTopForSelectedItem
+    [selectedItemProp.changes(), matchedItemsProp, rowHeightProp, bodyHeightProp], adjustScrollTopForSelectedItem
 
   visibleBeginProp = Bacon.combineWith (scrollTop, rowHeight) ->
     (scrollTop / rowHeight) | 0
@@ -34,15 +34,15 @@ module.exports = ({columnsProp, matchedItemsProp, focusBus, searchStream, moveSe
 
   visibleEndProp = Bacon.combineWith (begin, bodyHeight, rowHeight) ->
     begin + ((bodyHeight / rowHeight) | 0) + 2 # add to avoid visible gap when scrolling
-  , visibleBeginProp, @bodyHeightProp, rowHeightProp
+  , visibleBeginProp, bodyHeightProp, rowHeightProp
 
   # Setup vdom of scrollable content
   scrollableContentProp = Bacon.combineTemplate({
-    bodyHeight: @bodyHeightProp
+    bodyHeight: bodyHeightProp
     scrollTop: scrollTopProp
     content: Bacon.combineTemplate({
         columns: columnsProp
-        selectedItem: @selectedItemProp
+        selectedItem: selectedItemProp
         reverseStripes: visibleBeginProp.map (begin) ->
           begin % 2 is 0
         items: Bacon.combineWith (items, begin, end) ->
@@ -55,7 +55,7 @@ module.exports = ({columnsProp, matchedItemsProp, focusBus, searchStream, moveSe
       , scrollTopProp, rowHeightProp
     marginBottom: Bacon.combineWith (items, rowHeight, scrollTop, bodyHeight) ->
         items.length * rowHeight - scrollTop - bodyHeight
-      , matchedItemsProp, rowHeightProp, scrollTopProp, @bodyHeightProp
+      , matchedItemsProp, rowHeightProp, scrollTopProp, bodyHeightProp
   }).map (data) ->
     vDOM.scrollableContent(data, scrollTopBus)
 
@@ -65,7 +65,7 @@ module.exports = ({columnsProp, matchedItemsProp, focusBus, searchStream, moveSe
       scrollableContent
       vDOM.resizeHandle(bodyHeight, bodyHeightBus)
     ], {onclick: -> focusBus.push undefined}
-  , columnsProp, scrollableContentProp, @bodyHeightProp
+  , columnsProp, scrollableContentProp, bodyHeightProp
 
   initialTree = vDOM.rootNode()
   renderProp = Bacon.update {
@@ -77,7 +77,7 @@ module.exports = ({columnsProp, matchedItemsProp, focusBus, searchStream, moveSe
         el   : patch(el, diff(tree, newTree))
         tree : newTree
       }
-    [@selectedItemProp.changes()], (current, ...) ->
+    [selectedItemProp.changes()], (current, ...) ->
       # Scroll item into the view if outside the visible border and was triggered by selectItem change
       if selectedRow = current.el.querySelector('.is-selected')
         selectedRow.scrollIntoViewIfNeeded(false) # centerIfNeeded=false => croll minimal possible to avoid jumps
@@ -88,6 +88,7 @@ module.exports = ({columnsProp, matchedItemsProp, focusBus, searchStream, moveSe
 
 
   return {
-    elementProp: renderProp.map('.el')
-    resizedBodyHeightProp: bodyHeightProp
+    elementProp           : renderProp.map('.el')
+    resizedBodyHeightProp : bodyHeightProp
+    selectedItemProp      : selectedItemProp
   }
