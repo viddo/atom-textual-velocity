@@ -1,4 +1,5 @@
 Bacon                          = require 'baconjs'
+R                              = require 'ramda'
 createElement                  = require 'virtual-dom/create-element'
 diff                           = require 'virtual-dom/diff'
 patch                          = require 'virtual-dom/patch'
@@ -6,10 +7,14 @@ vDOM                           = require './vdom'
 selectItemByRelativeOffset     = require './select-item-by-relative-offset'
 adjustScrollTopForSelectedItem = require './adjust-scroll-top-for-seleted-item'
 
-module.exports = ({columnsProp, matchedItemsProp, focusBus, searchStream, moveSelectedStream, bodyHeightStream}) ->
+module.exports = ({columnsProp, matchedItemsProp, focusBus, searchStream, keyDownStreams, bodyHeightStream}) ->
   bodyHeightBus = new Bacon.Bus()
   scrollTopBus  = new Bacon.Bus()
   selectItemBus = new Bacon.Bus()
+
+  preventDefault = R.invoker(0, 'preventDefault')
+  moveSelectedStream = keyDownStreams.up.doAction(preventDefault).map(-1)
+    .merge(keyDownStreams.down.doAction(preventDefault).map(1))
 
   selectedItemProp = Bacon.update(undefined,
     [searchStream], -> undefined

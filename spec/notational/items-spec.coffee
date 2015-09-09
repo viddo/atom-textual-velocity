@@ -4,20 +4,23 @@ columns = require '../../src/columns'
 
 describe 'Items', ->
   beforeEach ->
-    @matchedItemsBus    = new Bacon.Bus()
-    @columnsBus         = new Bacon.Bus()
-    @focusBus           = new Bacon.Bus()
-    @searchBus          = new Bacon.Bus()
-    @moveSelectedStream = new Bacon.Bus()
-    @bodyHeightBus      = new Bacon.Bus()
+    @matchedItemsBus = new Bacon.Bus()
+    @columnsBus      = new Bacon.Bus()
+    @focusBus        = new Bacon.Bus()
+    @searchBus       = new Bacon.Bus()
+    @keyDownStreams  = {
+      up   : new Bacon.Bus()
+      down : new Bacon.Bus()
+    }
+    @bodyHeightBus   = new Bacon.Bus()
 
     @items = items(
-      matchedItemsProp   : @matchedItemsBus.toProperty([])
-      columnsProp        : @columnsBus.toProperty([])
-      focusBus           : @focusBus
-      searchStream       : @searchBus
-      moveSelectedStream : @moveSelectedStream
-      bodyHeightStream   : @bodyHeightBus
+      matchedItemsProp : @matchedItemsBus.toProperty([])
+      columnsProp      : @columnsBus.toProperty([])
+      focusBus         : @focusBus
+      searchStream     : @searchBus
+      keyDownStreams   : @keyDownStreams
+      bodyHeightStream : @bodyHeightBus
     )
 
   it 'has a set of expected attrs', ->
