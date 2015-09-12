@@ -1,27 +1,43 @@
 Bacon  = require 'baconjs'
+u = require '../utils'
 search = require '../../src/notational/search'
 
 describe 'Search', ->
   beforeEach ->
     @focusBus  = new Bacon.Bus()
-    @searchBus = new Bacon.Bus()
-    @searchBusSpy = jasmine.createSpy('searchBus')
-    @searchBus.onValue @searchBusSpy
 
     @search = search(
       focusStream : @focusBus
-      searchBus   : @searchBus
     )
+
+    @inputTextStreamSpy = jasmine.createSpy('inputTextStream')
+    @search.inputTextStream.onValue(@inputTextStreamSpy)
+
+    @abortStreamSpy = jasmine.createSpy('abortStream')
+    @search.abortStream.onValue(@abortStreamSpy)
+
+    @openStreamSpy = jasmine.createSpy('openStream')
+    @search.openStream.onValue(@openStreamSpy)
+
+    @selectPrevStreamSpy = jasmine.createSpy('selectPrevStream')
+    @search.selectPrevStream.onValue(@selectPrevStreamSpy)
+    @selectNextStreamSpy = jasmine.createSpy('selectNextStream')
+    @search.selectNextStream.onValue(@selectNextStreamSpy)
+
+    # Side-effects are required for streams to be started
     @rootElSpy = jasmine.createSpy('element')
     @search.elementProp.onValue @rootElSpy
     @$input = ->
       @rootElSpy.mostRecentCall.args[0].querySelector('.search')
 
   it 'has a set of expected attrs', ->
-    expect(@search.keyDownStreams).toBeDefined()
+    expect(@search.inputTextStream).toBeDefined()
+    expect(@search.selectPrevStream).toBeDefined()
+    expect(@search.selectNextStream).toBeDefined()
+    expect(@search.openStream).toBeDefined()
     expect(@rootElSpy.mostRecentCall.args[0]).toBeDefined()
 
-  describe 'when focus is triggered', ->
+  describe 'on a focus stream event', ->
     beforeEach ->
       spyOn(HTMLElement.prototype, 'focus')
       @focusBus.push()
@@ -34,40 +50,74 @@ describe 'Search', ->
     it 'should still have an element', ->
       expect(@rootElSpy.mostRecentCall.args[0]).toBeDefined
 
+  describe 'when a string is written on input', ->
+    beforeEach ->
+      @$input().value = 'test'
+      u.dispatchEvent(@$input(), 'input')
+
+      waitsFor ->
+        @inputTextStreamSpy.calls.length is 1
+
+    it 'send text on the inputTextStream', ->
+      expect(@inputTextStreamSpy.mostRecentCall.args[0]).toEqual 'test'
+
     describe 'when ESC key is pressed on input', ->
       beforeEach ->
-        @$input().value = 'foobar'
-        expect(@$input().value).toEqual('foobar')
-        @$input().onkeydown({keyCode: 27})
+        u.dispatchKeyEvent @$input(), {
+          eventType: 'keydown'
+          keyCode: 27
+        }
+        waitsFor ->
+          @abortStreamSpy.calls.length is 1
 
       it 'reset value on ESC', ->
         expect(@$input().value).toEqual('')
 
-      it 'pushes an empty string', ->
-        expect(@searchBusSpy.mostRecentCall.args[0]).toEqual('')
+      it 'pushes an empty string on inputTextStream', ->
+        expect(@inputTextStreamSpy.mostRecentCall.args[0]).toEqual ''
 
-  describe '.keyDownStreams', ->
-    keys = {
-      'enter' : 13
-      'esc'   : 27
-      'up'    : 38
-      'down'  : 40
-    }
-    setupKeyTest = (currentKey, currentKeyCode) ->
-      describe "when #{currentKey.toUpperCase()} is pressed on search input", ->
-        beforeEach ->
-          for key, keyCode of keys
-            @["#{key}Spy"] = jasmine.createSpy(key)
-            @search.keyDownStreams[key].onValue @["#{key}Spy"]
-          @$input().onkeydown({keyCode: currentKeyCode})
+  describe 'when UP key is pressed on input', ->
+    beforeEach ->
+      @preventDefaultSpy = jasmine.createSpy('preventDefaultSpy')
+      u.dispatchKeyEvent @$input(), {
+        eventType      : 'keydown'
+        keyCode        : 38
+        preventDefault : @preventDefaultSpy
+      }
+      waitsFor ->
+        @selectPrevStreamSpy.calls.length is 1
 
-        it 'gets an value on corresponding stream', ->
-          expect(@["#{currentKey}Spy"]).toHaveBeenCalled()
+    it 'sends an event on select-prev stream', ->
+      expect(@selectPrevStreamSpy.mostRecentCall.args[0]).toBeDefined()
 
-        it 'do not push any value on other streams', ->
-          for key, keyCode of keys
-            if (keyCode isnt currentKeyCode)
-              expect(@["#{key}Spy"]).not.toHaveBeenCalled()
+    it 'preventDefault action (to not displace cursor)', ->
+      expect(@preventDefaultSpy).toHaveBeenCalled()
 
-    for currentKey, currentKeyCode of keys
-      setupKeyTest(currentKey, currentKeyCode)
+  describe 'when DOWN key is pressed on input', ->
+    beforeEach ->
+      @preventDefaultSpy = jasmine.createSpy('preventDefaultSpy')
+      u.dispatchKeyEvent @$input(), {
+        eventType      : 'keydown'
+        keyCode        : 40
+        preventDefault : @preventDefaultSpy
+      }
+      waitsFor ->
+        @selectNextStreamSpy.calls.length is 1
+
+    it 'sends an event on select-prev stream', ->
+      expect(@selectNextStreamSpy.mostRecentCall.args[0]).toBeDefined()
+
+    it 'preventDefault action (to not displace cursor)', ->
+      expect(@preventDefaultSpy).toHaveBeenCalled()
+
+  describe 'when ENTER key is pressed on input', ->
+    beforeEach ->
+      u.dispatchKeyEvent @$input(), {
+        eventType      : 'keydown'
+        keyCode        : 13
+      }
+      waitsFor ->
+        @openStreamSpy.calls.length is 1
+
+    it 'sends an event on select-prev stream', ->
+      expect(@openStreamSpy.mostRecentCall.args[0]).toBeDefined()

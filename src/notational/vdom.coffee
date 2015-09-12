@@ -6,7 +6,7 @@ module.exports = {
   rootNode: (content, opts) ->
     h 'div.atom-notational-panel', opts, content
 
-  search: (searchBus, keydownBus) ->
+  search: (inputBus, keydownBus) ->
     h 'input', {
       type: 'text'
       tabIndex: '-1'
@@ -15,7 +15,7 @@ module.exports = {
       onkeydown: (ev) ->
         keydownBus.push ev
       oninput: (ev) ->
-        searchBus.push ev.target.value
+        inputBus.push ev
     }
 
   header: (columns) ->
