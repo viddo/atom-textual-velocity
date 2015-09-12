@@ -9,7 +9,7 @@ KEY_CODES = {
 
 module.exports = {
 
-  isEventCode: R.curry (keyName, ev) ->
+  isKey: R.curry (keyName, ev) ->
     #isKeyCode: R.propEq('keyCode')
     ev.keyCode is KEY_CODES[keyName.toUpperCase()]
 }

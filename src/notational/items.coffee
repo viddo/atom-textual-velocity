@@ -4,7 +4,7 @@ createElement                  = require 'virtual-dom/create-element'
 diff                           = require 'virtual-dom/diff'
 patch                          = require 'virtual-dom/patch'
 vDOM                           = require './vdom'
-keys                           = require './keys'
+Keys                           = require './keys'
 selectItemByRelativeOffset     = require './select-item-by-relative-offset'
 adjustScrollTopForSelectedItem = require './adjust-scroll-top-for-seleted-item'
 
@@ -17,20 +17,20 @@ module.exports = ({searchBus, matchedItemsProp, columnsProp, bodyHeightStream}) 
   keyDownBus    = new Bacon.Bus()
 
   preventDefault     = R.invoker(0, 'preventDefault')
-  abortStream        = keyDownBus.filter keys.isEventCode('esc')
-  selectPrevStream   = keyDownBus.filter(keys.isEventCode('up')).doAction(preventDefault)
-  selectNextStream   = keyDownBus.filter(keys.isEventCode('down')).doAction(preventDefault)
+  resetStream        = keyDownBus.filter Keys.isKey('esc')
+  selectPrevStream   = keyDownBus.filter(Keys.isKey('up')).doAction(preventDefault)
+  selectNextStream   = keyDownBus.filter(Keys.isKey('down')).doAction(preventDefault)
   moveSelectedStream = selectPrevStream.map(-1).merge(selectNextStream.map(1))
 
   vdomTree = vDOM.rootNode vDOM.search(inputBus, keyDownBus)
   elementProp = Bacon.update createElement(vdomTree),
     [focusBus], R.tap (el) ->
       el.querySelector('.search').focus()
-    [abortStream], R.tap (el) =>
+    [resetStream], R.tap (el) =>
       el.querySelector('.search').value = ''
 
   inputValueStream = inputBus.map R.path(['target', 'value'])
-  searchStream = inputValueStream.merge abortStream.map('')
+  searchStream = inputValueStream.merge resetStream.map('')
   searchBus.plug(searchStream)
 
   selectedItemProp = Bacon.update(undefined,
@@ -112,6 +112,6 @@ module.exports = ({searchBus, matchedItemsProp, columnsProp, bodyHeightStream}) 
     itemsElementProp      : renderProp.map('.el')
     resizedBodyHeightProp : bodyHeightProp
     selectedItemProp      : selectedItemProp
-    abortStream           : abortStream
-    openStream            : keyDownBus.filter keys.isEventCode('enter')
+    resetStream           : resetStream
+    openStream            : keyDownBus.filter Keys.isKey('enter')
   }

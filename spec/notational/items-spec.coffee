@@ -20,8 +20,8 @@ describe 'Items', ->
     @searchBusSpy = jasmine.createSpy('inputTextStream')
     @searchBus.onValue(@searchBusSpy)
 
-    @abortStreamSpy = jasmine.createSpy('abortStream')
-    @items.abortStream.onValue(@abortStreamSpy)
+    @resetStreamSpy = jasmine.createSpy('resetStream')
+    @items.resetStream.onValue(@resetStreamSpy)
 
     @openStreamSpy = jasmine.createSpy('openStream')
     @items.openStream.onValue(@openStreamSpy)
@@ -42,7 +42,7 @@ describe 'Items', ->
     expect(@items.itemsElementProp).toBeDefined()
     expect(@items.resizedBodyHeightProp).toBeDefined()
     expect(@items.selectedItemProp).toBeDefined()
-    expect(@items.abortStream).toBeDefined()
+    expect(@items.resetStream).toBeDefined()
     expect(@items.openStream).toBeDefined()
 
   it 'has DOM elements', ->
@@ -100,7 +100,7 @@ describe 'Items', ->
           keyCode: 27
         }
         waitsFor ->
-          @abortStreamSpy.calls.length is 1
+          @resetStreamSpy.calls.length is 1
 
       it 'reset value on ESC', ->
         expect(@$searchInput().value).toEqual('')
