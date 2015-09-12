@@ -8,26 +8,29 @@ class Panels
   constructor: ({search, items}) ->
     @disposables = new CompositeDisposable
 
-    # double-key press within 300ms triggers a hide event
-    @add search.elementProp.onValue @createSearchPanel
-    @add items.elementProp.onValue @createItemsPanel
-    @add items.resizedBodyHeightProp.debounce(500).onValue @saveResizedBodyHeight
-    @add items.selectedItemProp.onValue @previewSelectedItem
-    @add items.selectedItemProp.sampledBy(search.openStream).onValue @openSelectedItem
+    sideEffects = [
+      search.elementProp.onValue @createSearchPanel
+      items.elementProp.onValue @createItemsPanel
+      items.resizedBodyHeightProp.debounce(500).onValue @saveResizedBodyHeight
+      items.selectedItemProp.onValue @previewSelectedItem
+      items.selectedItemProp.sampledBy(search.openStream).onValue @openSelectedItem
 
-    @add @doubleEsc(search.abortStream).onValue R.pipe(
-      @hideItemsPanel
-      @hideSearchPanel
-      -> atom.workspace.getActivePane()?.activate()
-    )
-    @add @doubleEsc(atoms.cancelCommand()).onValue R.pipe(
-      @showItemsPanel,
-      @showSearchPanel,
-      @getSearchInput,
-      (input) -> input.select() and input.focus()
-    )
+      @quickDoubleStream(search.abortStream).onValue R.pipe(
+        @hideItemsPanel
+        @hideSearchPanel
+        -> atom.workspace.getActivePane()?.activate()
+      )
+      @quickDoubleStream(atoms.cancelCommand()).onValue R.pipe(
+        @showItemsPanel,
+        @showSearchPanel,
+        @getSearchInput,
+        (input) -> input.select() and input.focus()
+      )
+    ]
+    @removeOnDispose(sideEffect) for sideEffect in sideEffects
 
-  doubleEsc: (stream) ->
+  # filter a given stream to only trigger if tow event are triggered within 300ms (e.g. double-ESC)
+  quickDoubleStream: (stream) ->
     stream.bufferWithTimeOrCount(300, 2).filter R.propEq('length', 2)
 
   getSearchInput: ->
@@ -67,7 +70,7 @@ class Panels
     if selectedItem
       atom.workspace.open Path.join(selectedItem.projectPath, selectedItem.relPath)
 
-  add: (o) ->
+  removeOnDispose: (o) ->
     unless typeof o.dispose is 'function'
       if typeof o is 'function'
         o = new Disposable(o)
