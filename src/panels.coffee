@@ -5,17 +5,17 @@ atoms                             = require './atom-streams'
 
 module.exports =
 class Panels
-  constructor: ({search, items}) ->
+  constructor: ({searchElementProp, itemsElementProp, resizedBodyHeightProp, selectedItemProp, abortStream, openStream}) ->
     @disposables = new CompositeDisposable
 
     sideEffects = [
-      search.elementProp.onValue @createSearchPanel
-      items.elementProp.onValue @createItemsPanel
-      items.resizedBodyHeightProp.debounce(500).onValue @saveResizedBodyHeight
-      items.selectedItemProp.onValue @previewSelectedItem
-      items.selectedItemProp.sampledBy(search.openStream).onValue @openSelectedItem
+      searchElementProp.onValue @createSearchPanel
+      itemsElementProp.onValue @createItemsPanel
+      resizedBodyHeightProp.debounce(500).onValue @saveResizedBodyHeight
+      selectedItemProp.onValue @previewSelectedItem
+      selectedItemProp.sampledBy(openStream).onValue @openSelectedItem
 
-      @quickDoubleStream(search.abortStream).onValue R.pipe(
+      @quickDoubleStream(abortStream).onValue R.pipe(
         @hideItemsPanel
         @hideSearchPanel
         -> atom.workspace.getActivePane()?.activate()

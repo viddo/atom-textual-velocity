@@ -3,7 +3,6 @@ atoms    = require './atom-streams'
 columns  = require './columns'
 Panels   = require './panels'
 Projects = require './projects'
-search   = require './notational/search'
 items    = require './notational/items'
 
 module.exports =
@@ -14,26 +13,14 @@ module.exports =
       minimum: 0
 
   activate: (state) ->
-    focusBus  = new Bacon.Bus()
-    search = search({
-      focusStream: focusBus
-    })
-
-    @projects = new Projects(search.inputTextStream)
-
-    items = items(
-      matchedItemsProp : @projects.matchedItemsProp
-      columnsProp      : Bacon.sequentially(0, [columns]).toProperty([])
-      focusBus         : focusBus
-      searchStream     : search.inputTextStream
-      selectPrevStream : search.selectPrevStream
-      selectNextStream : search.selectNextStream
-      bodyHeightStream : atoms.fromConfig('atom-notational.bodyHeight')
-    )
-
+    @projects = new Projects()
     @panels = new Panels(
-      search : search
-      items  : items
+      items(
+        searchBus        : @projects.searchBus
+        matchedItemsProp : @projects.matchedItemsProp
+        columnsProp      : Bacon.sequentially(0, [columns]).toProperty([])
+        bodyHeightStream : atoms.fromConfig('atom-notational.bodyHeight')
+      )
     )
 
   deactivate: ->
