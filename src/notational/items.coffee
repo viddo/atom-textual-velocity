@@ -7,14 +7,12 @@ vDOM                           = require './vdom'
 selectItemByRelativeOffset     = require './select-item-by-relative-offset'
 adjustScrollTopForSelectedItem = require './adjust-scroll-top-for-seleted-item'
 
-module.exports = ({columnsProp, matchedItemsProp, focusBus, searchStream, keyDownStreams, bodyHeightStream}) ->
+module.exports = ({columnsProp, matchedItemsProp, focusBus, searchStream, selectPrevStream, selectNextStream, bodyHeightStream}) ->
   bodyHeightBus = new Bacon.Bus()
   scrollTopBus  = new Bacon.Bus()
   selectItemBus = new Bacon.Bus()
 
-  preventDefault = R.invoker(0, 'preventDefault')
-  moveSelectedStream = keyDownStreams.up.doAction(preventDefault).map(-1)
-    .merge(keyDownStreams.down.doAction(preventDefault).map(1))
+  moveSelectedStream = selectPrevStream.map(-1).merge(selectNextStream.map(1))
 
   selectedItemProp = Bacon.update(undefined,
     [searchStream], -> undefined

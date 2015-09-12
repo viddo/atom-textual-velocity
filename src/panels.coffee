@@ -13,9 +13,9 @@ class Panels
     @add items.elementProp.onValue @createItemsPanel
     @add items.resizedBodyHeightProp.debounce(500).onValue @saveResizedBodyHeight
     @add items.selectedItemProp.onValue @previewSelectedItem
-    @add items.selectedItemProp.sampledBy(search.keyDownStreams.enter).onValue @openSelectedItem
+    @add items.selectedItemProp.sampledBy(search.openStream).onValue @openSelectedItem
 
-    @add @doubleEsc(search.keyDownStreams.esc).onValue R.pipe(
+    @add @doubleEsc(search.abortStream).onValue R.pipe(
       @hideItemsPanel
       @hideSearchPanel
       -> atom.workspace.getActivePane()?.activate()

@@ -7,7 +7,7 @@ module.exports =
 class Projects
   constructor: (searchStream) ->
     @tasks = {}
-    searchProp = searchStream.skipDuplicates().toProperty('')
+    searchProp = searchStream.toProperty('')
     @matchedItemsProp = Bacon.combineWith @filterItemsBySearch, @createItemsProp(), searchProp
 
   filterItemsBySearch: (items, searchStr) ->

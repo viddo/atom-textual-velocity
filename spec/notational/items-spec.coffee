@@ -4,22 +4,21 @@ columns = require '../../src/columns'
 
 describe 'Items', ->
   beforeEach ->
-    @matchedItemsBus = new Bacon.Bus()
-    @columnsBus      = new Bacon.Bus()
-    @focusBus        = new Bacon.Bus()
-    @searchBus       = new Bacon.Bus()
-    @keyDownStreams  = {
-      up   : new Bacon.Bus()
-      down : new Bacon.Bus()
-    }
-    @bodyHeightBus   = new Bacon.Bus()
+    @matchedItemsBus  = new Bacon.Bus()
+    @columnsBus       = new Bacon.Bus()
+    @focusBus         = new Bacon.Bus()
+    @searchBus        = new Bacon.Bus()
+    @selectPrevStream = new Bacon.Bus()
+    @selectNextStream = new Bacon.Bus()
+    @bodyHeightBus    = new Bacon.Bus()
 
     @items = items(
       matchedItemsProp : @matchedItemsBus.toProperty([])
       columnsProp      : @columnsBus.toProperty([])
       focusBus         : @focusBus
       searchStream     : @searchBus
-      keyDownStreams   : @keyDownStreams
+      selectPrevStream : @selectPrevStream
+      selectNextStream : @selectNextStream
       bodyHeightStream : @bodyHeightBus
     )
 

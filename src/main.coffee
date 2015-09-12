@@ -15,20 +15,19 @@ module.exports =
 
   activate: (state) ->
     focusBus  = new Bacon.Bus()
-    searchBus = new Bacon.Bus()
-    @projects = new Projects(searchBus)
+    search = search({
+      focusStream: focusBus
+    })
 
-    search = search(
-      focusStream : focusBus
-      searchBus   : searchBus
-    )
+    @projects = new Projects(search.inputTextStream)
 
     items = items(
       matchedItemsProp : @projects.matchedItemsProp
       columnsProp      : Bacon.sequentially(0, [columns]).toProperty([])
       focusBus         : focusBus
-      searchStream     : searchBus
-      keyDownStreams   : search.keyDownStreams
+      searchStream     : search.inputTextStream
+      selectPrevStream : search.selectPrevStream
+      selectNextStream : search.selectNextStream
       bodyHeightStream : atoms.fromConfig('atom-notational.bodyHeight')
     )
 
