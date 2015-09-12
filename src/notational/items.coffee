@@ -80,14 +80,12 @@ module.exports = ({columnsProp, matchedItemsProp, focusBus, searchStream, select
         el   : patch(el, diff(tree, newTree))
         tree : newTree
       }
-    [selectedItemProp.changes()], (current, ...) ->
+    [selectedItemProp.changes()], R.tap (current, ...) ->
       # Scroll item into the view if outside the visible border and was triggered by selectItem change
       if selectedRow = current.el.querySelector('.is-selected')
         selectedRow.scrollIntoViewIfNeeded(false) # centerIfNeeded=false => croll minimal possible to avoid jumps
-      return current
-    [searchStream], (current, ...) ->
+    [searchStream], R.tap (current, ...) ->
       current.el.querySelector('.tbody').scrollTop = 0 #return to top
-      return current
 
 
   return {
