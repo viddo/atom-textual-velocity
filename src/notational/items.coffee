@@ -79,22 +79,20 @@ module.exports = ({searchBus, matchedItemsProp, columnsProp, bodyHeightStream}) 
       vDom.resizeHandle(bodyHeight, bodyHeightBus)
     ], {onclick: -> focusBus.push()}
 
+  renderResult = (el, tree) ->
+    el   : el
+    tree : tree
   initialTree = vDom.rootNode()
-  renderProp = Bacon.update {
-    el   : createElement(initialTree)
-    tree : initialTree
-  },
+  renderProp = Bacon.update renderResult(createElement(initialTree), initialTree),
     [vDomTreeProp.toEventStream()], ({el, tree}, newTree) ->
-      return {
-        el   : patch(el, diff(tree, newTree))
-        tree : newTree
-      }
+      newEl = patch(el, diff(tree, newTree))
+      renderResult(newEl, newTree)
     [selectedItemProp.changes()], R.tap (current) ->
       # Scroll item into the view if outside the visible border and was triggered by selectItem change
       if selectedRow = current.el.querySelector('.is-selected')
         selectedRow.scrollIntoViewIfNeeded(false) # centerIfNeeded=false => croll minimal possible to avoid jumps
     [searchStream], R.tap (current) ->
-      current.el.querySelector('.tbody').scrollTop = 0 #return to top
+      current.el.querySelector('.tbody').scrollTop = 0 #i return to top
 
   return {
     searchElementProp     : elementProp
