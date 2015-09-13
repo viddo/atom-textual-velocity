@@ -76,13 +76,13 @@ module.exports = ({searchBus, matchedItemsProp, columnsProp, bodyHeightStream}) 
       [resetStream], R.tap (el) -> el.value = ''
 
     itemsElementProp: Bacon.update({el: vDom.create(initialItemsTree), tree: initialItemsTree},
-        [vDomTreeProp.toEventStream()], ({el, tree}, newTree) ->
-          {el: vDom.patch(el, vDom.diff(tree, newTree)), tree: newTree}
-        [selectedItemProp.changes()], Beh.tapItemsElement '.is-selected', (el) ->
-          # Scroll item into the view if outside the visible border and was triggered by selectItem change
-          el?.scrollIntoViewIfNeeded(false) # centerIfNeeded=false => scroll minimal possible to avoid jumps
-        [searchStream], Beh.tapItemsElement '.tbody', (el) ->
-          el.scrollTop = 0 # return to top
+        [vDomTreeProp.toEventStream()], ({el, tree}, newTree) -> {el: vDom.patch(el, vDom.diff(tree, newTree)), tree: newTree}
+
+        # Scroll item into the view if outside the visible boundaries
+        # centerIfNeeded=false => scroll minimal possible to avoid jumps
+        [selectedItemProp.changes()], Beh.tapItemsElement '.is-selected', (el) -> el?.scrollIntoViewIfNeeded(false)
+
+        [searchStream], Beh.tapItemsElement '.tbody', (el) -> el.scrollTop = 0 # return to top
       ).map('.el')
 
     openStream            : keyDownBus.filter Beh.isEventKey('enter')
