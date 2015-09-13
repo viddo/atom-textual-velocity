@@ -1,16 +1,16 @@
-Bacon   = require 'baconjs'
-u       = require '../utils'
-items   = require '../../src/notational/items'
-columns = require '../../src/columns'
+Bacon        = require 'baconjs'
+u            = require '../utils'
+notationalUI = require '../../src/notational/ui'
+columns      = require '../../src/columns'
 
-describe 'Items', ->
+describe 'notationalUI', ->
   beforeEach ->
     @searchBus        = new Bacon.Bus()
     @matchedItemsBus  = new Bacon.Bus()
     @columnsBus       = new Bacon.Bus()
     @bodyHeightBus    = new Bacon.Bus()
 
-    @items = items(
+    @ui = notationalUI(
       searchBus        : @searchBus
       matchedItemsProp : @matchedItemsBus.toProperty([])
       columnsProp      : @columnsBus.toProperty([])
@@ -21,29 +21,29 @@ describe 'Items', ->
     @searchBus.onValue(@searchBusSpy)
 
     @resetStreamSpy = jasmine.createSpy('resetStream')
-    @items.resetStream.onValue(@resetStreamSpy)
+    @ui.resetStream.onValue(@resetStreamSpy)
 
     @openStreamSpy = jasmine.createSpy('openStream')
-    @items.openStream.onValue(@openStreamSpy)
+    @ui.openStream.onValue(@openStreamSpy)
 
     # Side-effects are required for streams to be started
     @searchElementSpy = jasmine.createSpy('search DOM element')
-    @items.searchElementProp.onValue @searchElementSpy
+    @ui.searchElementProp.onValue @searchElementSpy
     @$searchInput = ->
       @searchElementSpy.mostRecentCall.args[0]
 
     @itemsElementSpy = jasmine.createSpy('items DOM element')
-    @items.itemsElementProp.onValue @itemsElementSpy
+    @ui.itemsElementProp.onValue @itemsElementSpy
     @$items = ->
       @itemsElementSpy.mostRecentCall.args[0]
 
   it 'has a set of expected attrs', ->
-    expect(@items.searchElementProp).toBeDefined()
-    expect(@items.itemsElementProp).toBeDefined()
-    expect(@items.resizedBodyHeightProp).toBeDefined()
-    expect(@items.selectedItemProp).toBeDefined()
-    expect(@items.resetStream).toBeDefined()
-    expect(@items.openStream).toBeDefined()
+    expect(@ui.searchElementProp).toBeDefined()
+    expect(@ui.itemsElementProp).toBeDefined()
+    expect(@ui.resizedBodyHeightProp).toBeDefined()
+    expect(@ui.selectedItemProp).toBeDefined()
+    expect(@ui.resetStream).toBeDefined()
+    expect(@ui.openStream).toBeDefined()
 
   it 'has DOM elements', ->
     expect(@searchElementSpy.mostRecentCall.args[0]).toBeDefined()
@@ -65,8 +65,7 @@ describe 'Items', ->
       }]
 
     it 'renders the columns as table headers', ->
-      expect(@itemsElementSpy).toHaveBeenCalled()
-      el = @itemsElementSpy.calls[0].args[0]
+      el = @$items()
       expect(el.querySelector('th[text="head1"]')).toBeDefined()
       expect(el.querySelector('th[text="head2"]')).toBeDefined()
       expect(el.querySelector('th[text="head3"]')).toBeDefined()

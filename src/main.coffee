@@ -1,9 +1,9 @@
-Bacon    = require 'baconjs'
-atoms    = require './atom-streams'
-columns  = require './columns'
-Panels   = require './panels'
-Projects = require './projects'
-items    = require './notational/items'
+Bacon        = require 'baconjs'
+atoms        = require './atom-streams'
+columns      = require './columns'
+Panels       = require './panels'
+Projects     = require './projects'
+notationalUI = require './notational/ui'
 
 module.exports =
   config:
@@ -15,7 +15,7 @@ module.exports =
   activate: (state) ->
     @projects = new Projects()
     @panels = new Panels(
-      items(
+      notationalUI(
         searchBus        : @projects.searchBus
         matchedItemsProp : @projects.matchedItemsProp
         columnsProp      : Bacon.sequentially(0, [columns]).toProperty([])
