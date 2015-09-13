@@ -14,10 +14,12 @@ module.exports = {
   isEven: R.pipe(R.modulo(R.__, 2), R.equals(0))
   lastArg: R.nthArg(-1)
   preventDefault: R.invoker(0, 'preventDefault')
+  querySelector: R.invoker(1, 'querySelector')
 
   isEventKey: R.curry (keyName, ev) ->
     #isKeyCode: R.propEq('keyCode')
     ev.keyCode is KEY_CODES[keyName.toUpperCase()]
+
 
   itemForSelectOffset: (currentItem, selectOffset, items) ->
     newIndex = items.indexOf(currentItem) + selectOffset

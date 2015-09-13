@@ -73,14 +73,12 @@ describe 'Items', ->
 
   describe 'on click on items element', ->
     beforeEach ->
-      spyOn(HTMLElement.prototype, 'focus')
+      spyOn(@$searchInput(), 'focus')
       u.dispatchEvent(@$items(), 'click')
 
-    it 'focus on the element', ->
-      expect(HTMLElement.prototype.focus).toHaveBeenCalled()
-
-    it 'should still have an element', ->
-      expect(@searchElementSpy.mostRecentCall.args[0]).toBeDefined
+    it 'focus on search input', ->
+      # implicitly verifies that returned element is still an element too
+      expect(@$searchInput().focus).toHaveBeenCalled()
 
   describe 'when a string is written on input', ->
     beforeEach ->

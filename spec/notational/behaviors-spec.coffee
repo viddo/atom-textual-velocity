@@ -11,6 +11,20 @@ describe 'Behaviors', ->
     it 'returns the last argument in call', ->
       expect(Beh.lastArg(1,2,3)).toEqual(3)
 
+  describe '.querySelector', ->
+    beforeEach ->
+      @el = document.createElement('div')
+      @el.innerHTML = """
+        <ul>
+          <li class="first"></li>
+          <li class="second"></li>
+          <li class="third"></li>
+        <ul>
+      """
+
+    it 'returns the el.querySelector(selector)', ->
+      expect(Beh.querySelector('.second')(@el)).toBeDefined()
+
   describe '.preventDefault', ->
     beforeEach ->
       @ev = jasmine.createSpyObj('ev', ['preventDefault'])

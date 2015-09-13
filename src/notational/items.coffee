@@ -19,12 +19,11 @@ module.exports = ({searchBus, matchedItemsProp, columnsProp, bodyHeightStream}) 
   selectNextStream   = keyDownBus.filter(Beh.isEventKey('down')).doAction(Beh.preventDefault)
   selectOffsetStream = selectPrevStream.map(-1).merge(selectNextStream.map(1))
 
-  vDomTree = vDom.rootNode vDom.search(inputBus, keyDownBus)
-  elementProp = Bacon.update createElement(vDomTree),
-    [focusBus], R.tap (el) ->
-      el.querySelector('.search').focus()
-    [resetStream], R.tap (el) =>
-      el.querySelector('.search').value = ''
+  vDomTree = vDom.rootNode(vDom.search(inputBus, keyDownBus))
+  $searchInputEl = Beh.querySelector('.search')
+  searchElementProp = Bacon.update createElement(vDomTree),
+    [focusBus],    R.tap R.pipe $searchInputEl, (el) -> el.focus()
+    [resetStream], R.tap R.pipe $searchInputEl, (el) => el.value = ''
 
   inputValueStream = inputBus.map('.target.value')
   searchStream = inputValueStream.merge resetStream.map('')
@@ -95,7 +94,7 @@ module.exports = ({searchBus, matchedItemsProp, columnsProp, bodyHeightStream}) 
       current.el.querySelector('.tbody').scrollTop = 0 #i return to top
 
   return {
-    searchElementProp     : elementProp
+    searchElementProp     : searchElementProp
     itemsElementProp      : renderProp.map('.el')
     resizedBodyHeightProp : bodyHeightProp
     selectedItemProp      : selectedItemProp
