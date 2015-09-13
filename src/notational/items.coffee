@@ -17,17 +17,12 @@ module.exports = ({searchBus, matchedItemsProp, columnsProp, bodyHeightStream}) 
   selectNextStream   = keyDownBus.filter(Beh.isEventKey('down')).doAction(Beh.preventDefault)
   selectOffsetStream = selectPrevStream.map(-1).merge(selectNextStream.map(1))
 
-  searchTree = vDomTrees.search(inputBus, keyDownBus)
-  searchElementProp = Bacon.update vDom.create(searchTree),
-    [focusBus],    R.tap (el) -> el.focus()
-    [resetStream], R.tap (el) -> el.value = ''
-
   inputValueStream = inputBus.map('.target.value')
   searchStream = inputValueStream.merge resetStream.map('')
   searchBus.plug(searchStream)
 
   selectedItemProp = Bacon.update(undefined,
-    [searchStream], R.always(undefined)
+    [searchStream],  R.always(undefined)
     [selectItemBus], Beh.lastArg
     [selectOffsetStream, matchedItemsProp], Beh.itemForSelectOffset
   ).skipDuplicates()
@@ -51,22 +46,20 @@ module.exports = ({searchBus, matchedItemsProp, columnsProp, bodyHeightStream}) 
 
   # Setup vDom of scrollable content
   contentProp = Bacon.combineTemplate({
-    columns: columnsProp
-    selectedItem: selectedItemProp
-    reverseStripes: visibleBeginProp.map Beh.isEven
-    items: Bacon.combineWith(R.slice, visibleBeginProp, visibleEndProp, matchedItemsProp)
-  }).map (data) ->
-    vDomTrees.content(data, selectItemBus)
+    columns        : columnsProp
+    selectedItem   : selectedItemProp
+    reverseStripes : visibleBeginProp.map Beh.isEven
+    items          : Bacon.combineWith(R.slice, visibleBeginProp, visibleEndProp, matchedItemsProp)
+  }).map vDomTrees.content(selectItemBus)
 
   scrollableContentProp = Bacon.combineTemplate({
-    bodyHeight: bodyHeightProp
-    scrollTop: scrollTopProp
-    content: contentProp
-    topOffset: Bacon.combineWith(R.pipe(R.modulo, R.negate), scrollTopProp, rowHeightProp)
-    marginBottom: Bacon.combineWith [matchedItemsProp, rowHeightProp, scrollTopProp, bodyHeightProp], (items, rowHeight, scrollTop, bodyHeight) ->
+    bodyHeight   : bodyHeightProp
+    scrollTop    : scrollTopProp
+    content      : contentProp
+    topOffset    : Bacon.combineWith(R.pipe(R.modulo, R.negate), scrollTopProp, rowHeightProp)
+    marginBottom : Bacon.combineWith [matchedItemsProp, rowHeightProp, scrollTopProp, bodyHeightProp], (items, rowHeight, scrollTop, bodyHeight) ->
       items.length * rowHeight - scrollTop - bodyHeight
-  }).map (data) ->
-    vDomTrees.scrollableContent(data, scrollTopBus)
+  }).map vDomTrees.scrollableContent(scrollTopBus)
 
   vDomTreeProp = Bacon.combineWith [columnsProp, scrollableContentProp, bodyHeightProp], (columns, scrollableContent, bodyHeight) ->
     vDomTrees.root [
@@ -75,25 +68,25 @@ module.exports = ({searchBus, matchedItemsProp, columnsProp, bodyHeightStream}) 
       vDomTrees.resizeHandle(bodyHeight, bodyHeightBus)
     ], {onclick: -> focusBus.push()}
 
-  renderResult = (el, tree) ->
-    el   : el
-    tree : tree
-  initialTree = vDomTrees.root()
-  renderProp = Bacon.update renderResult(vDom.create(initialTree), initialTree),
-    [vDomTreeProp.toEventStream()], ({el, tree}, newTree) ->
-      newEl = vDom.patch(el, vDom.diff(tree, newTree))
-      renderResult(newEl, newTree)
-    [selectedItemProp.changes()], Beh.tapResultElement '.is-selected', (el) ->
-      # Scroll item into the view if outside the visible border and was triggered by selectItem change
-      el?.scrollIntoViewIfNeeded(false) # centerIfNeeded=false => croll minimal possible to avoid jumps
-    [searchStream], Beh.tapResultElement '.tbody', (el) ->
-      el.scrollTop = 0 # return to top
+  initialItemsTree = vDomTrees.root()
 
   return {
-    searchElementProp     : searchElementProp
-    itemsElementProp      : renderProp.map('.el')
+    searchElementProp: Bacon.update vDom.create(vDomTrees.search(inputBus, keyDownBus)),
+      [focusBus],    R.tap (el) -> el.focus()
+      [resetStream], R.tap (el) -> el.value = ''
+
+    itemsElementProp: Bacon.update({el: vDom.create(initialItemsTree), tree: initialItemsTree},
+        [vDomTreeProp.toEventStream()], ({el, tree}, newTree) ->
+          {el: vDom.patch(el, vDom.diff(tree, newTree)), tree: newTree}
+        [selectedItemProp.changes()], Beh.tapItemsElement '.is-selected', (el) ->
+          # Scroll item into the view if outside the visible border and was triggered by selectItem change
+          el?.scrollIntoViewIfNeeded(false) # centerIfNeeded=false => scroll minimal possible to avoid jumps
+        [searchStream], Beh.tapItemsElement '.tbody', (el) ->
+          el.scrollTop = 0 # return to top
+      ).map('.el')
+
+    openStream            : keyDownBus.filter Beh.isEventKey('enter')
     resizedBodyHeightProp : bodyHeightProp
     selectedItemProp      : selectedItemProp
     resetStream           : resetStream
-    openStream            : keyDownBus.filter Beh.isEventKey('enter')
   }

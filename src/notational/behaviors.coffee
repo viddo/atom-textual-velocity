@@ -23,7 +23,7 @@ module.exports = {
     #isKeyCode: R.propEq('keyCode')
     ev.keyCode is KEY_CODES[keyName.toUpperCase()]
 
-  tapResultElement: (selector, fn) ->
+  tapItemsElement: (selector, fn) ->
     R.tap R.pipe(
       R.prop('el')
       R.invoker(1, 'querySelector')(selector)

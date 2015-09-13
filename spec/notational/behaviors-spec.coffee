@@ -11,11 +11,11 @@ describe 'Behaviors', ->
     it 'returns the last argument in call', ->
       expect(Beh.lastArg(1,2,3)).toEqual(3)
 
-  describe '.tapResultElement', ->
+  describe '.tapItemsElement', ->
     describe 'when given a selector and tap fn', ->
       beforeEach ->
         @tapSpy = jasmine.createSpy('tap')
-        @appendClassName = Beh.tapResultElement('.second', @tapSpy)
+        @appendClassName = Beh.tapItemsElement('.second', @tapSpy)
 
       it 'returns a unary function', ->
         expect(@appendClassName.length).toEqual 1

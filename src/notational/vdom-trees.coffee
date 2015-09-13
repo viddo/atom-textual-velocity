@@ -1,5 +1,12 @@
 h     = require 'virtual-dom/h'
 Bacon = require 'baconjs'
+R     = require 'ramda'
+
+th = (width, content = '') ->
+  h 'th', {
+    style:
+      width: "#{width}%"
+  }, content
 
 module.exports = {
 
@@ -23,35 +30,30 @@ module.exports = {
       h 'table',
         h 'thead',
           h 'tr', columns.map ({width, title}) =>
-            @th width, title
+            th(width, title)
 
-  content: ({columns, reverseStripes, items, selectedItem}, selectItemBus) ->
+  content: R.curry (selectItemBus, {columns, reverseStripes, items, selectedItem}) ->
     h 'table', [
       h 'thead.only-for-column-widths',
         h 'tr', columns.map ({width}) =>
-          @th width
+          th(width)
       h 'tbody', {
         className: 'is-reversed-stripes' if reverseStripes
       }, items.map (item) ->
         h 'tr', {
           className: 'is-selected' if item is selectedItem
-          onclick: (ev) ->
+          onclick: ->
             selectItemBus.push(item)
         }, columns.map ({cellContent}) ->
           h 'td', cellContent(item)
     ]
 
-  th: (width, content = '') ->
-    h 'th', {
-      style:
-        width: "#{width}%"
-    }, content
-
-  scrollableContent: ({bodyHeight, topOffset, scrollTop, marginBottom, content}, scrollTopBus) ->
+  scrollableContent: R.curry (scrollTopBus, {bodyHeight, topOffset, scrollTop, marginBottom, content}) ->
     h 'div', {
       className: 'tbody'
       style: height: "#{bodyHeight}px"
-      onscroll: (ev) -> scrollTopBus.push(ev.srcElement.scrollTop)
+      onscroll: (ev) ->
+        scrollTopBus.push(ev.srcElement.scrollTop)
     }, h 'div.tinner-body', {
         style:
           height: "#{bodyHeight}px"
