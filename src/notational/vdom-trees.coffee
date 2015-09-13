@@ -3,7 +3,7 @@ Bacon = require 'baconjs'
 
 module.exports = {
 
-  rootNode: (content, opts) ->
+  root: (content, opts) ->
     h 'div.atom-notational-items', opts, content
 
   search: (inputBus, keydownBus) ->

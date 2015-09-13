@@ -11,14 +11,24 @@ KEY_CODES = {
 # Should also give more semantics to some calculations
 module.exports = {
 
-  isEven: R.pipe(R.modulo(R.__, 2), R.equals(0))
   lastArg: R.nthArg(-1)
   preventDefault: R.invoker(0, 'preventDefault')
-  findElement: R.invoker(1, 'querySelector')
+
+  isEven: R.pipe(
+    R.modulo(R.__, 2)
+    R.equals(0)
+  )
 
   isEventKey: R.curry (keyName, ev) ->
     #isKeyCode: R.propEq('keyCode')
     ev.keyCode is KEY_CODES[keyName.toUpperCase()]
+
+  tapResultElement: (selector, fn) ->
+    R.tap R.pipe(
+      R.prop('el')
+      R.invoker(1, 'querySelector')(selector)
+      fn
+    )
 
   itemForSelectOffset: (currentItem, selectOffset, items) ->
     newIndex = items.indexOf(currentItem) + selectOffset

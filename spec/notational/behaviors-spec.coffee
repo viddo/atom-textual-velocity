@@ -11,15 +11,16 @@ describe 'Behaviors', ->
     it 'returns the last argument in call', ->
       expect(Beh.lastArg(1,2,3)).toEqual(3)
 
-  describe '.findElement', ->
-    describe 'when given a selector', ->
+  describe '.tapResultElement', ->
+    describe 'when given a selector and tap fn', ->
       beforeEach ->
-        @appendClassName = Beh.findElement('.second')
+        @tapSpy = jasmine.createSpy('tap')
+        @appendClassName = Beh.tapResultElement('.second', @tapSpy)
 
       it 'returns a unary function', ->
         expect(@appendClassName.length).toEqual 1
 
-      describe 'when return function is called with an element', ->
+      describe 'when return function is called with an object that contains an element on the property "el"', ->
         beforeEach ->
           @el = document.createElement('div')
           @el.innerHTML = """
@@ -29,11 +30,15 @@ describe 'Behaviors', ->
               <li class="third"></li>
             <ul>
           """
-          @result = @appendClassName(@el)
+          @obj = {el: @el}
+          @result = @appendClassName(@obj)
 
         it 'returns matching element', ->
-          expect(@result).toEqual @el.querySelector('.second')
+          expect(@result).toEqual @obj
 
+        it 'calls tap fn with given', ->
+          expect(@tapSpy).toHaveBeenCalled()
+          expect(@tapSpy).toHaveBeenCalledWith(@el.querySelector('.second'))
 
   describe '.preventDefault', ->
     beforeEach ->
