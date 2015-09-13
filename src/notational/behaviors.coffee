@@ -14,12 +14,11 @@ module.exports = {
   isEven: R.pipe(R.modulo(R.__, 2), R.equals(0))
   lastArg: R.nthArg(-1)
   preventDefault: R.invoker(0, 'preventDefault')
-  querySelector: R.invoker(1, 'querySelector')
+  findElement: R.invoker(1, 'querySelector')
 
   isEventKey: R.curry (keyName, ev) ->
     #isKeyCode: R.propEq('keyCode')
     ev.keyCode is KEY_CODES[keyName.toUpperCase()]
-
 
   itemForSelectOffset: (currentItem, selectOffset, items) ->
     newIndex = items.indexOf(currentItem) + selectOffset
@@ -35,9 +34,7 @@ module.exports = {
   # Adjust scrolltop "[...]" for selected item "X" (if there is one)
   adjustScrollTopForSelectedItem: (currentScrollTop, selectedItem, items, rowHeight, bodyHeight) ->
     return currentScrollTop unless selectedItem
-
     selectedScrollTop = items.indexOf(selectedItem) * rowHeight
-
     if currentScrollTop > selectedScrollTop
       # selected item is located before the visible bounds
       # from: ..X..[...]..

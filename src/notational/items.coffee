@@ -20,10 +20,11 @@ module.exports = ({searchBus, matchedItemsProp, columnsProp, bodyHeightStream}) 
   selectOffsetStream = selectPrevStream.map(-1).merge(selectNextStream.map(1))
 
   vDomTree = vDom.rootNode(vDom.search(inputBus, keyDownBus))
-  $searchInputEl = Beh.querySelector('.search')
+  tapSearchInput = (fn) ->
+    R.tap R.pipe(Beh.findElement('.search'), fn)
   searchElementProp = Bacon.update createElement(vDomTree),
-    [focusBus],    R.tap R.pipe $searchInputEl, (el) -> el.focus()
-    [resetStream], R.tap R.pipe $searchInputEl, (el) => el.value = ''
+    [focusBus],    tapSearchInput (el) -> el.focus()
+    [resetStream], tapSearchInput (el) -> el.value = ''
 
   inputValueStream = inputBus.map('.target.value')
   searchStream = inputValueStream.merge resetStream.map('')
@@ -81,17 +82,18 @@ module.exports = ({searchBus, matchedItemsProp, columnsProp, bodyHeightStream}) 
   renderResult = (el, tree) ->
     el   : el
     tree : tree
+  tapResultElement = (selector, fn) ->
+    R.tap R.pipe(R.prop('el'), Beh.findElement(selector), fn)
   initialTree = vDom.rootNode()
   renderProp = Bacon.update renderResult(createElement(initialTree), initialTree),
     [vDomTreeProp.toEventStream()], ({el, tree}, newTree) ->
       newEl = patch(el, diff(tree, newTree))
       renderResult(newEl, newTree)
-    [selectedItemProp.changes()], R.tap (current) ->
+    [selectedItemProp.changes()], tapResultElement '.is-selected', (el) ->
       # Scroll item into the view if outside the visible border and was triggered by selectItem change
-      if selectedRow = current.el.querySelector('.is-selected')
-        selectedRow.scrollIntoViewIfNeeded(false) # centerIfNeeded=false => croll minimal possible to avoid jumps
-    [searchStream], R.tap (current) ->
-      current.el.querySelector('.tbody').scrollTop = 0 #i return to top
+      el?.scrollIntoViewIfNeeded(false) # centerIfNeeded=false => croll minimal possible to avoid jumps
+    [searchStream], tapResultElement '.tbody', (el) ->
+      el.scrollTop = 0 # return to top
 
   return {
     searchElementProp     : searchElementProp

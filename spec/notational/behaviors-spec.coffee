@@ -4,26 +4,36 @@ describe 'Behaviors', ->
 
   describe '.isEven', ->
     it 'returns true if given number is even', ->
-      expect(Beh.isEven(2)).toBe(true)
       expect(Beh.isEven(1)).toBe(false)
+      expect(Beh.isEven(20)).toBe(true)
 
   describe '.lastArg', ->
     it 'returns the last argument in call', ->
       expect(Beh.lastArg(1,2,3)).toEqual(3)
 
-  describe '.querySelector', ->
-    beforeEach ->
-      @el = document.createElement('div')
-      @el.innerHTML = """
-        <ul>
-          <li class="first"></li>
-          <li class="second"></li>
-          <li class="third"></li>
-        <ul>
-      """
+  describe '.findElement', ->
+    describe 'when given a selector', ->
+      beforeEach ->
+        @appendClassName = Beh.findElement('.second')
 
-    it 'returns the el.querySelector(selector)', ->
-      expect(Beh.querySelector('.second')(@el)).toBeDefined()
+      it 'returns a unary function', ->
+        expect(@appendClassName.length).toEqual 1
+
+      describe 'when return function is called with an element', ->
+        beforeEach ->
+          @el = document.createElement('div')
+          @el.innerHTML = """
+            <ul>
+              <li class="first"></li>
+              <li class="second"></li>
+              <li class="third"></li>
+            <ul>
+          """
+          @result = @appendClassName(@el)
+
+        it 'returns matching element', ->
+          expect(@result).toEqual @el.querySelector('.second')
+
 
   describe '.preventDefault', ->
     beforeEach ->
