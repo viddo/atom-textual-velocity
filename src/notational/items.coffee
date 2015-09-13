@@ -50,13 +50,11 @@ module.exports = ({searchBus, matchedItemsProp, columnsProp, bodyHeightStream}) 
     [scrollTopBus], R.nthArg(-1)
     [selectedItemProp.changes(), matchedItemsProp, rowHeightProp, bodyHeightProp], adjustScrollTopForSelectedItem
 
-  visibleBeginProp = Bacon.combineWith (scrollTop, rowHeight) ->
+  visibleBeginProp = Bacon.combineWith [scrollTopProp, rowHeightProp], (scrollTop, rowHeight) ->
     (scrollTop / rowHeight) | 0
-  , scrollTopProp, rowHeightProp
 
-  visibleEndProp = Bacon.combineWith (begin, bodyHeight, rowHeight) ->
+  visibleEndProp = Bacon.combineWith [visibleBeginProp, bodyHeightProp, rowHeightProp], (begin, bodyHeight, rowHeight) ->
     begin + ((bodyHeight / rowHeight) | 0) + 2 # add to avoid visible gap when scrolling
-  , visibleBeginProp, bodyHeightProp, rowHeightProp
 
   # Setup vDom of scrollable content
   contentProp = Bacon.combineTemplate({
@@ -72,19 +70,17 @@ module.exports = ({searchBus, matchedItemsProp, columnsProp, bodyHeightStream}) 
     scrollTop: scrollTopProp
     content: contentProp
     topOffset: Bacon.combineWith(R.pipe(R.modulo, R.negate), scrollTopProp, rowHeightProp)
-    marginBottom: Bacon.combineWith (items, rowHeight, scrollTop, bodyHeight) ->
-        items.length * rowHeight - scrollTop - bodyHeight
-      , matchedItemsProp, rowHeightProp, scrollTopProp, bodyHeightProp
+    marginBottom: Bacon.combineWith [matchedItemsProp, rowHeightProp, scrollTopProp, bodyHeightProp], (items, rowHeight, scrollTop, bodyHeight) ->
+      items.length * rowHeight - scrollTop - bodyHeight
   }).map (data) ->
     vDom.scrollableContent(data, scrollTopBus)
 
-  vDomTreeProp = Bacon.combineWith (columns, scrollableContent, bodyHeight) ->
+  vDomTreeProp = Bacon.combineWith [columnsProp, scrollableContentProp, bodyHeightProp], (columns, scrollableContent, bodyHeight) ->
     vDom.rootNode [
       vDom.header(columns)
       scrollableContent
       vDom.resizeHandle(bodyHeight, bodyHeightBus)
     ], {onclick: -> focusBus.push()}
-  , columnsProp, scrollableContentProp, bodyHeightProp
 
   initialTree = vDom.rootNode()
   renderProp = Bacon.update {
