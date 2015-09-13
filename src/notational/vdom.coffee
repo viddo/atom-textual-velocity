@@ -4,13 +4,13 @@ Bacon = require 'baconjs'
 module.exports = {
 
   rootNode: (content, opts) ->
-    h 'div.atom-notational-panel', opts, content
+    h 'div.atom-notational-items', opts, content
 
   search: (inputBus, keydownBus) ->
     h 'input', {
       type: 'text'
       tabIndex: '-1'
-      className: 'search native-key-bindings'
+      className: 'atom-notational-search native-key-bindings'
       placeholder: 'Search, or press enter to create a new untitled file'
       onkeydown: (ev) ->
         keydownBus.push ev

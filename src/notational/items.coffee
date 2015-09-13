@@ -19,12 +19,10 @@ module.exports = ({searchBus, matchedItemsProp, columnsProp, bodyHeightStream}) 
   selectNextStream   = keyDownBus.filter(Beh.isEventKey('down')).doAction(Beh.preventDefault)
   selectOffsetStream = selectPrevStream.map(-1).merge(selectNextStream.map(1))
 
-  vDomTree = vDom.rootNode(vDom.search(inputBus, keyDownBus))
-  tapSearchInput = (fn) ->
-    R.tap R.pipe(Beh.findElement('.search'), fn)
+  vDomTree = vDom.search(inputBus, keyDownBus)
   searchElementProp = Bacon.update createElement(vDomTree),
-    [focusBus],    tapSearchInput (el) -> el.focus()
-    [resetStream], tapSearchInput (el) -> el.value = ''
+    [focusBus],    R.tap (el) -> el.focus()
+    [resetStream], R.tap (el) -> el.value = ''
 
   inputValueStream = inputBus.map('.target.value')
   searchStream = inputValueStream.merge resetStream.map('')

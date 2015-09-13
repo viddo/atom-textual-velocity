@@ -30,7 +30,7 @@ describe 'Items', ->
     @searchElementSpy = jasmine.createSpy('search DOM element')
     @items.searchElementProp.onValue @searchElementSpy
     @$searchInput = ->
-      @searchElementSpy.mostRecentCall.args[0].querySelector('.search')
+      @searchElementSpy.mostRecentCall.args[0]
 
     @itemsElementSpy = jasmine.createSpy('items DOM element')
     @items.itemsElementProp.onValue @itemsElementSpy
