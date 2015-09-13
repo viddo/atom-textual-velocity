@@ -21,9 +21,9 @@ class Panels
         -> atom.workspace.getActivePane()?.activate()
       )
       @quickDoubleStream(atoms.cancelCommand()).onValue R.pipe(
-        @showItemsPanel,
-        @showSearchPanel,
-        @getSearchInput,
+        @showItemsPanel
+        @showSearchPanel
+        @getSearchInput
         (input) -> input.select() and input.focus()
       )
     ]
@@ -34,7 +34,7 @@ class Panels
     stream.bufferWithTimeOrCount(300, 2).filter R.propEq('length', 2)
 
   getSearchInput: ->
-    @searchPanel.getItem().querySelector('.search')
+    @searchPanel.getItem()
 
   hideSearchPanel: ->
     @searchPanel.hide()
