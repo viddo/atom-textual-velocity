@@ -1,12 +1,10 @@
-Bacon                          = require 'baconjs'
-R                              = require 'ramda'
-createElement                  = require 'virtual-dom/create-element'
-diff                           = require 'virtual-dom/diff'
-patch                          = require 'virtual-dom/patch'
-vDom                           = require './vDom'
-Keys                           = require './keys'
-selectItemByRelativeOffset     = require './select-item-by-relative-offset'
-adjustScrollTopForSelectedItem = require './adjust-scroll-top-for-seleted-item'
+Bacon         = require 'baconjs'
+R             = require 'ramda'
+createElement = require 'virtual-dom/create-element'
+diff          = require 'virtual-dom/diff'
+patch         = require 'virtual-dom/patch'
+vDom          = require './vDom'
+Beh           = require './behaviors.coffee'
 
 module.exports = ({searchBus, matchedItemsProp, columnsProp, bodyHeightStream}) ->
   bodyHeightBus = new Bacon.Bus()
@@ -16,11 +14,10 @@ module.exports = ({searchBus, matchedItemsProp, columnsProp, bodyHeightStream}) 
   inputBus      = new Bacon.Bus()
   keyDownBus    = new Bacon.Bus()
 
-  preventDefault     = R.invoker(0, 'preventDefault')
-  resetStream        = keyDownBus.filter Keys.isKey('esc')
-  selectPrevStream   = keyDownBus.filter(Keys.isKey('up')).doAction(preventDefault)
-  selectNextStream   = keyDownBus.filter(Keys.isKey('down')).doAction(preventDefault)
-  moveSelectedStream = selectPrevStream.map(-1).merge(selectNextStream.map(1))
+  resetStream        = keyDownBus.filter Beh.isEventKey('esc')
+  selectPrevStream   = keyDownBus.filter(Beh.isEventKey('up')).doAction(Beh.preventDefault)
+  selectNextStream   = keyDownBus.filter(Beh.isEventKey('down')).doAction(Beh.preventDefault)
+  selectOffsetStream = selectPrevStream.map(-1).merge(selectNextStream.map(1))
 
   vDomTree = vDom.rootNode vDom.search(inputBus, keyDownBus)
   elementProp = Bacon.update createElement(vDomTree),
@@ -35,32 +32,32 @@ module.exports = ({searchBus, matchedItemsProp, columnsProp, bodyHeightStream}) 
 
   selectedItemProp = Bacon.update(undefined,
     [searchStream], R.always(undefined)
-    [selectItemBus], R.nthArg(-1)
-    [moveSelectedStream, matchedItemsProp], selectItemByRelativeOffset
+    [selectItemBus], Beh.lastArg
+    [selectOffsetStream, matchedItemsProp], Beh.itemForSelectOffset
   ).skipDuplicates()
 
   # Setup props related to the scrollable content
   rowHeightProp = Bacon.constant(25)
   bodyHeightProp = bodyHeightBus.merge(bodyHeightStream)
     .skipDuplicates()
-    .filter R.lt(0)
+    .filter (newHeight) -> newHeight > 0
     .toProperty(100)
 
   scrollTopProp = Bacon.update 0,
-    [scrollTopBus], R.nthArg(-1)
-    [selectedItemProp.changes(), matchedItemsProp, rowHeightProp, bodyHeightProp], adjustScrollTopForSelectedItem
+    [scrollTopBus], Beh.lastArg
+    [selectedItemProp.changes(), matchedItemsProp, rowHeightProp, bodyHeightProp], Beh.adjustScrollTopForSelectedItem
 
   visibleBeginProp = Bacon.combineWith [scrollTopProp, rowHeightProp], (scrollTop, rowHeight) ->
     (scrollTop / rowHeight) | 0
 
   visibleEndProp = Bacon.combineWith [visibleBeginProp, bodyHeightProp, rowHeightProp], (begin, bodyHeight, rowHeight) ->
-    begin + ((bodyHeight / rowHeight) | 0) + 2 # add to avoid visible gap when scrolling
+    begin + ((bodyHeight / rowHeight) | 0) + 2 # add 2 to avoid visible gap when scrolling
 
   # Setup vDom of scrollable content
   contentProp = Bacon.combineTemplate({
     columns: columnsProp
     selectedItem: selectedItemProp
-    reverseStripes: visibleBeginProp.map R.modulo(R.__, 2)
+    reverseStripes: visibleBeginProp.map Beh.isEven
     items: Bacon.combineWith(R.slice, visibleBeginProp, visibleEndProp, matchedItemsProp)
   }).map (data) ->
     vDom.content(data, selectItemBus)
@@ -105,5 +102,5 @@ module.exports = ({searchBus, matchedItemsProp, columnsProp, bodyHeightStream}) 
     resizedBodyHeightProp : bodyHeightProp
     selectedItemProp      : selectedItemProp
     resetStream           : resetStream
-    openStream            : keyDownBus.filter Keys.isKey('enter')
+    openStream            : keyDownBus.filter Beh.isEventKey('enter')
   }
