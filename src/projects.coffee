@@ -48,7 +48,6 @@ class Projects
     return task
 
   dispose: ->
-    for path, task of @tasks
-      @destroyPathWatchTask(path)
+    @destroyWatchPathTask(path) for path, task of @tasks
     @tasks = null
     @matchedItemsProp = null
