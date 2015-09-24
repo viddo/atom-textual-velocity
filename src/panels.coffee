@@ -8,33 +8,31 @@ class Panels
   constructor: ({searchElementProp, itemsElementProp, resizedBodyHeightProp, selectedItemProp, resetStream, openStream}) ->
     @disposables = new CompositeDisposable
 
-    sideEffects = [
+    @removeOnDispose(sideEffect) for sideEffect in [
       searchElementProp.onValue @createSearchPanel
       itemsElementProp.onValue @createItemsPanel
       resizedBodyHeightProp.debounce(500).onValue @saveResizedBodyHeight
       selectedItemProp.onValue @previewSelectedItem
       selectedItemProp.sampledBy(openStream).onValue @openSelectedItem
 
-      @quickDoubleStream(resetStream).onValue R.pipe(
-        @hideItemsPanel
-        @hideSearchPanel
-        -> atom.workspace.getActivePane()?.activate()
-      )
-      @quickDoubleStream(atoms.cancelCommand()).onValue R.pipe(
-        @showItemsPanel
-        @showSearchPanel
-        @getSearchInput
-        (input) -> input.select() and input.focus()
-      )
+      @quickDoubleStream(resetStream).onValue =>
+        @hideItemsPanel()
+        @hideSearchPanel()
+        atom.workspace.getActivePane()?.activate()
+
+      @quickDoubleStream(atoms.cancelCommand()).onValue =>
+        @showItemsPanel()
+        @showSearchPanel()
+        @selectAndFocus(@searchPanel.getItem())
     ]
-    @removeOnDispose(sideEffect) for sideEffect in sideEffects
+
+  selectAndFocus: (input) ->
+    input.select()
+    input.focus()
 
   # filter a given stream to only trigger if tow event are triggered within 300ms (e.g. double-ESC)
   quickDoubleStream: (stream) ->
     stream.bufferWithTimeOrCount(300, 2).filter R.propEq('length', 2)
-
-  getSearchInput: ->
-    @searchPanel.getItem()
 
   hideSearchPanel: ->
     @searchPanel.hide()
@@ -48,11 +46,11 @@ class Panels
   showSearchPanel: ->
     @searchPanel.show()
 
-  createSearchPanel: (el) ->
-    unless @itemsPanel
+  createSearchPanel: (el) =>
+    unless @searchPanel
       @searchPanel = atom.workspace.addTopPanel(item: el)
 
-  createItemsPanel: (el) ->
+  createItemsPanel: (el) =>
     unless @itemsPanel
       @itemsPanel = atom.workspace.addTopPanel(item: el)
 
@@ -71,7 +69,7 @@ class Panels
       atom.workspace.open Path.join(selectedItem.projectPath, selectedItem.relPath)
 
   removeOnDispose: (o) ->
-    unless typeof o.dispose is 'function'
+    unless Disposable.isDisposable(o)
       if typeof o is 'function'
         o = new Disposable(o)
       else
@@ -81,7 +79,7 @@ class Panels
   dispose: ->
     @disposables.dispose()
     @disposables = null
-    @itemsPanel?.destroy()
-    @itemsPanel = null
     @searchPanel?.destroy()
     @searchPanel = null
+    @itemsPanel?.destroy()
+    @itemsPanel = null
