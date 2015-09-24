@@ -10,28 +10,33 @@ class Panels
 
     @removeOnDispose(sideEffect) for sideEffect in [
       searchElementProp.onValue @createSearchPanel
-      itemsElementProp.onValue @createItemsPanel
+      itemsElementProp.onValue  @createItemsPanel
+
       resizedBodyHeightProp.debounce(500).onValue @saveResizedBodyHeight
+
       selectedItemProp.onValue @previewSelectedItem
       selectedItemProp.sampledBy(openStream).onValue @openSelectedItem
 
-      @quickDoubleStream(resetStream).onValue =>
+      @doubleTapStream(resetStream).onValue =>
         @hideItemsPanel()
         @hideSearchPanel()
         atom.workspace.getActivePane()?.activate()
 
-      @quickDoubleStream(atoms.cancelCommand()).onValue =>
+      @doubleTapStream(atoms.cancelCommand()).onValue =>
         @showItemsPanel()
         @showSearchPanel()
-        @selectAndFocus(@searchPanel.getItem())
+        @selectAndFocusSearchInput()
     ]
 
-  selectAndFocus: (input) ->
-    input.select()
-    input.focus()
+  selectAndFocusSearchInput: ->
+    R.tap @selectAndfocus, @searchPanel.getItem()
+
+  selectAndfocus: (el) ->
+    el.select()
+    el.focus()
 
   # filter a given stream to only trigger if tow event are triggered within 300ms (e.g. double-ESC)
-  quickDoubleStream: (stream) ->
+  doubleTapStream: (stream) ->
     stream.bufferWithTimeOrCount(300, 2).filter R.propEq('length', 2)
 
   hideSearchPanel: ->
@@ -49,6 +54,7 @@ class Panels
   createSearchPanel: (el) =>
     unless @searchPanel
       @searchPanel = atom.workspace.addTopPanel(item: el)
+      @selectAndFocusSearchInput()
 
   createItemsPanel: (el) =>
     unless @itemsPanel

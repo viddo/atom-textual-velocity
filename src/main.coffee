@@ -13,6 +13,14 @@ module.exports =
       minimum: 0
 
   activate: (state) ->
+    @addStartSessionCmd()
+
+  addStartSessionCmd: ->
+    @startSessionCmd = atom.commands.add 'atom-workspace', 'atom-notational:start-session', => @startSession()
+
+  startSession: ->
+    @disposeAndRemove('startSessionCmd')
+
     @projects = new Projects()
     @panels = new Panels(
       notationalUI(
@@ -20,11 +28,20 @@ module.exports =
         matchedItemsProp : @projects.matchedItemsProp
         columnsProp      : Bacon.sequentially(0, [columns]).toProperty([])
         bodyHeightStream : atoms.fromConfig('atom-notational.bodyHeight')
-      )
-    )
+      ))
+
+    @stopSessionCmd = atom.commands.add 'atom-workspace', 'atom-notational:stop-session', =>
+      # start over
+      @stopSession()
+      @addStartSessionCmd()
+
+  stopSession: ->
+    @disposeAndRemove(prop) for prop in ['stopSessionCmd', 'startSessionCmd', 'projects', 'panels']
+
+  disposeAndRemove: (prop) ->
+    this[prop]?.dispose()
+    this[prop] = null
 
   deactivate: ->
-    @projects.dispose()
-    @projects = null
-    @panels.dispose()
-    @panels = null
+    @stopSession()
+    @disposeAndRemove('startSessionCmd')
