@@ -3,17 +3,26 @@
   "main": "./src/main",
   "version": "0.0.0",
   "description": "A short description of your package",
-  "repository": "https://github.com/atom/atom-notational",
+  "repository": "",
   "license": "MIT",
   "engines": {
     "atom": ">=0.174.0 <2.0.0"
   },
+  "activationCommands": {
+    "atom-workspace": "atom-notational:start-session"
+  },
   "dependencies": {
     "baconjs": "0.7.x",
     "chokidar": "1.0.x",
+    "classnames": "2.1.x",
     "gitignore-globs": "0.1.x",
     "moment": "2.10.x",
     "ramda": "0.17.x",
+    "react-for-atom": "0.13.x",
     "virtual-dom": "2.1.x"
+  },
+  "devDependencies": {
+    "fs-plus": "2.8.x",
+    "temp": "0.8.x"
   }
 }
