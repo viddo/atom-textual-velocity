@@ -18,8 +18,7 @@
     "gitignore-globs": "0.1.x",
     "moment": "2.10.x",
     "ramda": "0.17.x",
-    "react-for-atom": "0.13.x",
-    "virtual-dom": "2.1.x"
+    "react-for-atom": "0.13.x"
   },
   "devDependencies": {
     "fs-plus": "2.8.x",
