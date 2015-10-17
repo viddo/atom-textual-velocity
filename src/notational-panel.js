@@ -1,6 +1,9 @@
 'use babel';
 
-import {Disposable, CompositeDisposable} from 'atom';
+import {
+  Disposable,
+  CompositeDisposable,
+} from 'atom';
 import R from 'ramda';
 import Path from 'path';
 import React from 'react-for-atom';
@@ -13,23 +16,24 @@ import columns from './columns';
 class NotationalPanel {
 
   constructor(projects) {
-    let columnsProp = Bacon.sequentially(0, [columns]).toProperty([]);
-    let dblCancelStream = this._doubleTapStream(atoms.cancelCommand());
-
     this._panelElement = document.createElement('div');
     this._atomPanel = atom.workspace.addTopPanel({item: this._panelElement});
+
+    let isVisibleStream = atoms.stream(this._atomPanel, 'onDidChangeVisible').filter(R.identity);
+    let dblCancelStream = this._dblTapStream(atoms.cancelCommand());
+
     let reactPanel = React.render(
-      <PanelComponent columnsProp={columnsProp}
-        showStream={dblCancelStream}
+      <PanelComponent columnsProp={Bacon.sequentially(0, [columns]).toProperty([])}
+        showStream={dblCancelStream.merge(isVisibleStream)}
         bodyHeightStream={atoms.fromConfig('atom-notational.bodyHeight')}
         searchBus={projects.searchBus}
         matchedItemsProp={projects.matchedItemsProp}
       />, this._panelElement);
 
-    let dblResetStream = this._doubleTapStream(reactPanel.resetStream);
+    let dblResetStream = this._dblTapStream(reactPanel.resetStream);
 
     this._addSideEffects([
-      projects,
+      dblCancelStream.onValue(() => this._atomPanel.show()),
 
       reactPanel.bodyHeightProp.debounce(500).onValue(newHeight =>
         atom.config.set('atom-notational.bodyHeight', newHeight)
@@ -47,8 +51,6 @@ class NotationalPanel {
         atom.workspace.open(Path.join(selectedItem.projectPath, selectedItem.relPath));
       }),
 
-      dblCancelStream.onValue(() => this._atomPanel.show()),
-
       dblResetStream.onValue(() => {
         this._atomPanel.hide();
         let activePane = atom.workspace.getActivePane();
@@ -57,6 +59,15 @@ class NotationalPanel {
         }
       }),
     ]);
+  }
+
+  isVisible() {
+    return this._atomPanel.isVisible();
+  }
+
+  show() {
+    this._atomPanel.show();
+    this._atomPanel.emitter.emit('did-change-visible', true); // force event, to trigger showStream above
   }
 
   dispose() {
@@ -85,8 +96,8 @@ class NotationalPanel {
     }
   }
 
-  // filter a given stream to only trigger if tow event are triggered within 300ms (e.g. double-ESC)
-  _doubleTapStream(stream) {
+  // filter a given stream to only trigger if tow event are triggered within 300ms (e.g. dbl-ESC)
+  _dblTapStream(stream) {
     return stream.bufferWithTimeOrCount(300, 2).filter(R.propEq('length', 2));
   }
 };

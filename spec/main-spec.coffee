@@ -18,11 +18,11 @@ describe 'atom-notational', ->
       waitsForPromise ->
         promise
 
-    it 'creates a top-panel', ->
-     topPanels = atom.workspace.getTopPanels()
-     expect(topPanels.length).toEqual(1)
-     expect(topPanels[0].getItem().querySelector('.atom-notational-search')).toBeDefined()
-     expect(topPanels[0].getItem().querySelector('.atom-notational-items')).toBeDefined()
+    it 'creates a top panel for the notational panel', ->
+     panels = atom.workspace.getTopPanels()
+     expect(panels.length).toEqual(1)
+     expect(panels[0].getItem().querySelector('.atom-notational-search')).toBeDefined()
+     expect(panels[0].getItem().querySelector('.atom-notational-items')).toBeDefined()
 
     it 'start-session command is no longer available', ->
       expect(atom.commands.getSnapshot()['atom-notational:start-session']).toBeUndefined()
@@ -34,9 +34,8 @@ describe 'atom-notational', ->
       beforeEach ->
         workspaceElement.dispatchEvent(new CustomEvent('atom-notational:stop-session', bubbles: true))
 
-      it 'destroys the top-panel', ->
-        topPanels = atom.workspace.getTopPanels()
-        expect(topPanels.length).toEqual(0)
+      it 'destroys the panels', ->
+        expect(atom.workspace.getTopPanels().length).toEqual(0)
 
       it 'start-session command is available again', ->
         expect(atom.commands.getSnapshot()['atom-notational:start-session']).toBeDefined()
@@ -48,6 +47,5 @@ describe 'atom-notational', ->
       beforeEach ->
         atom.packages.deactivatePackage('atom-notational')
 
-      it 'removes the top panels', ->
-        topPanels = atom.workspace.getTopPanels()
-        expect(topPanels.length).toEqual(0)
+      it 'removes the panels', ->
+        expect(atom.workspace.getTopPanels().length).toEqual(0)

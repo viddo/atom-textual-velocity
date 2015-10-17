@@ -2,7 +2,7 @@
 
 import Bacon from 'baconjs';
 
-let fromDisposable = (obj, funcName, ...args) => {
+let atomStream = (obj, funcName, ...args) => {
   return Bacon.fromBinder(sink => {
     args.push(sink);
     let disposable = obj[funcName].apply(obj, args);
@@ -11,19 +11,20 @@ let fromDisposable = (obj, funcName, ...args) => {
 };
 
 let fromCommand = (context, command) => {
-  return fromDisposable(atom.commands, 'add', context, command);
+  return atomStream(atom.commands, 'add', context, command);
 };
 
 export default {
+  stream: atomStream,
   fromCommand: fromCommand,
 
   fromConfig(key) {
-    return fromDisposable(atom.config, 'observe', key);
+    return atomStream(atom.config, 'observe', key);
   },
 
   projectsPaths() {
     let lastProjectPathsProp = Bacon.sequentially(0, [[], atom.project.getPaths()])
-      .merge(fromDisposable(atom.project, 'onDidChangePaths'))
+      .merge(atomStream(atom.project, 'onDidChangePaths'))
       .slidingWindow(2, 2);
 
     let fromFilteredPairs = (pairwiseStream, predicate) => {
