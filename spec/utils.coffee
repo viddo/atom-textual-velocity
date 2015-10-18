@@ -9,6 +9,6 @@ module.exports = {
     # dispatching key events are problematicin chrome, use the callbacks for now
     el["on#{opts.eventType}"](
       keyCode: opts.keyCode
-      preventDefault: opts.preventDefault || ->
+      preventDefault: opts.preventDefault or ->
     )
 }

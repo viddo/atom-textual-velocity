@@ -19,10 +19,10 @@ describe 'atom-notational', ->
         promise
 
     it 'creates a top panel for the notational panel', ->
-     panels = atom.workspace.getTopPanels()
-     expect(panels.length).toEqual(1)
-     expect(panels[0].getItem().querySelector('.atom-notational-search')).toBeDefined()
-     expect(panels[0].getItem().querySelector('.atom-notational-items')).toBeDefined()
+      panels = atom.workspace.getTopPanels()
+      expect(panels.length).toEqual(1)
+      expect(panels[0].getItem().querySelector('.atom-notational-search')).toBeDefined()
+      expect(panels[0].getItem().querySelector('.atom-notational-items')).toBeDefined()
 
     it 'start-session command is no longer available', ->
       expect(atom.commands.getSnapshot()['atom-notational:start-session']).toBeUndefined()
