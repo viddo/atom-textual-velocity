@@ -1,4 +1,4 @@
-# atom-notational package
+# notational package
 
 A short description of your package.
 

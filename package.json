@@ -1,15 +1,22 @@
 {
-  "name": "atom-notational",
-  "main": "./lib/main",
+  "name": "notational",
   "version": "0.0.0",
-  "description": "A short description of your package",
   "repository": "",
+  "description": "Notational UI for Atom",
+  "keywords": [
+    "wiki",
+    "notational velocity",
+    "nvalt",
+    "note",
+    "notetaking"
+  ],
   "license": "MIT",
+  "main": "./lib/main",
+  "activationCommands": {
+    "atom-workspace": "notational:start-session"
+  },
   "engines": {
     "atom": ">=1.0.19 <2.0.0"
-  },
-  "activationCommands": {
-    "atom-workspace": "atom-notational:start-session"
   },
   "dependencies": {
     "baconjs": "0.7.x",

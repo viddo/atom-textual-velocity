@@ -5,7 +5,7 @@ describe 'Atom streams', ->
     describe 'when setting does not have any initial value', ->
       beforeEach ->
         @spy = jasmine.createSpy('onValue')
-        atoms.fromConfig('atom-notational.test').onValue(@spy)
+        atoms.fromConfig('notational.test').onValue(@spy)
 
         waitsFor =>
           @spy.calls.length is 1
@@ -15,13 +15,13 @@ describe 'Atom streams', ->
         expect(@spy.calls[0].args[0]).toBeUndefined()
 
       it 'returned stream gets new values when config is updated', ->
-        atom.config.set('atom-notational.test', 123)
+        atom.config.set('notational.test', 123)
 
         waitsFor =>
           @spy.calls.length is 2
         runs =>
           expect(@spy.calls[1].args[0]).toEqual(123)
-          atom.config.set('atom-notational.test', 456)
+          atom.config.set('notational.test', 456)
 
         waitsFor =>
           @spy.calls.length is 3
@@ -30,9 +30,9 @@ describe 'Atom streams', ->
 
     describe 'when setting has an value already', ->
       beforeEach ->
-        atom.config.set('atom-notational.test', 123)
+        atom.config.set('notational.test', 123)
         @spy = jasmine.createSpy('onValue')
-        atoms.fromConfig('atom-notational.test').onValue(@spy)
+        atoms.fromConfig('notational.test').onValue(@spy)
 
         waitsFor =>
           @spy.calls.length is 1
