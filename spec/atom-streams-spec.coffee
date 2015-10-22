@@ -1,11 +1,11 @@
 atoms = require '../lib/atom-streams'
 
 describe 'Atom streams', ->
-  describe '.fromConfig', ->
+  describe '.configStream', ->
     describe 'when setting does not have any initial value', ->
       beforeEach ->
         @spy = jasmine.createSpy('onValue')
-        atoms.fromConfig('notational.test').onValue(@spy)
+        atoms.configStream('notational.test').onValue(@spy)
 
         waitsFor =>
           @spy.calls.length is 1
@@ -32,7 +32,7 @@ describe 'Atom streams', ->
       beforeEach ->
         atom.config.set('notational.test', 123)
         @spy = jasmine.createSpy('onValue')
-        atoms.fromConfig('notational.test').onValue(@spy)
+        atoms.configStream('notational.test').onValue(@spy)
 
         waitsFor =>
           @spy.calls.length is 1
@@ -42,13 +42,13 @@ describe 'Atom streams', ->
         expect(@spy.calls[0].args[0]).toEqual(123)
 
 
-  describe '.fromCommand', ->
+  describe '.commandStream', ->
     beforeEach ->
       @workspaceView = atom.views.getView(atom.workspace)
       @workspaceView.className = '.test'
       jasmine.attachToDOM(@workspaceView)
       @spy = jasmine.createSpy('cmd')
-      atoms.fromCommand('atom-workspace', 'cat:cmd').onValue(@spy)
+      atoms.commandStream('atom-workspace', 'cat:cmd').onValue(@spy)
 
     it 'returns a stream that gets command events when command is matched', ->
       atom.commands.dispatch(@workspaceView, 'cat:whatever')
@@ -68,7 +68,7 @@ describe 'Atom streams', ->
   describe '.projectPaths', ->
     beforeEach ->
       spyOn(atom.project, 'getPaths').andReturn(['/tmp/1st', '/tmp/2nd']) # Initial paths
-      {openStream, closeStream} = atoms.projectsPaths()
+      {openStream, closeStream} = atoms.projectsPathsStreams()
       @addSpy = jasmine.createSpy('openStream')
       @removeSpy = jasmine.createSpy('closeStream')
       openStream.onValue(@addSpy)
