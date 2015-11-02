@@ -24,10 +24,10 @@ describe 'notational', ->
       expect(panels[0].getItem().querySelector('.notational-search')).toBeDefined()
       expect(panels[0].getItem().querySelector('.notational-items')).toBeDefined()
 
-    it 'start-session command is no longer available', ->
+    it 'removes the start-session command', ->
       expect(atom.commands.getSnapshot()['notational:start-session']).toBeUndefined()
 
-    it 'stop-session command is available', ->
+    it 'adds a stop-session command', ->
       expect(atom.commands.getSnapshot()['notational:stop-session']).toBeDefined()
 
     describe 'when stop-session command is triggered', ->
@@ -37,10 +37,10 @@ describe 'notational', ->
       it 'destroys the panels', ->
         expect(atom.workspace.getTopPanels().length).toEqual(0)
 
-      it 'start-session command is available again', ->
+      it 'adds a start-session command again', ->
         expect(atom.commands.getSnapshot()['notational:start-session']).toBeDefined()
 
-      it 'stop-session command is no longer available', ->
+      it 'removes the stop-session command', ->
         expect(atom.commands.getSnapshot()['notational:stop-session']).toBeUndefined()
 
     describe 'when package is desactivated', ->

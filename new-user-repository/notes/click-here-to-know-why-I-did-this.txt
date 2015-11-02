@@ -1,0 +1,6 @@
+I've been a power-user of Notational Velocity app (see notational.net) for years now.
+I got to a point where I got very frustrated with the shortcomings of what I want to achieve sometimes. My initial try was to learn the original source code. Unfortunately I found it too archaic for my taste and decided to look for alternative solutions instead.
+
+The problem was that I didn't find any alternative solutions I liked. This saw the little seed of an idea to carve my own path instead. This is what you see here. I'm a strong believer in open-source community, and wanted to use the technology I've come to love and adore in my every day life. At the beginning of 2015, and the previous release of Atom editor I finally saw an opportunity to build on the shoulders of giants, and create something better.
+
+This is what you now installed and see.

@@ -1,6 +1,6 @@
 {
   "name": "notational",
-  "version": "0.0.0",
+  "version": "0.0.1",
   "repository": "",
   "description": "Notational UI for Atom",
   "keywords": [
@@ -16,7 +16,7 @@
     "atom-workspace": "notational:start-session"
   },
   "engines": {
-    "atom": ">=1.0.19 <2.0.0"
+    "atom": ">=1.2.4 <2.0.0"
   },
   "dependencies": {
     "baconjs": "0.7.x",
@@ -25,13 +25,22 @@
     "gitignore-globs": "0.1.x",
     "moment": "2.10.x",
     "ramda": "0.17.x",
-    "react-for-atom": "0.13.x"
+    "react-for-atom": "0.13.x",
+    "scandal": "2.2.0"
   },
   "devDependencies": {
     "babel-eslint": "~4.1.3",
     "fs-plus": "2.8.x",
     "standard": "~5.3.1",
     "temp": "0.8.x"
+  },
+  "providedServices": {
+    "notational-service": {
+      "description": "Integrate w/ atom-notational",
+      "versions": {
+        "0.0.1": "provideServiceV0"
+      }
+    }
   },
   "standard": {
     "parser": "babel-eslint",
