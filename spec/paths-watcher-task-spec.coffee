@@ -3,20 +3,46 @@ path = require 'path'
 sendMessageTo = require '../lib/task/send-message-to'
 
 describe 'PathsWatcherTask', ->
-  [task, addedItemSpy] = []
+  [task, resultsSpy] = []
 
   beforeEach ->
-    addedItemSpy = jasmine.createSpy('addedItem')
+    resultsSpy = jasmine.createSpy('results')
     task = new Task(require.resolve('../lib/paths-watcher-task.js'))
-    task.on('addedItem', addedItemSpy)
     task.start([path.join(__dirname, 'fixtures')], [], true)
-    waitsFor ->
-      addedItemSpy.calls.length >= 2
+    task.on('results', resultsSpy)
 
   afterEach ->
     task.terminate()
 
-  it 'emits only text files', ->
-    expect(addedItemSpy).toHaveBeenCalled()
-    expect(addedItemSpy.calls[0].args[0].path).toMatch('empty.md')
-    expect(addedItemSpy.calls[1].args[0].path).toMatch('empty.txt')
+  describe 'when query w/o search string', ->
+    beforeEach ->
+      sendMessageTo(task, 'query', {
+        searchStr: '',
+        paginationOffset: 0,
+        paginationSize: 123
+      })
+      waitsFor ->
+        resultsSpy.calls.length >= 3
+
+    it 'emits results', ->
+      expect(resultsSpy).toHaveBeenCalled()
+      r = resultsSpy.calls[2].args[0]
+      expect(r.total).toEqual(2)
+      expect(r.items.length).toEqual(2)
+
+  describe 'when query w/o search string', ->
+    beforeEach ->
+      sendMessageTo(task, 'query', {
+        searchStr: 'plaintext',
+        paginationOffset: 0,
+        paginationSize: 123
+      })
+      waitsFor ->
+        resultsSpy.calls.length >= 3
+
+    it 'emits results', ->
+      expect(resultsSpy).toHaveBeenCalled()
+      r = resultsSpy.calls[2].args[0]
+      expect(r.total).toEqual(1)
+      expect(r.items.length).toEqual(1)
+      expect(r.items[0].path).toMatch(/plaintext.txt$/)
