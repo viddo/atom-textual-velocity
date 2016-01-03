@@ -18,5 +18,5 @@ describe 'PathsWatcherTask', ->
 
   it 'emits only text files', ->
     expect(addedItemSpy).toHaveBeenCalled()
-    expect(addedItemSpy.calls[0].args[0].title).toEqual('empty.md')
-    expect(addedItemSpy.calls[1].args[0].title).toEqual('empty.txt')
+    expect(addedItemSpy.calls[0].args[0].path).toMatch('empty.md')
+    expect(addedItemSpy.calls[1].args[0].path).toMatch('empty.txt')
