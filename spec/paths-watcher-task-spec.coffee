@@ -22,11 +22,11 @@ describe 'PathsWatcherTask', ->
         paginationSize: 123
       })
       waitsFor ->
-        resultsSpy.calls.length >= 3
+        resultsSpy.calls.length >= 2
 
     it 'emits results', ->
       expect(resultsSpy).toHaveBeenCalled()
-      r = resultsSpy.calls[2].args[0]
+      r = resultsSpy.calls[1].args[0]
       expect(r.total).toEqual(2)
       expect(r.items.length).toEqual(2)
 
@@ -38,11 +38,11 @@ describe 'PathsWatcherTask', ->
         paginationSize: 123
       })
       waitsFor ->
-        resultsSpy.calls.length >= 3
+        resultsSpy.calls.length >= 2
 
     it 'emits results', ->
       expect(resultsSpy).toHaveBeenCalled()
-      r = resultsSpy.calls[2].args[0]
+      r = resultsSpy.calls[1].args[0]
       expect(r.total).toEqual(1)
       expect(r.items.length).toEqual(1)
       expect(r.items[0].path).toMatch(/plaintext.txt$/)
