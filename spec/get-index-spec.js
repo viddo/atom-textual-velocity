@@ -1,8 +1,8 @@
 'use babel'
 
-import { prev, next } from '../lib/indices'
+import { prev, next } from '../lib/get-index'
 
-describe('indices', function () {
+describe('getIndex', function () {
   describe('.prev', function () {
     it('returns the last index when there is no current index', function () {
       expect(prev(123)).toEqual(122)
