@@ -45,6 +45,7 @@
     "parser": "babel-eslint",
     "globals": [
       "atom",
+      "beforeEach",
       "describe",
       "expect",
       "it",
