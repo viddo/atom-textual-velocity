@@ -3,7 +3,7 @@ path = require 'path'
 sendMessageTo = require '../lib/task/send-message-to'
 
 describe 'PathsWatcherTask', ->
-  [task, resultsSpy] = []
+  [task, resultsSpy, r] = []
 
   beforeEach ->
     resultsSpy = jasmine.createSpy('results')
@@ -23,26 +23,38 @@ describe 'PathsWatcherTask', ->
       })
       waitsFor ->
         resultsSpy.calls.length >= 2
+      runs ->
+        r = resultsSpy.calls[1].args[0]
 
     it 'emits results', ->
       expect(resultsSpy).toHaveBeenCalled()
-      r = resultsSpy.calls[1].args[0]
       expect(r.total).toEqual(2)
       expect(r.items.length).toEqual(2)
+
+    it 'result items has some data', ->
+      expect(r.items[0].path.length).toBeGreaterThan(0)
+      expect(r.items[0].stat).toBeDefined()
+      expect(r.items[0].stat.birthtime).toBeDefined()
 
   describe 'when query w/o search string', ->
     beforeEach ->
       sendMessageTo(task, 'query', {
-        searchStr: 'plaintext',
+        searchStr: 'thislineshouldonlyexistinonefile',
         paginationOffset: 0,
         paginationSize: 123
       })
       waitsFor ->
         resultsSpy.calls.length >= 2
+      runs ->
+        r = resultsSpy.calls[1].args[0]
 
     it 'emits results', ->
       expect(resultsSpy).toHaveBeenCalled()
-      r = resultsSpy.calls[1].args[0]
       expect(r.total).toEqual(1)
       expect(r.items.length).toEqual(1)
-      expect(r.items[0].path).toMatch(/plaintext.txt$/)
+      expect(r.items[0].path).toMatch(/an-example.txt$/)
+
+    it 'result items has some data', ->
+      expect(r.items[0].path.length).toBeGreaterThan(0)
+      expect(r.items[0].stat).toBeDefined()
+      expect(r.items[0].stat.birthtime).toBeDefined()

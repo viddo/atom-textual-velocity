@@ -1,0 +1,6 @@
+a plaintext file with some text in it to verify it is parsed as expected by the path watcher task since this whole file should not be included in the returned results
+a file could also have multiple lines
+
+obviously, duh
+thislineshouldonlyexistinonefile OK?
+ok, enough for now, bye
