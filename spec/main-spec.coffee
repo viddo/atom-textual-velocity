@@ -18,6 +18,9 @@ describe 'notational', ->
       waitsForPromise ->
         promise
 
+    afterEach ->
+      atom.packages.deactivatePackage('notational')
+
     it 'creates a top panel for the notational panel', ->
       panels = atom.workspace.getTopPanels()
       expect(panels.length).toEqual(1)

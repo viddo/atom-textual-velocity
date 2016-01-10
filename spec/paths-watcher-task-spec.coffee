@@ -12,6 +12,7 @@ describe 'PathsWatcherTask', ->
     task.on('results', resultsSpy)
 
   afterEach ->
+    sendMessageTo(task, 'dispose')
     task.terminate()
 
   describe 'when query w/o search string', ->
