@@ -1,6 +1,6 @@
 'use babel'
 
-import getResult from '../lib/get-result'
+import getResult from '../../lib/tasks/get-result'
 
 describe('getResult', function () {
   let results

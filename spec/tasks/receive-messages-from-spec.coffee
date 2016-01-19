@@ -1,4 +1,4 @@
-receiveMessagesFrom = require '../../lib/task/receive-messages-from'
+receiveMessagesFrom = require '../../lib/tasks/receive-messages-from'
 
 describe 'receiveMessagesFrom', ->
   [process, messageReceiver] = []

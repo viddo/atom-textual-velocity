@@ -1,14 +1,14 @@
 path = require 'path'
 {Task} = require 'atom'
-sendMessageTo = require '../lib/task/send-message-to'
+sendMessageTo = require '../../lib/tasks/send-message-to'
 
 describe 'PathsWatcherTask', ->
   [task, resultsSpy, r] = []
 
   beforeEach ->
     resultsSpy = jasmine.createSpy('results')
-    task = new Task(require.resolve('../lib/paths-watcher-task.js'))
-    task.start([path.join(__dirname, 'fixtures')], [], true)
+    task = new Task(require.resolve('../../lib/tasks/paths-watcher.js'))
+    task.start([path.join(__dirname, '..', 'fixtures')], [], true)
     task.on('results', resultsSpy)
 
   afterEach ->
