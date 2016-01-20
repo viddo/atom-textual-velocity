@@ -1,8 +1,8 @@
 'use babel'
 
-import getResult from '../../lib/tasks/get-result'
+import createResults from '../../lib/tasks/create-results'
 
-describe('getResult', function () {
+describe('createResults', function () {
   let results
   const items = [
     {path: '/foo'},
@@ -28,7 +28,7 @@ describe('getResult', function () {
           {id: 3}
         ]
       }
-      results = getResult(query, queryResults, items)
+      results = createResults(query, queryResults, items)
     })
 
     it('results has correct total', function () {
