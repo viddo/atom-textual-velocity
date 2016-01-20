@@ -38,11 +38,16 @@
     "parser": "babel-eslint",
     "globals": [
       "atom",
+      "afterEach",
       "beforeEach",
       "describe",
       "expect",
       "it",
-      "jasmine"
+      "jasmine",
+      "runs",
+      "spyOn",
+      "waitsFor",
+      "waitsForPromise"
     ]
   }
 }

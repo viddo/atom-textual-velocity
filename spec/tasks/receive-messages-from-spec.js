@@ -1,19 +1,23 @@
-receiveMessagesFrom = require '../../lib/tasks/receive-messages-from'
+'use babel'
 
-describe 'receiveMessagesFrom', ->
-  [process, messageReceiver] = []
+import receiveMessagesFrom from '../../lib/tasks/receive-messages-from'
 
-  beforeEach ->
+describe('receiveMessagesFrom', () => {
+  let [process, messageReceiver] = []
+
+  beforeEach(() => {
     process = jasmine.createSpyObj('process', ['on'])
     messageReceiver = receiveMessagesFrom(process)
+  })
 
-  it 'creates a receiver object', ->
+  it('creates a receiver object', () => {
     expect(messageReceiver).toBeDefined()
+  })
 
-  describe '.createStream', ->
-    [onValueSpy, stream] = []
+  describe('.createStream', () => {
+    let [onValueSpy, stream] = []
 
-    beforeEach ->
+    beforeEach(() => {
       onValueSpy = jasmine.createSpy('side-effects')
       stream = messageReceiver.createStream('foobar')
       stream.onValue(onValueSpy)
@@ -25,11 +29,16 @@ describe 'receiveMessagesFrom', ->
         name: 'foobar',
         payload: '2nd'
       })
+    })
 
-    it 'return a new stream', ->
+    it('return a new stream', () => {
       expect(stream).toBeDefined()
+    })
 
-    it 'stream gets data only for its given name', ->
+    it('stream gets data only for its given name', () => {
       expect(onValueSpy).toHaveBeenCalled()
       expect(onValueSpy.calls.length).toEqual(1)
       expect(onValueSpy).toHaveBeenCalledWith('2nd')
+    })
+  })
+})
