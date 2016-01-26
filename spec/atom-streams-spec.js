@@ -1,8 +1,14 @@
 'use babel'
 
-import atoms from '../lib/atom-streams'
+import * as atoms from '../lib/atom-streams'
 
 describe('Atom streams', () => {
+  describe('.createStream', function () {
+    it('should be exported', function () {
+      expect(atoms.createStream).toBeDefined()
+    })
+  })
+
   describe('.createConfigStream', () => {
     describe('when setting does not have any initial value', () => {
       beforeEach(() => {
@@ -84,17 +90,17 @@ describe('Atom streams', () => {
     })
   })
 
-  describe('.projectPaths', () => {
-    beforeEach(() => {
+  describe('.createOpenProjectStream', function () {
+    let spy
+
+    beforeEach(function () {
       spyOn(atom.project, 'getPaths').andReturn(['/tmp/1st', '/tmp/2nd']) // Initial paths
-      let {openStream, closeStream} = atoms.createProjectsPathsStreams()
-      this.addSpy = jasmine.createSpy('openStream')
-      this.removeSpy = jasmine.createSpy('closeStream')
-      openStream.onValue(this.addSpy)
-      closeStream.onValue(this.removeSpy)
+      let openProjectStream = atoms.createOpenProjectStream()
+      spy = jasmine.createSpy('spy')
+      openProjectStream.onValue(spy)
 
       waitsFor(() => {
-        return this.addSpy.calls.length === 2
+        return spy.calls.length >= 1
       })
 
       runs(() => {
@@ -105,26 +111,46 @@ describe('Atom streams', () => {
       })
 
       waitsFor(() => {
-        return this.addSpy.calls.length === 5
+        return spy.calls.length >= 4
       })
     })
 
     it('triggers an add event for each initial path', () => {
-      expect(this.addSpy).toHaveBeenCalled()
-      expect(this.addSpy.calls[0].args[0]).toEqual('/tmp/1st')
-      expect(this.addSpy.calls[1].args[0]).toEqual('/tmp/2nd')
+      expect(spy).toHaveBeenCalled()
+      expect(spy.calls[0].args[0]).toEqual('/tmp/1st')
+      expect(spy.calls[1].args[0]).toEqual('/tmp/2nd')
     })
 
     it('triggers an add event for each new path added after that', () => {
-      expect(this.addSpy.calls[2].args[0]).toEqual('/tmp/3rd')
-      expect(this.addSpy.calls[3].args[0]).toEqual('/tmp/4th')
-      expect(this.addSpy.calls[4].args[0]).toEqual('/tmp/5th')
+      expect(spy.calls[2].args[0]).toEqual('/tmp/3rd')
+      expect(spy.calls[3].args[0]).toEqual('/tmp/4th')
+      expect(spy.calls[4].args[0]).toEqual('/tmp/5th')
+    })
+  })
+
+  describe('.createCloseProjectStream', function () {
+    let spy
+
+    beforeEach(function () {
+      spyOn(atom.project, 'getPaths').andReturn(['/tmp/1st', '/tmp/2nd']) // Initial paths
+      let closeProjectStream = atoms.createCloseProjectStream()
+      spy = jasmine.createSpy('spy')
+      closeProjectStream.onValue(spy)
+
+      // Simulate adding/removing some paths after initialized
+      atom.project.emitter.emit('did-change-paths', ['/tmp/1st', '/tmp/2nd', '/tmp/3rd']) // add 3rd
+      atom.project.emitter.emit('did-change-paths', ['/tmp/1st', '/tmp/3rd']) // remove 2nd
+      atom.project.emitter.emit('did-change-paths', ['/tmp/3rd', '/tmp/4th', '/tmp/5th']) // remove 1st, add 4th and 5th
+
+      waitsFor(() => {
+        return spy.calls.length >= 2
+      })
     })
 
     it('triggers a remove event for each path removed after that', () => {
-      expect(this.removeSpy).toHaveBeenCalled()
-      expect(this.removeSpy.calls[0].args[0]).toEqual('/tmp/2nd')
-      expect(this.removeSpy.calls[1].args[0]).toEqual('/tmp/1st')
+      expect(spy).toHaveBeenCalled()
+      expect(spy.calls[0].args[0]).toEqual('/tmp/2nd')
+      expect(spy.calls[1].args[0]).toEqual('/tmp/1st')
     })
   })
 })
