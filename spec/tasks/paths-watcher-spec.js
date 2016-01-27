@@ -1,22 +1,26 @@
 'use babel'
 
-import path from 'path'
+import Path from 'path'
 import {Task} from 'atom'
 import sendMessageTo from '../../lib/tasks/send-message-to'
 
 describe('PathsWatcherTask', () => {
-  let [task, resultsSpy, r] = []
+  let task, resultsSpy, r
 
   beforeEach(() => {
     resultsSpy = jasmine.createSpy('results')
     task = new Task(require.resolve('../../lib/tasks/paths-watcher.js'))
-    task.start([path.join(__dirname, '..', 'fixtures')], [], true)
+    task.start()
+    sendMessageTo(task, 'openProjectPath', {
+      path: Path.join(__dirname, '..', 'fixtures'),
+      ignoredNames: [],
+      excludeVcsIgnoredPaths: true
+    })
     task.on('results', resultsSpy)
   })
 
   afterEach(() => {
     sendMessageTo(task, 'dispose')
-    task.terminate()
   })
 
   describe('when query w/o search string', () => {
@@ -41,7 +45,7 @@ describe('PathsWatcherTask', () => {
     })
 
     it('result items has some data', () => {
-      expect(r.items[0].path.length).toBeGreaterThan(0)
+      expect(r.items[0].relPath.length).toBeGreaterThan(0)
       expect(r.items[0].stat).toBeDefined()
       expect(r.items[0].stat.birthtime).toBeDefined()
     })
@@ -66,11 +70,11 @@ describe('PathsWatcherTask', () => {
       expect(resultsSpy).toHaveBeenCalled()
       expect(r.total).toEqual(1)
       expect(r.items.length).toEqual(1)
-      expect(r.items[0].path).toMatch(/an-example.txt$/)
+      expect(r.items[0].relPath).toMatch(/an-example.txt$/)
     })
 
     it('result items has some data', () => {
-      expect(r.items[0].path.length).toBeGreaterThan(0)
+      expect(r.items[0].relPath.length).toBeGreaterThan(0)
       expect(r.items[0].stat).toBeDefined()
       expect(r.items[0].stat.birthtime).toBeDefined()
     })
