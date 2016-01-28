@@ -1,6 +1,6 @@
 'use babel'
 
-import receiveMessagesFrom from '../../lib/tasks/receive-messages-from'
+import receiveMessagesFrom from '../lib/receive-messages-from'
 
 describe('receiveMessagesFrom', () => {
   let [process, messageReceiver] = []

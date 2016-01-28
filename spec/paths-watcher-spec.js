@@ -1,40 +1,58 @@
 'use babel'
 
+import Bacon from 'baconjs'
 import Path from 'path'
-import {Task} from 'atom'
-import sendMessageTo from '../../lib/tasks/send-message-to'
+import PathsWatcher from '../lib/paths-watcher'
 
-describe('PathsWatcherTask', () => {
-  let task, resultsSpy, r
+describe('PathsWatcher', () => {
+  let pathsWatcher, resultsSpy, r, readySpy
+  let openProjectPathBus, closeProjectPathBus, paginateLastQueryBus, queryBus
 
   beforeEach(() => {
+    openProjectPathBus = new Bacon.Bus()
+    closeProjectPathBus = new Bacon.Bus()
+    paginateLastQueryBus = new Bacon.Bus()
+    queryBus = new Bacon.Bus()
+
+    pathsWatcher = new PathsWatcher({
+      openProjectPathStream: openProjectPathBus,
+      closeProjectPathStream: closeProjectPathBus,
+      paginateLastQueryStream: paginateLastQueryBus,
+      queryStream: queryBus
+    })
+
     resultsSpy = jasmine.createSpy('results')
-    task = new Task(require.resolve('../../lib/tasks/paths-watcher.js'))
-    task.start()
-    sendMessageTo(task, 'openProjectPath', {
-      path: Path.join(__dirname, '..', 'fixtures'),
+    pathsWatcher.resultsStream.onValue(resultsSpy)
+    readySpy = jasmine.createSpy('ready')
+    pathsWatcher.readyStream.onValue(readySpy)
+
+    openProjectPathBus.push({
+      path: Path.join(__dirname, 'fixtures'),
       ignoredNames: [],
       excludeVcsIgnoredPaths: true
     })
-    task.on('results', resultsSpy)
+
+    waitsFor(() => {
+      return readySpy.calls.length >= 1
+    })
   })
 
   afterEach(() => {
-    sendMessageTo(task, 'dispose')
+    pathsWatcher.dispose()
   })
 
   describe('when query w/o search string', () => {
     beforeEach(() => {
-      sendMessageTo(task, 'query', {
+      queryBus.push({
         searchStr: '',
         paginationOffset: 0,
         paginationSize: 123
       })
       waitsFor(() => {
-        return resultsSpy.calls.length >= 2
+        return resultsSpy.calls.length >= 1
       })
       runs(() => {
-        r = resultsSpy.calls[1].args[0]
+        r = resultsSpy.calls[0].args[0]
       })
     })
 
@@ -53,16 +71,16 @@ describe('PathsWatcherTask', () => {
 
   describe('when query w/o search string', () => {
     beforeEach(() => {
-      sendMessageTo(task, 'query', {
+      queryBus.push({
         searchStr: 'thislineshouldonlyexistinonefile',
         paginationOffset: 0,
         paginationSize: 123
       })
       waitsFor(() => {
-        return resultsSpy.calls.length >= 2
+        return resultsSpy.calls.length >= 1
       })
       runs(() => {
-        r = resultsSpy.calls[1].args[0]
+        r = resultsSpy.calls[0].args[0]
       })
     })
 
