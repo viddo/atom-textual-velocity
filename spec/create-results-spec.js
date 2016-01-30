@@ -38,9 +38,5 @@ describe('createResults', function () {
     it('results has expected items', function () {
       expect(results.items.length).toEqual(2)
     })
-
-    it('results items have hrtime when item was created', function () {
-      expect(results.items[0].hrtime).toBeDefined()
-    })
   })
 })
