@@ -5,6 +5,7 @@ describe('notational', () => {
   let [workspaceElement] = []
 
   beforeEach(() => {
+    jasmine.unspy(window, 'setTimeout') // remove spy that screws up debounce
     workspaceElement = atom.views.getView(atom.workspace)
     jasmine.attachToDOM(workspaceElement)
   })
