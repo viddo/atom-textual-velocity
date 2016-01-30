@@ -90,12 +90,12 @@ describe('Atom streams', () => {
     })
   })
 
-  describe('.createOpenProjectStream', function () {
+  describe('.createOpenProjectPathStream', function () {
     let spy
 
     beforeEach(function () {
       spyOn(atom.project, 'getPaths').andReturn(['/tmp/1st', '/tmp/2nd']) // Initial paths
-      let openProjectStream = atoms.createOpenProjectStream()
+      let openProjectStream = atoms.createOpenProjectPathStream()
       spy = jasmine.createSpy('spy')
       openProjectStream.onValue(spy)
 
@@ -128,12 +128,12 @@ describe('Atom streams', () => {
     })
   })
 
-  describe('.createCloseProjectStream', function () {
+  describe('.createCloseProjectPathStream', function () {
     let spy
 
     beforeEach(function () {
       spyOn(atom.project, 'getPaths').andReturn(['/tmp/1st', '/tmp/2nd']) // Initial paths
-      let closeProjectStream = atoms.createCloseProjectStream()
+      let closeProjectStream = atoms.createCloseProjectPathStream()
       spy = jasmine.createSpy('spy')
       closeProjectStream.onValue(spy)
 

@@ -14,8 +14,8 @@ describe('Project', () => {
     jasmine.unspy(window, 'setTimeout') // remove spy that screws up debounce
     openProjectPathBus = new Bacon.Bus()
     closeProjectPathBus = new Bacon.Bus()
-    spyOn(atoms, 'createOpenProjectStream').andReturn(openProjectPathBus)
-    spyOn(atoms, 'createCloseProjectStream').andReturn(closeProjectPathBus)
+    spyOn(atoms, 'createOpenProjectPathStream').andReturn(openProjectPathBus)
+    spyOn(atoms, 'createCloseProjectPathStream').andReturn(closeProjectPathBus)
 
     project = new Project()
 
