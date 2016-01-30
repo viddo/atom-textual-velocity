@@ -7,7 +7,7 @@ import * as atoms from '../lib/atom-streams'
 
 describe('Project', () => {
   const dirStandardPath = Path.join(__dirname, 'fixtures', 'standard')
-  let project, resultsSpy, r, readySpy
+  let project, resultsSpy, r, parsedSpy
   let openProjectPathBus, closeProjectPathBus
 
   beforeEach(() => {
@@ -19,8 +19,8 @@ describe('Project', () => {
 
     project = new Project()
 
-    readySpy = jasmine.createSpy('ready')
-    project.readyStream.onValue(readySpy)
+    parsedSpy = jasmine.createSpy('path parsed')
+    project.parsedprojectPathStream.onValue(parsedSpy)
     resultsSpy = jasmine.createSpy('results')
     project.resultsProp.onValue(resultsSpy)
   })
@@ -34,9 +34,10 @@ describe('Project', () => {
   })
 
   it('should have expected props', function () {
-    expect(project.readyStream).toBeDefined()
     expect(project.queryBus).toBeDefined()
     expect(project.resultsProp).toBeDefined()
+    expect(project.openProjectPathStream).toBeDefined()
+    expect(project.parsedprojectPathStream).toBeDefined()
   })
 
   it('should trigger empty results with defaults', function () {
@@ -52,7 +53,7 @@ describe('Project', () => {
       openProjectPathBus.push(dirStandardPath)
 
       waitsFor(() => {
-        return readySpy.calls.length >= 1
+        return parsedSpy.calls.length >= 1
       })
     })
 
