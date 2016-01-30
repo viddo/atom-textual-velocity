@@ -28,7 +28,7 @@ describe('createResults', function () {
           {id: 3}
         ]
       }
-      results = createResults(query, queryResults, items)
+      results = createResults(queryResults, query, items)
     })
 
     it('results has correct total', function () {
