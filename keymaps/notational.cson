@@ -1,0 +1,8 @@
+'.platform-darwin':
+  'cmd-shift-c': 'notational:toggle-panel'
+
+'.platform-linux':
+  'ctrl-shift-c': 'notational:toggle-panel'
+
+'atom-workspace':
+  'ctrl-l': 'notational:focus-on-search'
