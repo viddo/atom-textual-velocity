@@ -35,6 +35,7 @@ describe('Project', () => {
 
   it('should have expected props', function () {
     expect(project.queryBus).toBeDefined()
+    expect(project.filesProp).toBeDefined()
     expect(project.resultsProp).toBeDefined()
     expect(project.openProjectPathStream).toBeDefined()
     expect(project.parsedprojectPathStream).toBeDefined()
@@ -42,8 +43,6 @@ describe('Project', () => {
 
   it('should trigger empty results with defaults', function () {
     const r = resultsSpy.calls[0].args[0]
-    expect(r.searchStr).toEqual('')
-    expect(r.paginationOffset).toEqual(0)
     expect(r.total).toEqual(0)
     expect(r.items).toEqual([])
   })
@@ -59,11 +58,7 @@ describe('Project', () => {
 
     describe('when query w/o search string', () => {
       beforeEach(() => {
-        project.queryBus.push({
-          searchStr: '',
-          paginationOffset: 0,
-          paginationSize: 123
-        })
+        project.queryBus.push('')
         waitsFor(() => {
           return resultsSpy.calls.length >= 2
         })
@@ -73,26 +68,15 @@ describe('Project', () => {
       })
 
       it('triggers results prop', () => {
-        expect(r.searchStr).toEqual('')
-        expect(r.paginationOffset).toEqual(0)
+        expect(r.query).toEqual('')
         expect(r.total).toEqual(3)
         expect(r.items.length).toEqual(3)
-      })
-
-      it('results items have some data', () => {
-        expect(r.items[0].basename).toEqual('another.txt')
-        expect(r.items[0].stat).toBeDefined()
-        expect(r.items[0].stat.birthtime).toBeDefined()
       })
     })
 
     describe('when query with search string', () => {
       beforeEach(() => {
-        project.queryBus.push({
-          searchStr: 'thislineshouldonlyexistinonefile',
-          paginationOffset: 0,
-          paginationSize: 123
-        })
+        project.queryBus.push('thislineshouldonlyexistinonefile')
         waitsFor(() => {
           return resultsSpy.calls.length >= 2
         })
@@ -102,43 +86,9 @@ describe('Project', () => {
       })
 
       it('triggers results prop', () => {
-        expect(r.searchStr).toEqual('thislineshouldonlyexistinonefile')
-        expect(r.paginationOffset).toEqual(0)
+        expect(r.query).toEqual('thislineshouldonlyexistinonefile')
         expect(r.total).toEqual(1)
-        expect(r.regexp).toBeDefined()
         expect(r.items.length).toEqual(1)
-      })
-
-      it('results items have some data', () => {
-        expect(r.items[0].basename).toEqual('an-example.txt')
-        expect(r.items[0].stat).toBeDefined()
-        expect(r.items[0].stat.birthtime).toBeDefined()
-      })
-    })
-
-    describe('when paginating', function () {
-      beforeEach(() => {
-        project.queryBus.push({
-          searchStr: '',
-          paginationOffset: 2,
-          paginationSize: 123
-        })
-        waitsFor(() => {
-          return resultsSpy.calls.length >= 2
-        })
-        runs(() => {
-          r = resultsSpy.calls[1].args[0]
-        })
-      })
-
-      it('indicates the total regardless of pagination state', function () {
-        expect(r.total).toEqual(3)
-      })
-
-      it('returns the items from pagination', function () {
-        expect(r.paginationOffset).toEqual(2)
-        expect(r.items.length).toEqual(1)
-        expect(r.items[0].basename).toEqual('empty.md')
       })
     })
 
