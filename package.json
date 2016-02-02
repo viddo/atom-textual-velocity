@@ -22,10 +22,10 @@
     "baconjs": "0.7.83",
     "chokidar": "1.0.6",
     "classnames": "2.2.3",
-    "lodash.debounce": "3.1.1",
-    "moment": "2.11.0",
+    "lodash.debounce": "4.0.0",
+    "moment": "2.11.1",
     "ramda": "0.19.1",
-    "react-for-atom": "0.14.6",
+    "react-for-atom": "0.14.6-0",
     "scandal": "2.2.0",
     "sifter": "0.4.5"
   },
