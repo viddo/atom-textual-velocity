@@ -25,7 +25,7 @@
     "lodash.debounce": "3.1.1",
     "moment": "2.11.0",
     "ramda": "0.19.1",
-    "react-for-atom": "0.14.3",
+    "react-for-atom": "0.14.6",
     "scandal": "2.2.0",
     "sifter": "0.4.5"
   },
