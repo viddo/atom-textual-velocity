@@ -22,6 +22,7 @@
     "baconjs": "0.7.83",
     "chokidar": "1.0.6",
     "classnames": "2.2.3",
+    "fs-plus": "2.8.1",
     "lodash.debounce": "4.0.0",
     "moment": "2.11.1",
     "ramda": "0.19.1",
@@ -31,7 +32,6 @@
   },
   "devDependencies": {
     "babel-eslint": "5.0.0-beta6",
-    "fs-plus": "2.8.1",
     "standard": "5.4.1"
   },
   "standard": {
