@@ -111,7 +111,7 @@ describe('Atom streams', () => {
       })
 
       waitsFor(() => {
-        return spy.calls.length >= 4
+        return spy.calls.length >= 5
       })
     })
 
