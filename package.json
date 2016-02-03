@@ -11,7 +11,7 @@
     "notetaking"
   ],
   "license": "MIT",
-  "main": "./lib/main",
+  "main": "./lib/main.js",
   "activationCommands": {
     "atom-workspace": "notational:start-session"
   },
