@@ -6,7 +6,7 @@ describe('getAdjustedScrollTop', function () {
   it('returns current scroll if item is in visible viewport', function () {
     // selected item and scrolltop is at top and within the visible viewport
     expect(getAdjustedScrollTop({
-      bodyHeight: 25,
+      panelHeight: 25,
       rowHeight: 25,
       scrollTop: 0,
       selectedIndex: 0
@@ -14,7 +14,7 @@ describe('getAdjustedScrollTop', function () {
 
     // selected item matches what's within the visible viewport
     expect(getAdjustedScrollTop({
-      bodyHeight: 25,
+      panelHeight: 25,
       rowHeight: 25,
       scrollTop: 25,
       selectedIndex: 1
@@ -22,7 +22,7 @@ describe('getAdjustedScrollTop', function () {
 
     // selected item is last item in visible viewport
     expect(getAdjustedScrollTop({
-      bodyHeight: 75,
+      panelHeight: 75,
       rowHeight: 25,
       scrollTop: 50,
       selectedIndex: 2
@@ -34,7 +34,7 @@ describe('getAdjustedScrollTop', function () {
     // from: ..[...]..X..
     // to:   ......[..X].
     expect(getAdjustedScrollTop({
-      bodyHeight: 100,
+      panelHeight: 100,
       rowHeight: 25,
       scrollTop: 1,
       selectedIndex: 4
@@ -42,7 +42,7 @@ describe('getAdjustedScrollTop', function () {
 
     // Still outside by 1px
     expect(getAdjustedScrollTop({
-      bodyHeight: 100,
+      panelHeight: 100,
       rowHeight: 25,
       scrollTop: 24,
       selectedIndex: 4
@@ -50,7 +50,7 @@ describe('getAdjustedScrollTop', function () {
 
     // Way out
     expect(getAdjustedScrollTop({
-      bodyHeight: 100,
+      panelHeight: 100,
       rowHeight: 25,
       scrollTop: 24,
       selectedIndex: 5
@@ -58,7 +58,7 @@ describe('getAdjustedScrollTop', function () {
 
     // Real example, non-conforming body height
     expect(getAdjustedScrollTop({
-      bodyHeight: 68,
+      panelHeight: 68,
       rowHeight: 25,
       scrollTop: 0,
       selectedIndex: 2
@@ -71,7 +71,7 @@ describe('getAdjustedScrollTop', function () {
     // to:   .[X..]......
 
     expect(getAdjustedScrollTop({
-      bodyHeight: 100,
+      panelHeight: 100,
       rowHeight: 25,
       scrollTop: 29,
       selectedIndex: 1
@@ -79,7 +79,7 @@ describe('getAdjustedScrollTop', function () {
 
     // 1px is still outside
     expect(getAdjustedScrollTop({
-      bodyHeight: 100,
+      panelHeight: 100,
       rowHeight: 25,
       scrollTop: 26,
       selectedIndex: 1
@@ -87,7 +87,7 @@ describe('getAdjustedScrollTop', function () {
 
     // Way out
     expect(getAdjustedScrollTop({
-      bodyHeight: 100,
+      panelHeight: 100,
       rowHeight: 25,
       scrollTop: 9000,
       selectedIndex: 1
