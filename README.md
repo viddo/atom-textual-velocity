@@ -1,4 +1,4 @@
-# Textual Velocity for Atom
+# Textual Velocity for Atom [![Build Status](http://travis-ci.org/viddo/atom-textual-velocity.png)](http://travis-ci.org/viddo/atom-textual-velocity)
 
 TEXTUAL VELOCITY is an application that stores and retrieves notes, similar vision as [Notational Velocity](http://notational.net/) but with a different approach.
 
