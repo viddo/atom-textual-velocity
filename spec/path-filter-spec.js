@@ -34,7 +34,7 @@ describe('path-filter', () => {
 
   describe('when there is a custom setting for a path', function () {
     beforeEach(function () {
-      atom.config.set('notational.customCfg', [{
+      atom.config.set('textualVelocity.customCfg', [{
         path: __dirname,
         inclusions: ['*.txt', '*.md']
       }])

@@ -1,5 +1,7 @@
-# notational package
+# Textual Velocity for Atom
 
-A short description of your package.
+TEXTUAL VELOCITY is an application that stores and retrieves notes, similar vision as [Notational Velocity](http://notational.net/) but with a different approach.
 
-![A screenshot of your package](https://f.cloud.github.com/assets/69169/2290250/c35d867a-a017-11e3-86be-cd7c5bf3ff9b.gif)
+More info soon, still WIP, please be patient. ;)
+
+Start by running `TextualVelocity: Start Session` [command](https://atom.io/docs/v1.4.3/getting-started-atom-basics#command-palette)

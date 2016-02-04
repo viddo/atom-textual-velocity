@@ -13,7 +13,7 @@ describe('Atom streams', () => {
     describe('when setting does not have any initial value', () => {
       beforeEach(() => {
         this.spy = jasmine.createSpy('onValue')
-        atoms.createConfigStream('notational.test').onValue(this.spy)
+        atoms.createConfigStream('textualVelocity.test').onValue(this.spy)
 
         waitsFor(() => {
           return this.spy.calls.length === 1
@@ -26,14 +26,14 @@ describe('Atom streams', () => {
       })
 
       it('returned stream gets new values when config is updated', () => {
-        atom.config.set('notational.test', 123)
+        atom.config.set('textualVelocity.test', 123)
 
         waitsFor(() => {
           return this.spy.calls.length === 2
         })
         runs(() => {
           expect(this.spy.calls[1].args[0]).toEqual(123)
-          atom.config.set('notational.test', 456)
+          atom.config.set('textualVelocity.test', 456)
         })
 
         waitsFor(() => {
@@ -47,9 +47,9 @@ describe('Atom streams', () => {
 
     describe('when setting has an value already', () => {
       beforeEach(() => {
-        atom.config.set('notational.test', 123)
+        atom.config.set('textualVelocity.test', 123)
         this.spy = jasmine.createSpy('onValue')
-        atoms.createConfigStream('notational.test').onValue(this.spy)
+        atoms.createConfigStream('textualVelocity.test').onValue(this.spy)
 
         waitsFor(() => {
           return this.spy.calls.length === 1
