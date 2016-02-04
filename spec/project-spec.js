@@ -34,7 +34,7 @@ describe('Project', () => {
   })
 
   it('should have expected props', function () {
-    expect(project.queryBus).toBeDefined()
+    expect(project.searchBus).toBeDefined()
     expect(project.filesProp).toBeDefined()
     expect(project.resultsProp).toBeDefined()
     expect(project.openProjectPathStream).toBeDefined()
@@ -58,7 +58,7 @@ describe('Project', () => {
 
     describe('when query w/o search string', () => {
       beforeEach(() => {
-        project.queryBus.push('')
+        project.searchBus.push('')
         waitsFor(() => {
           return resultsSpy.calls.length >= 2
         })
@@ -76,7 +76,7 @@ describe('Project', () => {
 
     describe('when query with search string', () => {
       beforeEach(() => {
-        project.queryBus.push('thislineshouldonlyexistinonefile')
+        project.searchBus.push('thislineshouldonlyexistinonefile')
         waitsFor(() => {
           return resultsSpy.calls.length >= 2
         })
