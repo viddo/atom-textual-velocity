@@ -1,8 +1,8 @@
 '.platform-darwin':
-  'cmd-shift-c': 'textualVelocity:toggle-panel'
+  'cmd-shift-c': 'textual-velocity:toggle-panel'
 
 '.platform-linux':
-  'ctrl-shift-c': 'textualVelocity:toggle-panel'
+  'ctrl-shift-c': 'textual-velocity:toggle-panel'
 
 'atom-workspace':
-  'ctrl-l': 'textualVelocity:focus-on-search'
+  'ctrl-l': 'textual-velocity:focus-on-search'

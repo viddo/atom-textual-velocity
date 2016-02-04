@@ -15,7 +15,7 @@
   "license": "MIT",
   "main": "./lib/main.js",
   "activationCommands": {
-    "atom-workspace": "textualVelocity:start-session"
+    "atom-workspace": "textual-velocity:start-session"
   },
   "engines": {
     "atom": ">=1.4.3 <2.0.0"
