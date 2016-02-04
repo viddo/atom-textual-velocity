@@ -6,6 +6,9 @@ This project adheres to [Semantic Versioning](http://semver.org/) and [keepachan
 ### Changed
 - Command name `textualVelocity` => `textual-velocity`
 
+### Fixed
+- `<enter>` with selected file focus on selected file instead of opening new buffer
+
 ## [0.1.0] - 2016-02-04
 - [M{D,L}P](https://twitter.com/jopas/status/515301088660959233)
 - Just works™ with some known limitations
