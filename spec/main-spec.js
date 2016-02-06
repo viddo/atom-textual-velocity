@@ -30,7 +30,7 @@ describe('textualVelocity', () => {
       atom.packages.deactivatePackage('textual-velocity')
     })
 
-    it('creates a top panel for the textualVelocity panel', () => {
+    it('creates a top panel for the session', () => {
       let panels = atom.workspace.getTopPanels()
       expect(panels.length).toEqual(1)
       expect(panels[0].getItem().querySelector('.textualVelocity-search')).toBeDefined()
