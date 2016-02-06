@@ -1,12 +1,12 @@
 'use babel'
 
 import Bacon from 'baconjs'
-import AppBehavior from '../lib/app-behavior'
+import UI from '../lib/ui'
 import { TestUtils } from 'react-for-atom'
 import dispatchKeyDownEvent from './utils'
 
-describe('Project', () => {
-  let appBehavior, input
+describe('UI', () => {
+  let ui, input
   let spies, b
 
   beforeEach(function () {
@@ -19,7 +19,7 @@ describe('Project', () => {
       deselectBus: new Bacon.Bus()
     }
 
-    appBehavior = new AppBehavior({
+    ui = new UI({
       domNode: document.createElement('div'),
       panelHeightStream: b.panelHeightBus,
       isLoadingFilesProp: b.isLoadingBus.toProperty(false),
@@ -29,7 +29,7 @@ describe('Project', () => {
       deselectStream: b.deselectBus
     })
 
-    input = TestUtils.findRenderedDOMComponentWithTag(appBehavior._reactPanel, 'input')
+    input = TestUtils.findRenderedDOMComponentWithTag(ui._reactPanel, 'input')
 
     spies = {
       searchProp: jasmine.createSpy('searchProp'),
@@ -38,11 +38,11 @@ describe('Project', () => {
       openFileStream: jasmine.createSpy('openFileStreamSpy'),
       createFileStream: jasmine.createSpy('createFileStreamSpy')
     }
-    appBehavior.searchProp.onValue(spies.searchProp)
-    appBehavior.panelHeightProp.onValue(spies.panelHeightProp)
-    appBehavior.selectedFileProp.onValue(spies.selectedFileProp)
-    appBehavior.openFileStream.onValue(spies.openFileStream)
-    appBehavior.createFileStream.onValue(spies.createFileStream)
+    ui.searchProp.onValue(spies.searchProp)
+    ui.panelHeightProp.onValue(spies.panelHeightProp)
+    ui.selectedFileProp.onValue(spies.selectedFileProp)
+    ui.openFileStream.onValue(spies.openFileStream)
+    ui.createFileStream.onValue(spies.createFileStream)
   })
 
   describe('when there is some data', function () {
