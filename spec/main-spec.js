@@ -1,13 +1,19 @@
 'use babel'
 /* global CustomEvent */
 
-describe('textualVelocity', () => {
-  let [workspaceElement] = []
+describe('textual-velocity package', () => {
+  let workspaceElement, activationError
 
   beforeEach(() => {
+    activationError = null
     jasmine.unspy(window, 'setTimeout') // remove spy that screws up debounce
     workspaceElement = atom.views.getView(atom.workspace)
     jasmine.attachToDOM(workspaceElement)
+
+    // Spy on fatal notifications to extract activationErroror, to re-throw it here
+    spyOn(atom.notifications, 'addFatalError').andCallFake((msg, d) => {
+      activationError = new Error([msg, d.detail, d.stack].join("\n")) // eslint-disable-line
+    })
   })
 
   it('package is lazy-loaded', () => {
@@ -22,12 +28,15 @@ describe('textualVelocity', () => {
       promise = atom.packages.activatePackage('textual-velocity')
       workspaceElement.dispatchEvent(new CustomEvent('textual-velocity:start-session', {bubbles: true}))
       waitsForPromise(() => {
+        if (activationError) throw activationError
         return promise
       })
     })
 
     afterEach(() => {
-      atom.packages.deactivatePackage('textual-velocity')
+      if (!activationError) {
+        atom.packages.deactivatePackage('textual-velocity')
+      }
     })
 
     it('creates a top panel for the session', () => {
@@ -47,7 +56,9 @@ describe('textualVelocity', () => {
 
     describe('when stop-session command is triggered', () => {
       beforeEach(() => {
-        workspaceElement.dispatchEvent(new CustomEvent('textual-velocity:stop-session', {bubbles: true}))
+        if (!activationError) {
+          workspaceElement.dispatchEvent(new CustomEvent('textual-velocity:stop-session', {bubbles: true}))
+        }
       })
 
       it('destroys the panels', () => {
@@ -65,7 +76,9 @@ describe('textualVelocity', () => {
 
     describe('when package is desactivated', () => {
       beforeEach(() => {
-        atom.packages.deactivatePackage('textual-velocity')
+        if (!activationError) {
+          atom.packages.deactivatePackage('textual-velocity')
+        }
       })
 
       it('removes the panels', () => {
