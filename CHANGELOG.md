@@ -5,6 +5,8 @@ This project adheres to [Semantic Versioning](http://semver.org/) and [keepachan
 ## [Unreleased]
 ### Added
 - Pointer cursor on items, to indicate that they're clickable
+### Changed
+- Internal structure, file/class names etc.
 
 ## [0.1.2] - 2016-02-05
 ### Changed
