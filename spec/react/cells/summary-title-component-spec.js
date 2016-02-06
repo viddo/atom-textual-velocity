@@ -1,7 +1,7 @@
 'use babel'
 
 import { React, TestUtils } from 'react-for-atom'
-import SummaryTitle from '../../../lib/react/cells/summary-title'
+import SummaryTitle from '../../../lib/react/cells/summary-title-component'
 
 describe('react/cells/summary-title', function () {
   let renderer, r
