@@ -11,6 +11,7 @@ This project adheres to [Semantic Versioning](http://semver.org/) and [keepachan
 
 ### Fixed
 - Reset search on `<ESC>`
+- Do not open new file on enter unless there is at least one char in the search input
 
 ## [0.1.2] - 2016-02-05
 ### Changed

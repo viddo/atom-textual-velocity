@@ -1,20 +1,13 @@
 'use babel'
-/* global UIEvent */
 
-export default {
-
-  dispatchEvent: (el, eventName, opts = {}) => {
-    opts.view = opts.view || window
-    if (opts.bubbles !== false) opts.bubbles = true
-    if (opts.cancelable !== false) opts.cancelable = true
-    el.dispatchEvent(new UIEvent(eventName, opts))
-  },
-
-  dispatchKeyEvent: (el, opts = {}) => {
-    // dispatching key events are problematicin chrome, use the callbacks for now
-    el[`on${opts.eventType}`]({
-      keyCode: opts.keyCode,
-      preventDefault: opts.preventDefault || () => {}
-    })
-  }
+// Unfortunately TestUtils.Simulate.keyDown(input, {key: 'Enter', keyCode: 13}) can't be used inside atom
+export default function dispatchKeyDownEvent (el, opts = {}) {
+  // Chrome doesn't play well with keydown events
+  // from https://code.google.com/p/chromium/issues/detail?id=327853&q=KeyboardEvent&colspec=ID%20Pri%20M%20Stars%20ReleaseBlock%20Cr%20Status%20Owner%20Summary%20OS%20Modified
+  var e = document.createEvent('Events')
+  // KeyboardEvents bubble and are cancelable.
+  // https://developer.mozilla.org/en-US/docs/Web/API/event.initEvent
+  e.initEvent('keydown', true, true)
+  e.keyCode = opts.keyCode
+  el.dispatchEvent(e)
 }
