@@ -2,6 +2,10 @@
 All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](http://semver.org/) and [keepachangelog.com](http://keepachangelog.com/).
 
+## [Unreleased]
+### Added
+- Pointer cursor on items, to indicate that they're clickable
+
 ## [0.1.2] - 2016-02-05
 ### Changed
 - Command name `textualVelocity` => `textual-velocity`
