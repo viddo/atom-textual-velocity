@@ -1,5 +1,8 @@
 .DS_Store
 .tern-project
-docs
+docs/wip
+docs/portable/*
+!docs/portable/osx-build-custom-atom.sh
+!docs/portable/README.md
 npm-debug.log
 node_modules
