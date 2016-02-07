@@ -2,6 +2,10 @@
 All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](http://semver.org/) and [keepachangelog.com](http://keepachangelog.com/).
 
+## [unreleased]
+### Added
+- Better project description and reference to v1 roadmap milestone
+
 ## [0.2.3] - 2016-02-07
 ### Added
 - Some minimal documentation on how it's intended to be used

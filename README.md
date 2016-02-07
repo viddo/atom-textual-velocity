@@ -1,8 +1,10 @@
 # Textual Velocity for Atom [![Build Status](http://travis-ci.org/viddo/atom-textual-velocity.png)](http://travis-ci.org/viddo/atom-textual-velocity)
 
-TEXTUAL VELOCITY is an application that stores and retrieves notes.
+TEXTUAL VELOCITY is a package to find your files easier. Ideal for your personal notes, but works just as well for any project with a lot of files (e.g. code projects).
 
 For those of you who used [Notational Velocity](http://notational.net/) or [nvalt](http://brettterpstra.com/projects/nvAlt/) before should feel right at home!
+
+_Note that this package is still WIP, see [v1 roadmap milestone](https://github.com/viddo/atom-textual-velocity/milestones) for details._
 
 <img width="748" alt="screen shot 2016-02-04 at 20 05 58" src="https://cloud.githubusercontent.com/assets/978461/12831123/f48a5964-cb92-11e5-9752-859edd2ed3a9.png">
 
