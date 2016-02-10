@@ -1,6 +1,8 @@
 'use babel'
 /* global CustomEvent */
 
+import Path from 'path'
+
 describe('textual-velocity package', () => {
   let workspaceElement, activationError
 
@@ -14,6 +16,8 @@ describe('textual-velocity package', () => {
     spyOn(atom.notifications, 'addFatalError').andCallFake((msg, d) => {
       activationError = new Error([msg, d.detail, d.stack].join("\n")) // eslint-disable-line
     })
+
+    atom.configDirPath = Path.join(__dirname, 'fixtures')
   })
 
   it('package is lazy-loaded', () => {
@@ -42,8 +46,8 @@ describe('textual-velocity package', () => {
     it('creates a top panel for the session', () => {
       let panels = atom.workspace.getTopPanels()
       expect(panels.length).toEqual(1)
-      expect(panels[0].getItem().querySelector('.textualVelocity-search')).toBeDefined()
-      expect(panels[0].getItem().querySelector('.textualVelocity-items')).toBeDefined()
+      expect(panels[0].getItem().querySelector('.textual-velocity-search')).toBeDefined()
+      expect(panels[0].getItem().querySelector('.textual-velocity-items')).toBeDefined()
     })
 
     it('removes the start-session command', () => {

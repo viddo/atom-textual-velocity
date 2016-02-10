@@ -13,7 +13,7 @@ describe('Atom streams', () => {
     describe('when setting does not have any initial value', () => {
       beforeEach(() => {
         this.spy = jasmine.createSpy('onValue')
-        atoms.createConfigStream('textualVelocity.test').onValue(this.spy)
+        atoms.createConfigStream('textual-velocity.test').onValue(this.spy)
 
         waitsFor(() => {
           return this.spy.calls.length === 1
@@ -26,14 +26,14 @@ describe('Atom streams', () => {
       })
 
       it('returned stream gets new values when config is updated', () => {
-        atom.config.set('textualVelocity.test', 123)
+        atom.config.set('textual-velocity.test', 123)
 
         waitsFor(() => {
           return this.spy.calls.length === 2
         })
         runs(() => {
           expect(this.spy.calls[1].args[0]).toEqual(123)
-          atom.config.set('textualVelocity.test', 456)
+          atom.config.set('textual-velocity.test', 456)
         })
 
         waitsFor(() => {
@@ -47,9 +47,9 @@ describe('Atom streams', () => {
 
     describe('when setting has an value already', () => {
       beforeEach(() => {
-        atom.config.set('textualVelocity.test', 123)
+        atom.config.set('textual-velocity.test', 123)
         this.spy = jasmine.createSpy('onValue')
-        atoms.createConfigStream('textualVelocity.test').onValue(this.spy)
+        atoms.createConfigStream('textual-velocity.test').onValue(this.spy)
 
         waitsFor(() => {
           return this.spy.calls.length === 1
@@ -87,70 +87,6 @@ describe('Atom streams', () => {
         expect(this.spy.calls[1].args[0]).not.toBeUndefined()
         expect(this.spy.calls.length).toEqual(2)
       })
-    })
-  })
-
-  describe('.createOpenProjectPathStream', function () {
-    let spy
-
-    beforeEach(function () {
-      spyOn(atom.project, 'getPaths').andReturn(['/tmp/1st', '/tmp/2nd']) // Initial paths
-      let openProjectStream = atoms.createOpenProjectPathStream()
-      spy = jasmine.createSpy('spy')
-      openProjectStream.onValue(spy)
-
-      waitsFor(() => {
-        return spy.calls.length >= 1
-      })
-
-      runs(() => {
-        // Simulate adding/removing some paths after initialized
-        atom.project.emitter.emit('did-change-paths', ['/tmp/1st', '/tmp/2nd', '/tmp/3rd']) // add 3rd
-        atom.project.emitter.emit('did-change-paths', ['/tmp/1st', '/tmp/3rd']) // remove 2nd
-        atom.project.emitter.emit('did-change-paths', ['/tmp/3rd', '/tmp/4th', '/tmp/5th']) // remove 1st, add 4th and 5th
-      })
-
-      waitsFor(() => {
-        return spy.calls.length >= 5
-      })
-    })
-
-    it('triggers an add event for each initial path', () => {
-      expect(spy).toHaveBeenCalled()
-      expect(spy.calls[0].args[0]).toEqual('/tmp/1st')
-      expect(spy.calls[1].args[0]).toEqual('/tmp/2nd')
-    })
-
-    it('triggers an add event for each new path added after that', () => {
-      expect(spy.calls[2].args[0]).toEqual('/tmp/3rd')
-      expect(spy.calls[3].args[0]).toEqual('/tmp/4th')
-      expect(spy.calls[4].args[0]).toEqual('/tmp/5th')
-    })
-  })
-
-  describe('.createCloseProjectPathStream', function () {
-    let spy
-
-    beforeEach(function () {
-      spyOn(atom.project, 'getPaths').andReturn(['/tmp/1st', '/tmp/2nd']) // Initial paths
-      let closeProjectStream = atoms.createCloseProjectPathStream()
-      spy = jasmine.createSpy('spy')
-      closeProjectStream.onValue(spy)
-
-      // Simulate adding/removing some paths after initialized
-      atom.project.emitter.emit('did-change-paths', ['/tmp/1st', '/tmp/2nd', '/tmp/3rd']) // add 3rd
-      atom.project.emitter.emit('did-change-paths', ['/tmp/1st', '/tmp/3rd']) // remove 2nd
-      atom.project.emitter.emit('did-change-paths', ['/tmp/3rd', '/tmp/4th', '/tmp/5th']) // remove 1st, add 4th and 5th
-
-      waitsFor(() => {
-        return spy.calls.length >= 2
-      })
-    })
-
-    it('triggers a remove event for each path removed after that', () => {
-      expect(spy).toHaveBeenCalled()
-      expect(spy.calls[0].args[0]).toEqual('/tmp/2nd')
-      expect(spy.calls[1].args[0]).toEqual('/tmp/1st')
     })
   })
 })

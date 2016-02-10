@@ -2,6 +2,17 @@
 All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](http://semver.org/) and [keepachangelog.com](http://keepachangelog.com/).
 
+## [unreleased]
+### Changed
+- Load notes from `.atom/notes` dir by default, with the option to override with a custom path
+- Renamed class names to avoid capital characters, e.g. `textVelocity` => `textual-velocity`
+
+### Removed
+- Unnecessary path filter, can be solved w/o implementation (e.g. .gitignore or similar)
+
+### Fixed
+- Use correct config key paths
+
 ## [0.2.4] - 2016-02-08
 ### Added
 - Better project description and reference to v1 roadmap milestone
@@ -23,7 +34,7 @@ This project adheres to [Semantic Versioning](http://semver.org/) and [keepachan
 
 ## [0.1.2] - 2016-02-05
 ### Changed
-- Command name `textualVelocity` => `textual-velocity`
+- Command name `textual-velocity` => `textual-velocity`
 
 ### Fixed
 - `<enter>` with selected file focus on selected file instead of opening new buffer

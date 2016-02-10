@@ -11,11 +11,12 @@ _Note that this package is still WIP, see [v1 roadmap milestone](https://github.
 ## Usage
 The primary use-case is to use this for notes taking, for this purpose it's recommended to use this [init file](docs/init.coffee).
 
-If you're an advanced atom user you might even want to run it in [portable](docs/portable/README.md) mode.
+Start by running `Textual Velocity: Start Session` [command](https://atom.io/docs/v1.4.3/getting-started-atom-basics#command-palette)
+
+The core settings of ""ignored files" and "exclude VCS dirs" are respected.
+If you want non-standard settings I'd recommend to run an Atom instance in [portable](docs/portable/README.md) mode.
 
 See [keymaps](keymaps/textual-velocity.cson) for available shortcuts.
-
-Start by running `Textual Velocity: Start Session` [command](https://atom.io/docs/v1.4.3/getting-started-atom-basics#command-palette)
 
 ## Installation
 `apm install textual-velocity`, or search & install it through the settings.

@@ -6,3 +6,4 @@ docs/portable/*
 !docs/portable/README.md
 npm-debug.log
 node_modules
+spec/fixtures/notes
