@@ -3,6 +3,8 @@ All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](http://semver.org/) and [keepachangelog.com](http://keepachangelog.com/).
 
 ## [unreleased]
+
+## [0.3.0] - 2016-02-10
 ### Changed
 - Load notes from `.atom/notes` dir by default, with the option to override with a custom path
 - Renamed class names to avoid capital characters, e.g. `textVelocity` => `textual-velocity`
