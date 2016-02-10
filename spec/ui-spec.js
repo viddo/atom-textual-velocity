@@ -45,7 +45,7 @@ describe('UI', () => {
     ui.createFileStream.onValue(spies.createFileStream)
   })
 
-  describe('when there is some data', function () {
+  describe('when there is some data but no selection yet', function () {
     beforeEach(function () {
       b.filesBus.push([{
         path: '/path/to/file.txt',
@@ -59,15 +59,15 @@ describe('UI', () => {
       })
     })
 
-    it('do not try to open or create a file on <enter>', function () {
+    it('creates new file on <enter>', function () {
       dispatchKeyDownEvent(input, { keyCode: 13 })
-      expect(spies.createFileStream).not.toHaveBeenCalled()
+      expect(spies.createFileStream).toHaveBeenCalled()
       expect(spies.openFileStream).not.toHaveBeenCalled()
 
-      // regression: make sure it's no triggering on subsequent char changes
+      // regression: make sure it does not trigger on subsequent char changes
       input.value = 'asd'
       TestUtils.Simulate.change(input)
-      expect(spies.createFileStream).not.toHaveBeenCalled()
+      expect(spies.createFileStream.calls.length).toEqual(1)
     })
 
     describe('when there is some input str', function () {
@@ -77,9 +77,13 @@ describe('UI', () => {
           TestUtils.Simulate.change(input)
         })
 
-        it('createFileStream does not trigger on <enter>', function () {
+        it('creates new file <enter>', function () {
           dispatchKeyDownEvent(input, { keyCode: 13 })
-          expect(spies.createFileStream).not.toHaveBeenCalled()
+          expect(spies.createFileStream).toHaveBeenCalled()
+        })
+
+        it('does not try to open file', function () {
+          expect(spies.openFileStream).not.toHaveBeenCalled()
         })
       })
 
@@ -92,10 +96,9 @@ describe('UI', () => {
         it('createFileStream triggers on <enter>', function () {
           dispatchKeyDownEvent(input, { keyCode: 13 })
           expect(spies.createFileStream).toHaveBeenCalled()
-          expect(spies.createFileStream).toHaveBeenCalledWith('foo')
         })
 
-        it('openFileStream does not trigger', function () {
+        it('does not try to open file', function () {
           expect(spies.openFileStream).not.toHaveBeenCalled()
         })
       })

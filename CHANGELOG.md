@@ -13,6 +13,7 @@ This project adheres to [Semantic Versioning](http://semver.org/) and [keepachan
 
 ### Fixed
 - Use correct config key paths
+- Create a new untitled file on enter when there's no search string
 
 ## [0.2.4] - 2016-02-08
 ### Added
