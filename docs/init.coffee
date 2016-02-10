@@ -2,7 +2,7 @@
 # Init script to register global shortcut and hide tree-view when session is started
 
 atom.packages.onDidActivatePackage (pkg) ->
-  return if pkg.name isnt 'tree-view'
+  return if pkg.name isnt 'textual-velocity'
 
   # Try register the global shortcut
   remote = require 'remote'
