@@ -6,6 +6,7 @@ This project adheres to [Semantic Versioning](http://semver.org/) and [keepachan
 ### Changed
 - Load notes from `.atom/notes` dir by default, with the option to override with a custom path
 - Renamed class names to avoid capital characters, e.g. `textVelocity` => `textual-velocity`
+- Docs; simplify and clarify intentions and usage.
 
 ### Removed
 - Unnecessary path filter, can be solved w/o implementation (e.g. .gitignore or similar)

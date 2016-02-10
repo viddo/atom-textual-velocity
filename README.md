@@ -1,22 +1,29 @@
 # Textual Velocity for Atom [![Build Status](http://travis-ci.org/viddo/atom-textual-velocity.png)](http://travis-ci.org/viddo/atom-textual-velocity)
+_Note that this package is still WIP, see [v1 roadmap milestone](https://github.com/viddo/atom-textual-velocity/milestones) for details._
 
-TEXTUAL VELOCITY is a package to find your files easier. Ideal for your personal notes, but works just as well for any project with a lot of files (e.g. code projects).
+TEXTUAL VELOCITY is a package to have your mental notes at your fingertips!
 
 For those of you who used [Notational Velocity](http://notational.net/) or [nvalt](http://brettterpstra.com/projects/nvAlt/) before should feel right at home!
-
-_Note that this package is still WIP, see [v1 roadmap milestone](https://github.com/viddo/atom-textual-velocity/milestones) for details._
 
 <img width="748" alt="screen shot 2016-02-04 at 20 05 58" src="https://cloud.githubusercontent.com/assets/978461/12831123/f48a5964-cb92-11e5-9752-859edd2ed3a9.png">
 
 ## Usage
-The primary use-case is to use this for notes taking, for this purpose it's recommended to use this [init file](docs/init.coffee).
+The package is lazy-loaded, use the `Textual Velocity: Start Session` [command](https://atom.io/docs/v1.4.3/getting-started-atom-basics#command-palette) to get started.
 
-Start by running `Textual Velocity: Start Session` [command](https://atom.io/docs/v1.4.3/getting-started-atom-basics#command-palette)
+By default notes are saved in `~/.atom/notes`, you can change it through the `textual-velocity:path` [config](https://atom.io/docs/api/v1.5.0/Config) setting.
 
-The core settings of ""ignored files" and "exclude VCS dirs" are respected.
-If you want non-standard settings I'd recommend to run an Atom instance in [portable](docs/portable/README.md) mode.
+You may also want to set a global shortcut to toggle the Atom window, see my [init config](docs/init.coffee) for an example of how this can be setup when the package is activated.
+
+The `core.ignoredNames` and `core.excludeVcsIgnoredPaths` are respected, but you need to restart a session for the changes to apply.
 
 See [keymaps](keymaps/textual-velocity.cson) for available shortcuts.
+
+Also, I recommend the following packages, that works great in combination with textual-velocity:
+- [quick-file-actions](https://atom.io/packages/quick-file-actions) - Quickly copy, delete, move, and create new files
+- [file-icons](https://atom.io/packages/file-icons) - Assign file extension icons and colours for improved visual grepping
+- [preview](https://atom.io/packages/preview) - Ultimate previewer of source code in Atom.
+- [recent-files-fuzzy-finder](https://atom.io/packages/recent-files-fuzzy-finder) - Find recently opened files easier
+- [block-travel](https://atom.io/packages/block-travel) - Quickly travel up/down between blocks of code
 
 ## Installation
 `apm install textual-velocity`, or search & install it through the settings.
