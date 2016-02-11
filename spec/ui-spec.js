@@ -50,7 +50,7 @@ describe('UI', () => {
       b.filesBus.push([{
         path: '/path/to/file.txt',
         content: '',
-        tags: [],
+        tags: '',
         stat: {}
       }])
       b.resultsBus.push({
