@@ -1,4 +1,4 @@
-# Textual Velocity for Atom [![Build Status](http://travis-ci.org/viddo/atom-textual-velocity.png)](http://travis-ci.org/viddo/atom-textual-velocity)
+# Textual Velocity for Atom [![Build Status](http://travis-ci.org/viddo/atom-textual-velocity.png?branch=master)](http://travis-ci.org/viddo/atom-textual-velocity)
 _Note that this package is still WIP, see [v1 roadmap milestone](https://github.com/viddo/atom-textual-velocity/milestones) for details._
 
 TEXTUAL VELOCITY is a package to have your mental notes at your fingertips!
