@@ -46,8 +46,8 @@ describe('textual-velocity package', () => {
     it('creates a top panel for the session', () => {
       let panels = atom.workspace.getTopPanels()
       expect(panels.length).toEqual(1)
-      expect(panels[0].getItem().querySelector('.textual-velocity-search')).toBeDefined()
-      expect(panels[0].getItem().querySelector('.textual-velocity-items')).toBeDefined()
+      expect(panels[0].getItem().querySelector('.tv-search')).toBeDefined()
+      expect(panels[0].getItem().querySelector('.tv-items')).toBeDefined()
     })
 
     it('removes the start-session command', () => {
