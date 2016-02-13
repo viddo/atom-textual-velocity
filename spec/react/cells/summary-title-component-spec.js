@@ -3,7 +3,7 @@
 import { React, TestUtils } from 'react-for-atom'
 import SummaryTitle from '../../../lib/react/cells/summary-title-component'
 
-describe('react/cells/summary-title', function () {
+describe('react/cells/summary-title-component', function () {
   let renderer, r
 
   beforeEach(function () {
