@@ -4,18 +4,16 @@ import { React, TestUtils } from 'react-for-atom'
 import TagsComponent from '../../../lib/react/cells/tags-component'
 
 describe('react/cells/tags-component', function () {
-  let renderer, r, file, evSpy
+  let renderer, r, tags, evSpy
 
   beforeEach(function () {
     evSpy = jasmine.createSpyObj('event', ['stopPropagation'])
     renderer = TestUtils.createRenderer()
-    file = {
-      tags: 'a b c'
-    }
+    tags = 'a b c'
   })
 
   it('renders tags as indidvidual items', function () {
-    renderer.render(<TagsComponent file={file} isSelected={false} />)
+    renderer.render(<TagsComponent tags={tags} isSelected={false} />)
     r = renderer.getRenderOutput()
     expect(r.props.children.length).toBe(3)
     expect(r.props.children[0]).toEqual(<span key='a' className='inline-block highlight'>a</span>)
@@ -30,7 +28,7 @@ describe('react/cells/tags-component', function () {
 
   describe('when clicked and is selected', function () {
     beforeEach(function () {
-      renderer.render(<TagsComponent file={file} isSelected={true} />)
+      renderer.render(<TagsComponent tags={tags} isSelected={true} />)
       r = renderer.getRenderOutput()
       r.props.onClick(evSpy)
       r = renderer.getRenderOutput() // to get updated output

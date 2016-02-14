@@ -22,9 +22,11 @@ describe('UI', () => {
     ui = new UI({
       domNode: document.createElement('div'),
       panelHeightStream: b.panelHeightBus,
-      isLoadingFilesProp: b.isLoadingBus.toProperty(false),
-      filesProp: b.filesBus.toProperty([]),
-      resultsProp: b.resultsBus.toProperty([]),
+      project: {
+        isLoadingFilesProp: b.isLoadingBus.toProperty(false),
+        filesProp: b.filesBus.toProperty([]),
+        resultsProp: b.resultsBus.toProperty([])
+      },
       focusOnSearchStream: b.focusBus,
       deselectStream: b.deselectBus
     })
@@ -108,6 +110,9 @@ describe('UI', () => {
     describe('when there is a selection', function () {
       beforeEach(function () {
         dispatchKeyDownEvent(input, { keyCode: 40 }) // <next>
+        waitsFor(() => {
+          return spies.selectedFileProp.calls.length >= 3
+        })
       })
 
       it('selectedFileProp should trigger', function () {
