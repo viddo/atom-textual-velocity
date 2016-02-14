@@ -1,5 +1,6 @@
 'use babel'
 
+import {React} from 'react-for-atom'
 import Bacon from 'baconjs'
 import UI from '../lib/ui'
 import { TestUtils } from 'react-for-atom'
@@ -22,11 +23,14 @@ describe('UI', () => {
     ui = new UI({
       domNode: document.createElement('div'),
       panelHeightStream: b.panelHeightBus,
-      project: {
-        isLoadingFilesProp: b.isLoadingBus.toProperty(false),
-        filesProp: b.filesBus.toProperty([]),
-        resultsProp: b.resultsBus.toProperty([])
-      },
+      columns: [{
+        title: 'test',
+        width: 100,
+        createCell: () => <td></td>
+      }],
+      isLoadingFilesProp: b.isLoadingBus.toProperty(false),
+      filesProp: b.filesBus.toProperty([]),
+      resultsProp: b.resultsBus.toProperty([]),
       focusOnSearchStream: b.focusBus,
       deselectStream: b.deselectBus
     })
