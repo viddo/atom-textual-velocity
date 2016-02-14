@@ -63,34 +63,6 @@ describe('Project', () => {
       expect(filesSpy.calls[0].args[0].length).toEqual(4)
     })
 
-    if (process.platform === 'darwin') {
-      it('a file might have tags', function () {
-        expect(filesSpy.calls[0].args[0][0].tags).toEqual('')
-
-        // fixtures/standard/osx-xattr-metadata-stuff.txt
-        expect(filesSpy.calls[0].args[0][3].tags).toEqual('someday mind projects')
-      })
-
-      describe('when search w/ tag', function () {
-        beforeEach(() => {
-          project.searchBus.push('mind')
-          waitsFor(() => {
-            return resultsSpy.calls.length >= 2
-          })
-          runs(() => {
-            r = resultsSpy.calls[1].args[0]
-          })
-        })
-
-        it('triggers results prop', () => {
-          expect(r.query).toEqual('mind')
-          expect(r.total).toEqual(1)
-          expect(r.items.length).toEqual(1)
-          expect(r.items[0].id).toEqual(3)
-        })
-      })
-    }
-
     describe('when query w/o search string', () => {
       beforeEach(() => {
         project.searchBus.push('')
