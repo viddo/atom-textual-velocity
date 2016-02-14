@@ -4,10 +4,9 @@ import { React, TestUtils } from 'react-for-atom'
 import TagsComponent from '../../../lib/react/cells/tags-component'
 
 describe('react/cells/tags-component', function () {
-  let renderer, r, tags, evSpy
+  let renderer, r, tags
 
   beforeEach(function () {
-    evSpy = jasmine.createSpyObj('event', ['stopPropagation'])
     renderer = TestUtils.createRenderer()
     tags = 'a b c'
   })
@@ -22,7 +21,7 @@ describe('react/cells/tags-component', function () {
   })
 
   it('does nothing on click since not selected', function () {
-    r.props.onClick(evSpy)
+    r.props.onClick()
     expect(r.props.children.length).toBe(3)
   })
 
@@ -30,7 +29,7 @@ describe('react/cells/tags-component', function () {
     beforeEach(function () {
       renderer.render(<TagsComponent tags={tags} isSelected={true} />)
       r = renderer.getRenderOutput()
-      r.props.onClick(evSpy)
+      r.props.onClick()
       r = renderer.getRenderOutput() // to get updated output
     })
 
