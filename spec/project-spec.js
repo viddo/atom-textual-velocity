@@ -64,7 +64,7 @@ describe('Project', () => {
     })
 
     if (process.platform === 'darwin') {
-      it('a file might has tags', function () {
+      it('a file might have tags', function () {
         expect(filesSpy.calls[0].args[0][0].tags).toEqual('')
 
         // fixtures/standard/osx-xattr-metadata-stuff.txt
