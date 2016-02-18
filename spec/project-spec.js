@@ -6,16 +6,19 @@ import Project from '../lib/project'
 const STANDARD_PATH = Path.join(__dirname, 'fixtures', 'standard')
 
 describe('Project', () => {
-  let project, resultsSpy, r, isLoadingFilesSpy
+  let project, r
+  let resultsSpy, isLoadingFilesSpy, filesSpy
 
   beforeEach(() => {
     jasmine.unspy(window, 'setTimeout') // remove spy that screws up debounce
     project = new Project(STANDARD_PATH)
 
     isLoadingFilesSpy = jasmine.createSpy('isLoading')
-    project.isLoadingFilesProp.onValue(isLoadingFilesSpy)
     resultsSpy = jasmine.createSpy('results')
+    filesSpy = jasmine.createSpy('files')
+    project.isLoadingFilesProp.onValue(isLoadingFilesSpy)
     project.resultsProp.onValue(resultsSpy)
+    project.filesProp.onValue(filesSpy)
   })
 
   afterEach(() => {
@@ -56,6 +59,10 @@ describe('Project', () => {
       expect(isLoadingFilesSpy.calls[1].args[0]).toBe(false)
     })
 
+    it('has files', function () {
+      expect(filesSpy.calls[0].args[0].length).toEqual(4)
+    })
+
     describe('when query w/o search string', () => {
       beforeEach(() => {
         project.searchBus.push('')
@@ -69,8 +76,8 @@ describe('Project', () => {
 
       it('triggers results prop', () => {
         expect(r.query).toEqual('')
-        expect(r.total).toEqual(3)
-        expect(r.items.length).toEqual(3)
+        expect(r.total).toEqual(4)
+        expect(r.items.length).toEqual(4)
       })
     })
 
@@ -89,6 +96,7 @@ describe('Project', () => {
         expect(r.query).toEqual('thislineshouldonlyexistinonefile')
         expect(r.total).toEqual(1)
         expect(r.items.length).toEqual(1)
+        expect(r.items[0].id).toEqual(0)
       })
     })
   })

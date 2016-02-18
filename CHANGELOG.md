@@ -3,6 +3,11 @@ All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](http://semver.org/) and [keepachangelog.com](http://keepachangelog.com/).
 
 ## [unreleased]
+### Added
+- Read/write of tags, using notational.net compatible metadata (stored in xattrs)
+
+### Fixed
+- Don't ask to save preview editor, when there are no changes made
 
 ## [0.3.0] - 2016-02-10
 ### Changed
