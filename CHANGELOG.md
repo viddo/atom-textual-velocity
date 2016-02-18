@@ -7,7 +7,8 @@ This project adheres to [Semantic Versioning](http://semver.org/) and [keepachan
 - Read/write of tags, using notational.net compatible metadata (stored in xattrs)
 
 ### Fixed
-- Don't ask to save preview editor, when there are no changes made
+- Confirm-save dialog appears even if there are no changes
+- .md is always added when new files are created #12
 
 ## [0.3.0] - 2016-02-10
 ### Changed

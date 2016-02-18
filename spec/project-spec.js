@@ -7,7 +7,7 @@ const STANDARD_PATH = Path.join(__dirname, 'fixtures', 'standard')
 
 describe('Project', () => {
   let project, r
-  let resultsSpy, isLoadingFilesSpy, filesSpy
+  let resultsSpy, isLoadingFilesSpy, filesSpy, newFilePathSpy
 
   beforeEach(() => {
     jasmine.unspy(window, 'setTimeout') // remove spy that screws up debounce
@@ -16,9 +16,12 @@ describe('Project', () => {
     isLoadingFilesSpy = jasmine.createSpy('isLoading')
     resultsSpy = jasmine.createSpy('results')
     filesSpy = jasmine.createSpy('files')
+    newFilePathSpy = jasmine.createSpy('newFilePathProp')
+
     project.isLoadingFilesProp.onValue(isLoadingFilesSpy)
     project.resultsProp.onValue(resultsSpy)
     project.filesProp.onValue(filesSpy)
+    project.newFilePathProp.onValue(newFilePathSpy)
   })
 
   afterEach(() => {
@@ -42,10 +45,18 @@ describe('Project', () => {
   })
 
   it('have a default filepath', function () {
-    const newFilePathSpy = jasmine.createSpy('newFilePathProp')
-    project.newFilePathProp.onValue(newFilePathSpy)
     expect(newFilePathSpy.calls[0].args[0]).toContain(STANDARD_PATH)
     expect(newFilePathSpy.calls[0].args[0]).toMatch('untitled.md$')
+  })
+
+  describe('when search string contains a file extension', function () {
+    beforeEach(function () {
+      project.searchBus.push('foo bar baz.js')
+    })
+
+    it('should have custom file extension', function () {
+      expect(newFilePathSpy.calls[1].args[0]).toMatch('baz.js$')
+    })
   })
 
   describe('when project is finished loading files', function () {
