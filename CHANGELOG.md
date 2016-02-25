@@ -3,8 +3,11 @@ All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](http://semver.org/) and [keepachangelog.com](http://keepachangelog.com/).
 
 ## [unreleased]
+### Added
+- Change selected item to currently active text editor
+
 ### Changed
-- Internal stuff
+- Internal structure
 
 ## [0.4.0] - 2016-02-18
 ### Added
