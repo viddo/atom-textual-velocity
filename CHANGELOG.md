@@ -4,7 +4,7 @@ This project adheres to [Semantic Versioning](http://semver.org/) and [keepachan
 
 ## [unreleased]
 ### Added
-- Change selected item to currently active text editor
+- Update selected item according to active pane too
 
 ### Changed
 - Internal structure
