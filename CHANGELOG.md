@@ -4,6 +4,10 @@ This project adheres to [Semantic Versioning](http://semver.org/) and [keepachan
 
 ## [unreleased]
 
+## [0.5.1] - 2016-03-06
+### Fixed
+- Custom file extension only works if <= 3 characters
+
 ## [0.5.0] - 2016-02-28
 ### Added
 - Update selected item according to active pane too
