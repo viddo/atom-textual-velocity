@@ -27,7 +27,7 @@ describe('react/cells/tags-component', function () {
 
   describe('when clicked and is selected', function () {
     beforeEach(function () {
-      renderer.render(<TagsComponent tags={tags} isSelected={true} />)
+      renderer.render(<TagsComponent tags={tags} isSelected />)
       r = renderer.getRenderOutput()
       r.props.onClick()
       r = renderer.getRenderOutput() // to get updated output
