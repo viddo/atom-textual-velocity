@@ -3,6 +3,8 @@ All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](http://semver.org/) and [keepachangelog.com](http://keepachangelog.com/).
 
 ## [unreleased]
+### Fixed
+- Fix click on tags component doesn't open edit input
 
 ## [0.5.1] - 2016-03-06
 ### Fixed
