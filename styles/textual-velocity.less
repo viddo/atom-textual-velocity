@@ -69,6 +69,13 @@
     text-overflow: ellipsis;
     white-space: nowrap;
   }
+  th {
+    color: @text-color-subtle;
+    cursor: pointer;
+    &.is-selected {
+      color: @text-color;
+    }
+  }
   td {
     cursor: pointer;
     &.tv-td--tags {

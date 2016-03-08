@@ -42,6 +42,8 @@ describe('Project', () => {
     expect(project.resultsProp).toBeDefined()
     expect(project.isLoadingFilesProp).toBeDefined()
     expect(project.newFilePathProp).toBeDefined()
+    expect(project.sortFieldBus).toBeDefined()
+    expect(project.sortDirectionBus).toBeDefined()
   })
 
   it('have a default filepath', function () {
