@@ -3,6 +3,9 @@ All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](http://semver.org/) and [keepachangelog.com](http://keepachangelog.com/).
 
 ## [unreleased]
+### Added
+- Add ability to change sorting and direction #2
+
 ### Fixed
 - Fix click on tags component doesn't open edit input
 
