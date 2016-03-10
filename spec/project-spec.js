@@ -1,6 +1,7 @@
 'use babel'
 
 import Path from 'path'
+import Bacon from 'baconjs'
 import Project from '../lib/project'
 
 const STANDARD_PATH = Path.join(__dirname, 'fixtures', 'standard')
@@ -11,7 +12,11 @@ describe('Project', () => {
 
   beforeEach(() => {
     jasmine.unspy(window, 'setTimeout') // remove spy that screws up debounce
-    project = new Project(STANDARD_PATH)
+    project = new Project({
+      rootPath: STANDARD_PATH,
+      sortFieldProp: Bacon.constant('mtimestamp'),
+      sortDirectionProp: Bacon.constant('desc'),
+    })
 
     isLoadingFilesSpy = jasmine.createSpy('isLoading')
     resultsSpy = jasmine.createSpy('results')
@@ -42,8 +47,6 @@ describe('Project', () => {
     expect(project.resultsProp).toBeDefined()
     expect(project.isLoadingFilesProp).toBeDefined()
     expect(project.newFilePathProp).toBeDefined()
-    expect(project.sortFieldBus).toBeDefined()
-    expect(project.sortDirectionBus).toBeDefined()
   })
 
   it('have a default filepath', function () {
