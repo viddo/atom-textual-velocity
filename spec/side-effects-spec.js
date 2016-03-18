@@ -158,23 +158,6 @@ describe('side-effects', () => {
             expect(atom.workspace.getPaneItems()).toEqual([]);
           });
         });
-
-        describe('when another path is opened when there is a preview opened already', function () {
-          beforeEach(function () {
-            this.selectedFileBus.push({
-              path: Path.join(atom.getConfigDirPath(), 'second.txt'),
-              content: 'second'
-            })
-            jasmine.Clock.tick(1000)
-          });
-
-          it('should reuse existing editor, changing path, content etc', function () {
-            expect(atom.workspace.getPaneItems().length).toEqual(1);
-            const editor = atom.workspace.getActiveTextEditor()
-            expect(editor.getPath()).toMatch(/second.txt$/)
-            expect(editor.getText()).toEqual('second')
-          });
-        });
       })
     })
   })
