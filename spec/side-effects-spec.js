@@ -119,10 +119,8 @@ describe('side-effects', () => {
 
     describe('when there is a selected path', function () {
       beforeEach(function () {
-        this.selectedFileBus.push({
-          path: Path.join(atom.getConfigDirPath(), 'first.txt'),
-          content: 'first'
-        })
+        this.path = Path.join(atom.getConfigDirPath(), 'first.txt')
+        this.selectedFileBus.push(this.path)
       })
 
       it('does nothing just yet', function () {
@@ -140,7 +138,11 @@ describe('side-effects', () => {
         it('opens seleted file path', function () {
           expect(atom.workspace.open).toHaveBeenCalled()
           expect(atom.workspace.open.calls[0].args[0]).toMatch(/first.txt$/)
-          expect(atom.workspace.getPaneItems()).not.toEqual([]);
+          expect(atom.workspace.getPaneItems()).not.toEqual([])
+        })
+
+        it('does not focus on the editor though', function () {
+          expect(atom.workspace.open.calls[0].args[1].activatePane).toBe(false)
         })
 
         describe('when an item is deselected', function () {
@@ -151,41 +153,59 @@ describe('side-effects', () => {
             // on 2nd event there should not exist any editor, verified that no error is thrown
             this.selectedFileBus.push(null)
             jasmine.Clock.tick(1000)
-          });
+          })
 
           it('should close the open text editor', function () {
             expect(atom.workspace.open.calls.length).toEqual(1)
-            expect(atom.workspace.getPaneItems()).toEqual([]);
-          });
-        });
+            expect(atom.workspace.getPaneItems()).toEqual([])
+          })
+        })
       })
     })
   })
 
   describe('.openEditor', function () {
+    let didOpen
+
     beforeEach(function () {
       spyOn(atom.workspace, 'open').andCallThrough()
-      this.filePathBus = new Bacon.Bus()
+      this.selectedPathBus = new Bacon.Bus()
+      this.newFilePathBus = new Bacon.Bus()
       this.openBus = new Bacon.Bus()
-      sideEffects.openEditor(this.filePathBus, this.openBus, atom.workspace)
+      sideEffects.openEditor(this.selectedPathBus, this.newFilePathBus, this.openBus, atom.workspace)
+      this.selectedPathBus.push(null)
+      this.newFilePathBus.push('')
+
+      didOpen = false
+      atom.workspace.onDidOpen(() => {
+        didOpen = true
+      })
     })
 
-    it('opens given path when open stream is triggered', function () {
-      expect(atom.workspace.open).not.toHaveBeenCalled()
+    describe('when there is a selected path', function () {
+      beforeEach(function () {
+        this.selectedPathBus.push('selected-file')
+        this.openBus.push(true)
+        waitsFor(() => didOpen)
+      })
 
-      let didOpen = false
-      atom.workspace.onDidOpen(() => didOpen = true)
-      this.filePathBus.push('test1')
-      this.filePathBus.push('test2')
-
-      expect(atom.workspace.open).not.toHaveBeenCalled()
-
-      this.filePathBus.push('test3')
-      this.openBus.push(true)
-      waitsFor(() => didOpen)
-      runs(() => {
+      it('opens given path when open stream is triggered', function () {
         expect(atom.workspace.open).toHaveBeenCalled()
-        expect(atom.workspace.open.calls[0].args[0]).toEqual('test3')
+        expect(atom.workspace.open.calls[0].args[0]).toEqual('selected-file')
+      })
+    })
+
+    describe('when there is no selected path', function () {
+      beforeEach(function () {
+        this.selectedPathBus.push(null)
+        this.newFilePathBus.push('new-file')
+        this.openBus.push(true)
+        waitsFor(() => didOpen)
+      })
+
+      it('opens a new file', function () {
+        expect(atom.workspace.open).toHaveBeenCalled()
+        expect(atom.workspace.open.calls[0].args[0]).toEqual('new-file')
       })
     })
   })
