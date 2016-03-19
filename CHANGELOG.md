@@ -7,6 +7,9 @@ This project adheres to [Semantic Versioning](http://semver.org/) and [keepachan
 - Add ability to change sorting and direction #2
 - Close preview when item is deselected
 
+### Changed
+- Open preview editor as pending editor/tab (requires Atom 1.6.0)
+
 ### Fixed
 - Fix click on tags component doesn't open edit input
 

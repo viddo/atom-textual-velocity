@@ -1,9 +1,9 @@
 # Textual Velocity for Atom [![Build Status](http://travis-ci.org/viddo/atom-textual-velocity.png?branch=master)](http://travis-ci.org/viddo/atom-textual-velocity)
-_Note that this package is still WIP, see [v1 roadmap milestone](https://github.com/viddo/atom-textual-velocity/milestones) for details._
+_Note that this package is still WIP, see [v1 roadmap milestone](https://github.com/viddo/atom-textual-velocity/milestones) for details.  See the [change log](CHANGELOG.md) for what's new._
 
-TEXTUAL VELOCITY is a package to have your mental notes at your fingertips!
+Your mental notes at your fingertips!
 
-For those of you who used [Notational Velocity](http://notational.net/) or [nvalt](http://brettterpstra.com/projects/nvAlt/) before should feel right at home!
+For those of you who used [Notational Velocity](http://notational.net/) or [nvalt](http://brettterpstra.com/projects/nvAlt/) before should feel right at home.
 
 <img width="748" alt="screen shot 2016-02-04 at 20 05 58" src="https://cloud.githubusercontent.com/assets/978461/12831123/f48a5964-cb92-11e5-9752-859edd2ed3a9.png">
 
