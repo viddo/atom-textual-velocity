@@ -36,5 +36,27 @@
   },
   "devDependencies": {
     "temp": "0.8.3"
+  },
+  "configSchema": {
+    "panelHeight": {
+      "type": "number",
+      "default": 150,
+      "minimum": 0
+    },
+    "path": {
+      "description": "Path to folder where to find notes. Can be an absolute path or a relative path to `~/.atom` (defaults to `~/.atom/notes`). You'll need to (re)start the session if you change this path.",
+      "type": "string",
+      "default": ""
+    },
+    "sortField": {
+      "type": "string",
+      "default": "mtimestamp",
+      "enum": ["name", "tags", "mtimestamp", "birthtimestamp"]
+    },
+    "sortDirection": {
+      "type": "string",
+      "default": "desc",
+      "enum": ["asc", "desc"]
+    }
   }
 }
