@@ -2,11 +2,18 @@
 /* global CustomEvent */
 
 import Path from 'path'
+import fixUnbalancedConsoleGroups from './fix-unbalanced-console.groups'
 
-describe('textual-velocity package', () => {
+describe('textual-velocity main', () => {
   let workspaceElement, activationError
 
+  fixUnbalancedConsoleGroups()
+
   beforeEach(() => {
+    spyOn(console, 'log').andCallThrough()
+    atom.config.set('textual-velocity.contextDesc', 'main integration test')
+    atom.config.set('textual-velocity.path', __dirname) // ./spec
+
     activationError = null
     jasmine.unspy(window, 'setTimeout') // remove spy that screws up debounce
     workspaceElement = atom.views.getView(atom.workspace)
@@ -14,7 +21,7 @@ describe('textual-velocity package', () => {
 
     // Spy on fatal notifications to extract activationErroror, to re-throw it here
     spyOn(atom.notifications, 'addFatalError').andCallFake((msg, d) => {
-      activationError = new Error([msg, d.detail, d.stack].join("\n")) // eslint-disable-line
+      activationError = new Error([msg, d.detail, d.stack].join('\n')) // eslint-disable-line
     })
 
     atom.configDirPath = Path.join(__dirname, 'fixtures')
@@ -46,47 +53,19 @@ describe('textual-velocity package', () => {
     it('creates a top panel for the session', () => {
       let panels = atom.workspace.getTopPanels()
       expect(panels.length).toEqual(1)
-      expect(panels[0].getItem().querySelector('.tv-search')).toBeDefined()
-      expect(panels[0].getItem().querySelector('.tv-items')).toBeDefined()
+      expect(panels[0].getItem().querySelector('.textual-velocity')).toEqual(jasmine.any(HTMLElement))
     })
 
-    it('removes the start-session command', () => {
-      expect(atom.commands.getSnapshot()['textual-velocity:start-session']).toBeUndefined()
-    })
-
-    it('adds a stop-session command', () => {
-      expect(atom.commands.getSnapshot()['textual-velocity:stop-session']).toBeDefined()
-    })
-
-    describe('when stop-session command is triggered', () => {
-      beforeEach(() => {
-        if (!activationError) {
-          workspaceElement.dispatchEvent(new CustomEvent('textual-velocity:stop-session', {bubbles: true}))
-        }
+    describe('when files are loaded', function () {
+      beforeEach(function () {
+        waitsFor(() => {
+          return console.groupEnd.calls.length >= 1
+        })
       })
 
-      it('destroys the panels', () => {
-        expect(atom.workspace.getTopPanels().length).toEqual(0)
-      })
-
-      it('adds a start-session command again', () => {
-        expect(atom.commands.getSnapshot()['textual-velocity:start-session']).toBeDefined()
-      })
-
-      it('removes the stop-session command', () => {
-        expect(atom.commands.getSnapshot()['textual-velocity:stop-session']).toBeUndefined()
-      })
-    })
-
-    describe('when package is desactivated', () => {
-      beforeEach(() => {
-        if (!activationError) {
-          atom.packages.deactivatePackage('textual-velocity')
-        }
-      })
-
-      it('removes the panels', () => {
-        expect(atom.workspace.getTopPanels().length).toEqual(0)
+      it('should preview files until contents and metadata are loaded', function () {
+        let panels = atom.workspace.getTopPanels()
+        expect(panels[0].getItem().innerHTML).toContain(__filename)
       })
     })
   })

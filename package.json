@@ -21,20 +21,21 @@
     "atom": ">=1.6.0 <2.0.0"
   },
   "dependencies": {
-    "baconjs": "0.7.83",
+    "baconjs": "0.7.84",
     "bplist": "0.0.4",
     "chokidar": "1.0.6",
-    "classnames": "2.2.3",
-    "fs-plus": "2.8.1",
-    "fs-xattr": "0.1.11",
-    "lodash.debounce": "4.0.3",
-    "moment": "2.11.2",
-    "ramda": "0.19.1",
-    "react-for-atom": "0.14.7-0",
+    "classnames": "2.2.5",
+    "fs-plus": "2.8.2",
+    "fs-xattr": "0.1.14",
+    "lodash.debounce": "4.0.6",
+    "moment": "2.13.0",
+    "ramda": "0.21.0",
+    "react-for-atom": "15.0.2-1",
     "scandal": "2.2.0",
     "sifter": "0.4.5"
   },
   "devDependencies": {
+    "standard": "7.1.0",
     "temp": "0.8.3"
   },
   "configSchema": {
@@ -51,12 +52,37 @@
     "sortField": {
       "type": "string",
       "default": "mtimestamp",
-      "enum": ["name", "tags", "mtimestamp", "birthtimestamp"]
+      "enum": [
+        "name",
+        "tags",
+        "mtimestamp",
+        "birthtimestamp"
+      ]
     },
     "sortDirection": {
       "type": "string",
       "default": "desc",
-      "enum": ["asc", "desc"]
+      "enum": [
+        "asc",
+        "desc"
+      ]
     }
+  },
+  "standard": {
+    "globals": [
+      "afterEach",
+      "atom",
+      "beforeAll",
+      "beforeEach",
+      "describe",
+      "expect",
+      "HTMLElement",
+      "it",
+      "jasmine",
+      "spyOn",
+      "runs",
+      "waitsFor",
+      "waitsForPromise"
+    ]
   }
 }

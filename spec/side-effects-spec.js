@@ -6,7 +6,7 @@ import * as sideEffects from '../lib/side-effects'
 
 const STANDARD_PATH = Path.join(__dirname, 'fixtures', 'standard')
 
-describe('side-effects', () => {
+xdescribe('side-effects', () => {
   beforeEach(function () {
     jasmine.unspy(window, 'setTimeout') // remove spy that screws up debounce
     this.atomPanel = atom.workspace.addTopPanel({

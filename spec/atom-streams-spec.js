@@ -2,7 +2,7 @@
 
 import * as atoms from '../lib/atom-streams'
 
-describe('Atom streams', () => {
+xdescribe('Atom streams', () => {
   describe('.createStream', function () {
     it('should be exported', function () {
       expect(atoms.createStream).toBeDefined()

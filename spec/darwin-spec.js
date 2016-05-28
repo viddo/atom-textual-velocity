@@ -2,7 +2,7 @@
 import temp from 'temp'
 import * as darwin from '../lib/darwin'
 
-describe('darwin', () => {
+xdescribe('darwin', () => {
   let path, callbackSpy
 
   beforeEach(function () {

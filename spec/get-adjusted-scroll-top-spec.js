@@ -2,7 +2,7 @@
 
 import getAdjustedScrollTop from '../lib/get-adjusted-scroll-top'
 
-describe('getAdjustedScrollTop', function () {
+xdescribe('getAdjustedScrollTop', function () {
   it('returns current scroll if item is in visible viewport', function () {
     // selected item and scrolltop is at top and within the visible viewport
     expect(getAdjustedScrollTop({

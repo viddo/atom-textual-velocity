@@ -6,7 +6,7 @@ import Project from '../lib/project'
 
 const STANDARD_PATH = Path.join(__dirname, 'fixtures', 'standard')
 
-describe('Project', () => {
+xdescribe('Project', () => {
   let project, r
   let resultsSpy, isLoadingFilesSpy, filesSpy, newFilePathSpy
 
