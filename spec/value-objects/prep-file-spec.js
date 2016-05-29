@@ -46,21 +46,39 @@ describe('value-objects/prep-file', () => {
       })
     })
 
+    describe('.relpath', function () {
+      it('should return the full path', function () {
+        expect(this.file.relPath).toMatch('prep-file-spec.js')
+      })
+    })
+
     describe('.path', function () {
       it('should return the full path', function () {
-        expect(this.file.path()).toMatch(__filename)
+        expect(this.file.path).toMatch(__filename)
       })
     })
 
     describe('.name', function () {
       it('should return the filename', function () {
-        expect(this.file.path()).toMatch('prep-file-spec.js')
+        expect(this.file.name).toMatch('prep-file-spec')
       })
     })
 
     describe('.ext', function () {
       it('should return the file extension', function () {
-        expect(this.file.path()).toMatch('.js')
+        expect(this.file.path).toMatch('.js')
+      })
+    })
+
+    describe('.createdTime', function () {
+      it('should return the time when file was creatd', function () {
+        expect(this.file.createdTime).toEqual(jasmine.any(Number))
+      })
+    })
+
+    describe('.lastUpdatedTime', function () {
+      it('should return the time when file was last updated', function () {
+        expect(this.file.lastUpdatedTime).toEqual(jasmine.any(Number))
       })
     })
   })

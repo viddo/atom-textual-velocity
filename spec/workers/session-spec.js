@@ -83,7 +83,7 @@ describe('workers/session', () => {
 
         it('with all files found during path scan', function () {
           expect(this.result.files.length).toEqual(3)
-          expect(this.result.files[0].name()).toEqual('foobar.txt')
+          expect(this.result.files[0].relPath).toEqual('foobar.txt')
         })
       })
 

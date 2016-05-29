@@ -65,8 +65,8 @@ describe('workers/path-watcher', () => {
 
     it('should have files', function () {
       expect(this.filesSpy.calls[1].args[0]).toEqual(R.repeat(jasmine.any(File), 3))
-      expect(this.filesSpy.calls[2].args[0][1].path()).toMatch(/.+file-1\.txt$/)
-      expect(this.filesSpy.calls[3].args[0][2].path()).toMatch(/.+file-2\.txt$/)
+      expect(this.filesSpy.calls[2].args[0][1].path).toMatch(/.+file-1\.txt$/)
+      expect(this.filesSpy.calls[3].args[0][2].path).toMatch(/.+file-2\.txt$/)
     })
 
     describe('when a file is changed', function () {
