@@ -46,20 +46,20 @@ describe('workers/path-watcher', () => {
   })
 
   it('should not be ready initially', function () {
-    expect(this.readySpy.calls[0].args[0]).toBe(false)
+    expect(this.readySpy).toHaveBeenCalledWith(false)
   })
 
   it('should have an empty files list', function () {
-    expect(this.filesSpy.calls[0].args[0]).toEqual([])
+    expect(this.filesSpy).toHaveBeenCalledWith([])
   })
 
   describe('when all files in path has been scanned', function () {
     beforeEach(function () {
       waitsFor(() => {
-        return this.readySpy.calls.length >= 2
+        return this.readySpy.calls.length === 2
       })
-      waitsFor(() => {
-        return !!this.readySpy.calls[1].args[0]
+      runs(() => {
+        expect(this.readySpy.calls[1].args[0]).toBe(true)
       })
     })
 

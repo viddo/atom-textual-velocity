@@ -32,25 +32,27 @@ describe('view-ctrl', function () {
       this.viewCtrl.activate()
     })
 
-    it('should start session', function () {
-      expect(this.interactor.startSession).toHaveBeenCalled()
-      expect(this.interactor.startSession.calls[0].args[0]).toEqual(jasmine.any(Object))
-    })
+    describe('should start session', function () {
+      beforeEach(function () {
+        expect(this.interactor.startSession).toHaveBeenCalled()
+        this.req = this.interactor.startSession.calls[0].args[0]
+      })
 
-    it('should start session with current platform', function () {
-      expect(this.interactor.startSession.calls[0].args[0].platform).toEqual(jasmine.any(String))
-    })
+      it('should start session with current platform', function () {
+        expect(this.req.platform).toEqual(jasmine.any(String))
+      })
 
-    it('should pass root path with value from config', function () {
-      expect(this.interactor.startSession.calls[0].args[0].rootPath).toEqual(atom.config.get('textual-velocity.path'))
-    })
+      it('should pass root path with value from config', function () {
+        expect(this.req.rootPath).toEqual(atom.config.get('textual-velocity.path'))
+      })
 
-    it('should pass ignored filenames from config', function () {
-      expect(this.interactor.startSession.calls[0].args[0].ignoredNames).toEqual(atom.config.get('core.ignoredNames'))
-    })
+      it('should pass ignored filenames from config', function () {
+        expect(this.req.ignoredNames).toEqual(atom.config.get('core.ignoredNames'))
+      })
 
-    it('should pass excludeVcsIgnoredPaths filenames from config', function () {
-      expect(this.interactor.startSession.calls[0].args[0].excludeVcsIgnoredPaths).toEqual(atom.config.get('core.excludeVcsIgnoredPaths'))
+      it('should pass excludeVcsIgnoredPaths filenames from config', function () {
+        expect(this.req.excludeVcsIgnoredPaths).toEqual(atom.config.get('core.excludeVcsIgnoredPaths'))
+      })
     })
   })
 
@@ -68,18 +70,19 @@ describe('view-ctrl', function () {
       })
     })
 
-    it('should create an atom panel', function () {
-      expect(atom.workspace.addTopPanel).toHaveBeenCalled()
-      expect(atom.workspace.addTopPanel.calls[0].args[0]).toEqual(jasmine.any(Object))
-      expect(atom.workspace.addTopPanel.calls[0].args[0].item).toEqual(jasmine.any(HTMLElement))
-    })
+    describe('should create an atom panel', function () {
+      beforeEach(function () {
+        expect(atom.workspace.addTopPanel).toHaveBeenCalled()
+        this.args = atom.workspace.addTopPanel.calls[0].args[0]
+      })
 
-    it('should render a the DOM node of the panel', function () {
-      expect(this.viewCtrl.domNode).toEqual(jasmine.any(HTMLElement))
-    })
+      it('should create an atom panel', function () {
+        expect(this.args.item).toEqual(jasmine.any(HTMLElement))
+      })
 
-    it('should render loading checklist', function () {
-      expect(this.viewCtrl.domNode.innerHTML).toContain('loading')
+      it('should render loading checklist', function () {
+        expect(this.viewCtrl.domNode.innerHTML).toContain('loading')
+      })
     })
   })
 })
