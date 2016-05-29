@@ -10,6 +10,7 @@ fixToEqualJasmineAny()
 
 describe('interactor', function () {
   beforeEach(function () {
+    jasmine.useRealClock()
     const viewCtrl = {}
 
     this.presenter = new Presenter(viewCtrl)
@@ -57,11 +58,11 @@ describe('interactor', function () {
     it('should log path scan', function () {
       expect(this.logger.logPathScan).toHaveBeenCalledWith({
         filesProp: jasmine.any(Object),
-        initialScanDoneProp: jasmine.any(Object)
+        initialPathScanDoneProp: jasmine.any(Object)
       })
     })
 
-    describe('when files scan is done', function () {
+    describe('when initial path scan is done', function () {
       beforeEach(function () {
         waitsFor(() => {
           return this.presenter.presentFilteredResults.calls.length >= 1
@@ -72,6 +73,25 @@ describe('interactor', function () {
       })
 
       it('should present initial results', function () {
+        expect(this.presenter.presentFilteredResults).toHaveBeenCalledWith({
+          files: jasmine.any(Array),
+          sifterResult: jasmine.any(Object)
+        })
+      })
+    })
+
+    describe('.search', function () {
+      beforeEach(function () {
+        spyOn(this.interactor._session, 'search').andCallThrough()
+        this.presenter.presentFilteredResults.reset()
+        this.interactor.search('meh')
+      })
+
+      it('should search', function () {
+        expect(this.interactor._session.search).toHaveBeenCalledWith('meh')
+      })
+
+      it('should present filtered results from search', function () {
         expect(this.presenter.presentFilteredResults).toHaveBeenCalledWith({
           files: jasmine.any(Array),
           sifterResult: jasmine.any(Object)

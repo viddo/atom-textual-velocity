@@ -31,14 +31,14 @@ describe('logger', () => {
   describe('.logPathScan', function () {
     beforeEach(function () {
       this.filesBus = new Bacon.Bus()
-      this.initialScanDoneBus = new Bacon.Bus()
+      this.initialPathScanDoneBus = new Bacon.Bus()
 
       const filesProp = this.filesBus.toProperty()
-      const initialScanDoneProp = this.initialScanDoneBus.map(true).toProperty(false)
+      const initialPathScanDoneProp = this.initialPathScanDoneBus.map(true).toProperty(false)
 
       this.prevCallsLength = this.consoleSpy.log.calls.length // to compensate for console logs done previously
 
-      this.logger.logPathScan({filesProp: filesProp, initialScanDoneProp: initialScanDoneProp})
+      this.logger.logPathScan({filesProp: filesProp, initialPathScanDoneProp: initialPathScanDoneProp})
       R.times((i) => { this.filesBus.push(R.repeat(`file ${i}`, i)) }, 5)
     })
 
@@ -53,7 +53,7 @@ describe('logger', () => {
 
     describe('when initial scan is done', function () {
       beforeEach(function () {
-        this.initialScanDoneBus.push(true)
+        this.initialPathScanDoneBus.push(true)
       })
 
       it('should not any more files', function () {
@@ -64,11 +64,11 @@ describe('logger', () => {
       })
 
       it('should not log any more files found', function () {
-        this.initialScanDoneBus.push(false)
+        this.initialPathScanDoneBus.push(false)
         this.filesBus.push(['file 1', 'file 2', 'file 3', 'new!'])
-        this.initialScanDoneBus.push(true)
+        this.initialPathScanDoneBus.push(true)
         this.filesBus.push(['file 1', 'file 2', 'file 3', 'new!', 'even newer!'])
-        this.initialScanDoneBus.push(false)
+        this.initialPathScanDoneBus.push(false)
         this.filesBus.push(['file 1', 'file 2', 'file 3', 'new!', 'even newer!', 'not this either'])
         expect(this.consoleSpy.log.calls.length).toEqual(6)
         expect(R.last(this.consoleSpy.log.calls).args[0]).toContain('4 files found')

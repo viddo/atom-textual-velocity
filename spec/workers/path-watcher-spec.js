@@ -15,7 +15,7 @@ describe('workers/path-watcher', () => {
   let File
 
   beforeEach(function () {
-    jasmine.unspy(window, 'setTimeout') // remove spy that screws up debounce
+    jasmine.useRealClock()
 
     const tempDirPath = temp.mkdirSync('empty-dir')
     this.realPath = fs.realpathSync(tempDirPath)

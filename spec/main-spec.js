@@ -9,7 +9,7 @@ describe('textual-velocity main', () => {
   fixUnbalancedConsoleGroups()
 
   beforeEach(function () {
-    jasmine.unspy(window, 'setTimeout') // remove spy that screws up debounce
+    jasmine.useRealClock()
     this.workspaceElement = atom.views.getView(atom.workspace)
     jasmine.attachToDOM(this.workspaceElement)
 
@@ -42,13 +42,14 @@ describe('textual-velocity main', () => {
       waitsForPromise(() => {
         return promise
       })
-
       runs(() => {
         this.panel = R.last(atom.workspace.getTopPanels())
       })
     })
 
     afterEach(function () {
+      atom.packages.deactivatePackage('textual-velocity')
+      this.panel = null
     })
 
     it('creates a top panel for the session', function () {
@@ -58,13 +59,12 @@ describe('textual-velocity main', () => {
     describe('when files are loaded', function () {
       beforeEach(function () {
         waitsFor(() => {
-          return R.last(console.log.calls).args[0] === 'displayResults'
+          return this.panel.getItem().innerHTML.match('<input') // implicitly asserts search input too
         })
       })
 
-      it('should preview files until contents and metadata are loaded', function () {
-        expect(this.panel.getItem().innerHTML).toContain('columns')
-        expect(this.panel.getItem().innerHTML).toContain('rows')
+      it('should render rows', function () {
+        expect(this.panel.getItem().innerHTML).toContain('tv-items')
       })
     })
   })

@@ -40,6 +40,12 @@ describe('value-objects/prep-file', () => {
       this.file = new File(relPath)
     })
 
+    describe('.id', function () {
+      it('should return a unqiue identifier', function () {
+        expect(this.file.id).toEqual(jasmine.any(String))
+      })
+    })
+
     describe('.path', function () {
       it('should return the full path', function () {
         expect(this.file.path()).toMatch(__filename)
