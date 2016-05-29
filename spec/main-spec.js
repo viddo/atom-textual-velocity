@@ -6,23 +6,25 @@ import R from 'ramda'
 import fixUnbalancedConsoleGroups from './fix-unbalanced-console.groups'
 
 describe('textual-velocity main', () => {
-  let workspaceElement, activationError
-
   fixUnbalancedConsoleGroups()
 
   beforeEach(function () {
+    jasmine.unspy(window, 'setTimeout') // remove spy that screws up debounce
+    this.workspaceElement = atom.views.getView(atom.workspace)
+    jasmine.attachToDOM(this.workspaceElement)
+
     spyOn(console, 'log').andCallThrough()
     atom.config.set('textual-velocity.enableDeveloperConsoleLog', true)
     atom.config.set('textual-velocity.path', __dirname) // ./spec
 
-    activationError = null
-    jasmine.unspy(window, 'setTimeout') // remove spy that screws up debounce
-    workspaceElement = atom.views.getView(atom.workspace)
-    jasmine.attachToDOM(workspaceElement)
-
     // Spy on fatal notifications to extract activationErroror, to re-throw it here
     spyOn(atom.notifications, 'addFatalError').andCallFake((msg, d) => {
-      activationError = new Error([msg, d.detail, d.stack].join('\n')) // eslint-disable-line
+      const err = new Error([msg, d.detail, d.stack].join('\n'))
+      jasmine.getEnv().currentSpec.fail(err)
+    })
+    spyOn(console, 'error').andCallFake(msg => {
+      const err = new Error(msg)
+      jasmine.getEnv().currentSpec.fail(err)
     })
 
     atom.configDirPath = Path.join(__dirname, 'fixtures')
@@ -34,24 +36,19 @@ describe('textual-velocity main', () => {
   })
 
   describe('when start-session command is triggered', function () {
-    let [promise] = []
-
     beforeEach(function () {
-      promise = atom.packages.activatePackage('textual-velocity')
-      workspaceElement.dispatchEvent(new CustomEvent('textual-velocity:start-session', {bubbles: true}))
+      const promise = atom.packages.activatePackage('textual-velocity')
+      this.workspaceElement.dispatchEvent(new CustomEvent('textual-velocity:start-session', {bubbles: true}))
       waitsForPromise(() => {
-        if (activationError) throw activationError
         return promise
       })
+
       runs(() => {
         this.panel = R.last(atom.workspace.getTopPanels())
       })
     })
 
     afterEach(function () {
-      if (!activationError) {
-        atom.packages.deactivatePackage('textual-velocity')
-      }
     })
 
     it('creates a top panel for the session', function () {
