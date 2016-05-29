@@ -1,10 +1,13 @@
 'use babel'
 
+import PathWatcher from '../lib/workers/path-watcher'
+import Session from '../lib/workers/session'
 import Presenter from '../lib/presenter'
 import Logger from '../lib/logger'
 import DisposableValues from '../lib/disposable-values'
 import Interactor from '../lib/interactor'
 import fixToEqualJasmineAny from './fix-to-equal-jasmine-any'
+import mockClass from './mock-class'
 
 fixToEqualJasmineAny()
 
@@ -24,10 +27,21 @@ describe('interactor', function () {
 
     this.disposables = new DisposableValues()
 
+    this.PathWatcherMock = mockClass(PathWatcher)
+    this.PathWatcherMock.prototype.filesProp.andReturn(this.filesProp = {})
+    this.PathWatcherMock.prototype.initialScanDoneProp.andReturn(this.initialScanDoneProp = {})
+    this.PathWatcherMock.prototype.dispose
+
+    this.SessionMock = mockClass(Session)
+    this.SessionMock.prototype.onResults.andReturn(() => {})
+
     this.interactor = new Interactor({
       presenter: this.presenter,
       logger: this.logger,
       disposables: this.disposables
+    }, {
+      PathWatcher: this.PathWatcherMock,
+      Session: this.SessionMock
     })
   })
 
@@ -57,45 +71,37 @@ describe('interactor', function () {
 
     it('should log path scan', function () {
       expect(this.logger.logPathScan).toHaveBeenCalledWith({
-        filesProp: jasmine.any(Object),
-        initialPathScanDoneProp: jasmine.any(Object)
+        filesProp: this.filesProp,
+        initialPathScanDoneProp: this.initialScanDoneProp
       })
     })
 
     describe('when initial path scan is done', function () {
       beforeEach(function () {
-        waitsFor(() => {
-          return this.presenter.presentFilteredResults.calls.length >= 1
-        })
-        runs(() => {
-          this.arg = this.presenter.presentFilteredResults.calls[0].args[0]
+        expect(this.SessionMock.prototype.onResults).toHaveBeenCalledWith(jasmine.any(Function))
+        const onResults = this.SessionMock.prototype.onResults.calls[0].args[0]
+        onResults({
+          files: this.files = {},
+          sifterResult: this.sifterResult = {}
         })
       })
 
       it('should present initial results', function () {
         expect(this.presenter.presentFilteredResults).toHaveBeenCalledWith({
-          files: jasmine.any(Array),
-          sifterResult: jasmine.any(Object)
+          files: this.files,
+          sifterResult: this.sifterResult
         })
       })
     })
 
     describe('.search', function () {
       beforeEach(function () {
-        spyOn(this.interactor._session, 'search').andCallThrough()
         this.presenter.presentFilteredResults.reset()
         this.interactor.search('meh')
       })
 
       it('should search', function () {
-        expect(this.interactor._session.search).toHaveBeenCalledWith('meh')
-      })
-
-      it('should present filtered results from search', function () {
-        expect(this.presenter.presentFilteredResults).toHaveBeenCalledWith({
-          files: jasmine.any(Array),
-          sifterResult: jasmine.any(Object)
-        })
+        expect(this.SessionMock.prototype.search).toHaveBeenCalledWith('meh')
       })
     })
   })
