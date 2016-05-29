@@ -66,6 +66,11 @@
         "asc",
         "desc"
       ]
+    },
+    "enableDeveloperConsoleLog": {
+      "description": "Output to the developer console.",
+      "type": "boolean",
+      "default": false
     }
   },
   "standard": {

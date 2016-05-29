@@ -10,7 +10,7 @@ describe('presenter', function () {
   beforeEach(function () {
     this.viewCtrl = new ViewCtrl()
     spyOn(this.viewCtrl, 'displayLoading')
-    spyOn(this.viewCtrl, 'previewFiles')
+    spyOn(this.viewCtrl, 'displayResults')
 
     this.presenter = new Presenter(this.viewCtrl)
   })
@@ -25,13 +25,19 @@ describe('presenter', function () {
     })
   })
 
-  describe('.presentFilesPreview', function () {
+  describe('.presentFilteredResults', function () {
     beforeEach(function () {
-      this.presenter.presentFilesPreview([{path: () => 'path/to/file.txt'}])
+      this.presenter.presentFilteredResults({
+        files: [{path: () => '/'}],
+        sifterResult: {}
+      })
     })
 
-    it('should preview files', function () {
-      expect(this.viewCtrl.previewFiles).toHaveBeenCalledWith(['path/to/file.txt'])
+    it('should display results', function () {
+      expect(this.viewCtrl.displayResults).toHaveBeenCalledWith({
+        columns: jasmine.any(Array),
+        rows: jasmine.any(Array)
+      })
     })
   })
 })

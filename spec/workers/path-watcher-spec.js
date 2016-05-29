@@ -8,8 +8,8 @@ import prepFile from '../../lib/value-objects/prep-file'
 import PathWatcher from '../../lib/workers/path-watcher'
 import fixToEqualJasmineAny from '../fix-to-equal-jasmine-any'
 
-fixToEqualJasmineAny()
 temp.track()
+fixToEqualJasmineAny()
 
 describe('workers/path-watcher', () => {
   let File
@@ -34,13 +34,13 @@ describe('workers/path-watcher', () => {
 
     this.filesSpy = jasmine.createSpy('files')
     this.readySpy = jasmine.createSpy('ready')
-    this.unready = this.pathWatcher.readyProp.onValue(this.readySpy)
-    this.unfiles = this.pathWatcher.filesProp.onValue(this.filesSpy)
+    this.unsubInitialScanDone = this.pathWatcher.initialScanDoneProp().onValue(this.readySpy)
+    this.unsubFilesProp = this.pathWatcher.filesProp().onValue(this.filesSpy)
   })
 
   afterEach(function () {
-    this.unready()
-    this.unfiles()
+    this.unsubInitialScanDone()
+    this.unsubFilesProp()
     this.pathWatcher.dispose()
     temp.cleanupSync()
   })

@@ -1,8 +1,10 @@
 'use babel'
 
-// Modify jasmine to work with jasmine.any assertions
-// expected to be called in a beforeAll(fixToEqualJasmineAny)
-export default function () {
+/**
+ * Modify jasmine to work with jasmine.any assertions
+* @param {Object} jasmine
+ */
+export default function (jasmine = global.jasmine) {
   if (jasmine.__onlyDoThisOnce) return
   jasmine.__onlyDoThisOnce = true
 

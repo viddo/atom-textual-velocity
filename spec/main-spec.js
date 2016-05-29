@@ -2,6 +2,7 @@
 /* global CustomEvent */
 
 import Path from 'path'
+import R from 'ramda'
 import fixUnbalancedConsoleGroups from './fix-unbalanced-console.groups'
 
 describe('textual-velocity main', () => {
@@ -9,9 +10,9 @@ describe('textual-velocity main', () => {
 
   fixUnbalancedConsoleGroups()
 
-  beforeEach(() => {
+  beforeEach(function () {
     spyOn(console, 'log').andCallThrough()
-    atom.config.set('textual-velocity.contextDesc', 'main integration test')
+    atom.config.set('textual-velocity.enableDeveloperConsoleLog', true)
     atom.config.set('textual-velocity.path', __dirname) // ./spec
 
     activationError = null
@@ -27,45 +28,46 @@ describe('textual-velocity main', () => {
     atom.configDirPath = Path.join(__dirname, 'fixtures')
   })
 
-  it('package is lazy-loaded', () => {
+  it('package is lazy-loaded', function () {
     expect(atom.packages.isPackageLoaded('textual-velocity')).toBe(false)
     expect(atom.packages.isPackageActive('textual-velocity')).toBe(false)
   })
 
-  describe('when start-session command is triggered', () => {
+  describe('when start-session command is triggered', function () {
     let [promise] = []
 
-    beforeEach(() => {
+    beforeEach(function () {
       promise = atom.packages.activatePackage('textual-velocity')
       workspaceElement.dispatchEvent(new CustomEvent('textual-velocity:start-session', {bubbles: true}))
       waitsForPromise(() => {
         if (activationError) throw activationError
         return promise
       })
+      runs(() => {
+        this.panel = R.last(atom.workspace.getTopPanels())
+      })
     })
 
-    afterEach(() => {
+    afterEach(function () {
       if (!activationError) {
         atom.packages.deactivatePackage('textual-velocity')
       }
     })
 
-    it('creates a top panel for the session', () => {
-      let panels = atom.workspace.getTopPanels()
-      expect(panels.length).toEqual(1)
-      expect(panels[0].getItem().querySelector('.textual-velocity')).toEqual(jasmine.any(HTMLElement))
+    it('creates a top panel for the session', function () {
+      expect(this.panel.getItem().querySelector('.textual-velocity')).toEqual(jasmine.any(HTMLElement))
     })
 
     describe('when files are loaded', function () {
       beforeEach(function () {
         waitsFor(() => {
-          return console.groupEnd.calls.length >= 1
+          return R.last(console.log.calls).args[0] === 'displayResults'
         })
       })
 
       it('should preview files until contents and metadata are loaded', function () {
-        let panels = atom.workspace.getTopPanels()
-        expect(panels[0].getItem().innerHTML).toContain(__filename)
+        expect(this.panel.getItem().innerHTML).toContain('columns')
+        expect(this.panel.getItem().innerHTML).toContain('rows')
       })
     })
   })

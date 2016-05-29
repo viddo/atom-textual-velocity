@@ -12,6 +12,8 @@ export default function () {
 
   afterEach(function () {
     const missingGroupEndCount = console.groupCollapsed.calls.length - console.groupEnd.calls.length
-    R.times(() => console.groupEnd(), missingGroupEndCount)
+    if (missingGroupEndCount > 0) {
+      R.times(() => console.groupEnd(), missingGroupEndCount)
+    }
   })
 }
