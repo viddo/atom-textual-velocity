@@ -85,4 +85,36 @@ describe('view-ctrl', function () {
       })
     })
   })
+
+  describe('.displayResults', function () {
+    beforeEach(function () {
+      this.viewCtrl.displayResults({
+        columns: [
+          {title: 'Name', key: 'title', width: 70},
+          {title: 'Updated', key: 'updated_date', width: 15},
+          {title: 'Created', key: 'created_date', width: 15}
+        ],
+        rows: [
+          {id: 2, title: 'foobar', created_date: '3 days ago', updated_date: 'yesterday'},
+          {id: 3, title: 'baz', created_date: '3 days ago', updated_date: 'today'},
+          {id: 1, title: 'qux', created_date: '1 year ago', updated_date: '1 year ago'}
+        ]
+      })
+    })
+
+    it('should render columns', function () {
+      expect(this.viewCtrl.domNode.innerHTML).toContain('Name')
+      expect(this.viewCtrl.domNode.innerHTML).toContain('Updated')
+      expect(this.viewCtrl.domNode.innerHTML).toContain('Created')
+    })
+
+    it('should render rows', function () {
+      expect(this.viewCtrl.domNode.innerHTML).toContain('foobar')
+      expect(this.viewCtrl.domNode.innerHTML).toContain('baz')
+      expect(this.viewCtrl.domNode.innerHTML).toContain('qux')
+
+      expect(this.viewCtrl.domNode.innerHTML).toContain('3 days ago')
+      expect(this.viewCtrl.domNode.innerHTML).toContain('today')
+    })
+  })
 })
