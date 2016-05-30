@@ -45,19 +45,22 @@ describe('workers/session', () => {
 
     this.filesBus.push([this.foobarFile])
 
-    this.resultsSpy = jasmine.createSpy('results')
-    this.unsubResults = this.session.onResults(this.resultsSpy)
+    this.initialResultsSpy = jasmine.createSpy('initialResults')
+    this.session.onInitialResults(this.initialResultsSpy)
+
+    this.searchResultsSpy = jasmine.createSpy('searchResults')
+    this.unsubSearchResults = this.session.onSearchResults(this.searchResultsSpy)
   })
 
   afterEach(function () {
     this.session.dispose()
     this.unsubInitialPathScanDoneProp()
     this.unsubFiles()
-    this.unsubResults()
+    this.unsubSearchResults()
   })
 
   it('should not have not results yet', function () {
-    expect(this.resultsSpy).not.toHaveBeenCalled()
+    expect(this.initialResultsSpy).not.toHaveBeenCalled()
   })
 
   describe('when initial path scan is done', function () {
@@ -70,9 +73,9 @@ describe('workers/session', () => {
 
     describe('should yield a result once', function () {
       beforeEach(function () {
-        expect(this.resultsSpy).toHaveBeenCalled()
-        expect(this.resultsSpy.calls.length).toEqual(1)
-        this.result = this.resultsSpy.calls[0].args[0]
+        expect(this.initialResultsSpy).toHaveBeenCalled()
+        expect(this.initialResultsSpy.calls.length).toEqual(1)
+        this.result = this.initialResultsSpy.calls[0].args[0]
       })
 
       describe('should contain files', function () {
@@ -129,8 +132,8 @@ describe('workers/session', () => {
 
       describe('should yield new result', function () {
         beforeEach(function () {
-          expect(this.resultsSpy.calls.length).toEqual(2)
-          this.sifterResult = this.resultsSpy.calls[1].args[0].sifterResult
+          expect(this.searchResultsSpy).toHaveBeenCalled()
+          this.sifterResult = this.searchResultsSpy.calls[0].args[0].sifterResult
         })
 
         it('should contain search meta', function () {

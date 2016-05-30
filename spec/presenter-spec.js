@@ -25,16 +25,18 @@ describe('presenter', function () {
     })
   })
 
-  describe('.presentFilteredResults', function () {
+  describe('.presentResults', function () {
     beforeEach(function () {
-      this.presenter.presentFilteredResults({
+      this.presenter.presentResults({
         files: [{path: () => '/'}],
-        sifterResult: {}
+        sifterResult: {},
+        focusSearchInput: true
       })
     })
 
     it('should display results', function () {
       expect(this.viewCtrl.displayResults).toHaveBeenCalledWith({
+        focusSearchInput: true,
         columns: jasmine.any(Array),
         rows: jasmine.any(Array)
       })

@@ -18,7 +18,8 @@ describe('interactor', function () {
 
     this.presenter = new Presenter(viewCtrl)
     spyOn(this.presenter, 'presentLoading')
-    spyOn(this.presenter, 'presentFilteredResults')
+    spyOn(this.presenter, 'presentInitialResults')
+    spyOn(this.presenter, 'presentSearchResults')
 
     this.logger = new Logger({env: 'interactor test'})
     spyOn(this.logger, 'logSessionStart')
@@ -33,7 +34,8 @@ describe('interactor', function () {
     this.PathWatcherMock.prototype.dispose
 
     this.SessionMock = mockClass(Session)
-    this.SessionMock.prototype.onResults.andReturn(() => {})
+    this.SessionMock.prototype.onInitialResults.andReturn(() => {})
+    this.SessionMock.prototype.onSearchResults.andReturn(() => {})
 
     this.interactor = new Interactor({
       presenter: this.presenter,
@@ -78,16 +80,16 @@ describe('interactor', function () {
 
     describe('when initial path scan is done', function () {
       beforeEach(function () {
-        expect(this.SessionMock.prototype.onResults).toHaveBeenCalledWith(jasmine.any(Function))
-        const onResults = this.SessionMock.prototype.onResults.calls[0].args[0]
-        onResults({
+        expect(this.SessionMock.prototype.onInitialResults).toHaveBeenCalledWith(jasmine.any(Function))
+        const onInitialResults = this.SessionMock.prototype.onInitialResults.calls[0].args[0]
+        onInitialResults({
           files: this.files = {},
           sifterResult: this.sifterResult = {}
         })
       })
 
       it('should present initial results', function () {
-        expect(this.presenter.presentFilteredResults).toHaveBeenCalledWith({
+        expect(this.presenter.presentInitialResults).toHaveBeenCalledWith({
           files: this.files,
           sifterResult: this.sifterResult
         })
@@ -96,12 +98,29 @@ describe('interactor', function () {
 
     describe('.search', function () {
       beforeEach(function () {
-        this.presenter.presentFilteredResults.reset()
         this.interactor.search('meh')
       })
 
       it('should search', function () {
         expect(this.SessionMock.prototype.search).toHaveBeenCalledWith('meh')
+      })
+
+      describe('when search results are available', function () {
+        beforeEach(function () {
+          expect(this.SessionMock.prototype.onSearchResults).toHaveBeenCalledWith(jasmine.any(Function))
+          const onSearchResults = this.SessionMock.prototype.onSearchResults.calls[0].args[0]
+          onSearchResults({
+            files: this.files = {},
+            sifterResult: this.sifterResult = {}
+          })
+        })
+
+        it('should present search results', function () {
+          expect(this.presenter.presentSearchResults).toHaveBeenCalledWith({
+            files: this.files,
+            sifterResult: this.sifterResult
+          })
+        })
       })
     })
   })
