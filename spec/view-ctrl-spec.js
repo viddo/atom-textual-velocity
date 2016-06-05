@@ -105,10 +105,12 @@ describe('view-ctrl', function () {
         expect(reactRenderer.renderResults).toHaveBeenCalled()
         expect(reactRenderer.renderResults).toHaveBeenCalledWith({
           DOMNode: jasmine.any(HTMLElement),
-          interactor: jasmine.any(Object),
           listHeight: jasmine.any(Number),
           rowHeight: jasmine.any(Number),
-          res: jasmine.any(Object)
+          res: jasmine.any(Object),
+          onSearch: jasmine.any(Function),
+          onScroll: jasmine.any(Function),
+          onResize: jasmine.any(Function)
         })
       })
 

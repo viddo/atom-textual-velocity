@@ -2,14 +2,12 @@
 
 import {TestUtils} from 'react-for-atom'
 import * as reactRenderer from '../lib/react-renderer'
-import Interactor from '../lib/interactor'
 
 [
   {name: 'reactRenderer', renderer: reactRenderer}
 ].forEach(function ({name, renderer}) {
   describe(name, function () {
     beforeEach(function () {
-      this.interactor = new Interactor({})
       this.DOMNode = document.createElement('div')
     })
 
@@ -33,7 +31,6 @@ import Interactor from '../lib/interactor'
         beforeEach(function () {
           renderer.renderResults({
             DOMNode: this.DOMNode,
-            interactor: this.interactor,
             listHeight: 123,
             rowHeight: 25,
             res: {
@@ -54,9 +51,12 @@ import Interactor from '../lib/interactor'
 
       describe('given some data', function () {
         beforeEach(function () {
+          this.searchSpy = jasmine.createSpy('search')
+          this.scrollSpy = jasmine.createSpy('scroll')
+          this.resizeSpy = jasmine.createSpy('resize')
+
           renderer.renderResults({
             DOMNode: this.DOMNode,
-            interactor: this.interactor,
             listHeight: 25,
             rowHeight: 20,
             res: {
@@ -74,7 +74,10 @@ import Interactor from '../lib/interactor'
                 {id: 3, title: 'baz', created_date: '3 days ago', updated_date: 'today'},
                 {id: 1, title: 'qux', created_date: '1 year ago', updated_date: '1 year ago'}
               ]
-            }
+            },
+            onSearch: this.searchSpy,
+            onScroll: this.scrollSpy,
+            onResize: this.resizeSpy
           })
           this.html = this.DOMNode.innerHTML
         })
@@ -96,28 +99,24 @@ import Interactor from '../lib/interactor'
 
         describe('when searching', function () {
           beforeEach(function () {
-            spyOn(this.interactor, 'search')
             const input = this.DOMNode.querySelector('input')
             input.value = 'foo'
             TestUtils.Simulate.change(input)
           })
 
-          it('should search with the text', function () {
-            expect(this.interactor.search).toHaveBeenCalledWith('foo')
+          it('should call onSearch callback', function () {
+            expect(this.searchSpy).toHaveBeenCalledWith('foo')
           })
         })
 
         describe('when scrolling', function () {
           beforeEach(function () {
-            spyOn(this.interactor, 'paginate')
             const scrollableList = this.DOMNode.querySelector('div[style*=overflow]')
             TestUtils.Simulate.scroll(scrollableList, {target: {scrollTop: 26}})
           })
 
-          it('should paginate results', function () {
-            expect(this.interactor.paginate).toHaveBeenCalledWith({
-              start: 1, limit: 3
-            })
+          it('should call onScroll callback', function () {
+            expect(this.scrollSpy).toHaveBeenCalledWith(26)
           })
         })
       })
