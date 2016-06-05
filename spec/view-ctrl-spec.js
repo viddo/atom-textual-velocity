@@ -9,6 +9,7 @@ fixToEqualJasmineAny()
 
 describe('view-ctrl', function () {
   beforeEach(function () {
+    jasmine.unspy(window, 'setTimeout') // remove spy that screws up debounce
     atom.config.set('textual-velocity.path', '~/test')
     atom.config.set('textual-velocity.listHeight', 123)
     atom.config.set('textual-velocity.rowHeight', 25)
@@ -108,6 +109,29 @@ describe('view-ctrl', function () {
           listHeight: jasmine.any(Number),
           rowHeight: jasmine.any(Number),
           res: jasmine.any(Object)
+        })
+      })
+
+      describe('when window is resized', function () {
+        beforeEach(function () {
+          jasmine.Clock.useMock()
+          spyOn(atom.config, 'set').andCallThrough()
+          this.DOMNode = atom.workspace.getTopPanels()[0].item
+          document.body.appendChild(this.DOMNode)
+          window.dispatchEvent(new Event('resize'))
+        })
+
+        afterEach(function () {
+          document.body.removeChild(this.DOMNode)
+          this.DOMNode = null
+        })
+
+        it('should update row height', function () {
+          expect(atom.config.set).not.toHaveBeenCalled()
+          jasmine.Clock.tick(1000)
+          expect(atom.config.set).toHaveBeenCalledWith('textual-velocity.rowHeight', jasmine.any(Number))
+          expect(atom.config.get('textual-velocity.rowHeight') !== 25).toBe(true)
+          expect(atom.config.get('textual-velocity.rowHeight') > 0).toBe(true)
         })
       })
     })
