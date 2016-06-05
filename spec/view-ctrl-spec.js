@@ -1,5 +1,6 @@
 'use babel'
 
+import * as reactRenderer from '../lib/react-renderer'
 import Interactor from '../lib/interactor'
 import ViewCtrl from '../lib/view-ctrl'
 import fixToEqualJasmineAny from './fix-to-equal-jasmine-any'
@@ -8,13 +9,21 @@ fixToEqualJasmineAny()
 
 describe('view-ctrl', function () {
   beforeEach(function () {
+    atom.config.set('textual-velocity.path', '~/test')
+    atom.config.set('textual-velocity.listHeight', 123)
+    atom.config.set('textual-velocity.rowHeight', 25)
+
     const presenter = {}
 
     this.interactor = new Interactor(presenter)
     spyOn(this.interactor, 'startSession')
     spyOn(this.interactor, 'stopSession')
 
-    this.viewCtrl = new ViewCtrl('view-ctrl test')
+    spyOn(reactRenderer, 'renderLoading').andCallThrough()
+    spyOn(reactRenderer, 'renderResults').andCallThrough()
+    spyOn(reactRenderer, 'remove').andCallThrough()
+
+    this.viewCtrl = new ViewCtrl(reactRenderer)
     this.viewCtrl.setInteractor(this.interactor)
   })
 
@@ -27,8 +36,6 @@ describe('view-ctrl', function () {
 
   describe('.activate', function () {
     beforeEach(function () {
-      atom.config.set('textual-velocity.path', '~/test')
-      atom.config.set('textual-velocity.panelHeight', 123)
       this.viewCtrl.activate()
     })
 
@@ -60,61 +67,49 @@ describe('view-ctrl', function () {
     beforeEach(function () {
       spyOn(atom.workspace, 'addTopPanel').andCallThrough()
 
-      this.viewCtrl.displayLoading({
-        height: 123,
-        process: [
-          {desc: 'finished', done: true},
-          {desc: 'in progress', current: true},
-          {desc: 'pending'}
-        ]
-      })
+      this.viewCtrl.displayLoading()
     })
 
-    describe('should create an atom panel', function () {
+    it('should create an atom panel', function () {
+      expect(atom.workspace.addTopPanel).toHaveBeenCalled()
+      expect(atom.workspace.addTopPanel.calls[0].args[0].item).toEqual(jasmine.any(HTMLElement))
+    })
+
+    it('should render loading', function () {
+      expect(reactRenderer.renderLoading).toHaveBeenCalled()
+    })
+
+    // Should  be called after displayLoading so tested in this scope to have same prerequisite state
+    describe('.displayResults', function () {
       beforeEach(function () {
-        expect(atom.workspace.addTopPanel).toHaveBeenCalled()
-        this.args = atom.workspace.addTopPanel.calls[0].args[0]
+        this.viewCtrl.displayResults({
+          focusSearchInput: false,
+          forcedScrollTop: 0,
+          itemsCount: 3,
+          paginationStart: 0,
+          columns: [
+            {title: 'Name', key: 'title', width: 70},
+            {title: 'Updated', key: 'updated_date', width: 15},
+            {title: 'Created', key: 'created_date', width: 15}
+          ],
+          rows: [
+            {id: 2, title: 'foobar', created_date: '3 days ago', updated_date: 'yesterday'},
+            {id: 3, title: 'baz', created_date: '3 days ago', updated_date: 'today'},
+            {id: 1, title: 'qux', created_date: '1 year ago', updated_date: '1 year ago'}
+          ]
+        })
       })
 
-      it('should create an atom panel', function () {
-        expect(this.args.item).toEqual(jasmine.any(HTMLElement))
+      it('should render results', function () {
+        expect(reactRenderer.renderResults).toHaveBeenCalled()
+        expect(reactRenderer.renderResults).toHaveBeenCalledWith({
+          DOMNode: jasmine.any(HTMLElement),
+          interactor: jasmine.any(Object),
+          listHeight: jasmine.any(Number),
+          rowHeight: jasmine.any(Number),
+          res: jasmine.any(Object)
+        })
       })
-
-      it('should render loading checklist', function () {
-        expect(this.viewCtrl.domNode.innerHTML).toContain('loading')
-      })
-    })
-  })
-
-  describe('.displayResults', function () {
-    beforeEach(function () {
-      this.viewCtrl.displayResults({
-        columns: [
-          {title: 'Name', key: 'title', width: 70},
-          {title: 'Updated', key: 'updated_date', width: 15},
-          {title: 'Created', key: 'created_date', width: 15}
-        ],
-        rows: [
-          {id: 2, title: 'foobar', created_date: '3 days ago', updated_date: 'yesterday'},
-          {id: 3, title: 'baz', created_date: '3 days ago', updated_date: 'today'},
-          {id: 1, title: 'qux', created_date: '1 year ago', updated_date: '1 year ago'}
-        ]
-      })
-    })
-
-    it('should render columns', function () {
-      expect(this.viewCtrl.domNode.innerHTML).toContain('Name')
-      expect(this.viewCtrl.domNode.innerHTML).toContain('Updated')
-      expect(this.viewCtrl.domNode.innerHTML).toContain('Created')
-    })
-
-    it('should render rows', function () {
-      expect(this.viewCtrl.domNode.innerHTML).toContain('foobar')
-      expect(this.viewCtrl.domNode.innerHTML).toContain('baz')
-      expect(this.viewCtrl.domNode.innerHTML).toContain('qux')
-
-      expect(this.viewCtrl.domNode.innerHTML).toContain('3 days ago')
-      expect(this.viewCtrl.domNode.innerHTML).toContain('today')
     })
   })
 })

@@ -39,11 +39,6 @@
     "temp": "0.8.3"
   },
   "configSchema": {
-    "panelHeight": {
-      "type": "number",
-      "default": 150,
-      "minimum": 0
-    },
     "path": {
       "description": "Path to folder where to find notes. Can be an absolute path or a relative path to `~/.atom` (defaults to `~/.atom/notes`). You'll need to (re)start the session if you change this path.",
       "type": "string",
@@ -51,12 +46,11 @@
     },
     "sortField": {
       "type": "string",
-      "default": "mtimestamp",
+      "default": "last_updated_at",
       "enum": [
-        "name",
-        "tags",
-        "mtimestamp",
-        "birthtimestamp"
+        "title",
+        "last_updated_at",
+        "created_at"
       ]
     },
     "sortDirection": {
@@ -66,6 +60,17 @@
         "asc",
         "desc"
       ]
+    },
+    "listHeight": {
+      "type": "number",
+      "default": 150,
+      "minimum": 0
+    },
+    "rowHeight": {
+      "type": "number",
+      "default": 20,
+      "minimum": 8,
+      "maximum": 80
     },
     "enableDeveloperConsoleLog": {
       "description": "Output to the developer console.",

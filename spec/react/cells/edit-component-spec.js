@@ -1,7 +1,7 @@
 'use babel'
 
-import { React, TestUtils } from 'react-for-atom'
-import dispatchKeyDownEvent from '../../utils'
+import {React, TestUtils} from 'react-for-atom'
+import {dispatchKeyDownEvent} from '../../utils'
 import EditComponent from '../../../lib/react/cells/edit-component'
 
 describe('react/cells/edit-component', function () {
