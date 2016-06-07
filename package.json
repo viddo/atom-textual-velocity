@@ -92,8 +92,12 @@
       "jasmine",
       "spyOn",
       "runs",
+      "xdescribe",
       "waitsFor",
       "waitsForPromise"
     ]
+  },
+  "scripts": {
+    "lint": "standard 'lib/**/*.js' && standard 'spec/**/*.js'"
   }
 }

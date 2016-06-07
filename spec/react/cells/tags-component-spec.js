@@ -24,7 +24,7 @@ describe('react/cells/tags-component', function () {
   it('does nothing on click since not selected', function () {
     r.props.onClick()
     expect(r.props.children.length).toBe(3)
-    expect(clickEvent.stopPropagation).not.toHaveBeenCalled();
+    expect(clickEvent.stopPropagation).not.toHaveBeenCalled()
   })
 
   describe('when clicked and is selected', function () {
@@ -40,14 +40,14 @@ describe('react/cells/tags-component', function () {
     })
 
     it('stops propagation of event', function () {
-      expect(clickEvent.stopPropagation).toHaveBeenCalled();
-      expect(clickEvent.stopPropagation.calls.length).toEqual(1);
-    });
+      expect(clickEvent.stopPropagation).toHaveBeenCalled()
+      expect(clickEvent.stopPropagation.calls.length).toEqual(1)
+    })
 
     it('stops propagation and focus on input on sequent clicks', function () {
       r = renderer.getRenderOutput()
       r.props.onClick(clickEvent)
-      expect(clickEvent.stopPropagation.calls.length).toEqual(2);
-    });
+      expect(clickEvent.stopPropagation.calls.length).toEqual(2)
+    })
   })
 })

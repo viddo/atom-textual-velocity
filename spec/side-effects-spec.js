@@ -4,8 +4,6 @@ import Path from 'path'
 import Bacon from 'baconjs'
 import * as sideEffects from '../lib/side-effects'
 
-const STANDARD_PATH = Path.join(__dirname, 'fixtures', 'standard')
-
 xdescribe('side-effects', () => {
   beforeEach(function () {
     jasmine.unspy(window, 'setTimeout') // remove spy that screws up debounce
@@ -132,7 +130,7 @@ xdescribe('side-effects', () => {
       describe('when debounced', function () {
         beforeEach(function () {
           let didOpen = false
-          atom.workspace.onDidOpen(() => didOpen = true)
+          atom.workspace.onDidOpen(() => { didOpen = true })
           jasmine.Clock.tick(1000)
           waitsFor(() => didOpen)
         })
@@ -140,7 +138,7 @@ xdescribe('side-effects', () => {
         it('opens seleted file path', function () {
           expect(atom.workspace.open).toHaveBeenCalled()
           expect(atom.workspace.open.calls[0].args[0]).toMatch(/first.txt$/)
-          expect(atom.workspace.getPaneItems()).not.toEqual([]);
+          expect(atom.workspace.getPaneItems()).not.toEqual([])
         })
 
         describe('when an item is deselected', function () {
@@ -151,13 +149,13 @@ xdescribe('side-effects', () => {
             // on 2nd event there should not exist any editor, verified that no error is thrown
             this.selectedFileBus.push(null)
             jasmine.Clock.tick(1000)
-          });
+          })
 
           it('should close the open text editor', function () {
             expect(atom.workspace.open.calls.length).toEqual(1)
-            expect(atom.workspace.getPaneItems()).toEqual([]);
-          });
-        });
+            expect(atom.workspace.getPaneItems()).toEqual([])
+          })
+        })
       })
     })
   })
@@ -174,7 +172,7 @@ xdescribe('side-effects', () => {
       expect(atom.workspace.open).not.toHaveBeenCalled()
 
       let didOpen = false
-      atom.workspace.onDidOpen(() => didOpen = true)
+      atom.workspace.onDidOpen(() => { didOpen = true })
       this.filePathBus.push('test1')
       this.filePathBus.push('test2')
 

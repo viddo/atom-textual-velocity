@@ -15,7 +15,7 @@ xdescribe('Project', () => {
     project = new Project({
       rootPath: STANDARD_PATH,
       sortFieldProp: Bacon.constant('mtimestamp'),
-      sortDirectionProp: Bacon.constant('desc'),
+      sortDirectionProp: Bacon.constant('desc')
     })
 
     isLoadingFilesSpy = jasmine.createSpy('isLoading')
