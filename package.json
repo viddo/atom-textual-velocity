@@ -25,17 +25,17 @@
     "bplist": "0.0.4",
     "chokidar": "1.0.6",
     "classnames": "2.2.5",
-    "fs-plus": "2.8.2",
+    "fs-plus": "2.9.1",
     "fs-xattr": "0.1.14",
     "lodash.debounce": "4.0.6",
     "moment": "2.13.0",
     "ramda": "0.21.0",
     "react-for-atom": "15.0.2-1",
     "scandal": "2.2.0",
-    "sifter": "0.4.5"
+    "sifter": "0.5.1"
   },
   "devDependencies": {
-    "standard": "7.1.0",
+    "standard": "7.1.2",
     "temp": "0.8.3"
   },
   "configSchema": {
