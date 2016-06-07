@@ -167,7 +167,7 @@ describe('workers/session', () => {
         it('should contain a sifter result', function () {
           expect(this.res.sifterResult).toEqual(jasmine.objectContaining({
             query: 'foo',
-            tokens: [{string: 'foo', regex: /f[oÒÓÔÕÕÖØòóôõöøŌō][oÒÓÔÕÕÖØòóôõöøŌō]/i}],
+            tokens: [{string: 'foo', regex: jasmine.any(RegExp)}],
             items: [{score: jasmine.any(Number), id: 0}],
             total: 1
           }))
@@ -199,7 +199,7 @@ describe('workers/session', () => {
           it('should yield same string search query', function () {
             expect(this.res.sifterResult).toEqual(jasmine.objectContaining({
               query: 'foo',
-              tokens: [{string: 'foo', regex: /f[oÒÓÔÕÕÖØòóôõöøŌō][oÒÓÔÕÕÖØòóôõöøŌō]/i}],
+              tokens: [{string: 'foo', regex: jasmine.any(RegExp)}],
               items: [{score: jasmine.any(Number), id: 0}],
               total: 1
             }))
