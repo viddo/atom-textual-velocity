@@ -18,6 +18,7 @@ describe('view-ctrl', function () {
 
     this.interactor = new Interactor(presenter)
     spyOn(this.interactor, 'startSession')
+    spyOn(this.interactor, 'search')
     spyOn(this.interactor, 'stopSession')
 
     spyOn(reactRenderer, 'renderLoading').andCallThrough()
@@ -111,6 +112,26 @@ describe('view-ctrl', function () {
           onSearch: jasmine.any(Function),
           onScroll: jasmine.any(Function),
           onResize: jasmine.any(Function)
+        })
+      })
+
+      describe('when on search and scroll', function () {
+        it('should search and reset scroll position', function () {
+          this.interactor.search.reset()
+          reactRenderer.renderResults.calls[0].args[0].onScroll(100)
+          expect(this.interactor.search).toHaveBeenCalledWith({str: '', start: 4, limit: 6})
+
+          this.interactor.search.reset()
+          reactRenderer.renderResults.calls[0].args[0].onSearch('foo')
+          expect(this.interactor.search).toHaveBeenCalledWith({str: 'foo', start: 0, limit: 6})
+
+          this.interactor.search.reset()
+          reactRenderer.renderResults.calls[0].args[0].onScroll(50)
+          expect(this.interactor.search).toHaveBeenCalledWith({str: 'foo', start: 2, limit: 6})
+
+          this.interactor.search.reset()
+          reactRenderer.renderResults.calls[0].args[0].onResize(150)
+          expect(this.interactor.search).toHaveBeenCalledWith({str: 'foo', start: 2, limit: 8})
         })
       })
 

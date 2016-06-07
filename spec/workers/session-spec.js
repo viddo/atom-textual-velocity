@@ -149,7 +149,7 @@ describe('workers/session', () => {
     describe('when doing a search', function () {
       beforeEach(function () {
         this.searchResultsSpy.reset()
-        this.session.search({str: 'foo'})
+        this.session.search({str: 'foo', start: 0, limit: 3})
       })
 
       describe('should yield a result', function () {
@@ -181,7 +181,7 @@ describe('workers/session', () => {
       describe('when paginate after the first search', function () {
         beforeEach(function () {
           this.searchResultsSpy.reset()
-          this.session.search({start: 2, limit: 3})
+          this.session.search({str: 'foo', start: 2, limit: 3})
         })
 
         describe('should yield a new result', function () {

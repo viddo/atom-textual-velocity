@@ -53,7 +53,7 @@ describe('presenter', function () {
 
         it('should contain results meta', function () {
           expect(this.res.forcedScrollTop).toEqual(0)
-          expect(this.res.focusSearchInput).toEqual(true)
+          expect(this.res.focusSearchInput).toEqual(false)
           expect(this.res.paginationStart).toEqual(0)
           expect(this.res.itemsCount).toEqual(7)
         })

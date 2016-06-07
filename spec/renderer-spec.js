@@ -27,6 +27,11 @@ import * as reactRenderer from '../lib/react-renderer'
     })
 
     describe('.renderResults', function () {
+      beforeEach(function () {
+        this.searchSpy = jasmine.createSpy('search')
+        this.scrollSpy = jasmine.createSpy('scroll')
+        this.resizeSpy = jasmine.createSpy('resize')
+      })
       describe('given an empty set', function () {
         beforeEach(function () {
           renderer.renderResults({
@@ -40,7 +45,10 @@ import * as reactRenderer from '../lib/react-renderer'
               paginationStart: 0,
               columns: [],
               rows: []
-            }
+            },
+            onSearch: this.searchSpy,
+            onScroll: this.scrollSpy,
+            onResize: this.resizeSpy
           })
         })
 
@@ -51,10 +59,6 @@ import * as reactRenderer from '../lib/react-renderer'
 
       describe('given some data', function () {
         beforeEach(function () {
-          this.searchSpy = jasmine.createSpy('search')
-          this.scrollSpy = jasmine.createSpy('scroll')
-          this.resizeSpy = jasmine.createSpy('resize')
-
           renderer.renderResults({
             DOMNode: this.DOMNode,
             listHeight: 25,

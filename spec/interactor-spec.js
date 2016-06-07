@@ -92,11 +92,11 @@ describe('interactor', function () {
 
     describe('.search', function () {
       beforeEach(function () {
-        this.interactor.search('meh')
+        this.interactor.search({str: 'meh', start: 0, limit: 10})
       })
 
       it('should search and start from top', function () {
-        expect(this.SessionMock.prototype.search).toHaveBeenCalledWith({str: 'meh', start: 0})
+        expect(this.SessionMock.prototype.search).toHaveBeenCalledWith({str: 'meh', start: 0, limit: 10})
       })
 
       describe('when search results are available', function () {
