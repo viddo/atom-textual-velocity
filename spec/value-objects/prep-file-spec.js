@@ -52,6 +52,12 @@ describe('value-objects/prep-file', () => {
       })
     })
 
+    describe('.content', function () {
+      it('should return an empty string by default', function () {
+        expect(this.file.content).toBeNull()
+      })
+    })
+
     describe('.path', function () {
       it('should return the full path', function () {
         expect(this.file.path).toMatch(__filename)
@@ -79,6 +85,34 @@ describe('value-objects/prep-file', () => {
     describe('.lastUpdatedTime', function () {
       it('should return the time when file was last updated', function () {
         expect(this.file.lastUpdatedTime).toEqual(jasmine.any(Number))
+      })
+    })
+
+    describe('.withContent', function () {
+      beforeEach(function () {
+        this.newFile = this.file.withContent('foobar')
+      })
+
+      it('should return a new file', function () {
+      })
+
+      describe('should create a new file', function () {
+        beforeEach(function () {
+          expect(this.newFile).toBeDefined()
+          expect(this.newFile).not.toBe(this.file)
+        })
+
+        it('with content', function () {
+          expect(this.newFile.content).toEqual('foobar')
+        })
+
+        it('with same path', function () {
+          expect(this.newFile.relPath).toEqual(this.file.relPath)
+        })
+
+        it('with same stat', function () {
+          expect(this.newFile.createdTime).toEqual(this.file.createdTime)
+        })
       })
     })
   })

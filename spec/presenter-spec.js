@@ -30,7 +30,8 @@ describe('presenter', function () {
     beforeEach(function () {
       this.allFiles = R.times(i => ({
         id: i,
-        path: `file ${i}`
+        path: `file ${i}`,
+        content: `content for ${i}`
       }), 10)
     })
 
@@ -107,6 +108,7 @@ describe('presenter', function () {
         it('should slice rows according to filter', function () {
           expect(this.res.rows.length).toEqual(4)
           expect(this.res.rows[0].title).toEqual('file 5')
+          expect(this.res.rows[0].content).toEqual('content for 5')
           expect(R.last(this.res.rows).title).toEqual('file 8')
         })
       })

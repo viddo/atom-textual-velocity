@@ -69,38 +69,53 @@ describe('workers/path-watcher', () => {
       expect(this.filesSpy.calls[3].args[0][2].path).toMatch(/.+file-2\.txt$/)
     })
 
-    describe('when a file is changed', function () {
+    describe('when file reads are done', function () {
       beforeEach(function () {
-        fs.writeFileSync(Path.join(this.realPath, 'file-0.txt'), 'meh something longert han one word')
-
         waitsFor(() => {
-          return this.filesSpy.calls.length >= 5
+          return this.filesSpy.calls.length >= 7
         })
       })
 
-      it('should update changed file', function () {
-        const prev = this.filesSpy.calls[3].args[0]
-        const current = this.filesSpy.calls[4].args[0]
-
-        expect(current).not.toBe(prev)
+      it('should contain files with contents', function () {
+        expect(this.filesSpy.mostRecentCall.args[0][0].content).toEqual('1')
+        expect(this.filesSpy.mostRecentCall.args[0][1].content).toEqual('2')
+        expect(this.filesSpy.mostRecentCall.args[0][2].content).toEqual('3')
       })
-    })
 
-    describe('when files are removed', function () {
-      it('should be reflected on the files prop', function () {
-        fs.unlinkSync(Path.join(this.realPath, 'file-0.txt'))
-        fs.unlinkSync(Path.join(this.realPath, 'file-1.txt'))
-        fs.unlinkSync(Path.join(this.realPath, 'other.zip'))
-        fs.unlinkSync(Path.join(this.realPath, 'file-2.txt'))
+      describe('when a file is changed', function () {
+        beforeEach(function () {
+          this.prev = this.filesSpy.mostRecentCall.args[0]
 
-        waitsFor(() => {
-          return this.filesSpy.calls.length >= 8
+          this.filesSpy.reset()
+          fs.writeFileSync(Path.join(this.realPath, 'file-0.txt'), 'meh something longert han one word')
+
+          waitsFor(() => {
+            return this.filesSpy.calls.length >= 1
+          })
         })
-        runs(() => {
-          expect(this.filesSpy.calls[4].args[0].length).toEqual(2)
-          expect(this.filesSpy.calls[5].args[0].length).toEqual(1)
 
-          expect(this.filesSpy.calls[7].args[0].length).toEqual(0)
+        it('should update changed file', function () {
+          expect(this.filesSpy.mostRecentCall.args[0]).not.toBe(this.prev)
+        })
+      })
+
+      describe('when files are removed', function () {
+        it('should be reflected on the files prop', function () {
+          this.filesSpy.reset()
+          fs.unlinkSync(Path.join(this.realPath, 'file-0.txt'))
+          fs.unlinkSync(Path.join(this.realPath, 'file-1.txt'))
+          fs.unlinkSync(Path.join(this.realPath, 'other.zip'))
+          fs.unlinkSync(Path.join(this.realPath, 'file-2.txt'))
+
+          waitsFor(() => {
+            return this.filesSpy.calls.length >= 4
+          })
+          runs(() => {
+            expect(this.filesSpy.calls[0].args[0].length).toEqual(2)
+            expect(this.filesSpy.calls[1].args[0].length).toEqual(1)
+            expect(this.filesSpy.calls[2].args[0].length).toEqual(1)
+            expect(this.filesSpy.calls[3].args[0].length).toEqual(0)
+          })
         })
       })
     })
