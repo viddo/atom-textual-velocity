@@ -28,9 +28,10 @@ describe('presenter', function () {
 
   describe('.presentResults', function () {
     beforeEach(function () {
-      this.allFiles = R.times(i => {
-        return {id: i, path: `file ${i}`}
-      }, 10)
+      this.allFiles = R.times(i => ({
+        id: i,
+        path: `file ${i}`
+      }), 10)
     })
 
     describe('when called for initial results or a string search', function () {
@@ -40,7 +41,9 @@ describe('presenter', function () {
           files: this.allFiles,
           sifterResult: {
             total: 7,
-            items: this.allFiles.map((f, i) => { return {id: i} }).slice(3)
+            items: this.allFiles
+              .map((f, i) => ({id: i}))
+              .slice(3)
           }
         })
       })
