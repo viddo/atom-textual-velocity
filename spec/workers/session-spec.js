@@ -77,6 +77,7 @@ describe('workers/session', () => {
         expect(this.initialResultsSpy).toHaveBeenCalled()
         expect(this.initialResultsSpy.calls.length).toEqual(1)
         this.res = this.initialResultsSpy.calls[0].args[0]
+        expect(this.res).toBeDefined()
       })
 
       describe('should contain files', function () {
