@@ -6,10 +6,7 @@ import Presenter from '../lib/presenter'
 import Logger from '../lib/logger'
 import DisposableValues from '../lib/disposable-values'
 import Interactor from '../lib/interactor'
-import fixToEqualJasmineAny from './fix-to-equal-jasmine-any'
 import mockClass from './mock-class'
-
-fixToEqualJasmineAny()
 
 describe('interactor', function () {
   beforeEach(function () {

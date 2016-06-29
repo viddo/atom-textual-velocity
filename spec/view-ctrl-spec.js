@@ -3,9 +3,6 @@
 import * as reactRenderer from '../lib/react-renderer'
 import Interactor from '../lib/interactor'
 import ViewCtrl from '../lib/view-ctrl'
-import fixToEqualJasmineAny from './fix-to-equal-jasmine-any'
-
-fixToEqualJasmineAny()
 
 describe('view-ctrl', function () {
   beforeEach(function () {

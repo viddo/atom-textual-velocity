@@ -3,11 +3,8 @@
 
 import Path from 'path'
 import R from 'ramda'
-import fixUnbalancedConsoleGroups from './fix-unbalanced-console.groups'
 
 describe('textual-velocity main', () => {
-  fixUnbalancedConsoleGroups()
-
   beforeEach(function () {
     jasmine.useRealClock()
     this.workspaceElement = atom.views.getView(atom.workspace)

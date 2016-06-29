@@ -3,14 +3,8 @@
 import Bacon from 'baconjs'
 import prepFile from '../../lib/value-objects/prep-file'
 import Session from '../../lib/workers/session'
-import fixToEqualJasmineAny from '../fix-to-equal-jasmine-any'
-import fixUnbalancedConsoleGroups from '../fix-unbalanced-console.groups'
-
-fixToEqualJasmineAny()
 
 describe('workers/session', () => {
-  fixUnbalancedConsoleGroups()
-
   let File
 
   beforeEach(function () {

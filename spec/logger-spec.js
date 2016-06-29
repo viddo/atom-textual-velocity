@@ -3,14 +3,8 @@
 import R from 'ramda'
 import Bacon from 'baconjs'
 import Logger from '../lib/logger'
-import fixToEqualJasmineAny from './fix-to-equal-jasmine-any'
-import fixUnbalancedConsoleGroups from './fix-unbalanced-console.groups'
-
-fixToEqualJasmineAny()
 
 describe('logger', () => {
-  fixUnbalancedConsoleGroups()
-
   beforeEach(function () {
     this.consoleSpy = jasmine.createSpyObj('console', ['log', 'groupCollapsed', 'groupEnd'])
     this.logger = new Logger({env: 'logger test', console: this.consoleSpy})

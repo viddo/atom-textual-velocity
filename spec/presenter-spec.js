@@ -3,9 +3,6 @@
 import R from 'ramda'
 import ViewCtrl from '../lib/view-ctrl'
 import Presenter from '../lib/presenter'
-import fixToEqualJasmineAny from './fix-to-equal-jasmine-any'
-
-fixToEqualJasmineAny()
 
 describe('presenter', function () {
   beforeEach(function () {

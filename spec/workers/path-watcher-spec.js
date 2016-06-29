@@ -6,10 +6,8 @@ import fs from 'fs'
 import temp from 'temp'
 import prepFile from '../../lib/value-objects/prep-file'
 import PathWatcher from '../../lib/workers/path-watcher'
-import fixToEqualJasmineAny from '../fix-to-equal-jasmine-any'
 
 temp.track()
-fixToEqualJasmineAny()
 
 describe('workers/path-watcher', () => {
   let File
