@@ -46,11 +46,11 @@
     },
     "sortField": {
       "type": "string",
-      "default": "last_updated_at",
+      "default": "lastUpdatedTime",
       "enum": [
         "title",
-        "last_updated_at",
-        "created_at"
+        "lastUpdatedTime",
+        "createdTime"
       ]
     },
     "sortDirection": {

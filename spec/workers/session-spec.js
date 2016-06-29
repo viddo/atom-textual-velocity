@@ -219,5 +219,32 @@ describe('workers/session', () => {
         })
       })
     })
+
+    describe('.sortByField', function () {
+      it('should yield a new search result', function () {
+        this.searchResultsSpy.reset()
+        this.session.sortByField('content')
+        expect(this.searchResultsSpy).toHaveBeenCalled()
+
+        this.res = this.searchResultsSpy.calls[0].args[0]
+        expect(this.res.sifterResult.options.sort[0]).toEqual({field: 'content', direction: 'asc'})
+      })
+    })
+
+    describe('.changeSortDirectionSpy', function () {
+      it('should yield a new search result', function () {
+        this.searchResultsSpy.reset()
+        this.session.changeSortDirection()
+        expect(this.searchResultsSpy).toHaveBeenCalled()
+        this.res = this.searchResultsSpy.calls[0].args[0]
+        expect(this.res.sifterResult.options.sort[0]).toEqual({field: 'name', direction: 'desc'})
+
+        this.searchResultsSpy.reset()
+        this.session.changeSortDirection()
+        expect(this.searchResultsSpy).toHaveBeenCalled()
+        this.res = this.searchResultsSpy.calls[0].args[0]
+        expect(this.res.sifterResult.options.sort[0]).toEqual({field: 'name', direction: 'asc'})
+      })
+    })
   })
 })

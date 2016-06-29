@@ -109,5 +109,25 @@ describe('interactor', function () {
         })
       })
     })
+
+    describe('.sortByField', function () {
+      beforeEach(function () {
+        this.interactor.sortByField('tags')
+      })
+
+      it('should change the field to sort by', function () {
+        expect(this.SessionMock.prototype.sortByField).toHaveBeenCalledWith('tags')
+      })
+    })
+
+    describe('.changeSortDirection', function () {
+      beforeEach(function () {
+        this.interactor.changeSortDirection()
+      })
+
+      it('should change sort direction', function () {
+        expect(this.SessionMock.prototype.changeSortDirection).toHaveBeenCalled()
+      })
+    })
   })
 })

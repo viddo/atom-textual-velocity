@@ -31,7 +31,10 @@ import * as reactRenderer from '../lib/react-renderer'
         this.searchSpy = jasmine.createSpy('search')
         this.scrollSpy = jasmine.createSpy('scroll')
         this.resizeSpy = jasmine.createSpy('resize')
+        this.sortByFieldSpy = jasmine.createSpy('sortByField')
+        this.changeSortDirectionSpy = jasmine.createSpy('changeSortDirectionSpy')
       })
+
       describe('given an empty set', function () {
         beforeEach(function () {
           renderer.renderResults({
@@ -43,12 +46,17 @@ import * as reactRenderer from '../lib/react-renderer'
               forcedScrollTop: 0,
               itemsCount: 0,
               paginationStart: 0,
+              sort: {},
               columns: [],
               rows: []
             },
-            onSearch: this.searchSpy,
-            onScroll: this.scrollSpy,
-            onResize: this.resizeSpy
+            callbacks: {
+              onSearch: this.searchSpy,
+              onScroll: this.scrollSpy,
+              onResize: this.resizeSpy,
+              onSortByField: this.sortByFieldSpy,
+              onChangeSortDirection: this.changeSortDirectionSpy
+            }
           })
         })
 
@@ -68,6 +76,7 @@ import * as reactRenderer from '../lib/react-renderer'
               forcedScrollTop: 0,
               itemsCount: 3,
               paginationStart: 0,
+              sort: {field: 'name', direction: 'desc'},
               columns: [
                 {title: 'Name', key: 'title', width: 70, renderCell: row => row.title},
                 {title: 'Updated', key: 'last_updated_at', width: 15},
@@ -79,9 +88,13 @@ import * as reactRenderer from '../lib/react-renderer'
                 {id: 1, title: 'qux', created_date: '1 year ago', last_updated_at: '1 year ago'}
               ]
             },
-            onSearch: this.searchSpy,
-            onScroll: this.scrollSpy,
-            onResize: this.resizeSpy
+            callbacks: {
+              onSearch: this.searchSpy,
+              onScroll: this.scrollSpy,
+              onResize: this.resizeSpy,
+              onSortByField: this.sortByFieldSpy,
+              onChangeSortDirection: this.changeSortDirectionSpy
+            }
           })
           this.html = this.DOMNode.innerHTML
         })

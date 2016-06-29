@@ -16,6 +16,8 @@ describe('view-ctrl', function () {
     this.interactor = new Interactor(presenter)
     spyOn(this.interactor, 'startSession')
     spyOn(this.interactor, 'search')
+    spyOn(this.interactor, 'sortByField')
+    spyOn(this.interactor, 'changeSortDirection')
     spyOn(this.interactor, 'stopSession')
 
     spyOn(reactRenderer, 'renderLoading').andCallThrough()
@@ -86,6 +88,7 @@ describe('view-ctrl', function () {
           forcedScrollTop: 0,
           itemsCount: 3,
           paginationStart: 0,
+          sort: {field: 'name', direction: 'desc'},
           columns: [
             {title: 'Name', key: 'title', width: 70, renderCell: row => row.title},
             {title: 'Updated', key: 'last_updated_at', width: 15},
@@ -101,34 +104,51 @@ describe('view-ctrl', function () {
 
       it('should render results', function () {
         expect(reactRenderer.renderResults).toHaveBeenCalled()
-        expect(reactRenderer.renderResults).toHaveBeenCalledWith({
-          DOMNode: jasmine.any(HTMLElement),
-          listHeight: jasmine.any(Number),
-          rowHeight: jasmine.any(Number),
-          res: jasmine.any(Object),
-          onSearch: jasmine.any(Function),
-          onScroll: jasmine.any(Function),
-          onResize: jasmine.any(Function)
-        })
+        var args = reactRenderer.renderResults.calls[0].args[0]
+        expect(args.DOMNode).toEqual(jasmine.any(HTMLElement))
+        expect(args.listHeight).toEqual(jasmine.any(Number))
+        expect(args.rowHeight).toEqual(jasmine.any(Number))
+        expect(args.res).toEqual(jasmine.any(Object))
+
+        expect(args.callbacks).toEqual(jasmine.any(Object))
+        expect(args.callbacks.onSearch).toEqual(jasmine.any(Function))
+        expect(args.callbacks.onScroll).toEqual(jasmine.any(Function))
+        expect(args.callbacks.onResize).toEqual(jasmine.any(Function))
+        expect(args.callbacks.onSortByField).toEqual(jasmine.any(Function))
+        expect(args.callbacks.onChangeSortDirection).toEqual(jasmine.any(Function))
       })
 
-      describe('when on search and scroll', function () {
+      describe('when search or scroll', function () {
         it('should search and reset scroll position', function () {
           this.interactor.search.reset()
-          reactRenderer.renderResults.calls[0].args[0].onScroll(100)
+          reactRenderer.renderResults.calls[0].args[0].callbacks.onScroll(100)
           expect(this.interactor.search).toHaveBeenCalledWith({str: '', start: 4, limit: 6})
 
           this.interactor.search.reset()
-          reactRenderer.renderResults.calls[0].args[0].onSearch('foo')
+          reactRenderer.renderResults.calls[0].args[0].callbacks.onSearch('foo')
           expect(this.interactor.search).toHaveBeenCalledWith({str: 'foo', start: 0, limit: 6})
 
           this.interactor.search.reset()
-          reactRenderer.renderResults.calls[0].args[0].onScroll(50)
+          reactRenderer.renderResults.calls[0].args[0].callbacks.onScroll(50)
           expect(this.interactor.search).toHaveBeenCalledWith({str: 'foo', start: 2, limit: 6})
 
           this.interactor.search.reset()
-          reactRenderer.renderResults.calls[0].args[0].onResize(150)
+          reactRenderer.renderResults.calls[0].args[0].callbacks.onResize(150)
           expect(this.interactor.search).toHaveBeenCalledWith({str: 'foo', start: 2, limit: 8})
+        })
+      })
+
+      describe('when sort by a field', function () {
+        it('should change field to sort by', function () {
+          reactRenderer.renderResults.calls[0].args[0].callbacks.onSortByField('tags')
+          expect(this.interactor.sortByField).toHaveBeenCalledWith('tags')
+        })
+      })
+
+      describe('when change sort direction', function () {
+        it('should change sort direction', function () {
+          reactRenderer.renderResults.calls[0].args[0].callbacks.onChangeSortDirection()
+          expect(this.interactor.changeSortDirection).toHaveBeenCalledWith()
         })
       })
 

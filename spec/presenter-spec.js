@@ -38,6 +38,12 @@ describe('presenter', function () {
           filter: {str: 'foobar', strChanged: true, start: 0, limit: 5},
           files: this.allFiles,
           sifterResult: {
+            options: {
+              sort: [
+                {field: 'name', direction: 'desc'},
+                {field: '$core', direction: 'desc'}
+              ]
+            },
             total: 7,
             items: this.allFiles
               .map((f, i) => ({id: i}))
@@ -57,6 +63,7 @@ describe('presenter', function () {
           expect(this.res.focusSearchInput).toEqual(false)
           expect(this.res.paginationStart).toEqual(0)
           expect(this.res.itemsCount).toEqual(7)
+          expect(this.res.sort).toEqual({field: 'name', direction: 'desc'})
         })
 
         it('should contain columns and rows', function () {
@@ -78,6 +85,12 @@ describe('presenter', function () {
           filter: {str: 'foobar', strChanged: false, start: 2, limit: 4},
           files: this.allFiles,
           sifterResult: {
+            options: {
+              sort: [
+                {field: 'name', direction: 'desc'},
+                {field: '$core', direction: 'desc'}
+              ]
+            },
             total: 7,
             items: this.allFiles.map((f, i) => { return {id: i} }).slice(3)
           }
@@ -95,6 +108,7 @@ describe('presenter', function () {
           expect(this.res.focusSearchInput).toEqual(true)
           expect(this.res.paginationStart).toEqual(2)
           expect(this.res.itemsCount).toEqual(7)
+          expect(this.res.sort).toEqual({field: 'name', direction: 'desc'})
         })
 
         it('should contain columns and rows', function () {
