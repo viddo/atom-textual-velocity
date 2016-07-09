@@ -139,16 +139,30 @@ describe('view-ctrl', function () {
       })
 
       describe('when sort by a field', function () {
-        it('should change field to sort by', function () {
+        beforeEach(function () {
           reactRenderer.renderResults.calls[0].args[0].callbacks.onSortByField('tags')
+        })
+
+        it('should change field to sort by', function () {
           expect(this.interactor.sortByField).toHaveBeenCalledWith('tags')
+        })
+
+        it('should persist new field', function () {
+          expect(atom.config.get('textual-velocity.sortField')).toEqual('tags')
         })
       })
 
       describe('when change sort direction', function () {
+        beforeEach(function () {
+          reactRenderer.renderResults.calls[0].args[0].callbacks.onChangeSortDirection('asc')
+        })
+
         it('should change sort direction', function () {
-          reactRenderer.renderResults.calls[0].args[0].callbacks.onChangeSortDirection()
           expect(this.interactor.changeSortDirection).toHaveBeenCalledWith()
+        })
+
+        it('should persist new direction', function () {
+          expect(atom.config.get('textual-velocity.sortDirection')).toEqual('asc')
         })
       })
 
