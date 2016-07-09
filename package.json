@@ -71,11 +71,6 @@
       "default": 20,
       "minimum": 8,
       "maximum": 80
-    },
-    "enableDeveloperConsoleLog": {
-      "description": "Output to the developer console.",
-      "type": "boolean",
-      "default": false
     }
   },
   "standard": {

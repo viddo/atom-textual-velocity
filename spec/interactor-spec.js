@@ -3,7 +3,6 @@
 import PathWatcher from '../lib/workers/path-watcher'
 import Session from '../lib/workers/session'
 import Presenter from '../lib/presenter'
-import Logger from '../lib/logger'
 import DisposableValues from '../lib/disposable-values'
 import Interactor from '../lib/interactor'
 import mockClass from './mock-class'
@@ -16,11 +15,6 @@ describe('interactor', function () {
     this.presenter = new Presenter(viewCtrl)
     spyOn(this.presenter, 'presentLoading')
     spyOn(this.presenter, 'presentResults')
-
-    this.logger = new Logger({env: 'interactor test'})
-    spyOn(this.logger, 'logSessionStart')
-    spyOn(this.logger, 'logPathScan')
-    spyOn(this.logger, 'logSessionEnd')
 
     this.disposables = new DisposableValues()
 
@@ -35,7 +29,6 @@ describe('interactor', function () {
 
     this.interactor = new Interactor({
       presenter: this.presenter,
-      logger: this.logger,
       disposables: this.disposables
     }, {
       PathWatcher: this.PathWatcherMock,
@@ -62,17 +55,6 @@ describe('interactor', function () {
 
     it('should present loading', function () {
       expect(this.presenter.presentLoading).toHaveBeenCalled()
-    })
-
-    it('should log session started', function () {
-      expect(this.logger.logSessionStart).toHaveBeenCalledWith(jasmine.any(Object))
-    })
-
-    it('should log path scan', function () {
-      expect(this.logger.logPathScan).toHaveBeenCalledWith({
-        filesProp: this.filesProp,
-        initialPathScanDoneProp: this.initialScanDoneProp
-      })
     })
 
     describe('when initial path scan is done', function () {
