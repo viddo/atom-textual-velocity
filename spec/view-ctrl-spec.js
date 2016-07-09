@@ -122,19 +122,19 @@ describe('view-ctrl', function () {
         it('should search and reset scroll position', function () {
           this.interactor.search.reset()
           reactRenderer.renderResults.calls[0].args[0].callbacks.onScroll(100)
-          expect(this.interactor.search).toHaveBeenCalledWith({str: '', start: 4, limit: 6})
+          expect(this.interactor.search).toHaveBeenCalledWith({str: '', start: 4, limit: 6}) // reset str, calc start+limit
 
           this.interactor.search.reset()
           reactRenderer.renderResults.calls[0].args[0].callbacks.onSearch('foo')
-          expect(this.interactor.search).toHaveBeenCalledWith({str: 'foo', start: 0, limit: 6})
+          expect(this.interactor.search).toHaveBeenCalledWith({str: 'foo', start: 0, limit: 6}) // set str, reset start, calc limit
 
           this.interactor.search.reset()
           reactRenderer.renderResults.calls[0].args[0].callbacks.onScroll(50)
-          expect(this.interactor.search).toHaveBeenCalledWith({str: 'foo', start: 2, limit: 6})
+          expect(this.interactor.search).toHaveBeenCalledWith({str: 'foo', start: 2, limit: 6}) // calc start, keep prev str+limit
 
           this.interactor.search.reset()
           reactRenderer.renderResults.calls[0].args[0].callbacks.onResize(150)
-          expect(this.interactor.search).toHaveBeenCalledWith({str: 'foo', start: 2, limit: 8})
+          expect(this.interactor.search).toHaveBeenCalledWith({str: 'foo', start: 2, limit: 8}) // calc limit, keep prev str+start
         })
       })
 
