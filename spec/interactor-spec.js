@@ -24,7 +24,6 @@ describe('interactor', function () {
     this.searchResultsBus = new Bacon.Bus()
 
     this.SessionMock = mockClass(Session)
-    this.SessionMock.prototype.onInitialResults.andReturn(() => {})
     this.SessionMock.prototype.searchResultsProp = this.searchResultsBus.toProperty({})
 
     this.interactor = new Interactor(this.presenter, {
@@ -51,18 +50,6 @@ describe('interactor', function () {
 
     it('should present loading', function () {
       expect(this.presenter.presentLoading).toHaveBeenCalled()
-    })
-
-    describe('when initial path scan is done', function () {
-      beforeEach(function () {
-        expect(this.SessionMock.prototype.onInitialResults).toHaveBeenCalledWith(jasmine.any(Function))
-        const onInitialResults = this.SessionMock.prototype.onInitialResults.calls[0].args[0]
-        onInitialResults(this.res = {})
-      })
-
-      it('should present initial results', function () {
-        expect(this.presenter.presentResults).toHaveBeenCalledWith(this.res)
-      })
     })
 
     describe('.search', function () {
