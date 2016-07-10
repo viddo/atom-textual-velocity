@@ -44,7 +44,7 @@ describe('workers/session', () => {
     this.session.onInitialResults(this.initialResultsSpy)
 
     this.searchResultsSpy = jasmine.createSpy('searchResults')
-    this.unsubSearchResults = this.session.onSearchResults(this.searchResultsSpy)
+    this.unsubSearchResults = this.session.searchResultsProp.onValue(this.searchResultsSpy)
   })
 
   afterEach(function () {

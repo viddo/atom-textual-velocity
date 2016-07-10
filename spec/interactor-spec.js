@@ -1,9 +1,9 @@
 'use babel'
 
+import Bacon from 'baconjs'
 import PathWatcher from '../lib/workers/path-watcher'
 import Session from '../lib/workers/session'
 import Presenter from '../lib/presenter'
-import DisposableValues from '../lib/disposable-values'
 import Interactor from '../lib/interactor'
 import mockClass from './mock-class'
 
@@ -16,21 +16,18 @@ describe('interactor', function () {
     spyOn(this.presenter, 'presentLoading')
     spyOn(this.presenter, 'presentResults')
 
-    this.disposables = new DisposableValues()
-
     this.PathWatcherMock = mockClass(PathWatcher)
     this.PathWatcherMock.prototype.filesProp.andReturn(this.filesProp = {})
     this.PathWatcherMock.prototype.initialScanDoneProp.andReturn(this.initialScanDoneProp = {})
     this.PathWatcherMock.prototype.dispose
 
+    this.searchResultsBus = new Bacon.Bus()
+
     this.SessionMock = mockClass(Session)
     this.SessionMock.prototype.onInitialResults.andReturn(() => {})
-    this.SessionMock.prototype.onSearchResults.andReturn(() => {})
+    this.SessionMock.prototype.searchResultsProp = this.searchResultsBus.toProperty({})
 
-    this.interactor = new Interactor({
-      presenter: this.presenter,
-      disposables: this.disposables
-    }, {
+    this.interactor = new Interactor(this.presenter, {
       PathWatcher: this.PathWatcherMock,
       Session: this.SessionMock
     })
@@ -38,7 +35,6 @@ describe('interactor', function () {
 
   afterEach(function () {
     this.interactor.stopSession()
-    this.disposables.dispose()
   })
 
   describe('.startSession', function () {
@@ -71,44 +67,78 @@ describe('interactor', function () {
 
     describe('.search', function () {
       beforeEach(function () {
-        this.interactor.search({str: 'meh', start: 0, limit: 10})
+        this.res = {}
+        this.interactor.search('meh')
       })
 
-      it('should search and start from top', function () {
-        expect(this.SessionMock.prototype.search).toHaveBeenCalledWith({str: 'meh', start: 0, limit: 10})
+      it('should search by given string and reset start position', function () {
+        expect(this.SessionMock.prototype.search).toHaveBeenCalledWith({str: 'meh', start: 0})
       })
 
       describe('when search results are available', function () {
         beforeEach(function () {
           this.presenter.presentResults.reset()
-          expect(this.SessionMock.prototype.onSearchResults).toHaveBeenCalledWith(jasmine.any(Function))
-          const onSearchResults = this.SessionMock.prototype.onSearchResults.calls[0].args[0]
-          onSearchResults(this.res = {})
+          this.searchResultsBus.push(this.res)
         })
 
         it('should present search results', function () {
-          expect(this.presenter.presentResults).toHaveBeenCalledWith(this.res)
+          expect(this.presenter.presentResults).toHaveBeenCalledWith(this.res, undefined)
+        })
+
+        describe('.paginate', function () {
+          beforeEach(function () {
+            this.presenter.presentResults.reset()
+            this.interactor.paginate({start: 2, limit: 10})
+          })
+
+          it('should paginate the last search results', function () {
+            expect(this.SessionMock.prototype.search).toHaveBeenCalledWith({start: 2, limit: 10})
+          })
+
+          it('should not change present results until new results are available', function () {
+            expect(this.presenter.presentResults).not.toHaveBeenCalled()
+          })
+        })
+
+        describe('.selectByIndex', function () {
+          beforeEach(function () {
+            this.interactor.selectByIndex(3)
+          })
+
+          it('should present last search results and selected index', function () {
+            expect(this.presenter.presentResults).toHaveBeenCalledWith(this.res, 3)
+          })
         })
       })
     })
 
     describe('.sortByField', function () {
       beforeEach(function () {
+        this.presenter.presentResults.reset()
         this.interactor.sortByField('tags')
       })
 
       it('should change the field to sort by', function () {
         expect(this.SessionMock.prototype.sortByField).toHaveBeenCalledWith('tags')
       })
+
+      it('should present results and reset the selected item', function () {
+        expect(this.presenter.presentResults).toHaveBeenCalledWith(jasmine.any(Object), undefined)
+      })
     })
 
     describe('.changeSortDirection', function () {
       beforeEach(function () {
+        this.presenter.presentResults.reset()
         this.interactor.changeSortDirection()
       })
 
       it('should change sort direction', function () {
         expect(this.SessionMock.prototype.changeSortDirection).toHaveBeenCalled()
+      })
+
+      it('should present results and reset the selected item', function () {
+        expect(this.presenter.presentResults).toHaveBeenCalledWith(jasmine.any(Object), undefined)
       })
     })
   })

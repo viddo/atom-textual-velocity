@@ -16,6 +16,8 @@ describe('view-ctrl', function () {
     this.interactor = new Interactor(presenter)
     spyOn(this.interactor, 'startSession')
     spyOn(this.interactor, 'search')
+    spyOn(this.interactor, 'paginate')
+    spyOn(this.interactor, 'selectByIndex')
     spyOn(this.interactor, 'sortByField')
     spyOn(this.interactor, 'changeSortDirection')
     spyOn(this.interactor, 'stopSession')
@@ -84,7 +86,6 @@ describe('view-ctrl', function () {
     describe('.displayResults', function () {
       beforeEach(function () {
         this.viewCtrl.displayResults({
-          focusSearchInput: false,
           forcedScrollTop: 0,
           itemsCount: 3,
           paginationStart: 0,
@@ -95,7 +96,7 @@ describe('view-ctrl', function () {
             {title: 'Created', key: 'created_date', width: 15}
           ],
           rows: [
-            {id: 2, title: 'foobar', created_date: '3 days ago', last_updated_at: 'yesterday'},
+            {id: 2, title: 'foobar', created_date: '3 days ago', last_updated_at: 'yesterday', selected: true},
             {id: 3, title: 'baz', created_date: '3 days ago', last_updated_at: 'today'},
             {id: 1, title: 'qux', created_date: '1 year ago', last_updated_at: '1 year ago'}
           ]
@@ -110,31 +111,52 @@ describe('view-ctrl', function () {
         expect(args.rowHeight).toEqual(jasmine.any(Number))
         expect(args.res).toEqual(jasmine.any(Object))
 
-        expect(args.callbacks).toEqual(jasmine.any(Object))
-        expect(args.callbacks.onSearch).toEqual(jasmine.any(Function))
-        expect(args.callbacks.onScroll).toEqual(jasmine.any(Function))
-        expect(args.callbacks.onResize).toEqual(jasmine.any(Function))
-        expect(args.callbacks.onSortByField).toEqual(jasmine.any(Function))
-        expect(args.callbacks.onChangeSortDirection).toEqual(jasmine.any(Function))
+        expect(args.callbacks).toEqual({
+          onSearch: jasmine.any(Function),
+          onScroll: jasmine.any(Function),
+          onClickRow: jasmine.any(Function),
+          onSortByField: jasmine.any(Function),
+          onChangeSortDirection: jasmine.any(Function),
+          onResize: jasmine.any(Function)
+        })
       })
 
-      describe('when search or scroll', function () {
+      describe('when search', function () {
         it('should search and reset scroll position', function () {
           this.interactor.search.reset()
-          reactRenderer.renderResults.calls[0].args[0].callbacks.onScroll(100)
-          expect(this.interactor.search).toHaveBeenCalledWith({str: '', start: 4, limit: 6}) // reset str, calc start+limit
+          reactRenderer.renderResults.calls[0].args[0].callbacks.onSearch('')
+          expect(this.interactor.search).toHaveBeenCalledWith('')
 
           this.interactor.search.reset()
           reactRenderer.renderResults.calls[0].args[0].callbacks.onSearch('foo')
-          expect(this.interactor.search).toHaveBeenCalledWith({str: 'foo', start: 0, limit: 6}) // set str, reset start, calc limit
+          expect(this.interactor.search).toHaveBeenCalledWith('foo')
+        })
+      })
+
+      describe('when scroll or list size changes', function () {
+        it('should paginate by calculated values', function () {
+          this.interactor.search.reset()
+          reactRenderer.renderResults.calls[0].args[0].callbacks.onScroll(100)
+          expect(this.interactor.paginate).toHaveBeenCalledWith({start: 4, limit: 6})
 
           this.interactor.search.reset()
           reactRenderer.renderResults.calls[0].args[0].callbacks.onScroll(50)
-          expect(this.interactor.search).toHaveBeenCalledWith({str: 'foo', start: 2, limit: 6}) // calc start, keep prev str+limit
+          expect(this.interactor.paginate).toHaveBeenCalledWith({start: 2, limit: 6})
 
           this.interactor.search.reset()
           reactRenderer.renderResults.calls[0].args[0].callbacks.onResize(150)
-          expect(this.interactor.search).toHaveBeenCalledWith({str: 'foo', start: 2, limit: 8}) // calc limit, keep prev str+start
+          expect(this.interactor.paginate).toHaveBeenCalledWith({start: 2, limit: 8})
+        })
+      })
+
+      describe('when clicking an item', function () {
+        it('should select item by index', function () {
+          reactRenderer.renderResults.calls[0].args[0].callbacks.onClickRow(1)
+          expect(this.interactor.selectByIndex).toHaveBeenCalledWith(1)
+
+          this.interactor.selectByIndex.reset()
+          reactRenderer.renderResults.calls[0].args[0].callbacks.onClickRow(3)
+          expect(this.interactor.selectByIndex).toHaveBeenCalledWith(3)
         })
       })
 

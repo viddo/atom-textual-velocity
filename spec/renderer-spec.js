@@ -28,11 +28,12 @@ import * as reactRenderer from '../lib/react-renderer'
 
     describe('.renderResults', function () {
       beforeEach(function () {
-        this.searchSpy = jasmine.createSpy('search')
-        this.scrollSpy = jasmine.createSpy('scroll')
-        this.resizeSpy = jasmine.createSpy('resize')
-        this.sortByFieldSpy = jasmine.createSpy('sortByField')
-        this.changeSortDirectionSpy = jasmine.createSpy('changeSortDirectionSpy')
+        this.searchSpy = jasmine.createSpy('onSearch')
+        this.scrollSpy = jasmine.createSpy('onScroll')
+        this.clickRowSpy = jasmine.createSpy('onClickRow')
+        this.sortByFieldSpy = jasmine.createSpy('onSortByField')
+        this.changeSortDirectionSpy = jasmine.createSpy('onChangeSortDirectionSpy')
+        this.resizeSpy = jasmine.createSpy('onResize')
       })
 
       describe('given an empty set', function () {
@@ -42,7 +43,6 @@ import * as reactRenderer from '../lib/react-renderer'
             listHeight: 123,
             rowHeight: 25,
             res: {
-              focusSearchInput: true,
               forcedScrollTop: 0,
               itemsCount: 0,
               paginationStart: 0,
@@ -53,6 +53,7 @@ import * as reactRenderer from '../lib/react-renderer'
             callbacks: {
               onSearch: this.searchSpy,
               onScroll: this.scrollSpy,
+              onClickRow: this.clickRowSpy,
               onResize: this.resizeSpy,
               onSortByField: this.sortByFieldSpy,
               onChangeSortDirection: this.changeSortDirectionSpy
@@ -72,7 +73,6 @@ import * as reactRenderer from '../lib/react-renderer'
             listHeight: 25,
             rowHeight: 20,
             res: {
-              focusSearchInput: true,
               forcedScrollTop: 0,
               itemsCount: 3,
               paginationStart: 0,
