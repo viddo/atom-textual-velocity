@@ -29,6 +29,7 @@ import * as reactRenderer from '../lib/react-renderer'
     describe('.renderResults', function () {
       beforeEach(function () {
         this.searchSpy = jasmine.createSpy('onSearch')
+        this.keyDownSpy = jasmine.createSpy('onKeyDown')
         this.scrollSpy = jasmine.createSpy('onScroll')
         this.clickRowSpy = jasmine.createSpy('onClickRow')
         this.sortByFieldSpy = jasmine.createSpy('onSortByField')
@@ -43,6 +44,7 @@ import * as reactRenderer from '../lib/react-renderer'
             listHeight: 123,
             rowHeight: 25,
             res: {
+              str: '',
               forcedScrollTop: 0,
               itemsCount: 0,
               paginationStart: 0,
@@ -52,11 +54,12 @@ import * as reactRenderer from '../lib/react-renderer'
             },
             callbacks: {
               onSearch: this.searchSpy,
+              onKeyDown: this.keyDownSpy,
               onScroll: this.scrollSpy,
               onClickRow: this.clickRowSpy,
-              onResize: this.resizeSpy,
               onSortByField: this.sortByFieldSpy,
-              onChangeSortDirection: this.changeSortDirectionSpy
+              onChangeSortDirection: this.changeSortDirectionSpy,
+              onResize: this.resizeSpy
             }
           })
         })
@@ -73,6 +76,7 @@ import * as reactRenderer from '../lib/react-renderer'
             listHeight: 25,
             rowHeight: 20,
             res: {
+              str: '',
               forcedScrollTop: 0,
               itemsCount: 3,
               paginationStart: 0,
@@ -90,10 +94,12 @@ import * as reactRenderer from '../lib/react-renderer'
             },
             callbacks: {
               onSearch: this.searchSpy,
+              onKeyDown: this.keyDownSpy,
               onScroll: this.scrollSpy,
-              onResize: this.resizeSpy,
+              onClickRow: this.clickRowSpy,
               onSortByField: this.sortByFieldSpy,
-              onChangeSortDirection: this.changeSortDirectionSpy
+              onChangeSortDirection: this.changeSortDirectionSpy,
+              onResize: this.resizeSpy
             }
           })
           this.html = this.DOMNode.innerHTML

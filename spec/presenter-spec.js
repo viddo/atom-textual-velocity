@@ -35,7 +35,7 @@ describe('presenter', function () {
     describe('when called for initial results or a string search', function () {
       beforeEach(function () {
         this.presenter.presentResults({
-          filter: {str: 'foobar', strChanged: true, start: 0, limit: 5},
+          filter: {str: '', strChanged: true, start: 0, limit: 5},
           files: this.allFiles,
           sifterResult: {
             options: {
@@ -59,6 +59,7 @@ describe('presenter', function () {
         })
 
         it('should contain results meta', function () {
+          expect(this.res.str).toEqual('')
           expect(this.res.forcedScrollTop).toEqual(0)
           expect(this.res.paginationStart).toEqual(0)
           expect(this.res.itemsCount).toEqual(7)
@@ -103,6 +104,7 @@ describe('presenter', function () {
         })
 
         it('should contain results meta', function () {
+          expect(this.res.str).toEqual('foobar')
           expect(this.res.forcedScrollTop).toBeNaN()
           expect(this.res.paginationStart).toEqual(2)
           expect(this.res.itemsCount).toEqual(7)

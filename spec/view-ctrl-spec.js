@@ -113,6 +113,7 @@ describe('view-ctrl', function () {
 
         expect(args.callbacks).toEqual({
           onSearch: jasmine.any(Function),
+          onKeyDown: jasmine.any(Function),
           onScroll: jasmine.any(Function),
           onClickRow: jasmine.any(Function),
           onSortByField: jasmine.any(Function),
