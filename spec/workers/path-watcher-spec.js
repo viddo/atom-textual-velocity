@@ -32,8 +32,8 @@ describe('workers/path-watcher', () => {
 
     this.filesSpy = jasmine.createSpy('files')
     this.readySpy = jasmine.createSpy('ready')
-    this.unsubInitialScanDone = this.pathWatcher.initialScanDoneProp().onValue(this.readySpy)
-    this.unsubFilesProp = this.pathWatcher.filesProp().onValue(this.filesSpy)
+    this.unsubInitialScanDone = this.pathWatcher.initialScanDoneProp.onValue(this.readySpy)
+    this.unsubFilesProp = this.pathWatcher.filesProp.onValue(this.filesSpy)
   })
 
   afterEach(function () {

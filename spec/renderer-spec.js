@@ -33,7 +33,7 @@ import * as reactRenderer from '../lib/react-renderer'
         this.scrollSpy = jasmine.createSpy('onScroll')
         this.clickRowSpy = jasmine.createSpy('onClickRow')
         this.sortByFieldSpy = jasmine.createSpy('onSortByField')
-        this.changeSortDirectionSpy = jasmine.createSpy('onChangeSortDirectionSpy')
+        this.sortDirectionSpy = jasmine.createSpy('onChangeSortDirectionSpy')
         this.resizeSpy = jasmine.createSpy('onResize')
       })
 
@@ -43,9 +43,10 @@ import * as reactRenderer from '../lib/react-renderer'
             DOMNode: this.DOMNode,
             listHeight: 123,
             rowHeight: 25,
+            scrollTop: 0,
             res: {
-              str: '',
-              forcedScrollTop: 0,
+              selectedIndex: undefined,
+              searchStr: '',
               itemsCount: 0,
               paginationStart: 0,
               sort: {},
@@ -58,7 +59,7 @@ import * as reactRenderer from '../lib/react-renderer'
               onScroll: this.scrollSpy,
               onClickRow: this.clickRowSpy,
               onSortByField: this.sortByFieldSpy,
-              onChangeSortDirection: this.changeSortDirectionSpy,
+              onChangeSortDirection: this.sortDirectionSpy,
               onResize: this.resizeSpy
             }
           })
@@ -75,9 +76,10 @@ import * as reactRenderer from '../lib/react-renderer'
             DOMNode: this.DOMNode,
             listHeight: 25,
             rowHeight: 20,
+            scrollTop: 0,
             res: {
-              str: '',
-              forcedScrollTop: 0,
+              selectedIndex: 1,
+              searchStr: '',
               itemsCount: 3,
               paginationStart: 0,
               sort: {field: 'name', direction: 'desc'},
@@ -88,7 +90,7 @@ import * as reactRenderer from '../lib/react-renderer'
               ],
               rows: [
                 {id: 2, title: 'foobar', created_date: '3 days ago', last_updated_at: 'yesterday'},
-                {id: 3, title: 'baz', created_date: '3 days ago', last_updated_at: 'today'},
+                {id: 3, title: 'baz', created_date: '3 days ago', last_updated_at: 'today', selected: true},
                 {id: 1, title: 'qux', created_date: '1 year ago', last_updated_at: '1 year ago'}
               ]
             },
@@ -98,7 +100,7 @@ import * as reactRenderer from '../lib/react-renderer'
               onScroll: this.scrollSpy,
               onClickRow: this.clickRowSpy,
               onSortByField: this.sortByFieldSpy,
-              onChangeSortDirection: this.changeSortDirectionSpy,
+              onChangeSortDirection: this.sortDirectionSpy,
               onResize: this.resizeSpy
             }
           })
@@ -135,6 +137,7 @@ import * as reactRenderer from '../lib/react-renderer'
         describe('when scrolling', function () {
           beforeEach(function () {
             const scrollableList = this.DOMNode.querySelector('div[style*=overflow]')
+            TestUtils.Simulate.scroll(scrollableList, {target: {scrollTop: 26}})
             TestUtils.Simulate.scroll(scrollableList, {target: {scrollTop: 26}})
           })
 
