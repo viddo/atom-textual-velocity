@@ -2,7 +2,7 @@
 
 import Bacon from 'baconjs'
 import R from 'ramda'
-import PathWatcher from '../lib/workers/path-watcher'
+import PathWatcher from '../lib/path-watcher'
 import Presenter from '../lib/presenter'
 import Interactor from '../lib/interactor'
 import mockClass from './mock-class'

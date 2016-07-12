@@ -3,7 +3,7 @@
 import Path from 'path'
 import PathFilter from '../../lib/value-objects/path-filter'
 
-describe('workers/path-filter', () => {
+describe('path-filter', () => {
   let pathFilter
 
   beforeEach(function () {
