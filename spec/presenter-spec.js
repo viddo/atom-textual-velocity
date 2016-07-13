@@ -3,6 +3,7 @@
 import R from 'ramda'
 import ViewCtrl from '../lib/view-ctrl'
 import Presenter from '../lib/presenter'
+import Summary from '../lib/columns/summary'
 
 describe('presenter', function () {
   beforeEach(function () {
@@ -10,7 +11,10 @@ describe('presenter', function () {
     spyOn(this.viewCtrl, 'displayLoading')
     spyOn(this.viewCtrl, 'displayResults')
 
-    this.presenter = new Presenter(this.viewCtrl)
+    this.presenter = new Presenter({
+      viewCtrl: this.viewCtrl,
+      columns: [new Summary()]
+    })
   })
 
   describe('.presentLoading', function () {
@@ -26,7 +30,7 @@ describe('presenter', function () {
   describe('.presentResults', function () {
     beforeEach(function () {
       this.allFiles = R.times(i => ({
-        id: i,
+        id: `f${i}`,
         index: i,
         path: `file ${i}`,
         content: `content for ${i}`
@@ -80,8 +84,12 @@ describe('presenter', function () {
 
         it('should slice rows according to pagination', function () {
           expect(this.res.rows.length).toEqual(5)
-          expect(this.res.rows[0].title).toEqual('file 3')
-          expect(R.last(this.res.rows).title).toEqual('file 7')
+          expect(R.head(this.res.rows).id).toEqual('f3')
+          expect(R.last(this.res.rows).id).toEqual('f7')
+        })
+
+        it('should contain cells', function () {
+          expect(R.head(this.res.rows).cells).toBeDefined()
         })
       })
     })
@@ -126,9 +134,8 @@ describe('presenter', function () {
 
         it('should slice rows according to pagination', function () {
           expect(this.res.rows.length).toEqual(4)
-          expect(this.res.rows[0].title).toEqual('file 5')
-          expect(this.res.rows[0].content).toEqual('content for 5')
-          expect(R.last(this.res.rows).title).toEqual('file 8')
+          expect(R.head(this.res.rows).id).toEqual('f5')
+          expect(R.last(this.res.rows).id).toEqual('f8')
         })
       })
     })

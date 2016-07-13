@@ -9,9 +9,10 @@ import mockClass from './mock-class'
 
 describe('interactor', function () {
   beforeEach(function () {
-    const viewCtrl = {}
-
-    this.presenter = new Presenter(viewCtrl)
+    this.presenter = new Presenter({
+      viewCtrl: {},
+      columns: []
+    })
     spyOn(this.presenter, 'presentLoading')
     spyOn(this.presenter, 'presentResults')
 

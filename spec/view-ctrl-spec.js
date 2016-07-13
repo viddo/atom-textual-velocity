@@ -94,14 +94,14 @@ describe('view-ctrl', function () {
             itemsCount: 3,
             sort: {field: 'name', direction: 'desc'},
             columns: [
-              {title: 'Name', key: 'title', width: 70, renderCell: row => row.title},
-              {title: 'Updated', key: 'last_updated_at', width: 15},
-              {title: 'Created', key: 'created_date', width: 15}
+              {title: 'Name', id: 'title', width: 70},
+              {title: 'Updated', id: 'last_updated_at', width: 15},
+              {title: 'Created', id: 'created_date', width: 15}
             ],
             rows: [
-              {id: 2, title: 'foobar', created_date: '3 days ago', last_updated_at: 'yesterday', selected: true},
-              {id: 3, title: 'baz', created_date: '3 days ago', last_updated_at: 'today'},
-              {id: 1, title: 'qux', created_date: '1 year ago', last_updated_at: '1 year ago'}
+              {id: 2, cells: ['foobar', '3 days ago', 'yesterday'], selected: true},
+              {id: 3, cells: ['baz', '3 days ago', 'today']},
+              {id: 1, cells: ['qux', '1 year ago', '1 year ago']}
             ]
           })
         })
