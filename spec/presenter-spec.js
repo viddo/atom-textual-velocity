@@ -41,13 +41,17 @@ describe('presenter', function () {
       beforeEach(function () {
         this.presenter.presentResults({
           files: this.allFiles,
-          sifterResults: {
+          sifterResult: {
             options: {
               sort: [
                 {field: 'name', direction: 'desc'},
                 {field: '$core', direction: 'desc'}
               ]
             },
+            tokens: [{
+              string: 'str',
+              regex: /[aÀÁÂÃÄÅàáâãäå][nÑñ][nÑñ][aÀÁÂÃÄÅàáâãäå]/
+            }],
             query: 'str',
             total: 7,
             items: this.allFiles
@@ -98,7 +102,7 @@ describe('presenter', function () {
       beforeEach(function () {
         this.presenter.presentResults({
           files: this.allFiles,
-          sifterResults: {
+          sifterResult: {
             options: {
               sort: [
                 {field: 'name', direction: 'desc'},
@@ -106,6 +110,10 @@ describe('presenter', function () {
               ]
             },
             query: 'foobar',
+            tokens: [{
+              string: 'foobar',
+              regex: /[fƑƒḞḟ][oØøÖöÓóÒòÔôǑǒŐőŎŏȮȯỌọƟɵƠơỎỏŌōÕõǪǫȌȍՕօ][oØøÖöÓóÒòÔôǑǒŐőŎŏȮȯỌọƟɵƠơỎỏŌōÕõǪǫȌȍՕօ][b␢βΒB฿𐌁ᛒ][aḀḁĂăÂâǍǎȺⱥȦȧẠạÄäÀàÁáĀāÃãÅåąĄÃąĄ][rŔŕɌɍŘřŖŗṘṙȐȑȒȓṚṛⱤɽ]/i
+            }],
             total: 7,
             items: this.allFiles.map((f, i) => { return {id: i} }).slice(3)
           },

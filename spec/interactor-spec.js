@@ -73,7 +73,7 @@ describe('interactor', function () {
         // 1st search
         this.interactor.search('file')
         expect(this.presenter.presentResults.mostRecentCall.args[0].files).toEqual(this.files)
-        expect(this.presenter.presentResults.mostRecentCall.args[0].sifterResults).toEqual(
+        expect(this.presenter.presentResults.mostRecentCall.args[0].sifterResult).toEqual(
           jasmine.objectContaining({query: 'file'}),
           'should set sifterResult'
         )
@@ -83,14 +83,14 @@ describe('interactor', function () {
         // selectByIndex
         this.interactor.selectByIndex(3)
         expect(this.presenter.presentResults.mostRecentCall.args[0].files).toEqual(this.files)
-        expect(this.presenter.presentResults.mostRecentCall.args[0].sifterResults).toEqual(jasmine.any(Object))
+        expect(this.presenter.presentResults.mostRecentCall.args[0].sifterResult).toEqual(jasmine.any(Object))
         expect(this.presenter.presentResults.mostRecentCall.args[0].pagination).toEqual({start: 0, limit: 123})
         expect(this.presenter.presentResults.mostRecentCall.args[0].selectedIndex).toEqual(3, 'should set selected index')
 
         // pagination
         this.interactor.paginate({start: 2, limit: 4})
         expect(this.presenter.presentResults.mostRecentCall.args[0].files).toEqual(this.files)
-        expect(this.presenter.presentResults.mostRecentCall.args[0].sifterResults).toEqual(jasmine.any(Object))
+        expect(this.presenter.presentResults.mostRecentCall.args[0].sifterResult).toEqual(jasmine.any(Object))
         expect(this.presenter.presentResults.mostRecentCall.args[0].pagination).toEqual({start: 2, limit: 4}, 'should update pagination')
         expect(this.presenter.presentResults.mostRecentCall.args[0].selectedIndex).toEqual(3)
 
@@ -103,14 +103,14 @@ describe('interactor', function () {
         this.interactor.selectByIndex(3)
         expect(this.presenter.presentResults.mostRecentCall.args[0].selectedIndex).toEqual(3, 'should set selected index')
         this.interactor.sortByField('tags')
-        expect(this.presenter.presentResults.mostRecentCall.args[0].sifterResults.options.sort[0]).toEqual({field: 'tags', direction: 'desc'}, 'should change field')
+        expect(this.presenter.presentResults.mostRecentCall.args[0].sifterResult.options.sort[0]).toEqual({field: 'tags', direction: 'desc'}, 'should change field')
         expect(this.presenter.presentResults.mostRecentCall.args[0].selectedIndex).toEqual(undefined, 'should reset selected index')
 
         // sortDirection
         this.interactor.selectByIndex(3)
         expect(this.presenter.presentResults.mostRecentCall.args[0].selectedIndex).toEqual(3, 'should set selected index')
         this.interactor.sortDirection('asc')
-        expect(this.presenter.presentResults.mostRecentCall.args[0].sifterResults.options.sort[0]).toEqual({field: 'tags', direction: 'asc'}, 'should change direction')
+        expect(this.presenter.presentResults.mostRecentCall.args[0].sifterResult.options.sort[0]).toEqual({field: 'tags', direction: 'asc'}, 'should change direction')
         expect(this.presenter.presentResults.mostRecentCall.args[0].selectedIndex).toEqual(undefined, 'should reset selected index')
 
         // selectPrev
