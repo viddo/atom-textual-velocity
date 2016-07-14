@@ -22,6 +22,7 @@ describe('columns', function () {
       content: 'beep boop',
       atime: new Date().getTime()
     }
+    this.renderResults = {}
   })
 
   columns.forEach(({name, column}) => {
@@ -34,7 +35,7 @@ describe('columns', function () {
       })
 
       it('should have a cellContent', function () {
-        const cellContent = column.cellContent(this.file)
+        const cellContent = column.cellContent(this.file, this.renderResults)
         expect(typeof cellContent === 'string' || cellContent instanceof Array).toBe(true)
       })
     })

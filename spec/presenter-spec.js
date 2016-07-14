@@ -32,7 +32,9 @@ describe('presenter', function () {
       this.allFiles = R.times(i => ({
         id: `f${i}`,
         index: i,
-        path: `file ${i}`,
+        path: `/notes/file ${i}.md`,
+        name: `file ${i}`,
+        ext: '.md',
         content: `content for ${i}`
       }), 10)
     })
@@ -55,8 +57,8 @@ describe('presenter', function () {
             query: 'str',
             total: 7,
             items: this.allFiles
-              .map((f, i) => ({id: i}))
               .slice(3)
+              .map(file => ({id: file.index}))
           },
           pagination: {start: 0, limit: 5},
           selectedIndex: 3
