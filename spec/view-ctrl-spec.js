@@ -88,6 +88,7 @@ describe('view-ctrl', function () {
       describe('.displayResults', function () {
         beforeEach(function () {
           this.viewCtrl.displayResults({
+            selectedPath: '/notes/file0.txt',
             selectedIndex: 0,
             searchStr: '',
             paginationStart: 0,
