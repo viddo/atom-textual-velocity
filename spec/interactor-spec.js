@@ -15,6 +15,9 @@ describe('interactor', function () {
     })
     spyOn(this.presenter, 'presentLoading')
     spyOn(this.presenter, 'presentResults')
+    spyOn(this.presenter, 'presentSelectedFilePreview')
+    spyOn(this.presenter, 'presentSelectedFileContent')
+    spyOn(this.presenter, 'presentNewFile')
 
     this.filesBus = new Bacon.Bus()
     this.initialScanDoneBus = new Bacon.Bus()
@@ -81,7 +84,9 @@ describe('interactor', function () {
         expect(this.presenter.presentResults.mostRecentCall.args[0].selectedIndex).toEqual(undefined, 'should reset selection')
 
         // selectByIndex
+        this.presenter.presentSelectedFilePreview.reset()
         this.interactor.selectByIndex(3)
+        expect(this.presenter.presentSelectedFilePreview).toHaveBeenCalledWith(jasmine.any(Object))
         expect(this.presenter.presentResults.mostRecentCall.args[0].files).toEqual(this.files)
         expect(this.presenter.presentResults.mostRecentCall.args[0].sifterResult).toEqual(jasmine.any(Object))
         expect(this.presenter.presentResults.mostRecentCall.args[0].pagination).toEqual({start: 0, limit: 123})
@@ -95,6 +100,7 @@ describe('interactor', function () {
         expect(this.presenter.presentResults.mostRecentCall.args[0].selectedIndex).toEqual(3)
 
         // 2nd search
+        this.presenter.presentSelectedFilePreview.reset()
         this.interactor.search('file')
         expect(this.presenter.presentResults.mostRecentCall.args[0].pagination).toEqual({start: 0, limit: 4}, 'should reset start')
         expect(this.presenter.presentResults.mostRecentCall.args[0].selectedIndex).toEqual(undefined, 'should reset any selection')
@@ -114,7 +120,9 @@ describe('interactor', function () {
         expect(this.presenter.presentResults.mostRecentCall.args[0].selectedIndex).toEqual(undefined, 'should reset selected index')
 
         // selectPrev
+        this.presenter.presentSelectedFilePreview.reset()
         this.interactor.selectPrev()
+        expect(this.presenter.presentSelectedFilePreview).toHaveBeenCalledWith(jasmine.any(Object))
         expect(this.presenter.presentResults.mostRecentCall.args[0].selectedIndex).toEqual(9, 'should start at the end of list')
         this.interactor.selectPrev()
         this.interactor.selectPrev()
@@ -132,7 +140,9 @@ describe('interactor', function () {
         expect(this.presenter.presentResults.mostRecentCall.args[0].selectedIndex).toEqual(undefined, 'should be reset')
 
         // selectNext
+        this.presenter.presentSelectedFilePreview.reset()
         this.interactor.selectNext()
+        expect(this.presenter.presentSelectedFilePreview).toHaveBeenCalledWith(jasmine.any(Object))
         expect(this.presenter.presentResults.mostRecentCall.args[0].selectedIndex).toEqual(0, 'should start at the beginning of list')
         this.interactor.selectNext()
         this.interactor.selectNext()
@@ -148,11 +158,45 @@ describe('interactor', function () {
         this.interactor.selectNext()
         expect(this.presenter.presentResults.mostRecentCall.args[0].selectedIndex).toEqual(9, 'should stop at end of list')
 
+        // openOrCreateItem (existing file)
+        this.presenter.presentResults.reset()
+        this.presenter.presentSelectedFilePreview.reset()
+        this.presenter.presentSelectedFileContent.reset()
+        this.interactor.openOrCreateItem()
+        expect(this.presenter.presentSelectedFileContent).toHaveBeenCalled()
+        expect(this.presenter.presentSelectedFileContent.mostRecentCall.args[0]).toEqual(jasmine.any(Object), 'should present selected file')
+        expect(this.presenter.presentResults).not.toHaveBeenCalled()
+        expect(this.presenter.presentSelectedFilePreview).not.toHaveBeenCalled()
+
         // selectByPath
         this.interactor.selectByPath('/notes/file 7.txt')
         expect(this.presenter.presentResults.mostRecentCall.args[0].selectedIndex).toEqual(7, 'should set correct index when there is a match')
         this.interactor.selectByPath('nonexisting')
         expect(this.presenter.presentResults.mostRecentCall.args[0].selectedIndex).toEqual(undefined, 'should unset index if there is no match')
+
+        // openOrCreateItem (new file w/o file ext)
+        this.interactor.search('test-new-file')
+        this.presenter.presentResults.reset()
+        this.presenter.presentSelectedFilePreview.reset()
+        this.presenter.presentSelectedFileContent.reset()
+        this.interactor.openOrCreateItem()
+        expect(this.presenter.presentNewFile).toHaveBeenCalled()
+        expect(this.presenter.presentNewFile.mostRecentCall.args[0]).toMatch(/test-new-file.md$/, 'should present selected file w/ default ext')
+        expect(this.presenter.presentResults).not.toHaveBeenCalled()
+        expect(this.presenter.presentSelectedFilePreview).not.toHaveBeenCalled()
+        expect(this.presenter.presentSelectedFileContent).not.toHaveBeenCalled()
+
+        // openOrCreateItem (new file w/ file ext)
+        this.interactor.search('test-new-file.bash')
+        this.presenter.presentResults.reset()
+        this.presenter.presentSelectedFilePreview.reset()
+        this.presenter.presentSelectedFileContent.reset()
+        this.interactor.openOrCreateItem()
+        expect(this.presenter.presentNewFile).toHaveBeenCalled()
+        expect(this.presenter.presentNewFile.mostRecentCall.args[0]).toMatch(/test-new-file.bash$/, 'should present selected file w/o default ext')
+        expect(this.presenter.presentResults).not.toHaveBeenCalled()
+        expect(this.presenter.presentSelectedFilePreview).not.toHaveBeenCalled()
+        expect(this.presenter.presentSelectedFileContent).not.toHaveBeenCalled()
       })
     })
   })
