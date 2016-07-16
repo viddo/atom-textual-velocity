@@ -1,8 +1,8 @@
 'use babel'
 
-import prepFile from '../../lib/value-objects/prep-file'
+import prepFile from '../lib/prep-file'
 
-describe('value-objects/prep-file', () => {
+describe('prep-file', () => {
   let File
 
   beforeEach(function () {

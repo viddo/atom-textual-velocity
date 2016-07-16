@@ -4,8 +4,8 @@ import Path from 'path'
 import R from 'ramda'
 import fs from 'fs'
 import temp from 'temp'
-import prepFile from '../../lib/value-objects/prep-file'
-import PathWatcher from '../../lib/path-watcher'
+import prepFile from '../lib/prep-file'
+import PathWatcher from '../lib/path-watcher'
 
 temp.track()
 

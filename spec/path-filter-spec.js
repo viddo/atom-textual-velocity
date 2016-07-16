@@ -3,11 +3,14 @@
 import Path from 'path'
 import PathFilter from '../lib/path-filter'
 
-xdescribe('path-filter', () => {
+describe('path-filter', () => {
   let pathFilter
 
   beforeEach(function () {
-    pathFilter = new PathFilter(__dirname)
+    pathFilter = new PathFilter(__dirname, {
+      exclusions: atom.config.get('core.ignoredNames'),
+      excludeVcsIgnores: atom.config.get('core.excludeVcsIgnoredPaths')
+    })
   })
 
   it('returns true for any text file', function () {
