@@ -116,20 +116,17 @@ describe('interactor', function () {
         // selectPrev
         this.interactor.selectPrev()
         expect(this.presenter.presentResults.mostRecentCall.args[0].selectedIndex).toEqual(9, 'should start at the end of list')
-        // expect(this.presenter.presentResults.mostRecentCall.args[0].pagination).toEqual({start: 6, limit: 4}, 'should update pagination to match selection')
         this.interactor.selectPrev()
         this.interactor.selectPrev()
         this.interactor.selectPrev()
         this.interactor.selectPrev()
         this.interactor.selectPrev()
         expect(this.presenter.presentResults.mostRecentCall.args[0].selectedIndex).toEqual(4, 'should stepped index back the same amount of calls to selectPrev')
-        // expect(this.presenter.presentResults.mostRecentCall.args[0].pagination).toEqual({start: 4, limit: 4}, 'should update pagination to match selection')
         this.interactor.selectPrev()
         this.interactor.selectPrev()
         this.interactor.selectPrev()
         this.interactor.selectPrev()
         expect(this.presenter.presentResults.mostRecentCall.args[0].selectedIndex).toEqual(0, 'should stepped index back the same amount of calls to selectPrev')
-        // expect(this.presenter.presentResults.mostRecentCall.args[0].pagination).toEqual({start: 0, limit: 4}, 'should stop start at 0')
 
         this.interactor.selectByIndex(undefined)
         expect(this.presenter.presentResults.mostRecentCall.args[0].selectedIndex).toEqual(undefined, 'should be reset')
@@ -137,14 +134,12 @@ describe('interactor', function () {
         // selectNext
         this.interactor.selectNext()
         expect(this.presenter.presentResults.mostRecentCall.args[0].selectedIndex).toEqual(0, 'should start at the beginning of list')
-        // expect(this.presenter.presentResults.mostRecentCall.args[0].pagination).toEqual({start: 0, limit: 4}, 'should update pagination to match selection')
         this.interactor.selectNext()
         this.interactor.selectNext()
         this.interactor.selectNext()
         this.interactor.selectNext()
         this.interactor.selectNext()
         expect(this.presenter.presentResults.mostRecentCall.args[0].selectedIndex).toEqual(5, 'should stepped index forward the same amount of calls to selectNext')
-        // expect(this.presenter.presentResults.mostRecentCall.args[0].pagination).toEqual({start: 1, limit: 4}, 'should update pagination to match selection')
         this.interactor.selectNext()
         this.interactor.selectNext()
         this.interactor.selectNext()
@@ -152,7 +147,6 @@ describe('interactor', function () {
         this.interactor.selectNext()
         this.interactor.selectNext()
         expect(this.presenter.presentResults.mostRecentCall.args[0].selectedIndex).toEqual(9, 'should stop at end of list')
-        // expect(this.presenter.presentResults.mostRecentCall.args[0].pagination).toEqual({start: 5, limit: 4}, 'should update pagination to match selection')
 
         // selectByPath
         this.interactor.selectByPath('/notes/file 7.txt')
