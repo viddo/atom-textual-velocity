@@ -55,7 +55,8 @@ describe('view-ctrl', function () {
       })
 
       it('should pass root path with value from config', function () {
-        expect(this.req.rootPath).toEqual(atom.config.get('textual-velocity.path'))
+        expect(this.req.rootPath).toMatch(/.+test$/)
+        expect(this.req.rootPath).not.toContain('~')
       })
 
       it('should pass ignored filenames from config', function () {
