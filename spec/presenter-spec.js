@@ -73,7 +73,7 @@ describe('presenter', function () {
 
         it('should contain results meta', function () {
           expect(this.res.selectedIndex).toEqual(3)
-          expect(this.res.selectedPath).toEqual('/notes/file 3.md')
+          expect(this.res.selectedPath).toEqual('/notes/file 6.md')
           expect(this.res.searchStr).toEqual('str')
           expect(this.res.paginationStart).toEqual(0)
           expect(this.res.itemsCount).toEqual(7)

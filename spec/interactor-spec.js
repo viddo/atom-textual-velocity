@@ -21,7 +21,7 @@ describe('interactor', function () {
 
     this.files = R.times(i => ({
       id: i,
-      path: `file ${i}.txt`,
+      path: `/notes/file ${i}.txt`,
       name: `file ${i}`,
       content: `content for ${i}`,
       last_updated_at: new Date()
@@ -153,6 +153,12 @@ describe('interactor', function () {
         this.interactor.selectNext()
         expect(this.presenter.presentResults.mostRecentCall.args[0].selectedIndex).toEqual(9, 'should stop at end of list')
         // expect(this.presenter.presentResults.mostRecentCall.args[0].pagination).toEqual({start: 5, limit: 4}, 'should update pagination to match selection')
+
+        // selectByPath
+        this.interactor.selectByPath('/notes/file 7.txt')
+        expect(this.presenter.presentResults.mostRecentCall.args[0].selectedIndex).toEqual(7, 'should set correct index when there is a match')
+        this.interactor.selectByPath('nonexisting')
+        expect(this.presenter.presentResults.mostRecentCall.args[0].selectedIndex).toEqual(undefined, 'should unset index if there is no match')
       })
     })
   })
