@@ -2,10 +2,8 @@
 
 import Bacon from 'baconjs'
 import R from 'ramda'
-import PathWatcher from '../lib/path-watcher'
 import Presenter from '../lib/presenter'
 import Interactor from '../lib/interactor'
-import mockClass from './mock-class'
 
 describe('interactor', function () {
   beforeEach(function () {
@@ -30,16 +28,26 @@ describe('interactor', function () {
       last_updated_at: new Date()
     }), 10)
 
-    this.PathWatcherMock = mockClass(PathWatcher)
-    this.PathWatcherMock.prototype.filesProp = this.filesBus.toProperty(this.files)
-    this.PathWatcherMock.prototype.initialScanDoneProp = this.initialScanDoneBus.toProperty(false)
-    this.PathWatcherMock.prototype.dispose
+    this.disposePathWatcherSpy = jasmine.createSpy('pathwatcher.dispose')
+    const pathWatcher = {
+      filesProp: () => this.filesBus.toProperty(this.files),
+      initialScanDoneProp: () => this.initialScanDoneBus.toProperty(false),
+      dispose: this.disposePathWatcherSpy
+    }
 
-    this.interactor = new Interactor(this.presenter, {PathWatcher: this.PathWatcherMock})
+    this.interactor = new Interactor({
+      presenter: this.presenter,
+      pathWatcherFactory: {
+        watch: () => {
+          return pathWatcher
+        }
+      }
+    })
   })
 
   afterEach(function () {
     this.interactor.stopSession()
+    expect(this.disposePathWatcherSpy).toHaveBeenCalled()
   })
 
   describe('.startSession', function () {
@@ -174,18 +182,6 @@ describe('interactor', function () {
         this.interactor.selectByPath('nonexisting')
         expect(this.presenter.presentResults.mostRecentCall.args[0].selectedIndex).toEqual(undefined, 'should unset index if there is no match')
 
-        // openOrCreateItem (new file w/o file ext)
-        this.interactor.search('test-new-file')
-        this.presenter.presentResults.reset()
-        this.presenter.presentSelectedFilePreview.reset()
-        this.presenter.presentSelectedFileContent.reset()
-        this.interactor.openOrCreateItem()
-        expect(this.presenter.presentNewFile).toHaveBeenCalled()
-        expect(this.presenter.presentNewFile.mostRecentCall.args[0]).toMatch(/test-new-file.md$/, 'should present selected file w/ default ext')
-        expect(this.presenter.presentResults).not.toHaveBeenCalled()
-        expect(this.presenter.presentSelectedFilePreview).not.toHaveBeenCalled()
-        expect(this.presenter.presentSelectedFileContent).not.toHaveBeenCalled()
-
         // openOrCreateItem (new file w/ file ext)
         this.interactor.search('test-new-file.bash')
         this.presenter.presentResults.reset()
@@ -193,7 +189,7 @@ describe('interactor', function () {
         this.presenter.presentSelectedFileContent.reset()
         this.interactor.openOrCreateItem()
         expect(this.presenter.presentNewFile).toHaveBeenCalled()
-        expect(this.presenter.presentNewFile.mostRecentCall.args[0]).toMatch(/test-new-file.bash$/, 'should present selected file w/o default ext')
+        expect(this.presenter.presentNewFile.mostRecentCall.args[0].path).toMatch(/test-new-file.bash$/, 'should present selected file w/o default ext')
         expect(this.presenter.presentResults).not.toHaveBeenCalled()
         expect(this.presenter.presentSelectedFilePreview).not.toHaveBeenCalled()
         expect(this.presenter.presentSelectedFileContent).not.toHaveBeenCalled()

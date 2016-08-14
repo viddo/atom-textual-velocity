@@ -152,4 +152,18 @@ describe('presenter', function () {
       })
     })
   })
+
+  describe('.presentNewFile', function () {
+    beforeEach(function () {
+      spyOn(this.viewCtrl, 'displayItemContent')
+    })
+
+    it('should append file extension if none is given', function () {
+      this.presenter.presentNewFile({path: 'filename'})
+      expect(this.viewCtrl.displayItemContent.mostRecentCall.args[0]).toEqual('filename.md')
+
+      this.presenter.presentNewFile({path: 'filename.bash'})
+      expect(this.viewCtrl.displayItemContent.mostRecentCall.args[0]).toEqual('filename.bash')
+    })
+  })
 })
