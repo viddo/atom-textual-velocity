@@ -35,8 +35,18 @@
     "sifter": "0.5.1"
   },
   "devDependencies": {
+    "@flow-atom/atom": "^1.8.0-rev.0",
     "babel-eslint": "6.1.2",
-    "standard": "7.1.2",
+    "babel-plugin-syntax-flow": "6.13.0",
+    "babel-plugin-transform-flow-strip-types": "6.8.0",
+    "eslint": "3.3.0",
+    "eslint-config-standard": "6.0.0-beta.2",
+    "eslint-config-standard-jsx": "2.0.0",
+    "eslint-plugin-flowtype": "2.7.0",
+    "eslint-plugin-promise": "2.0.1",
+    "eslint-plugin-react": "6.1.0",
+    "eslint-plugin-standard": "2.0.0",
+    "flow-bin": "0.30.0",
     "temp": "0.8.3"
   },
   "configSchema": {
@@ -74,27 +84,9 @@
       "maximum": 80
     }
   },
-  "standard": {
-    "parser": "babel-eslint",
-    "globals": [
-      "afterEach",
-      "atom",
-      "beforeAll",
-      "beforeEach",
-      "describe",
-      "Event",
-      "expect",
-      "HTMLElement",
-      "it",
-      "jasmine",
-      "spyOn",
-      "runs",
-      "xdescribe",
-      "waitsFor",
-      "waitsForPromise"
-    ]
-  },
   "scripts": {
-    "lint": "standard 'lib/**/*.js' && standard 'spec/**/*.js'"
+    "flow": "flow; test $? -eq 0 -o $? -eq 2",
+    "lint": "eslint 'lib/**/*.js' && eslint 'spec/**/*.js'",
+    "test": "npm run flow && apm test && npm run lint"
   }
 }

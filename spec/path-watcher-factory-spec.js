@@ -6,7 +6,7 @@ import fs from 'fs'
 import temp from 'temp'
 import NotesPath from '../lib/notes-path'
 import NotesFileFilter from '../lib/notes-file-filter'
-import pathWatcherFactory from '../lib/path-watcher-factory'
+import * as pathWatcherFactory from '../lib/path-watcher-factory'
 
 temp.track()
 
@@ -28,15 +28,11 @@ describe('path-watcher-factory', () => {
       this.notesPath = NotesPath(this.realPath)
       this.notesFileFilter = new NotesFileFilter(this.realPath)
 
-      this.pathWatcher = pathWatcherFactory.watch({
-        path: this.notesPath,
-        filter: this.notesFileFilter
-      })
-
       this.filesSpy = jasmine.createSpy('files')
       this.initialScanDoneSpy = jasmine.createSpy('ready')
-      this.unsubInitialScanDone = this.pathWatcher.initialScanDoneProp().onValue(this.initialScanDoneSpy)
-      this.unsubFilesProp = this.pathWatcher.filesProp().onValue(this.filesSpy)
+      this.pathWatcher = pathWatcherFactory.watch(this.notesPath, this.notesFileFilter)
+      this.unsubInitialScanDone = this.pathWatcher.initialScanDoneProp.onValue(this.initialScanDoneSpy)
+      this.unsubFilesProp = this.pathWatcher.filesProp.onValue(this.filesSpy)
     })
 
     afterEach(function () {

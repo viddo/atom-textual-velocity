@@ -11,9 +11,10 @@ describe('view-ctrl', function () {
     atom.config.set('textual-velocity.listHeight', 123)
     atom.config.set('textual-velocity.rowHeight', 25)
 
+    const pathWatcherFactory = {}
     const presenter = {}
 
-    this.interactor = new Interactor(presenter)
+    this.interactor = new Interactor(presenter, pathWatcherFactory)
     spyOn(this.interactor, 'startSession')
     spyOn(this.interactor, 'search')
     spyOn(this.interactor, 'paginate')
@@ -29,11 +30,12 @@ describe('view-ctrl', function () {
     spyOn(reactRenderer, 'remove').andCallThrough()
 
     this.viewCtrl = new ViewCtrl(reactRenderer)
-    this.viewCtrl.setInteractor(this.interactor)
+    this.viewCtrl.interactor = this.interactor
   })
 
   afterEach(function () {
     this.viewCtrl.deactivate()
+    this.viewCtrl.interactor = null
 
     expect(this.viewCtrl.interactor).toBeFalsy()
     expect(this.interactor.stopSession).toHaveBeenCalled()
@@ -48,10 +50,6 @@ describe('view-ctrl', function () {
       beforeEach(function () {
         expect(this.interactor.startSession).toHaveBeenCalled()
         this.req = this.interactor.startSession.calls[0].args[0]
-      })
-
-      it('should start session with current platform', function () {
-        expect(this.req.platform).toEqual(jasmine.any(String))
       })
 
       it('should pass root path with value from config', function () {
@@ -86,9 +84,9 @@ describe('view-ctrl', function () {
       })
 
       // Should be called after displayLoading so tested in this scope to have same prerequisite state
-      describe('.displayResults', function () {
+      describe('.displaySearchResults', function () {
         beforeEach(function () {
-          this.viewCtrl.displayResults({
+          this.viewCtrl.displaySearchResults({
             selectedPath: '/notes/file0.txt',
             selectedIndex: 0,
             searchStr: '',

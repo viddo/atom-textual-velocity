@@ -9,12 +9,10 @@ describe('presenter', function () {
   beforeEach(function () {
     this.viewCtrl = new ViewCtrl()
     spyOn(this.viewCtrl, 'displayLoading')
-    spyOn(this.viewCtrl, 'displayResults')
+    spyOn(this.viewCtrl, 'displaySearchResults')
 
-    this.presenter = new Presenter({
-      viewCtrl: this.viewCtrl,
-      columns: [new Summary()]
-    })
+    const columns = [new Summary()]
+    this.presenter = new Presenter(this.viewCtrl, columns)
   })
 
   describe('.presentLoading', function () {
@@ -27,7 +25,7 @@ describe('presenter', function () {
     })
   })
 
-  describe('.presentResults', function () {
+  describe('.presentSearchResults', function () {
     beforeEach(function () {
       this.allFiles = R.times(i => ({
         id: `f${i}`,
@@ -41,7 +39,7 @@ describe('presenter', function () {
 
     describe('when called for a search and selected index', function () {
       beforeEach(function () {
-        this.presenter.presentResults({
+        this.presenter.presentSearchResults({
           files: this.allFiles,
           sifterResult: {
             options: {
@@ -67,8 +65,8 @@ describe('presenter', function () {
 
       describe('should display results', function () {
         beforeEach(function () {
-          expect(this.viewCtrl.displayResults).toHaveBeenCalled()
-          this.res = this.viewCtrl.displayResults.calls[0].args[0]
+          expect(this.viewCtrl.displaySearchResults).toHaveBeenCalled()
+          this.res = this.viewCtrl.displaySearchResults.calls[0].args[0]
         })
 
         it('should contain results meta', function () {
@@ -103,7 +101,7 @@ describe('presenter', function () {
 
     describe('when called for pagination', function () {
       beforeEach(function () {
-        this.presenter.presentResults({
+        this.presenter.presentSearchResults({
           files: this.allFiles,
           sifterResult: {
             options: {
@@ -127,8 +125,8 @@ describe('presenter', function () {
 
       describe('should display results', function () {
         beforeEach(function () {
-          expect(this.viewCtrl.displayResults).toHaveBeenCalled()
-          this.res = this.viewCtrl.displayResults.calls[0].args[0]
+          expect(this.viewCtrl.displaySearchResults).toHaveBeenCalled()
+          this.res = this.viewCtrl.displaySearchResults.calls[0].args[0]
         })
 
         it('should contain results meta', function () {

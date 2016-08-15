@@ -1,0 +1,9 @@
+[options]
+unsafe.enable_getters_and_setters=true
+
+[libs]
+decls/
+
+[ignore]
+<PROJECT_ROOT>/docs/.*
+.*/node_modules/fbjs/.*
