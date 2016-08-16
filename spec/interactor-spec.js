@@ -71,7 +71,7 @@ describe('interactor', function () {
       beforeEach(function () {
         this.initialScanDoneBus.push(true)
         expect(this.presenter.presentSearchResults).not.toHaveBeenCalled()
-        window.advanceClock(5000) // debounced sifterProp
+        advanceClock(5000) // debounced sifterProp
         expect(this.presenter.presentSearchResults).toHaveBeenCalled()
       })
 
@@ -91,6 +91,8 @@ describe('interactor', function () {
         // selectByIndex
         this.presenter.presentSelectedFilePreview.reset()
         this.interactor.selectByIndex(3)
+        expect(this.presenter.presentSelectedFilePreview).not.toHaveBeenCalled()
+        advanceClock(1000) // debounced preview
         expect(this.presenter.presentSelectedFilePreview).toHaveBeenCalledWith(jasmine.any(Object))
         expect(this.presenter.presentSearchResults.mostRecentCall.args[0].files).toEqual(this.files)
         expect(this.presenter.presentSearchResults.mostRecentCall.args[0].sifterResult).toEqual(jasmine.any(Object))
@@ -127,6 +129,7 @@ describe('interactor', function () {
         // selectPrev
         this.presenter.presentSelectedFilePreview.reset()
         this.interactor.selectPrev()
+        advanceClock(1000) // debounced preview
         expect(this.presenter.presentSelectedFilePreview).toHaveBeenCalledWith(jasmine.any(Object))
         expect(this.presenter.presentSearchResults.mostRecentCall.args[0].selectedIndex).toEqual(9, 'should start at the end of list')
         this.interactor.selectPrev()
@@ -147,6 +150,7 @@ describe('interactor', function () {
         // selectNext
         this.presenter.presentSelectedFilePreview.reset()
         this.interactor.selectNext()
+        advanceClock(1000) // debounced preview
         expect(this.presenter.presentSelectedFilePreview).toHaveBeenCalledWith(jasmine.any(Object))
         expect(this.presenter.presentSearchResults.mostRecentCall.args[0].selectedIndex).toEqual(0, 'should start at the beginning of list')
         this.interactor.selectNext()

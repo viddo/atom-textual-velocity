@@ -6,7 +6,6 @@ import ViewCtrl from '../lib/view-ctrl'
 
 describe('view-ctrl', function () {
   beforeEach(function () {
-    jasmine.unspy(window, 'setTimeout') // remove spy that screws up debounce
     atom.config.set('textual-velocity.path', '~/test')
     atom.config.set('textual-velocity.listHeight', 123)
     atom.config.set('textual-velocity.rowHeight', 25)
@@ -218,7 +217,6 @@ describe('view-ctrl', function () {
 
         describe('when window is resized', function () {
           beforeEach(function () {
-            jasmine.Clock.useMock()
             spyOn(atom.config, 'set').andCallThrough()
             document.body.appendChild(this.DOMNode)
             window.dispatchEvent(new Event('resize'))
@@ -230,7 +228,7 @@ describe('view-ctrl', function () {
 
           it('should update row height', function () {
             expect(atom.config.set).not.toHaveBeenCalled()
-            jasmine.Clock.tick(1000)
+            advanceClock(1000)
             expect(atom.config.set).toHaveBeenCalledWith('textual-velocity.rowHeight', jasmine.any(Number))
             expect(atom.config.get('textual-velocity.rowHeight') !== 25).toBe(true)
             expect(atom.config.get('textual-velocity.rowHeight') > 0).toBe(true)
