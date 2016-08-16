@@ -1,28 +1,40 @@
 'use babel'
 
 import {TestUtils} from 'react-for-atom'
-import * as reactRenderer from '../lib/react-renderer'
+import ReactView from '../lib/react-view'
 
 [
-  {name: 'reactRenderer', renderer: reactRenderer}
-].forEach(function ({name, renderer}) {
+  {
+    name: 'reactView',
+    newView: (DOMNode) => {
+      const atomPanel = {
+        getItem: () => DOMNode
+      }
+      return new ReactView(atomPanel)
+    }
+  }
+].forEach(function ({name, newView}) {
   describe(name, function () {
     beforeEach(function () {
       this.DOMNode = document.createElement('div')
+      this.view = newView(this.DOMNode)
     })
 
     afterEach(function () {
+      this.view.dispose()
+      this.view = null
       this.DOMNode = null
     })
 
     describe('.renderLoading', function () {
       beforeEach(function () {
-        renderer.renderLoading({DOMNode: this.DOMNode, listHeight: 100})
+        const listHeight = 101
+        this.view.renderLoading(listHeight)
       })
 
       it('should render loading DOM', function () {
         expect(this.DOMNode.outerHTML).toContain('loading')
-        expect(this.DOMNode.outerHTML).toContain('height: 100px')
+        expect(this.DOMNode.outerHTML).toContain('height: 101px')
       })
     })
 
@@ -39,8 +51,7 @@ import * as reactRenderer from '../lib/react-renderer'
 
       describe('given an empty set', function () {
         beforeEach(function () {
-          renderer.renderResults({
-            DOMNode: this.DOMNode,
+          this.view.renderResults({
             listHeight: 123,
             rowHeight: 25,
             scrollTop: 0,
@@ -72,7 +83,7 @@ import * as reactRenderer from '../lib/react-renderer'
 
       describe('given some data', function () {
         beforeEach(function () {
-          renderer.renderResults({
+          this.view.renderResults({
             DOMNode: this.DOMNode,
             listHeight: 25,
             rowHeight: 20,
@@ -145,14 +156,6 @@ import * as reactRenderer from '../lib/react-renderer'
             expect(this.scrollSpy).toHaveBeenCalledWith(26)
           })
         })
-      })
-    })
-
-    describe('.remove', function () {
-      it('should clean up DOMNode node', function () {
-        this.DOMNode.innerHTML = '<div>asd</div>'
-        renderer.remove(this.DOMNode)
-        expect(this.DOMNode.innerHTML).toEqual('')
       })
     })
   })

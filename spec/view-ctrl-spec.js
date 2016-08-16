@@ -1,6 +1,6 @@
 'use babel'
 
-import * as reactRenderer from '../lib/react-renderer'
+import ReactView from '../lib/react-view'
 import Interactor from '../lib/interactor'
 import ViewCtrl from '../lib/view-ctrl'
 
@@ -25,11 +25,18 @@ describe('view-ctrl', function () {
     spyOn(this.interactor, 'sortDirection')
     spyOn(this.interactor, 'stopSession')
 
-    spyOn(reactRenderer, 'renderLoading').andCallThrough()
-    spyOn(reactRenderer, 'renderResults').andCallThrough()
-    spyOn(reactRenderer, 'remove').andCallThrough()
+    const DOMNode = this.DOMNode = document.createElement('div')
+    this.atomPanel = {
+      getItem: () => DOMNode,
+      show: jasmine.createSpy('atomPanel.show')
+    }
 
-    this.viewCtrl = new ViewCtrl(reactRenderer)
+    this.view = new ReactView(this.atomPanel)
+    spyOn(this.view, 'renderLoading').andCallThrough()
+    spyOn(this.view, 'renderResults').andCallThrough()
+    spyOn(this.view, 'dispose').andCallThrough()
+
+    this.viewCtrl = new ViewCtrl(this.atomPanel, this.view)
     this.viewCtrl.interactor = this.interactor
   })
 
@@ -69,18 +76,13 @@ describe('view-ctrl', function () {
     // Should be called after startSession so tested in this scope to have same prerequisite state
     describe('.displayLoading', function () {
       beforeEach(function () {
-        spyOn(atom.workspace, 'addTopPanel').andCallThrough()
-
+        atom.config.set('textual-velocity.listHeight', 101)
         this.viewCtrl.displayLoading()
       })
 
-      it('should create an atom panel', function () {
-        expect(atom.workspace.addTopPanel).toHaveBeenCalled()
-        expect(atom.workspace.addTopPanel.calls[0].args[0].item).toEqual(jasmine.any(HTMLElement))
-      })
-
       it('should render loading', function () {
-        expect(reactRenderer.renderLoading).toHaveBeenCalled()
+        expect(this.view.renderLoading).toHaveBeenCalledWith(101)
+        expect(this.atomPanel.show).toHaveBeenCalled()
       })
 
       // Should be called after displayLoading so tested in this scope to have same prerequisite state
@@ -107,9 +109,8 @@ describe('view-ctrl', function () {
         })
 
         it('should render results', function () {
-          expect(reactRenderer.renderResults).toHaveBeenCalled()
-          var args = reactRenderer.renderResults.calls[0].args[0]
-          expect(args.DOMNode).toEqual(jasmine.any(HTMLElement))
+          expect(this.view.renderResults).toHaveBeenCalled()
+          var args = this.view.renderResults.calls[0].args[0]
           expect(args.listHeight).toEqual(jasmine.any(Number))
           expect(args.rowHeight).toEqual(jasmine.any(Number))
           expect(args.res).toEqual(jasmine.any(Object))
@@ -128,38 +129,38 @@ describe('view-ctrl', function () {
         describe('when search', function () {
           it('should search and reset scroll position', function () {
             this.interactor.search.reset()
-            reactRenderer.renderResults.calls[0].args[0].callbacks.onSearch('')
+            this.view.renderResults.calls[0].args[0].callbacks.onSearch('')
             expect(this.interactor.search).toHaveBeenCalledWith('')
 
             this.interactor.search.reset()
-            reactRenderer.renderResults.calls[0].args[0].callbacks.onSearch('foo')
+            this.view.renderResults.calls[0].args[0].callbacks.onSearch('foo')
             expect(this.interactor.search).toHaveBeenCalledWith('foo')
           })
         })
 
         describe('when scroll or list size changes', function () {
           it('should calculate pagination', function () {
-            reactRenderer.renderResults.calls[0].args[0].callbacks.onScroll(0)
-            reactRenderer.renderResults.calls[0].args[0].callbacks.onScroll(100)
+            this.view.renderResults.calls[0].args[0].callbacks.onScroll(0)
+            this.view.renderResults.calls[0].args[0].callbacks.onScroll(100)
             expect(this.interactor.paginate).toHaveBeenCalledWith({start: 4, limit: 6})
 
             this.interactor.paginate.reset()
-            reactRenderer.renderResults.calls[0].args[0].callbacks.onScroll(50)
+            this.view.renderResults.calls[0].args[0].callbacks.onScroll(50)
             expect(this.interactor.paginate).toHaveBeenCalledWith({start: 2, limit: 6})
 
             this.interactor.paginate.reset()
-            reactRenderer.renderResults.calls[0].args[0].callbacks.onResize(150)
+            this.view.renderResults.calls[0].args[0].callbacks.onResize(150)
             expect(this.interactor.paginate).toHaveBeenCalledWith({start: 2, limit: 8})
           })
         })
 
         describe('when key is pressed', function () {
           it('should update state according to key pressed', function () {
-            reactRenderer.renderResults.calls[0].args[0].callbacks.onKeyDown({keyCode: 27}) // <esc>
+            this.view.renderResults.calls[0].args[0].callbacks.onKeyDown({keyCode: 27}) // <esc>
             expect(this.interactor.search).toHaveBeenCalledWith('')
 
             const preventDefaultSpy = jasmine.createSpy('preventDefault')
-            reactRenderer.renderResults.calls[0].args[0].callbacks.onKeyDown({
+            this.view.renderResults.calls[0].args[0].callbacks.onKeyDown({
               keyCode: 38, // <up>
               preventDefault: preventDefaultSpy
             })
@@ -167,7 +168,7 @@ describe('view-ctrl', function () {
             expect(preventDefaultSpy).toHaveBeenCalled()
 
             preventDefaultSpy.reset()
-            reactRenderer.renderResults.calls[0].args[0].callbacks.onKeyDown({
+            this.view.renderResults.calls[0].args[0].callbacks.onKeyDown({
               keyCode: 40, // <down>
               preventDefault: preventDefaultSpy
             })
@@ -178,18 +179,18 @@ describe('view-ctrl', function () {
 
         describe('when clicking an item', function () {
           it('should select item by index', function () {
-            reactRenderer.renderResults.calls[0].args[0].callbacks.onClickRow(1)
+            this.view.renderResults.calls[0].args[0].callbacks.onClickRow(1)
             expect(this.interactor.selectByIndex).toHaveBeenCalledWith(1)
 
             this.interactor.selectByIndex.reset()
-            reactRenderer.renderResults.calls[0].args[0].callbacks.onClickRow(3)
+            this.view.renderResults.calls[0].args[0].callbacks.onClickRow(3)
             expect(this.interactor.selectByIndex).toHaveBeenCalledWith(3)
           })
         })
 
         describe('when sort by a field', function () {
           beforeEach(function () {
-            reactRenderer.renderResults.calls[0].args[0].callbacks.onSortByField('tags')
+            this.view.renderResults.calls[0].args[0].callbacks.onSortByField('tags')
           })
 
           it('should change field to sort by', function () {
@@ -203,7 +204,7 @@ describe('view-ctrl', function () {
 
         describe('when change sort direction', function () {
           beforeEach(function () {
-            reactRenderer.renderResults.calls[0].args[0].callbacks.onChangeSortDirection('asc')
+            this.view.renderResults.calls[0].args[0].callbacks.onChangeSortDirection('asc')
           })
 
           it('should change sort direction', function () {
@@ -219,14 +220,12 @@ describe('view-ctrl', function () {
           beforeEach(function () {
             jasmine.Clock.useMock()
             spyOn(atom.config, 'set').andCallThrough()
-            this.DOMNode = atom.workspace.getTopPanels()[0].item
             document.body.appendChild(this.DOMNode)
             window.dispatchEvent(new Event('resize'))
           })
 
           afterEach(function () {
             document.body.removeChild(this.DOMNode)
-            this.DOMNode = null
           })
 
           it('should update row height', function () {

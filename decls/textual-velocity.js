@@ -50,11 +50,6 @@ declare type PresenterType = {
   presentNewFile: (file: NotesFileType) => void
 }
 
-declare type LoadingParamsType = {
-  DOMNode: HTMLElement,
-  listHeight: number
-}
-
 declare type NotesFileType = {
   id: string,
   relPath: string,
@@ -101,14 +96,7 @@ declare type RawSearchResultsType = {
   selectedIndex: number | void
 }
 
-declare type RendererType = {
-  renderLoading: (viewModel: LoadingParamsType) => void,
-  renderResults: (viewModel: ResultsViewParamsType) => void,
-  remove: (DOMNode: HTMLElement) => void
-}
-
 declare type ResultsViewParamsType = {
-  DOMNode: HTMLElement,
   rowHeight: number,
   listHeight: number,
   forcedScrollTop: number | void,
@@ -165,4 +153,10 @@ declare type ViewCtrlType = {
   displaySelectedItemPreview: (path: string) => void,
   displayItemContent: (path: string) => void,
   deactivate: Function
+}
+
+declare type ViewType = {
+  renderLoading: (listHeight: number) => void,
+  renderResults: (viewModel: ResultsViewParamsType) => void,
+  dispose: () => void
 }
