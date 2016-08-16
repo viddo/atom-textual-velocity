@@ -29,10 +29,10 @@ describe('notes-file', () => {
 
     assertFileProps(function () {
       it('should not have content just yet', function () {
-        expect(this.file.content).toBeUndefined()
+        expect(this.file.content).toBeFalsy()
       })
 
-      it('should not have stat times just yet', function () {
+      it('should not have stats times just yet', function () {
         expect(this.file.createdTime).toBeUndefined()
         expect(this.file.lastUpdatedTime).toBeUndefined()
       })
@@ -52,7 +52,7 @@ describe('notes-file', () => {
     })
   })
 
-  describe('when given filename and stat', function () {
+  describe('when given filename and stats', function () {
     beforeEach(function () {
       const relPath = __filename.replace(__dirname, '')
       this.file = new NotesFile(this.getFullPath, relPath, {content: '', stats: fs.statSync(__filename)})

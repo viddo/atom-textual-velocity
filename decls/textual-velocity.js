@@ -59,12 +59,12 @@ declare type NotesFileType = {
   createdTime: number | void,
   lastUpdatedTime: number | void,
   stats: FsStatsType,
-  content: string | void
+  content: string | null
 }
 
 declare type NotesFileOptionsType = {
-  stats: FsStatsType | void,
-  content: string | void
+  stats: FsStatsType | null,
+  content: string | null
 }
 
 declare type NotesPathType = {
