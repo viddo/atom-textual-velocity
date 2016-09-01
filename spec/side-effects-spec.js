@@ -185,6 +185,7 @@ describe('side-effects', function () {
 
   describe('when toggle-atom-window event is triggered', function () {
     beforeEach(function () {
+      atom.show() // for CLI env to have same window state as testrunner in dev mode
       atom.commands.dispatch(workspaceElement, 'textual-velocity:toggle-atom-window')
     })
 

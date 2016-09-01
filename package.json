@@ -93,6 +93,6 @@
   "scripts": {
     "flow": "flow; test $? -eq 0 -o $? -eq 2",
     "lint": "eslint 'lib/**/*.js' && eslint 'spec/**/*.js'",
-    "test": "npm run flow && apm test && npm run lint"
+    "test": "apm test && npm run flow && npm run lint"
   }
 }
