@@ -1,200 +1,245 @@
-'use babel'
+/* @flow */
 
 import Bacon from 'baconjs'
 import R from 'ramda'
-import Presenter from '../lib/presenter'
 import Interactor from '../lib/interactor'
+import NotesFile from '../lib/notes-file'
 
 describe('interactor', function () {
+  let buses, interactor, spies
+
   beforeEach(function () {
-    const viewCtrl = {}
-    const columns = []
-    this.presenter = new Presenter(viewCtrl, columns)
-    spyOn(this.presenter, 'presentLoading')
-    spyOn(this.presenter, 'presentSearchResults')
-    spyOn(this.presenter, 'presentSelectedFilePreview')
-    spyOn(this.presenter, 'presentSelectedFileContent')
-    spyOn(this.presenter, 'presentNewFile')
+    buses = {
+      activePath: new Bacon.Bus(),
+      clickedRow: new Bacon.Bus(),
+      files: new Bacon.Bus(),
+      initialScanDone: new Bacon.Bus(),
+      keyDown: new Bacon.Bus(),
+      keyEnter: new Bacon.Bus(),
+      keyEsc: new Bacon.Bus(),
+      keyUp: new Bacon.Bus(),
+      listHeight: new Bacon.Bus(),
+      rowHeight: new Bacon.Bus(),
+      scrollTop: new Bacon.Bus(),
+      sessionStart: new Bacon.Bus(),
+      sortDirection: new Bacon.Bus(),
+      sortField: new Bacon.Bus(),
+      textInput: new Bacon.Bus()
+    }
 
-    this.filesBus = new Bacon.Bus()
-    this.initialScanDoneBus = new Bacon.Bus()
+    const testViewCtrl = {
+      activePathStream: buses.activePath,
+      clickedRowStream: buses.clickedRow,
+      keyDownStream: buses.keyDown,
+      keyEnterStream: buses.keyEnter,
+      keyEscStream: buses.keyEsc,
+      keyUpStream: buses.keyUp,
+      listHeightStream: buses.listHeight,
+      rowHeightStream: buses.rowHeight,
+      scrollTopStream: buses.scrollTop,
+      sessionStartStream: buses.sessionStart,
+      sortDirectionStream: buses.sortDirection,
+      sortFieldStream: buses.sortField,
+      textInputStream: buses.textInput,
+      deactivate: jasmine.createSpy('viewCtrl.deactivate')
+    }
 
-    this.files = R.times(i => ({
-      id: i,
-      path: `/notes/file ${i}.txt`,
-      name: `file ${i}`,
-      content: `content for ${i}`,
-      last_updated_at: new Date()
-    }), 10)
+    spies = {
+      disposePathWatcher: jasmine.createSpy('pathWatcher.dispose'),
+      filesProp: jasmine.createSpy('filesProp'),
+      forcedScrollTopProp: jasmine.createSpy('forcedScrollTopProp'),
+      listHeightProp: jasmine.createSpy('listHeightProp'),
+      loadingStream: jasmine.createSpy('loadingStream'),
+      openFileStream: jasmine.createSpy('openFileStream'),
+      notesPathStream: jasmine.createSpy('notesPathStream'),
+      paginationProp: jasmine.createSpy('paginationProp'),
+      rowHeightProp: jasmine.createSpy('rowHeightProp'),
+      selectedIndexProp: jasmine.createSpy('selectedIndexProp'),
+      sifterResultProp: jasmine.createSpy('sifterResultProp')
+    }
 
-    this.disposePathWatcherSpy = jasmine.createSpy('pathwatcher.dispose')
-    const pathWatcher = {
-      filesProp: this.filesBus.toProperty(this.files),
-      initialScanDoneProp: this.initialScanDoneBus.toProperty(false),
-      dispose: this.disposePathWatcherSpy
+    const testPatchWatcher = {
+      initialScanDoneProp: buses.initialScanDone.toProperty(),
+      filesProp: buses.files.toProperty([]),
+      dispose: spies.disposePathWatcher
     }
 
     const pathWatcherFactory = {
-      watch: () => {
-        return pathWatcher
-      }
+      watch: () => testPatchWatcher
     }
-    this.interactor = new Interactor(this.presenter, pathWatcherFactory)
+
+    interactor = new Interactor(testViewCtrl, pathWatcherFactory)
+
+    interactor.filesProp.onValue(spies.filesProp)
+    interactor.forcedScrollTopProp.onValue(spies.forcedScrollTopProp)
+    interactor.listHeightProp.onValue(spies.listHeightProp)
+    interactor.loadingStream.onValue(spies.loadingStream)
+    interactor.openFileStream.onValue(spies.openFileStream)
+    interactor.notesPathStream.onValue(spies.notesPathStream)
+    interactor.paginationProp.onValue(spies.paginationProp)
+    interactor.rowHeightProp.onValue(spies.rowHeightProp)
+    interactor.selectedIndexProp.onValue(spies.selectedIndexProp)
+    interactor.sifterResultProp.onValue(spies.sifterResultProp)
+
+    buses.listHeight.push(60)
+    buses.rowHeight.push(20)
   })
 
-  afterEach(function () {
-    this.interactor.stopSession()
-    expect(this.disposePathWatcherSpy).toHaveBeenCalled()
-  })
-
-  describe('.startSession', function () {
+  describe('when start session event is triggered', function () {
     beforeEach(function () {
-      this.interactor.startSession({
+      buses.sessionStart.push({
         rootPath: __dirname,
         sortField: 'name',
         sortDirection: 'desc',
-        paginationLimit: 123,
+        rowHeight: 20,
+        listHeight: 60,
         ignoredNames: '.git, .DS_Store',
         excludeVcsIgnoredPaths: true
       })
+      buses.sortField.push('name')
+      buses.sortDirection.push('desc')
     })
 
-    it('should present loading', function () {
-      expect(this.presenter.presentLoading).toHaveBeenCalled()
-    })
+    it('should yield values on some streams and props', function () {
+      expect(spies.forcedScrollTopProp).toHaveBeenCalledWith(undefined)
+      expect(spies.listHeightProp).toHaveBeenCalledWith(60)
+      expect(spies.loadingStream).toHaveBeenCalled()
+      expect(spies.notesPathStream).toHaveBeenCalled()
+      expect(spies.paginationProp).toHaveBeenCalledWith({start: 0, limit: 5})
+      expect(spies.rowHeightProp).toHaveBeenCalledWith(20)
+      expect(spies.selectedIndexProp).toHaveBeenCalledWith(undefined)
 
-    it('should not present results yet', function () {
-      expect(this.presenter.presentSearchResults).not.toHaveBeenCalled()
+      buses.files.push([
+        new NotesFile(str => str, 'file1.md', {
+          content: 'content of file 1',
+          stats: null
+        })
+      ])
+      expect(spies.filesProp).toHaveBeenCalled()
+      expect(spies.filesProp.mostRecentCall.args[0]).toEqual([jasmine.any(Object)])
+
+      expect(spies.sifterResultProp).not.toHaveBeenCalled()
+      expect(spies.openFileStream).not.toHaveBeenCalled()
     })
 
     describe('when files scan is done', function () {
+      let allFiles
+
       beforeEach(function () {
-        this.initialScanDoneBus.push(true)
-        expect(this.presenter.presentSearchResults).not.toHaveBeenCalled()
+        allFiles = R.times(i => {
+          return new NotesFile(str => `/notes/${str}`, `file ${i}.md`, {
+            content: `content of file ${i}`,
+            stats: null
+          })
+        }, 10)
+        buses.files.push(allFiles)
+        buses.initialScanDone.push(true)
+        expect(spies.sifterResultProp).not.toHaveBeenCalled()
         advanceClock(5000) // debounced sifterProp
-        expect(this.presenter.presentSearchResults).toHaveBeenCalled()
+      })
+
+      it('should yield sifter results', function () {
+        expect(spies.sifterResultProp).toHaveBeenCalled()
+        const res = spies.sifterResultProp.calls[0].args[0]
+        expect(res.options).toEqual({
+          fields: ['name', 'content'],
+          sort: [
+            {field: 'name', direction: 'desc'},
+            {field: '$score', direction: 'desc'}
+          ],
+          conjunction: 'and'
+        })
+        expect(res.query).toEqual('')
+        expect(res.tokens).toEqual([])
+        expect(res.total).toEqual(10)
+        expect(res.items).toEqual(jasmine.any(Array))
+        expect(res.items[0]).toEqual({score: 1, id: jasmine.any(Number)})
       })
 
       // since the various states are inter-related on previous state I'll test the various scenarios after each other
-      it('should present results according input', function () {
-        // search: should present results w/ new query
-        // 1st search
-        this.interactor.search('file')
-        expect(this.presenter.presentSearchResults.mostRecentCall.args[0].files).toEqual(this.files)
-        expect(this.presenter.presentSearchResults.mostRecentCall.args[0].sifterResult).toEqual(
-          jasmine.objectContaining({query: 'file'}),
-          'should set sifterResult'
-        )
-        expect(this.presenter.presentSearchResults.mostRecentCall.args[0].pagination).toEqual({start: 0, limit: 123})
-        expect(this.presenter.presentSearchResults.mostRecentCall.args[0].selectedIndex).toEqual(undefined, 'should reset selection')
+      it('should yield new values on streams and props changes', function () {
+        // textInput: should present results w/ new query
+        // 1st textInput
+        spies.sifterResultProp.reset()
+        buses.textInput.push('fil')
+        expect(spies.sifterResultProp.mostRecentCall.args[0].query).toEqual('fil')
+        expect(spies.paginationProp.mostRecentCall.args[0]).toEqual({start: 0, limit: 5})
+        expect(spies.selectedIndexProp.mostRecentCall.args[0]).toEqual(undefined, 'should reset selection')
 
-        // selectByIndex
-        this.presenter.presentSelectedFilePreview.reset()
-        this.interactor.selectByIndex(3)
-        expect(this.presenter.presentSelectedFilePreview).not.toHaveBeenCalled()
-        advanceClock(1000) // debounced preview
-        expect(this.presenter.presentSelectedFilePreview).toHaveBeenCalledWith(jasmine.any(Object))
-        expect(this.presenter.presentSearchResults.mostRecentCall.args[0].files).toEqual(this.files)
-        expect(this.presenter.presentSearchResults.mostRecentCall.args[0].sifterResult).toEqual(jasmine.any(Object))
-        expect(this.presenter.presentSearchResults.mostRecentCall.args[0].pagination).toEqual({start: 0, limit: 123})
-        expect(this.presenter.presentSearchResults.mostRecentCall.args[0].selectedIndex).toEqual(3, 'should set selected index')
+        // clickedRow
+        spies.selectedIndexProp.reset()
+        buses.clickedRow.push(3)
+        expect(spies.selectedIndexProp).toHaveBeenCalledWith(3)
+        expect(spies.paginationProp).toHaveBeenCalledWith({start: 0, limit: 5})
 
-        // pagination
-        this.interactor.paginate({start: 2, limit: 4})
-        expect(this.presenter.presentSearchResults.mostRecentCall.args[0].files).toEqual(this.files)
-        expect(this.presenter.presentSearchResults.mostRecentCall.args[0].sifterResult).toEqual(jasmine.any(Object))
-        expect(this.presenter.presentSearchResults.mostRecentCall.args[0].pagination).toEqual({start: 2, limit: 4}, 'should update pagination')
-        expect(this.presenter.presentSearchResults.mostRecentCall.args[0].selectedIndex).toEqual(3)
+        // listHeight
+        buses.listHeight.push(120)
+        expect(spies.listHeightProp).toHaveBeenCalledWith(120)
+        buses.rowHeight.push(21)
+        expect(spies.rowHeightProp).toHaveBeenCalledWith(21)
 
-        // 2nd search
-        this.presenter.presentSelectedFilePreview.reset()
-        this.interactor.search('file')
-        expect(this.presenter.presentSearchResults.mostRecentCall.args[0].pagination).toEqual({start: 0, limit: 4}, 'should reset start')
-        expect(this.presenter.presentSearchResults.mostRecentCall.args[0].selectedIndex).toEqual(undefined, 'should reset any selection')
+        // pagination by scrollTop
+        spies.sifterResultProp.reset()
+        spies.paginationProp.reset()
+        buses.scrollTop.push(65)
+        expect(spies.paginationProp).toHaveBeenCalledWith({start: 3, limit: 7})
+        expect(spies.sifterResultProp).not.toHaveBeenCalled()
 
-        // sortByField
-        this.interactor.selectByIndex(3)
-        expect(this.presenter.presentSearchResults.mostRecentCall.args[0].selectedIndex).toEqual(3, 'should set selected index')
-        this.interactor.sortByField('tags')
-        expect(this.presenter.presentSearchResults.mostRecentCall.args[0].sifterResult.options.sort[0]).toEqual({field: 'tags', direction: 'desc'}, 'should change field')
-        expect(this.presenter.presentSearchResults.mostRecentCall.args[0].selectedIndex).toEqual(undefined, 'should reset selected index')
+        // reset
+        spies.paginationProp.reset()
+        spies.selectedIndexProp.reset()
+        spies.sifterResultProp.reset()
+        buses.keyEsc.push()
+        expect(spies.paginationProp).toHaveBeenCalledWith({start: 0, limit: 7})
+        expect(spies.selectedIndexProp).toHaveBeenCalledWith(undefined)
+        expect(spies.sifterResultProp).toHaveBeenCalled()
 
-        // sortDirection
-        this.interactor.selectByIndex(3)
-        expect(this.presenter.presentSearchResults.mostRecentCall.args[0].selectedIndex).toEqual(3, 'should set selected index')
-        this.interactor.sortDirection('asc')
-        expect(this.presenter.presentSearchResults.mostRecentCall.args[0].sifterResult.options.sort[0]).toEqual({field: 'tags', direction: 'asc'}, 'should change direction')
-        expect(this.presenter.presentSearchResults.mostRecentCall.args[0].selectedIndex).toEqual(undefined, 'should reset selected index')
+        // 2nd textInput
+        spies.sifterResultProp.reset()
+        buses.textInput.push('file')
+        expect(spies.paginationProp).toHaveBeenCalledWith({start: 0, limit: 7})
+        expect(spies.selectedIndexProp).toHaveBeenCalledWith(undefined)
 
-        // selectPrev
-        this.presenter.presentSelectedFilePreview.reset()
-        this.interactor.selectPrev()
-        advanceClock(1000) // debounced preview
-        expect(this.presenter.presentSelectedFilePreview).toHaveBeenCalledWith(jasmine.any(Object))
-        expect(this.presenter.presentSearchResults.mostRecentCall.args[0].selectedIndex).toEqual(9, 'should start at the end of list')
-        this.interactor.selectPrev()
-        this.interactor.selectPrev()
-        this.interactor.selectPrev()
-        this.interactor.selectPrev()
-        this.interactor.selectPrev()
-        expect(this.presenter.presentSearchResults.mostRecentCall.args[0].selectedIndex).toEqual(4, 'should stepped index back the same amount of calls to selectPrev')
-        this.interactor.selectPrev()
-        this.interactor.selectPrev()
-        this.interactor.selectPrev()
-        this.interactor.selectPrev()
-        expect(this.presenter.presentSearchResults.mostRecentCall.args[0].selectedIndex).toEqual(0, 'should stepped index back the same amount of calls to selectPrev')
+        // sort direction+field
+        spies.sifterResultProp.reset()
+        buses.sortDirection.push('asc')
+        buses.sortField.push('content')
+        expect(spies.sifterResultProp.mostRecentCall.args[0].options.sort[0]).toEqual({field: 'content', direction: 'asc'}, 'should have changed sort')
 
-        this.interactor.selectByIndex(undefined)
-        expect(this.presenter.presentSearchResults.mostRecentCall.args[0].selectedIndex).toEqual(undefined, 'should be reset')
+        // select prev (by offset)
+        spies.selectedIndexProp.reset()
+        buses.keyUp.push()
+        expect(spies.selectedIndexProp.mostRecentCall.args[0]).toEqual(9, 'should select last item')
+        R.times(() => { buses.keyUp.push() }, 5)
+        expect(spies.selectedIndexProp.mostRecentCall.args[0]).toEqual(4, 'should stepped index back the same amount of events')
+        R.times(() => { buses.keyUp.push() }, 4)
+        expect(spies.selectedIndexProp.mostRecentCall.args[0]).toEqual(0, 'should stepped index back the same amount of events')
+        R.times(() => { buses.keyUp.push() }, 3)
+        expect(spies.selectedIndexProp.mostRecentCall.args[0]).toEqual(0, 'should stay on first item')
 
-        // selectNext
-        this.presenter.presentSelectedFilePreview.reset()
-        this.interactor.selectNext()
-        advanceClock(1000) // debounced preview
-        expect(this.presenter.presentSelectedFilePreview).toHaveBeenCalledWith(jasmine.any(Object))
-        expect(this.presenter.presentSearchResults.mostRecentCall.args[0].selectedIndex).toEqual(0, 'should start at the beginning of list')
-        this.interactor.selectNext()
-        this.interactor.selectNext()
-        this.interactor.selectNext()
-        this.interactor.selectNext()
-        this.interactor.selectNext()
-        expect(this.presenter.presentSearchResults.mostRecentCall.args[0].selectedIndex).toEqual(5, 'should stepped index forward the same amount of calls to selectNext')
-        this.interactor.selectNext()
-        this.interactor.selectNext()
-        this.interactor.selectNext()
-        this.interactor.selectNext()
-        this.interactor.selectNext()
-        this.interactor.selectNext()
-        expect(this.presenter.presentSearchResults.mostRecentCall.args[0].selectedIndex).toEqual(9, 'should stop at end of list')
+        // select next (by offset)
+        buses.clickedRow.push(undefined)  // reset selection
+        spies.selectedIndexProp.reset()
+        buses.keyDown.push()
+        expect(spies.selectedIndexProp.mostRecentCall.args[0]).toEqual(0, 'should start at the beginning of list')
+        R.times(() => { buses.keyDown.push() }, 5)
+        expect(spies.selectedIndexProp.mostRecentCall.args[0]).toEqual(5, 'should stepped index forward the same amount of events')
+        R.times(() => { buses.keyDown.push() }, 6)
+        expect(spies.selectedIndexProp.mostRecentCall.args[0]).toEqual(9, 'should stop at end of list')
 
-        // openOrCreateItem (existing file)
-        this.presenter.presentSearchResults.reset()
-        this.presenter.presentSelectedFilePreview.reset()
-        this.presenter.presentSelectedFileContent.reset()
-        this.interactor.openOrCreateItem()
-        expect(this.presenter.presentSelectedFileContent).toHaveBeenCalled()
-        expect(this.presenter.presentSelectedFileContent.mostRecentCall.args[0]).toEqual(jasmine.any(Object), 'should present selected file')
-        expect(this.presenter.presentSearchResults).not.toHaveBeenCalled()
-        expect(this.presenter.presentSelectedFilePreview).not.toHaveBeenCalled()
-
-        // selectByPath
-        this.interactor.selectByPath('/notes/file 7.txt')
-        expect(this.presenter.presentSearchResults.mostRecentCall.args[0].selectedIndex).toEqual(7, 'should set correct index when there is a match')
-        this.interactor.selectByPath('nonexisting')
-        expect(this.presenter.presentSearchResults.mostRecentCall.args[0].selectedIndex).toEqual(undefined, 'should unset index if there is no match')
-
-        // openOrCreateItem (new file w/ file ext)
-        this.interactor.search('test-new-file.bash')
-        this.presenter.presentSearchResults.reset()
-        this.presenter.presentSelectedFilePreview.reset()
-        this.presenter.presentSelectedFileContent.reset()
-        this.interactor.openOrCreateItem()
-        expect(this.presenter.presentNewFile).toHaveBeenCalled()
-        expect(this.presenter.presentNewFile.mostRecentCall.args[0].path).toMatch(/test-new-file.bash$/, 'should present selected file w/o default ext')
-        expect(this.presenter.presentSearchResults).not.toHaveBeenCalled()
-        expect(this.presenter.presentSelectedFilePreview).not.toHaveBeenCalled()
-        expect(this.presenter.presentSelectedFileContent).not.toHaveBeenCalled()
+        // active path change
+        spies.selectedIndexProp.reset()
+        buses.activePath.push('/notes/file 7.md')
+        expect(spies.selectedIndexProp.mostRecentCall.args[0]).toEqual(7, 'should set the index to found file')
+        buses.activePath.push('/notes/whatever')
+        expect(spies.selectedIndexProp.mostRecentCall.args[0]).toEqual(undefined, 'should unset index when there is no match')
       })
+    })
+
+    it('should yield an openFile event when open stream triggers', function () {
+      expect(spies.openFileStream).not.toHaveBeenCalled()
+      buses.keyEnter.push()
+      expect(spies.openFileStream).toHaveBeenCalled()
     })
   })
 })

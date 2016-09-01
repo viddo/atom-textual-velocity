@@ -3,6 +3,10 @@ All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](http://semver.org/) and [keepachangelog.com](http://keepachangelog.com/).
 
 ## [unreleased]
+### Changed
+- Internals completely refactored, to make changes/new features easier to implement+test
+- Using [Flowtype](https://flowtype.org/) to find bugs easier
+- Updated dependencies to latest stable versions
 
 ## [0.7.0] - 2016-03-29
 ### Added

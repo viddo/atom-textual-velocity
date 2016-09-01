@@ -4,14 +4,12 @@
 import Path from 'path'
 import R from 'ramda'
 
-describe('textual-velocity main', () => {
+describe('main', () => {
   beforeEach(function () {
     jasmine.useRealClock()
     this.workspaceElement = atom.views.getView(atom.workspace)
     jasmine.attachToDOM(this.workspaceElement)
 
-    spyOn(console, 'log').andCallThrough()
-    atom.config.set('textual-velocity.enableDeveloperConsoleLog', true)
     atom.config.set('textual-velocity.path', __dirname) // ./spec
 
     // Spy on fatal notifications to extract activationErroror, to re-throw it here
@@ -53,6 +51,12 @@ describe('textual-velocity main', () => {
       expect(this.panel.getItem().querySelector('.textual-velocity')).toEqual(jasmine.any(HTMLElement))
     })
 
+    it('should replaced start-session command with a stop-session command', function () {
+      const commands = atom.commands.getSnapshot()
+      expect(commands['textual-velocity:start-session']).toBeUndefined()
+      expect(commands['textual-velocity:stop-session']).toBeDefined()
+    })
+
     describe('when files are loaded', function () {
       beforeEach(function () {
         waitsFor(() => {
@@ -62,6 +66,26 @@ describe('textual-velocity main', () => {
 
       it('should render rows', function () {
         expect(this.panel.getItem().innerHTML).toContain('tv-items')
+      })
+
+      describe('when stop-session command is triggered', function () {
+        beforeEach(function () {
+          const promise = atom.packages.activatePackage('textual-velocity')
+          this.workspaceElement.dispatchEvent(new CustomEvent('textual-velocity:stop-session', {bubbles: true}))
+          waitsForPromise(() => {
+            return promise
+          })
+        })
+
+        it('should not render rows anymore', function () {
+          expect(atom.workspace.getTopPanels()).toEqual([])
+        })
+
+        it('should replaced stop-session command with a start-session command', function () {
+          const commands = atom.commands.getSnapshot()
+          expect(commands['textual-velocity:start-session']).toBeDefined()
+          expect(commands['textual-velocity:stop-session']).toBeUndefined()
+        })
       })
     })
   })

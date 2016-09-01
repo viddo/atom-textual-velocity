@@ -1,0 +1,1 @@
+type SortDirectionType = 'asc' | 'desc'

@@ -35,7 +35,6 @@
     "sifter": "0.5.1"
   },
   "devDependencies": {
-    "@flow-atom/atom": "^1.8.0-rev.0",
     "babel-eslint": "6.1.2",
     "babel-plugin-syntax-flow": "6.13.0",
     "babel-plugin-transform-flow-strip-types": "6.8.0",

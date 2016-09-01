@@ -43,14 +43,14 @@ describe('path-watcher-factory', () => {
     })
 
     it('should return a watcher that handles the life-cycle of a given path', function () {
-      expect(this.initialScanDoneSpy.calls[0].args[0]).toEqual(false, 'initialScanDone should not be ready initially')
+      expect(this.initialScanDoneSpy).not.toHaveBeenCalled() // initialScanDone should not be ready initially
       expect(this.filesSpy.calls[0].args[0]).toEqual([], 'files should be an empty list initially')
 
       waitsFor('watcher to be ready', () => {
-        return this.initialScanDoneSpy.calls.length === 2
+        return this.initialScanDoneSpy.calls.length >= 1
       })
       runs(() => {
-        expect(this.initialScanDoneSpy.calls[1].args[0]).toEqual(true, 'initialScanDone should be ready')
+        expect(this.initialScanDoneSpy.mostRecentCall.args[0]).toEqual(true, 'initialScanDone should be ready')
         expect(this.filesSpy.calls[1].args[0]).toEqual(R.repeat(jasmine.any(Object), 3), 'files should have some entries')
         expect(this.filesSpy.calls[2].args[0][1].path).toMatch(/.+file-1\.txt$/, 'file should have a path')
         expect(this.filesSpy.calls[3].args[0][2].path).toMatch(/.+file-2\.txt$/, 'file should have a path')

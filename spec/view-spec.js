@@ -7,153 +7,153 @@ import ReactView from '../lib/react-view'
   {
     name: 'reactView',
     newView: (DOMNode) => {
-      const atomPanel = {
+      const panel = {
         getItem: () => DOMNode
       }
-      return new ReactView(atomPanel)
+      return new ReactView(panel)
     }
   }
 ].forEach(function ({name, newView}) {
   describe(name, function () {
+    let DOMNode: DOMNodeType
+    let view: ViewType
+    let spies: Object
+
     beforeEach(function () {
-      this.DOMNode = document.createElement('div')
-      this.view = newView(this.DOMNode)
+      DOMNode = document.createElement('div')
+      view = newView(DOMNode)
+
+      spies = {
+        clickedRowStream: jasmine.createSpy('clickedRowStream'),
+        keyDownStream: jasmine.createSpy('keyDownStream'),
+        listHeightStream: jasmine.createSpy('listHeightStream'),
+        sortDirectionStream: jasmine.createSpy('sortDirectionStream'),
+        sortFieldStream: jasmine.createSpy('sortFieldStream'),
+        scrollTopStream: jasmine.createSpy('scrollTopStream'),
+        textInputStream: jasmine.createSpy('textInputStream')
+      }
+
+      view.clickedRowStream.onValue(spies.clickedRowStream)
+      view.keyDownStream.onValue(spies.keyDownStream)
+      view.listHeightStream.onValue(spies.listHeightStream)
+      view.sortDirectionStream.onValue(spies.sortDirectionStream)
+      view.sortFieldStream.onValue(spies.sortFieldStream)
+      view.scrollTopStream.onValue(spies.scrollTopStream)
+      view.textInputStream.onValue(spies.textInputStream)
     })
 
     afterEach(function () {
-      this.view.dispose()
-      this.view = null
-      this.DOMNode = null
+      view.dispose()
+      view = null
+      DOMNode = null
     })
 
     describe('.renderLoading', function () {
       beforeEach(function () {
         const listHeight = 101
-        this.view.renderLoading(listHeight)
+        view.renderLoading(listHeight)
       })
 
       it('should render loading DOM', function () {
-        expect(this.DOMNode.outerHTML).toContain('loading')
-        expect(this.DOMNode.outerHTML).toContain('height: 101px')
+        expect(DOMNode.outerHTML).toContain('loading')
+        expect(DOMNode.outerHTML).toContain('height: 101px')
       })
     })
 
     describe('.renderResults', function () {
-      beforeEach(function () {
-        this.searchSpy = jasmine.createSpy('onSearch')
-        this.keyDownSpy = jasmine.createSpy('onKeyDown')
-        this.scrollSpy = jasmine.createSpy('onScroll')
-        this.clickRowSpy = jasmine.createSpy('onClickRow')
-        this.sortByFieldSpy = jasmine.createSpy('onSortByField')
-        this.sortDirectionSpy = jasmine.createSpy('onChangeSortDirectionSpy')
-        this.resizeSpy = jasmine.createSpy('onResize')
-      })
-
       describe('given an empty set', function () {
         beforeEach(function () {
-          this.view.renderResults({
+          view.renderResults({
             listHeight: 123,
             rowHeight: 25,
             scrollTop: 0,
-            res: {
-              selectedIndex: undefined,
-              searchStr: '',
-              itemsCount: 0,
-              paginationStart: 0,
-              sort: {},
-              columns: [],
-              rows: []
-            },
-            callbacks: {
-              onSearch: this.searchSpy,
-              onKeyDown: this.keyDownSpy,
-              onScroll: this.scrollSpy,
-              onClickRow: this.clickRowSpy,
-              onSortByField: this.sortByFieldSpy,
-              onChangeSortDirection: this.sortDirectionSpy,
-              onResize: this.resizeSpy
-            }
+            selectedIndex: undefined,
+            searchStr: '',
+            itemsCount: 0,
+            paginationStart: 0,
+            sort: {},
+            columns: [],
+            rows: []
           })
         })
 
         it('should render the panel DOM', function () {
-          expect(this.DOMNode.innerHTML).not.toEqual('')
+          expect(DOMNode.innerHTML).not.toEqual('')
         })
       })
 
       describe('given some data', function () {
+        let html
+
         beforeEach(function () {
-          this.view.renderResults({
-            DOMNode: this.DOMNode,
+          view.renderResults({
+            DOMNode: DOMNode,
             listHeight: 25,
             rowHeight: 20,
             scrollTop: 0,
-            res: {
-              selectedIndex: 1,
-              searchStr: '',
-              itemsCount: 3,
-              paginationStart: 0,
-              sort: {field: 'name', direction: 'desc'},
-              columns: [
-                {title: 'Name', id: 'title', width: 70},
-                {title: 'Updated', id: 'last_updated_at', width: 15},
-                {title: 'Created', id: 'created_date', width: 15}
-              ],
-              rows: [
-                {id: 2, cells: ['foobar', '3 days ago', 'yesterday']},
-                {id: 3, cells: ['baz', '3 days ago', 'today'], selected: true},
-                {id: 1, cells: ['qux', '1 year ago', '1 year ago']}
-              ]
-            },
+            selectedIndex: 1,
+            searchStr: '',
+            itemsCount: 3,
+            paginationStart: 0,
+            sort: {field: 'name', direction: 'desc'},
+            columns: [
+              {title: 'Name', id: 'title', width: 70},
+              {title: 'Updated', id: 'last_updated_at', width: 15},
+              {title: 'Created', id: 'created_date', width: 15}
+            ],
+            rows: [
+              {id: 2, cells: ['foobar', '3 days ago', 'yesterday']},
+              {id: 3, cells: ['baz', '3 days ago', 'today'], selected: true},
+              {id: 1, cells: ['qux', '1 year ago', '1 year ago']}
+            ],
             callbacks: {
-              onSearch: this.searchSpy,
-              onKeyDown: this.keyDownSpy,
-              onScroll: this.scrollSpy,
-              onClickRow: this.clickRowSpy,
-              onSortByField: this.sortByFieldSpy,
-              onChangeSortDirection: this.sortDirectionSpy,
-              onResize: this.resizeSpy
+              onSearch: spies.search,
+              onKeyDown: spies.keyDown,
+              onScroll: spies.scroll,
+              onClickRow: spies.clickRow,
+              onSortByField: spies.sortField,
+              onChangeSortDirection: spies.sortDirection,
+              onResize: spies.resize
             }
           })
-          this.html = this.DOMNode.innerHTML
+          html = DOMNode.innerHTML
         })
 
         it('should render columns', function () {
-          expect(this.html).toContain('Name')
-          expect(this.html).toContain('Updated')
-          expect(this.html).toContain('Created')
+          expect(html).toContain('Name')
+          expect(html).toContain('Updated')
+          expect(html).toContain('Created')
         })
 
         it('should render rows', function () {
-          expect(this.html).toContain('foobar')
-          expect(this.html).toContain('baz')
-          expect(this.html).toContain('qux')
+          expect(html).toContain('foobar')
+          expect(html).toContain('baz')
+          expect(html).toContain('qux')
 
-          expect(this.html).toContain('3 days ago')
-          expect(this.html).toContain('today')
+          expect(html).toContain('3 days ago')
+          expect(html).toContain('today')
         })
 
         describe('when searching', function () {
           beforeEach(function () {
-            const input = this.DOMNode.querySelector('input')
+            const input = DOMNode.querySelector('input')
             input.value = 'foo'
             TestUtils.Simulate.change(input)
           })
 
           it('should call onSearch callback', function () {
-            expect(this.searchSpy).toHaveBeenCalledWith('foo')
+            expect(spies.textInputStream).toHaveBeenCalledWith('foo')
           })
         })
 
         describe('when scrolling', function () {
           beforeEach(function () {
-            const scrollableList = this.DOMNode.querySelector('div[style*=overflow]')
-            TestUtils.Simulate.scroll(scrollableList, {target: {scrollTop: 26}})
+            const scrollableList = DOMNode.querySelector('div[style*=overflow]')
             TestUtils.Simulate.scroll(scrollableList, {target: {scrollTop: 26}})
           })
 
           it('should call onScroll callback', function () {
-            expect(this.scrollSpy).toHaveBeenCalledWith(26)
+            expect(spies.scrollTopStream).toHaveBeenCalledWith(26)
           })
         })
       })
