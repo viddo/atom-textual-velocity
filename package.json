@@ -50,11 +50,13 @@
   },
   "configSchema": {
     "path": {
-      "description": "Path to folder where to find notes. Can be an absolute path or a relative path to `~/.atom` (defaults to `~/.atom/notes`). You'll need to (re)start the session if you change this path.",
+      "order": 1,
+      "description": "_Changing this setting requires restarting the session._<br/>Path to folder where to find notes. Can be an absolute path or a relative path to `~/.atom` (defaults to `~/.atom/notes`)",
       "type": "string",
       "default": ""
     },
     "sortField": {
+      "order": 2,
       "type": "string",
       "default": "lastUpdatedTime",
       "enum": [
@@ -64,6 +66,7 @@
       ]
     },
     "sortDirection": {
+      "order": 3,
       "type": "string",
       "default": "desc",
       "enum": [
@@ -72,11 +75,15 @@
       ]
     },
     "listHeight": {
+      "order": 4,
+      "description": "Height of panel, can also be changed by dragging the bottom of panel",
       "type": "number",
       "default": 150,
       "minimum": 0
     },
     "rowHeight": {
+      "order": 5,
+      "description": "Internal cached value, used to calculate pagination size",
       "type": "number",
       "default": 20,
       "minimum": 8,
