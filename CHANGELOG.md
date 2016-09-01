@@ -6,7 +6,7 @@ This project adheres to [Semantic Versioning](http://semver.org/) and [keepachan
 ### Changed
 - Internals completely refactored, to make changes/new features easier to implement+test
 - Using [Flowtype](https://flowtype.org/) to find bugs easier
-- Updated dependencies to latest stable versions
+- Updated all dependencies to latest stable versions
 
 ## [0.7.0] - 2016-03-29
 ### Added

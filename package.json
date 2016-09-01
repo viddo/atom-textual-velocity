@@ -18,12 +18,12 @@
     "atom-workspace": "textual-velocity:start-session"
   },
   "engines": {
-    "atom": ">=1.6.0 <2.0.0"
+    "atom": ">=1.10.0 <2.0.0"
   },
   "dependencies": {
     "baconjs": "0.7.85",
     "bplist": "0.0.4",
-    "chokidar": "1.0.6",
+    "chokidar": "1.6.0",
     "classnames": "2.2.5",
     "fs-plus": "2.9.1",
     "fs-xattr": "0.1.14",
