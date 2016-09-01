@@ -81,8 +81,8 @@ describe('interactor', function () {
     interactor.selectedIndexProp.onValue(spies.selectedIndexProp)
     interactor.sifterResultProp.onValue(spies.sifterResultProp)
 
-    buses.listHeight.push(60)
     buses.rowHeight.push(20)
+    buses.listHeight.push(60)
   })
 
   describe('when start session event is triggered', function () {
@@ -182,7 +182,7 @@ describe('interactor', function () {
         spies.sifterResultProp.reset()
         spies.paginationProp.reset()
         buses.scrollTop.push(65)
-        expect(spies.paginationProp).toHaveBeenCalledWith({start: 3, limit: 7})
+        expect(spies.paginationProp).toHaveBeenCalledWith({start: 3, limit: 8})
         expect(spies.sifterResultProp).not.toHaveBeenCalled()
 
         // reset
@@ -190,14 +190,14 @@ describe('interactor', function () {
         spies.selectedIndexProp.reset()
         spies.sifterResultProp.reset()
         buses.keyEsc.push()
-        expect(spies.paginationProp).toHaveBeenCalledWith({start: 0, limit: 7})
+        expect(spies.paginationProp).toHaveBeenCalledWith({start: 0, limit: 8})
         expect(spies.selectedIndexProp).toHaveBeenCalledWith(undefined)
         expect(spies.sifterResultProp).toHaveBeenCalled()
 
         // 2nd textInput
         spies.sifterResultProp.reset()
         buses.textInput.push('file')
-        expect(spies.paginationProp).toHaveBeenCalledWith({start: 0, limit: 7})
+        expect(spies.paginationProp).toHaveBeenCalledWith({start: 0, limit: 8})
         expect(spies.selectedIndexProp).toHaveBeenCalledWith(undefined)
 
         // sort direction+field

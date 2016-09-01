@@ -4,7 +4,7 @@ import Bacon from 'baconjs'
 import SideEffects from '../lib/side-effects'
 import ReactView from '../lib/react-view'
 
-describe('atom-side-effects', function () {
+describe('side-effects', function () {
   // eslint-disable-next-line
   let workspaceElement, buses, panel, sideEffects, testView, testPresenter, spies, input
 
@@ -227,18 +227,28 @@ describe('atom-side-effects', function () {
     // Test values in sequence since interrelated
     it('should render on some yielded values', function () {
       expect(testView.renderResults).not.toHaveBeenCalledWith()
+
+      // render on rows
       buses.rows.push([])
       expect(testView.renderResults).toHaveBeenCalledWith(jasmine.any(Object))
 
+      // do NOT render on the others
       testView.renderResults.reset()
       atom.config.set('textual-velocity.rowHeight', 20)
-      buses.listHeight.push(100)
-      buses.searchStr.push('beep')
       buses.itemsCount.push(23)
+      buses.rowHeight.push(20)
+      buses.searchStr.push('beep')
       buses.sort.push({field: 'content', direction: 'asc'})
       expect(testView.renderResults).not.toHaveBeenCalled()
 
+      // render on scroll
+      testView.renderResults.reset()
       buses.forcedScrollTop.push(42)
+      expect(testView.renderResults).toHaveBeenCalled()
+
+      // render on list height
+      testView.renderResults.reset()
+      buses.listHeight.push(100)
       expect(testView.renderResults).toHaveBeenCalled()
     })
   })
