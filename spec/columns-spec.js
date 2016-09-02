@@ -6,7 +6,6 @@ import Summary from '../lib/columns/summary'
 const columns = [{
   name: 'DateColumn',
   column: new DateColumn({
-    id: 'id',
     title: 'title',
     field: 'atime'
   })
@@ -28,7 +27,6 @@ describe('columns', function () {
   columns.forEach(({name, column}) => {
     describe(name, function () {
       it('should have a some compulsory props', function () {
-        expect(column.id).toEqual(jasmine.any(String))
         expect(column.title).toEqual(jasmine.any(String))
         expect(column.width).toEqual(jasmine.any(Number))
         expect(column.field).toEqual(jasmine.any(String))
