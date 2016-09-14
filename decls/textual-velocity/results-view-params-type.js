@@ -1,17 +1,16 @@
 declare type ResultsViewParamsType = {
-  rowHeight: number,
-  listHeight: number,
-  forcedScrollTop: number | void,
-  selectedIndex: number | void,
-  searchStr: string,
-  paginationStart: number,
-  itemsCount: number,
-  sort: SifterResultSortType,
   columns: Array<ColumnHeaderType>,
+  forcedScrollTop: number | void,
+  itemsCount: number,
+  listHeight: number,
+  paginationStart: number,
+  rowHeight: number,
   rows: Array<{
     id: string,
     index: number,
     selected: boolean,
-    cells: Array<CellContentType>
-  }>
+    cells: Array<CellType>
+  }>,
+  searchStr: string,
+  sort: SifterResultSortType
 }

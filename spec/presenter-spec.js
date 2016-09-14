@@ -3,11 +3,10 @@
 import Bacon from 'baconjs'
 import R from 'ramda'
 import Presenter from '../lib/presenter'
-import NotesFile from '../lib/notes-file'
 import NotesPath from '../lib/notes-path'
 
 describe('presenter', function () {
-  let buses, testColumns, presenter, spies
+  let buses, presenter, spies, nameColumn, extColumn
 
   const newSifterResult = (obj = {}) => {
     return R.merge({
@@ -26,6 +25,7 @@ describe('presenter', function () {
 
   beforeEach(function () {
     buses = {
+      editCellNameProp: new Bacon.Bus(),
       files: new Bacon.Bus(),
       forcedScrollTop: new Bacon.Bus(),
       listHeight: new Bacon.Bus(),
@@ -34,11 +34,13 @@ describe('presenter', function () {
       notesPath: new Bacon.Bus(),
       pagination: new Bacon.Bus(),
       rowHeight: new Bacon.Bus(),
+      saveEditedCellContent: new Bacon.Bus(),
       selectedIndex: new Bacon.Bus(),
       sifterResult: new Bacon.Bus()
     }
 
-    const testInteractor = {
+    const interactor = {
+      editCellNameProp: buses.editCellNameProp.toProperty(undefined),
       filesProp: buses.files.toProperty([]),
       forcedScrollTopProp: buses.forcedScrollTop.toProperty(undefined),
       listHeightProp: buses.listHeight.toProperty(123),
@@ -47,20 +49,29 @@ describe('presenter', function () {
       notesPathStream: buses.notesPath,
       paginationProp: buses.pagination.toProperty({start: 0, limit: 5}),
       rowHeightProp: buses.rowHeight.toProperty(23),
+      saveEditedCellContentStream: buses.saveEditedCellContent,
       selectedIndexProp: buses.selectedIndex.toProperty(undefined),
       sifterResultProp: buses.sifterResult.toProperty()
     }
 
-    testColumns = [{
-      id: 'test',
-      field: 'name',
-      title: 'Test column',
+    nameColumn = {
+      editCellName: 'name',
+      editCellStr: file => file.name,
+      sortField: 'name',
+      title: 'Filename',
+      width: 90,
+      cellContent: (file, template) => file.name
+    }
+    extColumn = {
+      sortField: 'ext',
+      title: 'File extension',
       width: 10,
-      cellContent: (file, template) => `cellContent: ${file.relPath}`
-    }]
-    spyOn(testColumns[0], 'cellContent').andCallThrough()
+      cellContent: (file, template) => file.ext
+    }
+    const columnsProp = Bacon.constant([nameColumn, extColumn])
+    spyOn(nameColumn, 'cellContent').andCallThrough()
 
-    presenter = new Presenter(testInteractor, testColumns)
+    presenter = new Presenter(interactor, columnsProp)
 
     spies = {
       columnHeadersProp: jasmine.createSpy('columnHeadersProp'),
@@ -116,10 +127,9 @@ describe('presenter', function () {
       // simulate files beings populated:
       buses.files.push([])
       allFiles = R.times(i => {
-        return new NotesFile(notesPath.fullPath, `file ${i}.md`, {
-          content: `content of file ${i}`,
-          stats: null
-        })
+        const file = notesPath.newFile(`file ${i}.md`)
+        file.data.content = `content of file ${i}`
+        return file
       }, 10)
       buses.files.push(allFiles)
     })
@@ -156,8 +166,12 @@ describe('presenter', function () {
           id: jasmine.any(String),
           index: jasmine.any(Number),
           selected: false,
-          cells: [ 'cellContent: file 0.md' ]
+          cells: jasmine.any(Array)
         })
+        expect(spies.rowsStream.mostRecentCall.args[0][0].cells).toEqual([
+          {content: 'file 0', editCellName: 'name'},
+          {content: '.md', editCellName: undefined}
+        ])
       })
     })
 
@@ -189,7 +203,10 @@ describe('presenter', function () {
         expect(spies.rowsStream.mostRecentCall.args[0][0]).toEqual(
           jasmine.objectContaining({
             id: jasmine.any(String),
-            cells: [ 'cellContent: file 3.md' ]
+            cells: [
+              {content: 'file 3', editCellName: 'name'},
+              {content: '.md', editCellName: undefined}
+            ]
           })
         )
         expect(spies.rowsStream.mostRecentCall.args[0].map(x => x.index)).toEqual([0, 1, 2, 3, 4], 'index in asc order')
@@ -197,8 +214,9 @@ describe('presenter', function () {
       })
 
       it('should provide tokens to cellContent to highlight matches', function () {
-        expect(testColumns[0].cellContent).toHaveBeenCalled()
-        expect(testColumns[0].cellContent.mostRecentCall.args[1].sifterResult).toEqual(jasmine.any(Object))
+        expect(nameColumn.cellContent).toHaveBeenCalled()
+        expect(nameColumn.cellContent.mostRecentCall.args[1]).toEqual(jasmine.any(Object))
+        expect(nameColumn.cellContent.mostRecentCall.args[1].content).toEqual(jasmine.any(Function))
       })
 
       describe('when interactor pagination changes', function () {
@@ -214,9 +232,9 @@ describe('presenter', function () {
           expect(spies.rowsStream.mostRecentCall.args[0]).toEqual(jasmine.any(Array))
           expect(spies.rowsStream.mostRecentCall.args[0].length).toEqual(3)
           expect(spies.rowsStream.mostRecentCall.args[0].map(x => x.cells)).toEqual([
-            ['cellContent: file 7.md'],
-            ['cellContent: file 8.md'],
-            ['cellContent: file 9.md']
+            [{content: 'file 7', editCellName: 'name'}, {content: '.md', editCellName: undefined}],
+            [{content: 'file 8', editCellName: 'name'}, {content: '.md', editCellName: undefined}],
+            [{content: 'file 9', editCellName: 'name'}, {content: '.md', editCellName: undefined}]
           ])
         })
       })

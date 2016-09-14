@@ -3,10 +3,11 @@
 import Bacon from 'baconjs'
 import SideEffects from '../lib/side-effects'
 import ReactView from '../lib/react-view'
+import defaultConfig from '../lib/default-config'
 
 describe('side-effects', function () {
   // eslint-disable-next-line
-  let workspaceElement, buses, panel, sideEffects, testView, testPresenter, spies, input
+  let workspaceElement, buses, panel, sideEffects, view, presenter, spies, input
 
   const assertTextInputFocus = () => {
     expect(input.select).not.toHaveBeenCalled()
@@ -27,6 +28,7 @@ describe('side-effects', function () {
       loading: new Bacon.Bus(),
       openPath: new Bacon.Bus(),
       pagination: new Bacon.Bus(),
+      saveEditedCellContent: new Bacon.Bus(),
       previewItem: new Bacon.Bus(),
       rowHeight: new Bacon.Bus(),
       rows: new Bacon.Bus(),
@@ -39,7 +41,13 @@ describe('side-effects', function () {
       listHeight: new Bacon.Bus(),
       sortDirection: new Bacon.Bus(),
       sortField: new Bacon.Bus(),
-      scrollTop: new Bacon.Bus()
+      scrollTop: new Bacon.Bus(),
+
+      columnsProp: new Bacon.Bus(),
+      editCellStream: new Bacon.Bus(),
+      fieldsProp: new Bacon.Bus(),
+      fileReadersProp: new Bacon.Bus(),
+      fileWritersProp: new Bacon.Bus()
     }
 
     const testColumn: ColumnHeaderType = {
@@ -49,7 +57,7 @@ describe('side-effects', function () {
       width: 100
     }
 
-    testPresenter = {
+    presenter = {
       columnHeadersProp: buses.columnHeaders.toProperty([testColumn]),
       forcedScrollTopProp: buses.forcedScrollTop.toProperty(undefined),
       itemsCountProp: buses.itemsCount.toProperty(),
@@ -57,6 +65,7 @@ describe('side-effects', function () {
       loadingStream: buses.loading,
       openPathStream: buses.openPath,
       paginationProp: buses.pagination.toProperty({start: 0, limit: 0}),
+      saveEditedCellContentStream: buses.saveEditedCellContent,
       selectedPathStream: buses.previewItem,
       rowHeightProp: buses.rowHeight.toProperty(20),
       rowsStream: buses.rows.toProperty(),
@@ -64,23 +73,31 @@ describe('side-effects', function () {
       sortProp: buses.sort.toProperty()
     }
 
-    testView = new ReactView(panel)
-    testView.clickedRowStream = buses.clickedRow
-    testView.keyDownStream = buses.keyDown
-    testView.listHeightStream = buses.listHeight
-    testView.sortDirectionStream = buses.sortDirection
-    testView.sortFieldStream = buses.sortField
-    testView.scrollTopStream = buses.scrollTop
-    testView.textInputStream = buses.keyInput
-    spyOn(testView, 'renderLoading')
-    spyOn(testView, 'renderResults')
+    view = new ReactView(panel)
+    view.clickedCellStream = buses.clickedRow
+    view.keyDownStream = buses.keyDown
+    view.listHeightStream = buses.listHeight
+    view.sortDirectionStream = buses.sortDirection
+    view.sortFieldStream = buses.sortField
+    view.scrollTopStream = buses.scrollTop
+    view.textInputStream = buses.keyInput
+    spyOn(view, 'renderLoading')
+    spyOn(view, 'renderResults')
 
     panel = atom.workspace.addTopPanel({
       item: document.createElement('div')
     })
     spyOn(panel.getItem(), 'querySelector')
 
-    sideEffects = new SideEffects(panel, testView, testPresenter)
+    const service = {
+      columnsProp: buses.columnsProp,
+      editCellStream: buses.editCellStream,
+      fieldsProp: buses.fieldsProp,
+      fileReadersProp: buses.fileReadersProp,
+      fileWritersProp: buses.fileWritersProp
+    }
+
+    sideEffects = new SideEffects(panel, view, presenter, service)
 
     spies = {
       listHeight: jasmine.createSpy('listHeight'),
@@ -213,7 +230,7 @@ describe('side-effects', function () {
     })
 
     it('should render loading', function () {
-      expect(testView.renderLoading).toHaveBeenCalledWith(100)
+      expect(view.renderLoading).toHaveBeenCalledWith(100)
     })
   })
 
@@ -227,30 +244,30 @@ describe('side-effects', function () {
 
     // Test values in sequence since interrelated
     it('should render on some yielded values', function () {
-      expect(testView.renderResults).not.toHaveBeenCalledWith()
+      expect(view.renderResults).not.toHaveBeenCalledWith()
 
       // render on rows
       buses.rows.push([])
-      expect(testView.renderResults).toHaveBeenCalledWith(jasmine.any(Object))
+      expect(view.renderResults).toHaveBeenCalledWith(jasmine.any(Object))
 
       // do NOT render on the others
-      testView.renderResults.reset()
+      view.renderResults.reset()
       atom.config.set('textual-velocity.rowHeight', 20)
       buses.itemsCount.push(23)
       buses.rowHeight.push(20)
       buses.searchStr.push('beep')
       buses.sort.push({field: 'content', direction: 'asc'})
-      expect(testView.renderResults).not.toHaveBeenCalled()
+      expect(view.renderResults).not.toHaveBeenCalled()
 
       // render on scroll
-      testView.renderResults.reset()
+      view.renderResults.reset()
       buses.forcedScrollTop.push(42)
-      expect(testView.renderResults).toHaveBeenCalled()
+      expect(view.renderResults).toHaveBeenCalled()
 
       // render on list height
-      testView.renderResults.reset()
+      view.renderResults.reset()
       buses.listHeight.push(100)
-      expect(testView.renderResults).toHaveBeenCalled()
+      expect(view.renderResults).toHaveBeenCalled()
     })
   })
 
@@ -276,6 +293,31 @@ describe('side-effects', function () {
 
     it('should open text editor for file', function () {
       expect(atom.workspace.open).toHaveBeenCalledWith('/notes/file.txt')
+    })
+  })
+
+  describe('when columns change', function () {
+    beforeEach(function () {
+      atom.config.setSchema('textual-velocity', {
+        type: 'object',
+        properties: defaultConfig
+      })
+      buses.columnsProp.push([
+        {title: 'Name', sortField: 'name'},
+        {title: 'Tags', sortField: 'tags'}
+      ])
+    })
+
+    it('should update config schema', function () {
+      expect(atom.config.getSchema('textual-velocity.sortField')).toEqual(
+        jasmine.objectContaining({
+          type: 'string',
+          default: 'name',
+          enum: [
+            {value: 'name', description: 'Name'},
+            {value: 'tags', description: 'Tags'}
+          ]
+        }))
     })
   })
 })

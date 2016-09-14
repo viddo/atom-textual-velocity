@@ -20,19 +20,29 @@
   "engines": {
     "atom": ">=1.10.0 <2.0.0"
   },
+  "providedServices": {
+     "textual-velocity": {
+      "description": "Exposes API to register columns and file read/writers",
+      "versions": {
+        "0.1.0": "provideServiceV0"
+      }
+    }
+  },
   "dependencies": {
     "baconjs": "0.7.85",
-    "bplist": "0.0.4",
     "chokidar": "1.6.0",
     "classnames": "2.2.5",
     "fs-plus": "2.9.1",
-    "fs-xattr": "0.1.14",
     "lodash.debounce": "4.0.8",
     "moment": "2.14.1",
     "ramda": "0.22.1",
     "react-for-atom": "15.2.1-0",
     "scandal": "2.2.0",
     "sifter": "0.5.1"
+  },
+  "optionalDependencies": {
+    "bplist": "0.0.4",
+    "fs-xattr": "0.1.14"
   },
   "devDependencies": {
     "babel-eslint": "6.1.2",
@@ -47,48 +57,6 @@
     "eslint-plugin-standard": "2.0.0",
     "flow-bin": "0.31.1",
     "temp": "0.8.3"
-  },
-  "configSchema": {
-    "path": {
-      "order": 1,
-      "description": "_Changing this setting requires restarting the session._<br/>Path to folder where to find notes. Can be an absolute path or a relative path to `~/.atom` (defaults to `~/.atom/notes`)",
-      "type": "string",
-      "default": ""
-    },
-    "sortField": {
-      "order": 2,
-      "type": "string",
-      "default": "lastUpdatedTime",
-      "enum": [
-        "title",
-        "lastUpdatedTime",
-        "createdTime"
-      ]
-    },
-    "sortDirection": {
-      "order": 3,
-      "type": "string",
-      "default": "desc",
-      "enum": [
-        "asc",
-        "desc"
-      ]
-    },
-    "listHeight": {
-      "order": 4,
-      "description": "Height of panel, can also be changed by dragging the bottom of panel",
-      "type": "number",
-      "default": 150,
-      "minimum": 0
-    },
-    "rowHeight": {
-      "order": 5,
-      "description": "Internal cached value, used to calculate pagination size",
-      "type": "number",
-      "default": 20,
-      "minimum": 8,
-      "maximum": 80
-    }
   },
   "scripts": {
     "flow": "flow; test $? -eq 0 -o $? -eq 2",

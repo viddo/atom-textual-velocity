@@ -1,18 +1,28 @@
 'use babel'
 
+import Bacon from 'baconjs'
+import fs from 'fs'
 import Path from 'path'
 import R from 'ramda'
-import fs from 'fs'
 import temp from 'temp'
-import NotesPath from '../lib/notes-path'
 import NotesFileFilter from '../lib/notes-file-filter'
-import * as pathWatcherFactory from '../lib/path-watcher-factory'
+import NotesPath from '../lib/notes-path'
+import contentFileReader from '../lib/file-readers/content-file-reader'
+import statsFileReader from '../lib/file-readers/stats-file-reader'
+import PathWatcherFactory from '../lib/path-watcher-factory'
 
 temp.track()
 
 describe('path-watcher-factory', () => {
+  let pathWatcherFactory
+
   beforeEach(function () {
     jasmine.useRealClock()
+    const fileReadersProp = Bacon.constant([
+      contentFileReader,
+      statsFileReader
+    ])
+    pathWatcherFactory = new PathWatcherFactory(fileReadersProp)
   })
 
   describe('.watch', function () {
@@ -60,21 +70,22 @@ describe('path-watcher-factory', () => {
         return this.filesSpy.calls.length >= 7
       })
       runs(() => {
-        expect(this.filesSpy.mostRecentCall.args[0][0].content).toEqual('1', 'file should have content')
-        expect(this.filesSpy.mostRecentCall.args[0][1].content).toEqual('2', 'file should have content')
-        expect(this.filesSpy.mostRecentCall.args[0][2].content).toEqual('3', 'file should have content')
+        const files = this.filesSpy.mostRecentCall.args[0]
+        expect(files[0].data.content).toEqual('1', 'file should have content')
+        expect(files[1].data.content).toEqual('2', 'file should have content')
+        expect(files[2].data.content).toEqual('3', 'file should have content')
       })
 
       runs(() => {
-        this.prev = this.filesSpy.mostRecentCall.args[0]
+        this.prevContent = this.filesSpy.mostRecentCall.args[0][0].data.content
         this.filesSpy.reset()
         fs.writeFileSync(Path.join(this.realPath, 'file-0.txt'), 'meh something longer than one word')
       })
       waitsFor('file change', () => {
-        return this.filesSpy.calls.length >= 1
+        return this.filesSpy.calls.length >= 2
       })
       runs(() => {
-        expect(this.filesSpy.mostRecentCall.args[0]).not.toBe(this.prev, 'should have updated changed file')
+        expect(this.filesSpy.mostRecentCall.args[0][0].data.content).not.toEqual(this.prevContent, 'should have updated changed file')
       })
 
       runs(() => {

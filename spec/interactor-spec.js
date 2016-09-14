@@ -3,15 +3,19 @@
 import Bacon from 'baconjs'
 import R from 'ramda'
 import Interactor from '../lib/interactor'
+import FileField from '../lib/fields/file-field'
 import NotesFile from '../lib/notes-file'
 
 describe('interactor', function () {
-  let buses, interactor, spies
+  let buses, interactor, spies, nameField, extField
 
   beforeEach(function () {
     buses = {
+      abortEditCellStream: new Bacon.Bus(),
       activePath: new Bacon.Bus(),
       clickedRow: new Bacon.Bus(),
+      editCellStream: new Bacon.Bus(),
+      dblClickedCell: new Bacon.Bus(),
       files: new Bacon.Bus(),
       initialScanDone: new Bacon.Bus(),
       keyDown: new Bacon.Bus(),
@@ -20,6 +24,7 @@ describe('interactor', function () {
       keyUp: new Bacon.Bus(),
       listHeight: new Bacon.Bus(),
       rowHeight: new Bacon.Bus(),
+      saveEditedCellContent: new Bacon.Bus(),
       scrollTop: new Bacon.Bus(),
       sessionStart: new Bacon.Bus(),
       sortDirection: new Bacon.Bus(),
@@ -27,9 +32,11 @@ describe('interactor', function () {
       textInput: new Bacon.Bus()
     }
 
-    const testViewCtrl = {
+    const viewCtrl = {
+      abortEditCellStream: buses.abortEditCellStream,
       activePathStream: buses.activePath,
-      clickedRowStream: buses.clickedRow,
+      clickedCellStream: buses.clickedRow,
+      dblClickedCellStream: buses.dblClickedCell,
       keyDownStream: buses.keyDown,
       keyEnterStream: buses.keyEnter,
       keyEscStream: buses.keyEsc,
@@ -37,6 +44,7 @@ describe('interactor', function () {
       listHeightStream: buses.listHeight,
       rowHeightStream: buses.rowHeight,
       scrollTopStream: buses.scrollTop,
+      saveEditedCellContentStream: buses.saveEditedCellContent,
       sessionStartStream: buses.sessionStart,
       sortDirectionStream: buses.sortDirection,
       sortFieldStream: buses.sortField,
@@ -58,17 +66,27 @@ describe('interactor', function () {
       sifterResultProp: jasmine.createSpy('sifterResultProp')
     }
 
-    const testPatchWatcher = {
+    const pathWatcher = {
       initialScanDoneProp: buses.initialScanDone.toProperty(),
       filesProp: buses.files.toProperty([]),
       dispose: spies.disposePathWatcher
     }
 
     const pathWatcherFactory = {
-      watch: () => testPatchWatcher
+      watch: () => pathWatcher
     }
 
-    interactor = new Interactor(testViewCtrl, pathWatcherFactory)
+    nameField = new FileField({name: 'name', propPath: 'name'})
+    extField = new FileField({name: 'ext', propPath: 'ext'})
+    const service = {
+      columnsProp: {},
+      editCellStream: buses.editCellStream,
+      fieldsProp: Bacon.constant([nameField, extField]),
+      fileReadersProp: {},
+      fileWritersProp: {}
+    }
+
+    interactor = new Interactor(viewCtrl, pathWatcherFactory, service)
 
     interactor.filesProp.onValue(spies.filesProp)
     interactor.forcedScrollTopProp.onValue(spies.forcedScrollTopProp)
@@ -110,10 +128,11 @@ describe('interactor', function () {
       expect(spies.selectedIndexProp).toHaveBeenCalledWith(undefined)
 
       buses.files.push([
-        new NotesFile(str => str, 'file1.md', {
-          content: 'content of file 1',
-          stats: null
-        })
+        new NotesFile('file1.md', relPath => relPath)
+        // {
+        //   content: 'content of file 1',
+        //   stats: null
+        // }
       ])
       expect(spies.filesProp).toHaveBeenCalled()
       expect(spies.filesProp.mostRecentCall.args[0]).toEqual([jasmine.any(Object)])
@@ -127,10 +146,11 @@ describe('interactor', function () {
 
       beforeEach(function () {
         allFiles = R.times(i => {
-          return new NotesFile(str => `/notes/${str}`, `file ${i}.md`, {
-            content: `content of file ${i}`,
-            stats: null
-          })
+          return new NotesFile(`file ${i}.md`, str => `/notes/${str}`)
+          // {
+          //   content: `content of file ${i}`,
+          //   stats: null
+          // })
         }, 10)
         buses.files.push(allFiles)
         buses.initialScanDone.push(true)
@@ -142,7 +162,7 @@ describe('interactor', function () {
         expect(spies.sifterResultProp).toHaveBeenCalled()
         const res = spies.sifterResultProp.calls[0].args[0]
         expect(res.options).toEqual({
-          fields: ['name', 'content'],
+          fields: ['name', 'ext'],
           sort: [
             {field: 'name', direction: 'desc'},
             {field: '$score', direction: 'desc'}

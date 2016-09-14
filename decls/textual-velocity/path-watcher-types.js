@@ -7,5 +7,5 @@ declare type PathWatcherType = {
 }
 
 declare type PathWatcherFactoryType = {
-  watch: (path: NotesPathType, filter: NotesPathFilterType) => PathWatcherType
+  watch (path: NotesPathType, filter: NotesPathFilterType): PathWatcherType
 }

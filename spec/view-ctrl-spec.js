@@ -33,7 +33,7 @@ describe('view-ctrl', function () {
     }
 
     testView = new ReactView(testPanel)
-    testView.clickedRowStream = buses.clickedRow
+    testView.clickedCellStream = buses.clickedRow
     testView.keyDownStream = buses.keyDown
     testView.listHeightStream = buses.listHeight
     testView.sortDirectionStream = buses.sortDirection
@@ -45,7 +45,7 @@ describe('view-ctrl', function () {
 
     spies = {
       activePathStream: jasmine.createSpy('activePathStream'),
-      clickedRowStream: jasmine.createSpy('clickedRowStream'),
+      clickedCellStream: jasmine.createSpy('clickedCellStream'),
       keyDownStream: jasmine.createSpy('keyDownStream'),
       keyEnterStream: jasmine.createSpy('keyEnterStream'),
       keyEscStream: jasmine.createSpy('keyEscStream'),
@@ -59,7 +59,7 @@ describe('view-ctrl', function () {
       textInputStream: jasmine.createSpy('textInputStream')
     }
     viewCtrl.activePathStream.onValue(spies.activePathStream)
-    viewCtrl.clickedRowStream.onValue(spies.clickedRowStream)
+    viewCtrl.clickedCellStream.onValue(spies.clickedCellStream)
     viewCtrl.keyDownStream.onValue(spies.keyDownStream)
     viewCtrl.keyEnterStream.onValue(spies.keyEnterStream)
     viewCtrl.keyEscStream.onValue(spies.keyEscStream)
@@ -100,9 +100,9 @@ describe('view-ctrl', function () {
     })
 
     describe('when a row is clicked', function () {
-      it('should yield a index on clickedRowStream', function () {
+      it('should yield a index on clickedCellStream', function () {
         buses.clickedRow.push(3)
-        expect(spies.clickedRowStream).toHaveBeenCalledWith(3)
+        expect(spies.clickedCellStream).toHaveBeenCalledWith(3)
       })
     })
 

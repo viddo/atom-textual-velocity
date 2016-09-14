@@ -68,6 +68,11 @@
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
+
+    .highlight { // e.g. tags, "reversed" colors
+      color: @app-background-color;
+      background-color: @text-color-subtle
+    }
   }
   th {
     color: @text-color-subtle;
@@ -78,7 +83,7 @@
   }
   td {
     cursor: pointer;
-    &.tv-td--tags {
+    &.edit-cell-str {
       display: table-cell;
       padding: 0;
     }

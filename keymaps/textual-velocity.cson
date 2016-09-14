@@ -1,10 +1,8 @@
 '.platform-darwin':
   'cmd-shift-c': 'textual-velocity:toggle-panel'
-  'cmd-shift-t': 'textual-velocity:edit-tags'
 
 '.platform-linux':
   'ctrl-shift-c': 'textual-velocity:toggle-panel'
-  'ctrl-shift-t': 'textual-velocity:edit-tags'
 
 'atom-workspace':
   'ctrl-l': 'textual-velocity:focus-on-search'

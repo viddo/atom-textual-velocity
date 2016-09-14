@@ -17,8 +17,8 @@ describe('main', () => {
       const err = new Error([msg, d.detail, d.stack].join('\n'))
       jasmine.getEnv().currentSpec.fail(err)
     })
-    spyOn(console, 'error').andCallFake(msg => {
-      const err = new Error(msg)
+    spyOn(console, 'error').andCallFake((msg, explanation = '') => {
+      const err = new Error(msg + explanation.toString())
       jasmine.getEnv().currentSpec.fail(err)
     })
 
