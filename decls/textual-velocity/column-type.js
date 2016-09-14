@@ -4,5 +4,6 @@ declare type ColumnType = {
   title: string,
   description: string,
   width: number,
+  editCellStr?: void | (file: NotesFileType) => string,
   cellContent (file: NotesFileType, searchMatch?: SearchMatchType): CellContentType
 }
