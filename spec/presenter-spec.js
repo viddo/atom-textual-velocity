@@ -26,32 +26,32 @@ describe('presenter', function () {
   beforeEach(function () {
     buses = {
       editCellNameProp: new Bacon.Bus(),
-      files: new Bacon.Bus(),
-      forcedScrollTop: new Bacon.Bus(),
-      listHeight: new Bacon.Bus(),
-      loading: new Bacon.Bus(),
-      openFile: new Bacon.Bus(),
-      notesPath: new Bacon.Bus(),
-      pagination: new Bacon.Bus(),
-      rowHeight: new Bacon.Bus(),
-      saveEditedCellContent: new Bacon.Bus(),
-      selectedIndex: new Bacon.Bus(),
-      sifterResult: new Bacon.Bus()
+      filesProp: new Bacon.Bus(),
+      forcedScrollTopProp: new Bacon.Bus(),
+      listHeightProp: new Bacon.Bus(),
+      loadingStream: new Bacon.Bus(),
+      openFileStream: new Bacon.Bus(),
+      notesPathStream: new Bacon.Bus(),
+      paginationProp: new Bacon.Bus(),
+      rowHeightProp: new Bacon.Bus(),
+      saveEditedCellContentStream: new Bacon.Bus(),
+      selectedIndexProp: new Bacon.Bus(),
+      sifterResultProp: new Bacon.Bus()
     }
 
     const interactor = {
       editCellNameProp: buses.editCellNameProp.toProperty(undefined),
-      filesProp: buses.files.toProperty([]),
-      forcedScrollTopProp: buses.forcedScrollTop.toProperty(undefined),
-      listHeightProp: buses.listHeight.toProperty(123),
-      loadingStream: buses.loading,
-      openFileStream: buses.openFile,
-      notesPathStream: buses.notesPath,
-      paginationProp: buses.pagination.toProperty({start: 0, limit: 5}),
-      rowHeightProp: buses.rowHeight.toProperty(23),
-      saveEditedCellContentStream: buses.saveEditedCellContent,
-      selectedIndexProp: buses.selectedIndex.toProperty(undefined),
-      sifterResultProp: buses.sifterResult.toProperty()
+      filesProp: buses.filesProp.toProperty([]),
+      forcedScrollTopProp: buses.forcedScrollTopProp.toProperty(undefined),
+      listHeightProp: buses.listHeightProp.toProperty(123),
+      loadingStream: buses.loadingStream,
+      openFileStream: buses.openFileStream,
+      notesPathStream: buses.notesPathStream,
+      paginationProp: buses.paginationProp.toProperty({start: 0, limit: 5}),
+      rowHeightProp: buses.rowHeightProp.toProperty(23),
+      saveEditedCellContentStream: buses.saveEditedCellContentStream,
+      selectedIndexProp: buses.selectedIndexProp.toProperty(undefined),
+      sifterResultProp: buses.sifterResultProp.toProperty()
     }
 
     nameColumn = {
@@ -116,25 +116,25 @@ describe('presenter', function () {
     expect(spies.sortProp).not.toHaveBeenCalled()
   })
 
-  describe('when interactor loading stream is triggered', function () {
+  describe('when interactor loadingStream stream is triggered', function () {
     let allFiles
 
     beforeEach(function () {
-      const notesPath = NotesPath(__dirname)
-      buses.notesPath.push(notesPath)
-      buses.loading.push()
+      const notesPathStream = NotesPath(__dirname)
+      buses.notesPathStream.push(notesPathStream)
+      buses.loadingStream.push()
 
-      // simulate files beings populated:
-      buses.files.push([])
+      // simulate filesProp beings populated:
+      buses.filesProp.push([])
       allFiles = R.times(i => {
-        const file = notesPath.newFile(`file ${i}.md`)
+        const file = notesPathStream.newFile(`file ${i}.md`)
         file.data.content = `content of file ${i}`
         return file
       }, 10)
-      buses.files.push(allFiles)
+      buses.filesProp.push(allFiles)
     })
 
-    it('should trigger presenter loading stream', function () {
+    it('should trigger presenter loadingStream stream', function () {
       expect(spies.loadingStream).toHaveBeenCalled()
     })
 
@@ -144,7 +144,7 @@ describe('presenter', function () {
 
     describe('when there is a sifter result', function () {
       beforeEach(function () {
-        buses.sifterResult.push(
+        buses.sifterResultProp.push(
           newSifterResult({
             total: 10,
             items: allFiles.map(file => ({id: allFiles.indexOf(file)}))
@@ -177,7 +177,7 @@ describe('presenter', function () {
 
     describe('when a search query is given', function () {
       beforeEach(function () {
-        buses.sifterResult.push(
+        buses.sifterResultProp.push(
           newSifterResult({
             tokens: [{
               string: 'str',
@@ -219,12 +219,12 @@ describe('presenter', function () {
         expect(nameColumn.cellContent.mostRecentCall.args[1].content).toEqual(jasmine.any(Function))
       })
 
-      describe('when interactor pagination changes', function () {
+      describe('when interactor paginationProp changes', function () {
         beforeEach(function () {
-          buses.pagination.push({start: 4, limit: 3})
+          buses.paginationProp.push({start: 4, limit: 3})
         })
 
-        it('should update the pagination', function () {
+        it('should update the paginationProp', function () {
           expect(spies.paginationProp).toHaveBeenCalledWith({start: 4, limit: 3})
         })
 
@@ -241,7 +241,7 @@ describe('presenter', function () {
 
       describe('when interactor forcedScrollTopProp changes', function () {
         beforeEach(function () {
-          buses.forcedScrollTop.push(0)
+          buses.forcedScrollTopProp.push(0)
         })
 
         it('should yield new value on prop', function () {
@@ -251,7 +251,7 @@ describe('presenter', function () {
 
       describe('when a file is selected', function () {
         beforeEach(function () {
-          buses.selectedIndex.push(2)
+          buses.selectedIndexProp.push(2)
         })
 
         it('should yield new rows', function () {
@@ -269,7 +269,7 @@ describe('presenter', function () {
 
         it('should open file when triggered by that open stream', function () {
           expect(spies.openPathStream).not.toHaveBeenCalled()
-          buses.openFile.push()
+          buses.openFileStream.push()
           expect(spies.openPathStream).toHaveBeenCalled()
           expect(spies.openPathStream.mostRecentCall.args[0]).toMatch(/.+file 5.md/)
         })
@@ -277,14 +277,14 @@ describe('presenter', function () {
 
       it('should open new file when there is no selected file', function () {
         expect(spies.openPathStream).not.toHaveBeenCalled()
-        buses.openFile.push()
+        buses.openFileStream.push()
         expect(spies.openPathStream).toHaveBeenCalled()
         expect(spies.openPathStream.mostRecentCall.args[0]).toMatch(/.+str.md/)
 
-        buses.sifterResult.push(
+        buses.sifterResultProp.push(
           newSifterResult({query: ''})
         )
-        buses.openFile.push()
+        buses.openFileStream.push()
         expect(spies.openPathStream.mostRecentCall.args[0]).toMatch(/.+untitled.md/)
       })
     })

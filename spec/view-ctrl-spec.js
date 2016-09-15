@@ -16,13 +16,13 @@ describe('view-ctrl', function () {
     atom.config.set('textual-velocity.sortField', 'content')
 
     buses = {
-      clickedRow: new Bacon.Bus(),
-      keyDown: new Bacon.Bus(),
-      keyInput: new Bacon.Bus(),
-      listHeight: new Bacon.Bus(),
-      sortDirection: new Bacon.Bus(),
-      sortField: new Bacon.Bus(),
-      scrollTop: new Bacon.Bus()
+      clickedRowStream: new Bacon.Bus(),
+      keyDownStream: new Bacon.Bus(),
+      keyInputStream: new Bacon.Bus(),
+      listHeightStream: new Bacon.Bus(),
+      sortDirectionStream: new Bacon.Bus(),
+      sortFieldStream: new Bacon.Bus(),
+      scrollTopStream: new Bacon.Bus()
     }
 
     DOMNode = document.createElement('div')
@@ -33,13 +33,13 @@ describe('view-ctrl', function () {
     }
 
     testView = new ReactView(testPanel)
-    testView.clickedCellStream = buses.clickedRow
-    testView.keyDownStream = buses.keyDown
-    testView.listHeightStream = buses.listHeight
-    testView.sortDirectionStream = buses.sortDirection
-    testView.sortFieldStream = buses.sortField
-    testView.scrollTopStream = buses.scrollTop
-    testView.textInputStream = buses.keyInput
+    testView.clickedCellStream = buses.clickedRowStream
+    testView.keyDownStream = buses.keyDownStream
+    testView.listHeightStream = buses.listHeightStream
+    testView.sortDirectionStream = buses.sortDirectionStream
+    testView.sortFieldStream = buses.sortFieldStream
+    testView.scrollTopStream = buses.scrollTopStream
+    testView.textInputStream = buses.keyInputStream
 
     viewCtrl = new ViewCtrl(testView)
 
@@ -101,7 +101,7 @@ describe('view-ctrl', function () {
 
     describe('when a row is clicked', function () {
       it('should yield a index on clickedCellStream', function () {
-        buses.clickedRow.push(3)
+        buses.clickedRowStream.push(3)
         expect(spies.clickedCellStream).toHaveBeenCalledWith(3)
       })
     })
@@ -117,11 +117,11 @@ describe('view-ctrl', function () {
       })
 
       it('should search on normal text input', function () {
-        buses.keyInput.push('')
+        buses.keyInputStream.push('')
         expect(spies.textInputStream).toHaveBeenCalledWith('')
-        buses.keyInput.push('a')
+        buses.keyInputStream.push('a')
         expect(spies.textInputStream).toHaveBeenCalledWith('a')
-        buses.keyInput.push('a test')
+        buses.keyInputStream.push('a test')
         expect(spies.textInputStream).toHaveBeenCalledWith('a test')
 
         expect(spies.keyEnterStream).not.toHaveBeenCalled()
@@ -131,7 +131,7 @@ describe('view-ctrl', function () {
 
       it('should yield open event on enter', function () {
         const event = newKeyEvent(13) // enter
-        buses.keyDown.push(event)
+        buses.keyDownStream.push(event)
         expect(spies.keyEnterStream).toHaveBeenCalled()
         expect(event.preventDefault).toHaveBeenCalled()
 
@@ -142,7 +142,7 @@ describe('view-ctrl', function () {
 
       it('should yield selection by index on up/down events', function () {
         let event = newKeyEvent(38) // up
-        buses.keyDown.push(event)
+        buses.keyDownStream.push(event)
         expect(event.preventDefault).toHaveBeenCalled()
         expect(spies.keyUpStream).toHaveBeenCalledWith(event)
         expect(spies.keyDownStream).not.toHaveBeenCalled()
@@ -152,7 +152,7 @@ describe('view-ctrl', function () {
         spies.keyDownStream.reset()
         spies.keyUpStream.reset()
         event = newKeyEvent(40) // down
-        buses.keyDown.push(event)
+        buses.keyDownStream.push(event)
         expect(event.preventDefault).toHaveBeenCalled()
         expect(spies.keyUpStream).not.toHaveBeenCalled()
         expect(spies.keyDownStream).toHaveBeenCalledWith(event)
@@ -164,7 +164,7 @@ describe('view-ctrl', function () {
         spies.keyDownStream.reset()
         spies.keyUpStream.reset()
         event = newKeyEvent(30) // else?
-        buses.keyDown.push(event)
+        buses.keyDownStream.push(event)
         expect(spies.keyUpStream).not.toHaveBeenCalled()
         expect(spies.keyDownStream).not.toHaveBeenCalled()
         expect(event.preventDefault).not.toHaveBeenCalled()
@@ -175,7 +175,7 @@ describe('view-ctrl', function () {
 
     describe('when sort changes', function () {
       beforeEach(function () {
-        atom.config.set('textual-velocity.sortDirection', 'asc')
+        atom.config.set('textual-velocity.sortDirectionStream', 'asc')
         atom.config.set('textual-velocity.sortfield', 'content')
       })
 
