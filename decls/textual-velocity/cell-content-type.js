@@ -2,6 +2,6 @@ declare type CellContentType =
   | string
   | {
       attrs: Object,
-      content: CellContentType
+      content?: CellContentType
     }
   | Array<CellContentType>
