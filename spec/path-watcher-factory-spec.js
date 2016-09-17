@@ -22,7 +22,14 @@ describe('path-watcher-factory', () => {
       contentFileReader,
       statsFileReader
     ])
-    pathWatcherFactory = new PathWatcherFactory(fileReadersProp)
+    const fieldsProp = Bacon.constant([
+      {filePropName: 'name'},
+      {filePropName: 'contentAsInt', value: file => parseInt(file.content)}
+    ])
+    pathWatcherFactory = new PathWatcherFactory({
+      fileReadersProp: fileReadersProp,
+      fieldsProp: fieldsProp
+    })
   })
 
   describe('.watch', function () {
@@ -38,11 +45,11 @@ describe('path-watcher-factory', () => {
       this.notesPath = NotesPath(this.realPath)
       this.notesFileFilter = new NotesFileFilter(this.realPath)
 
-      this.filesSpy = jasmine.createSpy('files')
-      this.initialScanDoneSpy = jasmine.createSpy('ready')
+      this.sifterPropSpy = jasmine.createSpy('sifterProp')
+      this.initialScanDonePropSpy = jasmine.createSpy('initialScanDoneProp')
       this.pathWatcher = pathWatcherFactory.watch(this.notesPath, this.notesFileFilter)
-      this.unsubInitialScanDone = this.pathWatcher.initialScanDoneProp.onValue(this.initialScanDoneSpy)
-      this.unsubFilesProp = this.pathWatcher.filesProp.onValue(this.filesSpy)
+      this.unsubInitialScanDone = this.pathWatcher.initialScanDoneProp.onValue(this.initialScanDonePropSpy)
+      this.unsubFilesProp = this.pathWatcher.sifterProp.onValue(this.sifterPropSpy)
     })
 
     afterEach(function () {
@@ -53,55 +60,57 @@ describe('path-watcher-factory', () => {
     })
 
     it('should return a watcher that handles the life-cycle of a given path', function () {
-      expect(this.initialScanDoneSpy).not.toHaveBeenCalled() // initialScanDone should not be ready initially
-      expect(this.filesSpy.calls[0].args[0]).toEqual([], 'files should be an empty list initially')
+      expect(this.initialScanDonePropSpy).not.toHaveBeenCalled() // initialScanDone should not be ready initially
+      expect(this.sifterPropSpy.calls[0].args[0].items).toEqual([], 'items should be an empty list initially')
 
       waitsFor('watcher to be ready', () => {
-        return this.initialScanDoneSpy.calls.length >= 1
+        return this.initialScanDonePropSpy.calls.length >= 1
       })
       runs(() => {
-        expect(this.initialScanDoneSpy.mostRecentCall.args[0]).toEqual(true, 'initialScanDone should be ready')
-        expect(this.filesSpy.calls[1].args[0]).toEqual(R.repeat(jasmine.any(Object), 3), 'files should have some entries')
-        expect(this.filesSpy.calls[2].args[0][1].path).toMatch(/.+file-1\.txt$/, 'file should have a path')
-        expect(this.filesSpy.calls[3].args[0][2].path).toMatch(/.+file-2\.txt$/, 'file should have a path')
+        expect(this.initialScanDonePropSpy.mostRecentCall.args[0]).toEqual(true, 'initialScanDone should be ready')
+        expect(this.sifterPropSpy.calls[1].args[0].items).toEqual(R.repeat(jasmine.any(Object), 3), 'files should have some entries')
+        expect(this.sifterPropSpy.calls[2].args[0].items[1].path).toMatch(/.+file-1\.txt$/, 'file should have a path')
+        expect(this.sifterPropSpy.calls[3].args[0].items[2].path).toMatch(/.+file-2\.txt$/, 'file should have a path')
       })
 
       waitsFor('all files to be read', () => {
-        return this.filesSpy.calls.length >= 7
+        return this.sifterPropSpy.calls.length >= 7
       })
       runs(() => {
-        const files = this.filesSpy.mostRecentCall.args[0]
-        expect(files[0].data.content).toEqual('1', 'file should have content')
-        expect(files[1].data.content).toEqual('2', 'file should have content')
-        expect(files[2].data.content).toEqual('3', 'file should have content')
+        const files = this.sifterPropSpy.mostRecentCall.args[0].items
+        expect(files[0].content).toEqual('1', 'file should have content')
+        expect(files[1].content).toEqual('2', 'file should have content')
+        expect(files[2].content).toEqual('3', 'file should have content')
+
+        expect(files[0].contentAsInt).toEqual(1)
       })
 
       runs(() => {
-        this.prevContent = this.filesSpy.mostRecentCall.args[0][0].data.content
-        this.filesSpy.reset()
+        this.prevContent = this.sifterPropSpy.mostRecentCall.args[0].items[0].content
+        this.sifterPropSpy.reset()
         fs.writeFileSync(Path.join(this.realPath, 'file-0.txt'), 'meh something longer than one word')
       })
       waitsFor('file change', () => {
-        return this.filesSpy.calls.length >= 2
+        return this.sifterPropSpy.calls.length >= 2
       })
       runs(() => {
-        expect(this.filesSpy.mostRecentCall.args[0][0].data.content).not.toEqual(this.prevContent, 'should have updated changed file')
+        const files = this.sifterPropSpy.mostRecentCall.args[0].items
+        expect(files[0].content).not.toEqual(this.prevContent, 'should have updated changed file')
+        expect(files[0].contentAsInt).toBeNaN(NaN, 'should have updated field value')
       })
 
       runs(() => {
-        this.filesSpy.reset()
+        this.sifterPropSpy.reset()
         fs.unlinkSync(Path.join(this.realPath, 'file-0.txt'))
         fs.unlinkSync(Path.join(this.realPath, 'file-1.txt'))
         fs.unlinkSync(Path.join(this.realPath, 'other.zip'))
-        fs.unlinkSync(Path.join(this.realPath, 'file-2.txt'))
       })
       waitsFor('for all files to have been removed', () => {
-        return this.filesSpy.calls.length >= 3
+        return this.sifterPropSpy.calls.length >= 2
       })
       runs(() => {
-        expect(this.filesSpy.calls[0].args[0].length).toEqual(2)
-        expect(this.filesSpy.calls[1].args[0].length).toEqual(1)
-        expect(this.filesSpy.calls[2].args[0].length).toEqual(0)
+        expect(this.sifterPropSpy.calls[1].args[0].items.length).toEqual(1)
+        expect(this.sifterPropSpy.calls[1].args[0].items[0].relPath).toEqual('file-2.txt')
       })
     })
   })

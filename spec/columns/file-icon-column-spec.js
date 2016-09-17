@@ -20,9 +20,7 @@ describe('columns/file-icon-column', function () {
     let file, cellContent
 
     beforeEach(function () {
-      file = new NotesFile('markdown.md', relPath => `/notes/${relPath}`, {
-        content: '# testing markdown\nshould be **Zzz** by now tho'
-      })
+      file = new NotesFile('markdown.md', relPath => `/notes/${relPath}`)
       cellContent = column.cellContent(file)
     })
 

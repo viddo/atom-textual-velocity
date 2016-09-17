@@ -5,5 +5,6 @@ declare type NotesFileType = {
   base: string,
   name: string,
   ext: string,
-  data: Object
+  stats?: Object,
+  content?: string
 }

@@ -10,7 +10,7 @@ describe('columns/stats-date-column', function () {
     column = new StatsDateColumn({
       sortField: 'created-date',
       title: 'Created date',
-      prop: 'birthtime'
+      filePropName: 'birthtime'
     })
   })
 
@@ -38,7 +38,7 @@ describe('columns/stats-date-column', function () {
     })
 
     it('should return diffing time from now', function () {
-      file.data.stats = {birthtime: new Date()}
+      file.stats = {birthtime: new Date()}
       expect(column.cellContent(file)).toEqual(jasmine.any(String))
       expect(column.cellContent(file)).not.toEqual('')
     })

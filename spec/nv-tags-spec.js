@@ -6,6 +6,7 @@ try {
   var bplist = require('bplist') // eslint-disable-line
   var xattr = require('fs-xattr') // eslint-disable-line
 } catch (err) {
+  console.warn('nv-tags-specs not run: ', err)
   return
 }
 
@@ -90,13 +91,12 @@ describe('nv-tags', function () {
 
     describe('.value', function () {
       it('should return the tags as a space separated string', function () {
-        expect(field.value({data: {nvtags: ['beep', 'boop']}})).toEqual('beep boop')
+        expect(field.value({nvtags: ['beep', 'boop']})).toEqual('beep boop')
       })
 
       it('should return nothing for nonvalid prop', function () {
-        expect(field.value({data: {nvtags: {}}})).toBeFalsy()
-        expect(field.value({data: {nvtags: null}})).toBeFalsy()
-        expect(field.value({data: {}})).toBeFalsy()
+        expect(field.value({nvtags: {}})).toBeFalsy()
+        expect(field.value({nvtags: null})).toBeFalsy()
       })
     })
   })
@@ -110,7 +110,7 @@ describe('nv-tags', function () {
 
     describe('.cellContent', function () {
       it('should return the tags as a space separated string', function () {
-        var file = {data: {nvtags: ['beep', 'boop']}}
+        var file = {nvtags: ['beep', 'boop']}
         var cellContent = column.cellContent(file)
 
         expect(cellContent).toEqual(jasmine.any(Array))
@@ -121,9 +121,8 @@ describe('nv-tags', function () {
       })
 
       it('should return nothing for nonvalid prop', function () {
-        expect(column.cellContent({data: {nvtags: {}}})).toBeFalsy()
-        expect(column.cellContent({data: {nvtags: null}})).toBeFalsy()
-        expect(column.cellContent({data: {}})).toBeFalsy()
+        expect(column.cellContent({nvtags: {}})).toBeFalsy()
+        expect(column.cellContent({nvtags: null})).toBeFalsy()
       })
     })
   })

@@ -21,9 +21,8 @@ describe('columns/summary-column', function () {
     let file
 
     beforeEach(function () {
-      file = new NotesFile('markdown.md', relPath => `/notes/${relPath}`, {
-        content: '# testing markdown\nshould be **Zzz** by now tho'
-      })
+      file = new NotesFile('markdown.md', relPath => `/notes/${relPath}`)
+      file.content = '# testing markdown\nshould be **Zzz** by now tho'
     })
 
     describe('when there is no query applied', function () {

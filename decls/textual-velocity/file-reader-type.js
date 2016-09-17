@@ -1,5 +1,5 @@
 declare type FileReaderType = {
-  propName: string,
+  filePropName: string,
   skipRead?: (file: NotesFileType, contextInfo: {isNewFile?: boolean}) => boolean,
   read (path: string, callback: NodeCallbackType): void
 }

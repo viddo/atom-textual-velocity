@@ -128,7 +128,7 @@ describe('presenter', function () {
       buses.filesProp.push([])
       allFiles = R.times(i => {
         const file = notesPathStream.newFile(`file ${i}.md`)
-        file.data.content = `content of file ${i}`
+        file.content = `content of file ${i}`
         return file
       }, 10)
       buses.filesProp.push(allFiles)

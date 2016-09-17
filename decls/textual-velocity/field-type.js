@@ -1,4 +1,4 @@
 declare type FieldType = {
-  name: string,
-  value (file: NotesFileType): any,
+  filePropName: string,
+  value?: (file: NotesFileType) => any
 }

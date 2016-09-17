@@ -2,12 +2,12 @@
 
 import Bacon from 'baconjs'
 import R from 'ramda'
+import Sifter from 'sifter'
 import Interactor from '../lib/interactor'
-import FileField from '../lib/fields/file-field'
 import NotesFile from '../lib/notes-file'
 
 describe('interactor', function () {
-  let buses, interactor, spies, nameField, extField
+  let buses, interactor, spies
 
   beforeEach(function () {
     buses = {
@@ -16,7 +16,6 @@ describe('interactor', function () {
       clickedCellStream: new Bacon.Bus(),
       editCellStream: new Bacon.Bus(),
       dblClickedCell: new Bacon.Bus(),
-      filesProp: new Bacon.Bus(),
       initialScanDoneProp: new Bacon.Bus(),
       keyDownStream: new Bacon.Bus(),
       keyEnterStream: new Bacon.Bus(),
@@ -27,6 +26,7 @@ describe('interactor', function () {
       saveEditedCellContentStream: new Bacon.Bus(),
       scrollTopStream: new Bacon.Bus(),
       sessionStartStream: new Bacon.Bus(),
+      sifterProp: new Bacon.Bus(),
       sortDirectionStream: new Bacon.Bus(),
       sortFieldStream: new Bacon.Bus(),
       textInputStream: new Bacon.Bus()
@@ -68,7 +68,7 @@ describe('interactor', function () {
 
     const pathWatcher = {
       initialScanDoneProp: buses.initialScanDoneProp.toProperty(),
-      filesProp: buses.filesProp.toProperty([]),
+      sifterProp: buses.sifterProp.toProperty(new Sifter([])),
       dispose: spies.disposePathWatcher
     }
 
@@ -76,12 +76,13 @@ describe('interactor', function () {
       watch: () => pathWatcher
     }
 
-    nameField = new FileField({name: 'name', propPath: 'name'})
-    extField = new FileField({name: 'ext', propPath: 'ext'})
     const service = {
       columnsProp: {},
       editCellStream: buses.editCellStream,
-      fieldsProp: Bacon.constant([nameField, extField]),
+      fieldsProp: Bacon.constant([
+        {filePropName: 'name'},
+        {filePropName: 'ext'}
+      ]),
       fileReadersProp: {},
       fileWritersProp: {}
     }
@@ -127,13 +128,10 @@ describe('interactor', function () {
       expect(spies.rowHeightProp).toHaveBeenCalledWith(20)
       expect(spies.selectedIndexProp).toHaveBeenCalledWith(undefined)
 
-      buses.filesProp.push([
-        new NotesFile('file1.md', relPath => relPath)
-        // {
-        //   content: 'content of file 1',
-        //   stats: null
-        // }
-      ])
+      buses.sifterProp.push(
+        new Sifter([
+          new NotesFile('file1.md', relPath => relPath)
+        ]))
       expect(spies.filesProp).toHaveBeenCalled()
       expect(spies.filesProp.mostRecentCall.args[0]).toEqual([jasmine.any(Object)])
 
@@ -147,15 +145,9 @@ describe('interactor', function () {
       beforeEach(function () {
         allFiles = R.times(i => {
           return new NotesFile(`file ${i}.md`, str => `/notes/${str}`)
-          // {
-          //   content: `content of file ${i}`,
-          //   stats: null
-          // })
         }, 10)
-        buses.filesProp.push(allFiles)
+        buses.sifterProp.push(new Sifter(allFiles))
         buses.initialScanDoneProp.push(true)
-        expect(spies.sifterResultProp).not.toHaveBeenCalled()
-        advanceClock(5000) // debounced sifterProp
       })
 
       it('should yield sifter results', function () {
