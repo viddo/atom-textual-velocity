@@ -146,6 +146,7 @@ describe('interactor', function () {
         allFiles = R.times(i => {
           return new NotesFile(`file ${i}.md`, str => `/notes/${str}`)
         }, 10)
+        advanceClock(1000) // due to debounced sifterProp
         buses.sifterProp.push(new Sifter(allFiles))
         buses.initialScanDoneProp.push(true)
       })
