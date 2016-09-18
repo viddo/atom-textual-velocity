@@ -1,15 +1,15 @@
 declare type PresenterType = {
-  columnHeadersProp: Bacon.Property,
-  forcedScrollTopProp: Bacon.Property,
-  itemsCountProp: Bacon.Property,
-  listHeightProp: Bacon.Property,
-  loadingStream: Bacon.Stream,
-  openPathStream: Bacon.Stream,
-  paginationProp: Bacon.Property,
-  selectedPathStream: Bacon.Stream,
-  rowHeightProp: Bacon.Property,
-  rowsStream: Bacon.Stream,
-  saveEditedCellContentStream: Bacon.Stream,
-  searchStrProp: Bacon.Property,
-  sortProp: Bacon.Property
+  columnHeadersP: Bacon.Property,
+  forcedScrollTopP: Bacon.Property,
+  itemsCountP: Bacon.Property,
+  listHeightP: Bacon.Property,
+  loadingS: Bacon.Stream,
+  openPathS: Bacon.Stream,
+  paginationP: Bacon.Property,
+  selectedPathS: Bacon.Stream,
+  rowHeightP: Bacon.Property,
+  rowsS: Bacon.Stream,
+  saveEditedCellContentS: Bacon.Stream,
+  searchStrP: Bacon.Property,
+  sortP: Bacon.Property
 }

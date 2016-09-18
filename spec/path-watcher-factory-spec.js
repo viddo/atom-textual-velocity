@@ -18,17 +18,17 @@ describe('path-watcher-factory', () => {
 
   beforeEach(function () {
     jasmine.useRealClock()
-    const fileReadersProp = Bacon.constant([
+    const fileReadersP = Bacon.constant([
       contentFileReader,
       statsFileReader
     ])
-    const fieldsProp = Bacon.constant([
+    const fieldsP = Bacon.constant([
       {filePropName: 'name'},
       {filePropName: 'contentAsInt', value: file => parseInt(file.content)}
     ])
     pathWatcherFactory = new PathWatcherFactory({
-      fileReadersProp: fileReadersProp,
-      fieldsProp: fieldsProp
+      fileReadersP: fileReadersP,
+      fieldsP: fieldsP
     })
   })
 
@@ -45,16 +45,16 @@ describe('path-watcher-factory', () => {
       this.notesPath = NotesPath(this.realPath)
       this.notesFileFilter = new NotesFileFilter(this.realPath)
 
-      this.sifterPropSpy = jasmine.createSpy('sifterProp')
-      this.initialScanDonePropSpy = jasmine.createSpy('initialScanDoneProp')
+      this.sifterPropSpy = jasmine.createSpy('sifterP')
+      this.initialScanDonePropSpy = jasmine.createSpy('initialScanDoneP')
       this.pathWatcher = pathWatcherFactory.watch(this.notesPath, this.notesFileFilter)
-      this.unsubInitialScanDone = this.pathWatcher.initialScanDoneProp.onValue(this.initialScanDonePropSpy)
-      this.unsubFilesProp = this.pathWatcher.sifterProp.onValue(this.sifterPropSpy)
+      this.unsubInitialScanDone = this.pathWatcher.initialScanDoneP.onValue(this.initialScanDonePropSpy)
+      this.unsubFilesP = this.pathWatcher.sifterP.onValue(this.sifterPropSpy)
     })
 
     afterEach(function () {
       this.unsubInitialScanDone()
-      this.unsubFilesProp()
+      this.unsubFilesP()
       this.pathWatcher.dispose()
       temp.cleanupSync()
     })

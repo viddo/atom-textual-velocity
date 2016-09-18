@@ -11,64 +11,64 @@ describe('interactor', function () {
 
   beforeEach(function () {
     buses = {
-      abortEditCellStream: new Bacon.Bus(),
-      activePathStream: new Bacon.Bus(),
-      clickedCellStream: new Bacon.Bus(),
-      editCellStream: new Bacon.Bus(),
+      abortEditCellS: new Bacon.Bus(),
+      activePathS: new Bacon.Bus(),
+      clickedCellS: new Bacon.Bus(),
+      editCellS: new Bacon.Bus(),
       dblClickedCell: new Bacon.Bus(),
-      initialScanDoneProp: new Bacon.Bus(),
-      keyDownStream: new Bacon.Bus(),
-      keyEnterStream: new Bacon.Bus(),
-      keyEscStream: new Bacon.Bus(),
-      keyUpStream: new Bacon.Bus(),
-      listHeightStream: new Bacon.Bus(),
-      rowHeightStream: new Bacon.Bus(),
-      saveEditedCellContentStream: new Bacon.Bus(),
-      scrollTopStream: new Bacon.Bus(),
-      sessionStartStream: new Bacon.Bus(),
-      sifterProp: new Bacon.Bus(),
-      sortDirectionStream: new Bacon.Bus(),
-      sortFieldStream: new Bacon.Bus(),
-      textInputStream: new Bacon.Bus()
+      initialScanDoneP: new Bacon.Bus(),
+      keyDownS: new Bacon.Bus(),
+      keyEnterS: new Bacon.Bus(),
+      keyEscS: new Bacon.Bus(),
+      keyUpS: new Bacon.Bus(),
+      listHeightS: new Bacon.Bus(),
+      rowHeightS: new Bacon.Bus(),
+      saveEditedCellContentS: new Bacon.Bus(),
+      scrollTopS: new Bacon.Bus(),
+      sessionStartS: new Bacon.Bus(),
+      sifterP: new Bacon.Bus(),
+      sortDirectionS: new Bacon.Bus(),
+      sortFieldS: new Bacon.Bus(),
+      textInputS: new Bacon.Bus()
     }
 
     const viewCtrl = {
-      abortEditCellStream: buses.abortEditCellStream,
-      activePathStream: buses.activePathStream,
-      clickedCellStream: buses.clickedCellStream,
-      dblClickedCellStream: buses.dblClickedCell,
-      keyDownStream: buses.keyDownStream,
-      keyEnterStream: buses.keyEnterStream,
-      keyEscStream: buses.keyEscStream,
-      keyUpStream: buses.keyUpStream,
-      listHeightStream: buses.listHeightStream,
-      rowHeightStream: buses.rowHeightStream,
-      scrollTopStream: buses.scrollTopStream,
-      saveEditedCellContentStream: buses.saveEditedCellContentStream,
-      sessionStartStream: buses.sessionStartStream,
-      sortDirectionStream: buses.sortDirectionStream,
-      sortFieldStream: buses.sortFieldStream,
-      textInputStream: buses.textInputStream,
+      abortEditCellS: buses.abortEditCellS,
+      activePathS: buses.activePathS,
+      clickedCellS: buses.clickedCellS,
+      dblClickedCellS: buses.dblClickedCell,
+      keyDownS: buses.keyDownS,
+      keyEnterS: buses.keyEnterS,
+      keyEscS: buses.keyEscS,
+      keyUpS: buses.keyUpS,
+      listHeightS: buses.listHeightS,
+      rowHeightS: buses.rowHeightS,
+      scrollTopS: buses.scrollTopS,
+      saveEditedCellContentS: buses.saveEditedCellContentS,
+      sessionStartS: buses.sessionStartS,
+      sortDirectionS: buses.sortDirectionS,
+      sortFieldS: buses.sortFieldS,
+      textInputS: buses.textInputS,
       deactivate: jasmine.createSpy('viewCtrl.deactivate')
     }
 
     spies = {
       disposePathWatcher: jasmine.createSpy('pathWatcher.dispose'),
-      filesProp: jasmine.createSpy('filesProp'),
-      forcedScrollTopProp: jasmine.createSpy('forcedScrollTopProp'),
-      listHeightProp: jasmine.createSpy('listHeightProp'),
-      loadingStream: jasmine.createSpy('loadingStream'),
-      openFileStream: jasmine.createSpy('openFileStream'),
-      notesPathStream: jasmine.createSpy('notesPathStream'),
-      paginationProp: jasmine.createSpy('paginationProp'),
-      rowHeightProp: jasmine.createSpy('rowHeightProp'),
-      selectedIndexProp: jasmine.createSpy('selectedIndexProp'),
-      sifterResultProp: jasmine.createSpy('sifterResultProp')
+      filesP: jasmine.createSpy('filesP'),
+      forcedScrollTopP: jasmine.createSpy('forcedScrollTopP'),
+      listHeightP: jasmine.createSpy('listHeightP'),
+      loadingS: jasmine.createSpy('loadingS'),
+      openFileS: jasmine.createSpy('openFileS'),
+      notesPathS: jasmine.createSpy('notesPathS'),
+      paginationP: jasmine.createSpy('paginationP'),
+      rowHeightP: jasmine.createSpy('rowHeightP'),
+      selectedIndexP: jasmine.createSpy('selectedIndexP'),
+      sifterResultP: jasmine.createSpy('sifterResultP')
     }
 
     const pathWatcher = {
-      initialScanDoneProp: buses.initialScanDoneProp.toProperty(),
-      sifterProp: buses.sifterProp.toProperty(new Sifter([])),
+      initialScanDoneP: buses.initialScanDoneP.toProperty(),
+      sifterP: buses.sifterP.toProperty(new Sifter([])),
       dispose: spies.disposePathWatcher
     }
 
@@ -77,36 +77,36 @@ describe('interactor', function () {
     }
 
     const service = {
-      columnsProp: {},
-      editCellStream: buses.editCellStream,
-      fieldsProp: Bacon.constant([
+      columnsP: {},
+      editCellS: buses.editCellS,
+      fieldsP: Bacon.constant([
         {filePropName: 'name'},
         {filePropName: 'ext'}
       ]),
-      fileReadersProp: {},
-      fileWritersProp: {}
+      fileReadersP: {},
+      fileWritersP: {}
     }
 
     interactor = new Interactor(viewCtrl, pathWatcherFactory, service)
 
-    interactor.filesProp.onValue(spies.filesProp)
-    interactor.forcedScrollTopProp.onValue(spies.forcedScrollTopProp)
-    interactor.listHeightProp.onValue(spies.listHeightProp)
-    interactor.loadingStream.onValue(spies.loadingStream)
-    interactor.openFileStream.onValue(spies.openFileStream)
-    interactor.notesPathStream.onValue(spies.notesPathStream)
-    interactor.paginationProp.onValue(spies.paginationProp)
-    interactor.rowHeightProp.onValue(spies.rowHeightProp)
-    interactor.selectedIndexProp.onValue(spies.selectedIndexProp)
-    interactor.sifterResultProp.onValue(spies.sifterResultProp)
+    interactor.filesP.onValue(spies.filesP)
+    interactor.forcedScrollTopP.onValue(spies.forcedScrollTopP)
+    interactor.listHeightP.onValue(spies.listHeightP)
+    interactor.loadingS.onValue(spies.loadingS)
+    interactor.openFileS.onValue(spies.openFileS)
+    interactor.notesPathS.onValue(spies.notesPathS)
+    interactor.paginationP.onValue(spies.paginationP)
+    interactor.rowHeightP.onValue(spies.rowHeightP)
+    interactor.selectedIndexP.onValue(spies.selectedIndexP)
+    interactor.sifterResultP.onValue(spies.sifterResultP)
 
-    buses.rowHeightStream.push(20)
-    buses.listHeightStream.push(60)
+    buses.rowHeightS.push(20)
+    buses.listHeightS.push(60)
   })
 
   describe('when start session event is triggered', function () {
     beforeEach(function () {
-      buses.sessionStartStream.push({
+      buses.sessionStartS.push({
         rootPath: __dirname,
         sortField: 'name',
         sortDirection: 'desc',
@@ -115,45 +115,45 @@ describe('interactor', function () {
         ignoredNames: '.git, .DS_Store',
         excludeVcsIgnoredPaths: true
       })
-      buses.sortFieldStream.push('name')
-      buses.sortDirectionStream.push('desc')
+      buses.sortFieldS.push('name')
+      buses.sortDirectionS.push('desc')
     })
 
     it('should yield values on some streams and props', function () {
-      expect(spies.forcedScrollTopProp).toHaveBeenCalledWith(undefined)
-      expect(spies.listHeightProp).toHaveBeenCalledWith(60)
-      expect(spies.loadingStream).toHaveBeenCalled()
-      expect(spies.notesPathStream).toHaveBeenCalled()
-      expect(spies.paginationProp).toHaveBeenCalledWith({start: 0, limit: 5})
-      expect(spies.rowHeightProp).toHaveBeenCalledWith(20)
-      expect(spies.selectedIndexProp).toHaveBeenCalledWith(undefined)
+      expect(spies.forcedScrollTopP).toHaveBeenCalledWith(undefined)
+      expect(spies.listHeightP).toHaveBeenCalledWith(60)
+      expect(spies.loadingS).toHaveBeenCalled()
+      expect(spies.notesPathS).toHaveBeenCalled()
+      expect(spies.paginationP).toHaveBeenCalledWith({start: 0, limit: 5})
+      expect(spies.rowHeightP).toHaveBeenCalledWith(20)
+      expect(spies.selectedIndexP).toHaveBeenCalledWith(undefined)
 
-      buses.sifterProp.push(
+      buses.sifterP.push(
         new Sifter([
           new NotesFile('file1.md', relPath => relPath)
         ]))
-      expect(spies.filesProp).toHaveBeenCalled()
-      expect(spies.filesProp.mostRecentCall.args[0]).toEqual([jasmine.any(Object)])
+      expect(spies.filesP).toHaveBeenCalled()
+      expect(spies.filesP.mostRecentCall.args[0]).toEqual([jasmine.any(Object)])
 
-      expect(spies.sifterResultProp).not.toHaveBeenCalled()
-      expect(spies.openFileStream).not.toHaveBeenCalled()
+      expect(spies.sifterResultP).not.toHaveBeenCalled()
+      expect(spies.openFileS).not.toHaveBeenCalled()
     })
 
-    describe('when filesProp scan is done', function () {
+    describe('when filesP scan is done', function () {
       let allFiles
 
       beforeEach(function () {
         allFiles = R.times(i => {
           return new NotesFile(`file ${i}.md`, str => `/notes/${str}`)
         }, 10)
-        advanceClock(1000) // due to debounced sifterProp
-        buses.sifterProp.push(new Sifter(allFiles))
-        buses.initialScanDoneProp.push(true)
+        advanceClock(1000) // due to debounced sifterP
+        buses.sifterP.push(new Sifter(allFiles))
+        buses.initialScanDoneP.push(true)
       })
 
       it('should yield sifter results', function () {
-        expect(spies.sifterResultProp).toHaveBeenCalled()
-        const res = spies.sifterResultProp.calls[0].args[0]
+        expect(spies.sifterResultP).toHaveBeenCalled()
+        const res = spies.sifterResultP.calls[0].args[0]
         expect(res.options).toEqual({
           fields: ['name', 'ext'],
           sort: [
@@ -171,88 +171,88 @@ describe('interactor', function () {
 
       // since the various states are inter-related on previous state I'll test the various scenarios after each other
       it('should yield new values on streams and props changes', function () {
-        // textInputStream: should present results w/ new query
-        // 1st textInputStream
-        spies.sifterResultProp.reset()
-        buses.textInputStream.push('fil')
-        expect(spies.sifterResultProp.mostRecentCall.args[0].query).toEqual('fil')
-        expect(spies.paginationProp.mostRecentCall.args[0]).toEqual({start: 0, limit: 5})
-        expect(spies.selectedIndexProp.mostRecentCall.args[0]).toEqual(undefined, 'should reset selection')
+        // textInputS: should present results w/ new query
+        // 1st textInputS
+        spies.sifterResultP.reset()
+        buses.textInputS.push('fil')
+        expect(spies.sifterResultP.mostRecentCall.args[0].query).toEqual('fil')
+        expect(spies.paginationP.mostRecentCall.args[0]).toEqual({start: 0, limit: 5})
+        expect(spies.selectedIndexP.mostRecentCall.args[0]).toEqual(undefined, 'should reset selection')
 
-        // clickedCellStream
-        spies.selectedIndexProp.reset()
-        buses.clickedCellStream.push(3)
-        expect(spies.selectedIndexProp).toHaveBeenCalledWith(3)
-        expect(spies.paginationProp).toHaveBeenCalledWith({start: 0, limit: 5})
+        // clickedCellS
+        spies.selectedIndexP.reset()
+        buses.clickedCellS.push(3)
+        expect(spies.selectedIndexP).toHaveBeenCalledWith(3)
+        expect(spies.paginationP).toHaveBeenCalledWith({start: 0, limit: 5})
 
-        // listHeightStream
-        buses.listHeightStream.push(120)
-        expect(spies.listHeightProp).toHaveBeenCalledWith(120)
-        buses.rowHeightStream.push(21)
-        expect(spies.rowHeightProp).toHaveBeenCalledWith(21)
+        // listHeightS
+        buses.listHeightS.push(120)
+        expect(spies.listHeightP).toHaveBeenCalledWith(120)
+        buses.rowHeightS.push(21)
+        expect(spies.rowHeightP).toHaveBeenCalledWith(21)
 
-        // pagination by scrollTopStream
-        spies.sifterResultProp.reset()
-        spies.paginationProp.reset()
-        buses.scrollTopStream.push(65)
-        expect(spies.paginationProp).toHaveBeenCalledWith({start: 3, limit: 8})
-        expect(spies.sifterResultProp).not.toHaveBeenCalled()
+        // pagination by scrollTopS
+        spies.sifterResultP.reset()
+        spies.paginationP.reset()
+        buses.scrollTopS.push(65)
+        expect(spies.paginationP).toHaveBeenCalledWith({start: 3, limit: 8})
+        expect(spies.sifterResultP).not.toHaveBeenCalled()
 
         // reset
-        spies.paginationProp.reset()
-        spies.selectedIndexProp.reset()
-        spies.sifterResultProp.reset()
-        buses.keyEscStream.push()
-        expect(spies.paginationProp).toHaveBeenCalledWith({start: 0, limit: 8})
-        expect(spies.selectedIndexProp).toHaveBeenCalledWith(undefined)
-        expect(spies.sifterResultProp).toHaveBeenCalled()
+        spies.paginationP.reset()
+        spies.selectedIndexP.reset()
+        spies.sifterResultP.reset()
+        buses.keyEscS.push()
+        expect(spies.paginationP).toHaveBeenCalledWith({start: 0, limit: 8})
+        expect(spies.selectedIndexP).toHaveBeenCalledWith(undefined)
+        expect(spies.sifterResultP).toHaveBeenCalled()
 
-        // 2nd textInputStream
-        spies.sifterResultProp.reset()
-        buses.textInputStream.push('file')
-        expect(spies.paginationProp).toHaveBeenCalledWith({start: 0, limit: 8})
-        expect(spies.selectedIndexProp).toHaveBeenCalledWith(undefined)
+        // 2nd textInputS
+        spies.sifterResultP.reset()
+        buses.textInputS.push('file')
+        expect(spies.paginationP).toHaveBeenCalledWith({start: 0, limit: 8})
+        expect(spies.selectedIndexP).toHaveBeenCalledWith(undefined)
 
         // sort direction+field
-        spies.sifterResultProp.reset()
-        buses.sortDirectionStream.push('asc')
-        buses.sortFieldStream.push('content')
-        expect(spies.sifterResultProp.mostRecentCall.args[0].options.sort[0]).toEqual({field: 'content', direction: 'asc'}, 'should have changed sort')
+        spies.sifterResultP.reset()
+        buses.sortDirectionS.push('asc')
+        buses.sortFieldS.push('content')
+        expect(spies.sifterResultP.mostRecentCall.args[0].options.sort[0]).toEqual({field: 'content', direction: 'asc'}, 'should have changed sort')
 
         // select prev (by offset)
-        spies.selectedIndexProp.reset()
-        buses.keyUpStream.push()
-        expect(spies.selectedIndexProp.mostRecentCall.args[0]).toEqual(9, 'should select last item')
-        R.times(() => { buses.keyUpStream.push() }, 5)
-        expect(spies.selectedIndexProp.mostRecentCall.args[0]).toEqual(4, 'should stepped index back the same amount of events')
-        R.times(() => { buses.keyUpStream.push() }, 4)
-        expect(spies.selectedIndexProp.mostRecentCall.args[0]).toEqual(0, 'should stepped index back the same amount of events')
-        R.times(() => { buses.keyUpStream.push() }, 3)
-        expect(spies.selectedIndexProp.mostRecentCall.args[0]).toEqual(0, 'should stay on first item')
+        spies.selectedIndexP.reset()
+        buses.keyUpS.push()
+        expect(spies.selectedIndexP.mostRecentCall.args[0]).toEqual(9, 'should select last item')
+        R.times(() => { buses.keyUpS.push() }, 5)
+        expect(spies.selectedIndexP.mostRecentCall.args[0]).toEqual(4, 'should stepped index back the same amount of events')
+        R.times(() => { buses.keyUpS.push() }, 4)
+        expect(spies.selectedIndexP.mostRecentCall.args[0]).toEqual(0, 'should stepped index back the same amount of events')
+        R.times(() => { buses.keyUpS.push() }, 3)
+        expect(spies.selectedIndexP.mostRecentCall.args[0]).toEqual(0, 'should stay on first item')
 
         // select next (by offset)
-        buses.clickedCellStream.push(undefined)  // reset selection
-        spies.selectedIndexProp.reset()
-        buses.keyDownStream.push()
-        expect(spies.selectedIndexProp.mostRecentCall.args[0]).toEqual(0, 'should start at the beginning of list')
-        R.times(() => { buses.keyDownStream.push() }, 5)
-        expect(spies.selectedIndexProp.mostRecentCall.args[0]).toEqual(5, 'should stepped index forward the same amount of events')
-        R.times(() => { buses.keyDownStream.push() }, 6)
-        expect(spies.selectedIndexProp.mostRecentCall.args[0]).toEqual(9, 'should stop at end of list')
+        buses.clickedCellS.push(undefined)  // reset selection
+        spies.selectedIndexP.reset()
+        buses.keyDownS.push()
+        expect(spies.selectedIndexP.mostRecentCall.args[0]).toEqual(0, 'should start at the beginning of list')
+        R.times(() => { buses.keyDownS.push() }, 5)
+        expect(spies.selectedIndexP.mostRecentCall.args[0]).toEqual(5, 'should stepped index forward the same amount of events')
+        R.times(() => { buses.keyDownS.push() }, 6)
+        expect(spies.selectedIndexP.mostRecentCall.args[0]).toEqual(9, 'should stop at end of list')
 
         // active path change
-        spies.selectedIndexProp.reset()
-        buses.activePathStream.push('/notes/file 7.md')
-        expect(spies.selectedIndexProp.mostRecentCall.args[0]).toEqual(7, 'should set the index to found file')
-        buses.activePathStream.push('/notes/whatever')
-        expect(spies.selectedIndexProp.mostRecentCall.args[0]).toEqual(undefined, 'should unset index when there is no match')
+        spies.selectedIndexP.reset()
+        buses.activePathS.push('/notes/file 7.md')
+        expect(spies.selectedIndexP.mostRecentCall.args[0]).toEqual(7, 'should set the index to found file')
+        buses.activePathS.push('/notes/whatever')
+        expect(spies.selectedIndexP.mostRecentCall.args[0]).toEqual(undefined, 'should unset index when there is no match')
       })
     })
 
     it('should yield an openFile event when open stream triggers', function () {
-      expect(spies.openFileStream).not.toHaveBeenCalled()
-      buses.keyEnterStream.push()
-      expect(spies.openFileStream).toHaveBeenCalled()
+      expect(spies.openFileS).not.toHaveBeenCalled()
+      buses.keyEnterS.push()
+      expect(spies.openFileS).toHaveBeenCalled()
     })
   })
 })

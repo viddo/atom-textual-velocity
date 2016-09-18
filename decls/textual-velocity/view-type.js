@@ -1,16 +1,16 @@
 import Bacon from 'fs'
 
 declare type ViewType = {
-  abortEditCellStream: Bacon.Stream,
-  clickedCellStream: Bacon.Stream,
-  dblClickedCellStream: Bacon.Stream,
-  keyDownStream: Bacon.Stream,
-  listHeightStream: Bacon.Stream,
-  saveEditedCellContentStream: Bacon.Stream,
-  scrollTopStream: Bacon.Stream,
-  sortDirectionStream: Bacon.Stream,
-  sortFieldStream: Bacon.Stream,
-  textInputStream: Bacon.Stream,
+  abortEditCellS: Bacon.Stream,
+  clickedCellS: Bacon.Stream,
+  dblClickedCellS: Bacon.Stream,
+  keyDownS: Bacon.Stream,
+  listHeightS: Bacon.Stream,
+  saveEditedCellContentS: Bacon.Stream,
+  scrollTopS: Bacon.Stream,
+  sortDirectionS: Bacon.Stream,
+  sortFieldS: Bacon.Stream,
+  textInputS: Bacon.Stream,
   renderLoading (listHeight: number): void,
   renderResults (params: ResultsViewParamsType): void,
   dispose (): void

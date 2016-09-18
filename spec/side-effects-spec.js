@@ -21,32 +21,32 @@ describe('side-effects', function () {
     spyOn(atom.workspace, 'open')
 
     buses = {
-      columnHeadersProp: new Bacon.Bus(),
-      forcedScrollTopProp: new Bacon.Bus(),
-      itemsCountProp: new Bacon.Bus(),
-      loadingStream: new Bacon.Bus(),
-      openPathStream: new Bacon.Bus(),
-      paginationProp: new Bacon.Bus(),
-      saveEditedCellContentStream: new Bacon.Bus(),
-      previewItemStream: new Bacon.Bus(),
-      rowHeightProp: new Bacon.Bus(),
-      rowsStream: new Bacon.Bus(),
-      searchStrProp: new Bacon.Bus(),
-      sortProp: new Bacon.Bus(),
+      columnHeadersP: new Bacon.Bus(),
+      forcedScrollTopP: new Bacon.Bus(),
+      itemsCountP: new Bacon.Bus(),
+      loadingS: new Bacon.Bus(),
+      openPathS: new Bacon.Bus(),
+      paginationP: new Bacon.Bus(),
+      saveEditedCellContentS: new Bacon.Bus(),
+      previewItemS: new Bacon.Bus(),
+      rowHeightP: new Bacon.Bus(),
+      rowsS: new Bacon.Bus(),
+      searchStrP: new Bacon.Bus(),
+      sortP: new Bacon.Bus(),
 
-      clickedCellStream: new Bacon.Bus(),
-      keyDownStream: new Bacon.Bus(),
-      listHeightStream: new Bacon.Bus(),
-      sortDirectionStream: new Bacon.Bus(),
-      sortFieldStream: new Bacon.Bus(),
-      scrollTopStream: new Bacon.Bus(),
-      textInputStream: new Bacon.Bus(),
+      clickedCellS: new Bacon.Bus(),
+      keyDownS: new Bacon.Bus(),
+      listHeightS: new Bacon.Bus(),
+      sortDirectionS: new Bacon.Bus(),
+      sortFieldS: new Bacon.Bus(),
+      scrollTopS: new Bacon.Bus(),
+      textInputS: new Bacon.Bus(),
 
-      columnsProp: new Bacon.Bus(),
-      editCellStream: new Bacon.Bus(),
-      fieldsProp: new Bacon.Bus(),
-      fileReadersProp: new Bacon.Bus(),
-      fileWritersProp: new Bacon.Bus()
+      columnsP: new Bacon.Bus(),
+      editCellS: new Bacon.Bus(),
+      fieldsP: new Bacon.Bus(),
+      fileReadersP: new Bacon.Bus(),
+      fileWritersP: new Bacon.Bus()
     }
 
     const testColumn: ColumnHeaderType = {
@@ -57,29 +57,29 @@ describe('side-effects', function () {
     }
 
     presenter = {
-      columnHeadersProp: buses.columnHeadersProp.toProperty([testColumn]),
-      forcedScrollTopProp: buses.forcedScrollTopProp.toProperty(undefined),
-      itemsCountProp: buses.itemsCountProp.toProperty(),
-      listHeightProp: buses.listHeightStream.toProperty(100),
-      loadingStream: buses.loadingStream,
-      openPathStream: buses.openPathStream,
-      paginationProp: buses.paginationProp.toProperty({start: 0, limit: 0}),
-      saveEditedCellContentStream: buses.saveEditedCellContentStream,
-      selectedPathStream: buses.previewItemStream,
-      rowHeightProp: buses.rowHeightProp.toProperty(20),
-      rowsStream: buses.rowsStream.toProperty(),
-      searchStrProp: buses.searchStrProp.toProperty(),
-      sortProp: buses.sortProp.toProperty()
+      columnHeadersP: buses.columnHeadersP.toProperty([testColumn]),
+      forcedScrollTopP: buses.forcedScrollTopP.toProperty(undefined),
+      itemsCountP: buses.itemsCountP.toProperty(),
+      listHeightP: buses.listHeightS.toProperty(100),
+      loadingS: buses.loadingS,
+      openPathS: buses.openPathS,
+      paginationP: buses.paginationP.toProperty({start: 0, limit: 0}),
+      saveEditedCellContentS: buses.saveEditedCellContentS,
+      selectedPathS: buses.previewItemS,
+      rowHeightP: buses.rowHeightP.toProperty(20),
+      rowsS: buses.rowsS.toProperty(),
+      searchStrP: buses.searchStrP.toProperty(),
+      sortP: buses.sortP.toProperty()
     }
 
     view = new ReactView(panel)
-    view.clickedCellStream = buses.clickedCellStream
-    view.keyDownStream = buses.keyDownStream
-    view.listHeightStream = buses.listHeightStream
-    view.sortDirectionStream = buses.sortDirectionStream
-    view.sortFieldStream = buses.sortFieldStream
-    view.scrollTopStream = buses.scrollTopStream
-    view.textInputStream = buses.textInputStream
+    view.clickedCellS = buses.clickedCellS
+    view.keyDownS = buses.keyDownS
+    view.listHeightS = buses.listHeightS
+    view.sortDirectionS = buses.sortDirectionS
+    view.sortFieldS = buses.sortFieldS
+    view.scrollTopS = buses.scrollTopS
+    view.textInputS = buses.textInputS
     spyOn(view, 'renderLoading')
     spyOn(view, 'renderResults')
 
@@ -89,31 +89,31 @@ describe('side-effects', function () {
     spyOn(panel.getItem(), 'querySelector')
 
     const service = {
-      columnsProp: buses.columnsProp,
-      editCellStream: buses.editCellStream,
-      fieldsProp: buses.fieldsProp,
-      fileReadersProp: buses.fileReadersProp,
-      fileWritersProp: buses.fileWritersProp
+      columnsP: buses.columnsP,
+      editCellS: buses.editCellS,
+      fieldsP: buses.fieldsP,
+      fileReadersP: buses.fileReadersP,
+      fileWritersP: buses.fileWritersP
     }
 
     sideEffects = new SideEffects(panel, view, presenter, service)
 
     spies = {
-      listHeightStream: jasmine.createSpy('listHeight'),
-      rowHeightProp: jasmine.createSpy('rowHeightProp'),
-      sortDirectionStream: jasmine.createSpy('sortDirection'),
-      sortFieldStream: jasmine.createSpy('sortField')
+      listHeightS: jasmine.createSpy('listHeight'),
+      rowHeightP: jasmine.createSpy('rowHeightP'),
+      sortDirectionS: jasmine.createSpy('sortDirection'),
+      sortFieldS: jasmine.createSpy('sortField')
     }
 
-    atom.config.observe('textual-velocity.listHeight', spies.listHeightStream)
-    atom.config.observe('textual-velocity.rowHeight', spies.rowHeightProp)
-    atom.config.observe('textual-velocity.sortDirection', spies.sortDirectionStream)
-    atom.config.observe('textual-velocity.sortField', spies.sortFieldStream)
+    atom.config.observe('textual-velocity.listHeight', spies.listHeightS)
+    atom.config.observe('textual-velocity.rowHeight', spies.rowHeightP)
+    atom.config.observe('textual-velocity.sortDirection', spies.sortDirectionS)
+    atom.config.observe('textual-velocity.sortField', spies.sortFieldS)
 
-    spies.listHeightStream.reset()
-    spies.rowHeightProp.reset()
-    spies.sortDirectionStream.reset()
-    spies.sortFieldStream.reset()
+    spies.listHeightS.reset()
+    spies.rowHeightP.reset()
+    spies.sortDirectionS.reset()
+    spies.sortFieldS.reset()
 
     input = jasmine.createSpyObj('input', ['select', 'focus'])
     panel.getItem().querySelector.andReturn(input)
@@ -126,23 +126,23 @@ describe('side-effects', function () {
   })
 
   it('should save list height when it changes', function () {
-    buses.listHeightStream.push(120)
-    buses.listHeightStream.push(123)
-    buses.listHeightStream.push(124)
-    expect(spies.listHeightStream).not.toHaveBeenCalled()
+    buses.listHeightS.push(120)
+    buses.listHeightS.push(123)
+    buses.listHeightS.push(124)
+    expect(spies.listHeightS).not.toHaveBeenCalled()
     advanceClock(1000)
-    expect(spies.listHeightStream).toHaveBeenCalledWith(124)
-    expect(spies.listHeightStream.calls.length).toEqual(1)
+    expect(spies.listHeightS).toHaveBeenCalledWith(124)
+    expect(spies.listHeightS.calls.length).toEqual(1)
   })
 
-  it('should save sortProp direction when changed', function () {
-    buses.sortDirectionStream.push('asc')
-    expect(spies.sortDirectionStream).toHaveBeenCalled()
+  it('should save sortP direction when changed', function () {
+    buses.sortDirectionS.push('asc')
+    expect(spies.sortDirectionS).toHaveBeenCalled()
   })
 
-  it('should save sortProp field when changed', function () {
-    buses.sortFieldStream.push('asc')
-    expect(spies.sortFieldStream).toHaveBeenCalled()
+  it('should save sortP field when changed', function () {
+    buses.sortFieldS.push('asc')
+    expect(spies.sortFieldS).toHaveBeenCalled()
   })
 
   describe('when window resizes', function () {
@@ -157,21 +157,21 @@ describe('side-effects', function () {
       triggerResizeEvent()
       panel.getItem().querySelector.andReturn({clientHeight: 29})
       triggerResizeEvent()
-      expect(spies.rowHeightProp).toHaveBeenCalledWith(28)
+      expect(spies.rowHeightP).toHaveBeenCalledWith(28)
 
       advanceClock(1000)
       panel.getItem().querySelector.andReturn({clientHeight: 30})
       triggerResizeEvent()
-      expect(spies.rowHeightProp).toHaveBeenCalledWith(30)
+      expect(spies.rowHeightP).toHaveBeenCalledWith(30)
       expect(panel.getItem().querySelector).toHaveBeenCalledWith('td')
     })
 
     it('should not break if there is no td', function () {
-      spies.rowHeightProp.reset()
+      spies.rowHeightP.reset()
       panel.getItem().querySelector.andReturn(undefined)
       triggerResizeEvent()
       advanceClock(1000)
-      expect(spies.rowHeightProp).not.toHaveBeenCalled()
+      expect(spies.rowHeightP).not.toHaveBeenCalled()
       expect(panel.getItem().querySelector).toHaveBeenCalledWith('td')
     })
   })
@@ -228,9 +228,9 @@ describe('side-effects', function () {
     })
   })
 
-  describe('when loadingStream stream yields a value', function () {
+  describe('when loadingS stream yields a value', function () {
     beforeEach(function () {
-      buses.loadingStream.push()
+      buses.loadingS.push()
     })
 
     it('should render loading', function () {
@@ -241,43 +241,43 @@ describe('side-effects', function () {
   describe('when presentation data yields values', function () {
     beforeEach(function () {
       // initial values related to initial search
-      buses.searchStrProp.push('')
-      buses.itemsCountProp.push(0)
-      buses.sortProp.push({field: 'name', direction: 'desc'})
+      buses.searchStrP.push('')
+      buses.itemsCountP.push(0)
+      buses.sortP.push({field: 'name', direction: 'desc'})
     })
 
     // Test values in sequence since interrelated
     it('should render on some yielded values', function () {
       expect(view.renderResults).not.toHaveBeenCalledWith()
 
-      // render on rowsStream
-      buses.rowsStream.push([])
+      // render on rowsS
+      buses.rowsS.push([])
       expect(view.renderResults).toHaveBeenCalledWith(jasmine.any(Object))
 
       // do NOT render on the others
       view.renderResults.reset()
       atom.config.set('textual-velocity.rowHeight', 20)
-      buses.itemsCountProp.push(23)
-      buses.rowHeightProp.push(20)
-      buses.searchStrProp.push('beep')
-      buses.sortProp.push({field: 'content', direction: 'asc'})
+      buses.itemsCountP.push(23)
+      buses.rowHeightP.push(20)
+      buses.searchStrP.push('beep')
+      buses.sortP.push({field: 'content', direction: 'asc'})
       expect(view.renderResults).not.toHaveBeenCalled()
 
       // render on scroll
       view.renderResults.reset()
-      buses.forcedScrollTopProp.push(42)
+      buses.forcedScrollTopP.push(42)
       expect(view.renderResults).toHaveBeenCalled()
 
       // render on list height
       view.renderResults.reset()
-      buses.listHeightStream.push(100)
+      buses.listHeightS.push(100)
       expect(view.renderResults).toHaveBeenCalled()
     })
   })
 
   describe('when preview stream yields a path', function () {
     beforeEach(function () {
-      buses.previewItemStream.push('/notes/file.txt')
+      buses.previewItemS.push('/notes/file.txt')
     })
 
     it('should preview the file using a pending text editor', function () {
@@ -292,7 +292,7 @@ describe('side-effects', function () {
 
   describe('when open stream yields a path', function () {
     beforeEach(function () {
-      buses.openPathStream.push('/notes/file.txt')
+      buses.openPathS.push('/notes/file.txt')
     })
 
     it('should open text editor for file', function () {
@@ -306,7 +306,7 @@ describe('side-effects', function () {
         type: 'object',
         properties: defaultConfig
       })
-      buses.columnsProp.push([
+      buses.columnsP.push([
         {title: 'Name', sortField: 'name'},
         {title: 'Tags', sortField: 'tags'}
       ])

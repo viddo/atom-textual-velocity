@@ -24,22 +24,22 @@ import ReactView from '../lib/react-view'
       view = newView(DOMNode)
 
       spies = {
-        clickedCellStream: jasmine.createSpy('clickedCellStream'),
-        keyDownStream: jasmine.createSpy('keyDownStream'),
-        listHeightStream: jasmine.createSpy('listHeightStream'),
-        sortDirectionStream: jasmine.createSpy('sortDirectionStream'),
-        sortFieldStream: jasmine.createSpy('sortFieldStream'),
-        scrollTopStream: jasmine.createSpy('scrollTopStream'),
-        textInputStream: jasmine.createSpy('textInputStream')
+        clickedCellS: jasmine.createSpy('clickedCellS'),
+        keyDownS: jasmine.createSpy('keyDownS'),
+        listHeightS: jasmine.createSpy('listHeightS'),
+        sortDirectionS: jasmine.createSpy('sortDirectionS'),
+        sortFieldS: jasmine.createSpy('sortFieldS'),
+        scrollTopS: jasmine.createSpy('scrollTopS'),
+        textInputS: jasmine.createSpy('textInputS')
       }
 
-      view.clickedCellStream.onValue(spies.clickedCellStream)
-      view.keyDownStream.onValue(spies.keyDownStream)
-      view.listHeightStream.onValue(spies.listHeightStream)
-      view.sortDirectionStream.onValue(spies.sortDirectionStream)
-      view.sortFieldStream.onValue(spies.sortFieldStream)
-      view.scrollTopStream.onValue(spies.scrollTopStream)
-      view.textInputStream.onValue(spies.textInputStream)
+      view.clickedCellS.onValue(spies.clickedCellS)
+      view.keyDownS.onValue(spies.keyDownS)
+      view.listHeightS.onValue(spies.listHeightS)
+      view.sortDirectionS.onValue(spies.sortDirectionS)
+      view.sortFieldS.onValue(spies.sortFieldS)
+      view.scrollTopS.onValue(spies.scrollTopS)
+      view.textInputS.onValue(spies.textInputS)
     })
 
     afterEach(function () {
@@ -142,7 +142,7 @@ import ReactView from '../lib/react-view'
           })
 
           it('should call onSearch callback', function () {
-            expect(spies.textInputStream).toHaveBeenCalledWith('foo')
+            expect(spies.textInputS).toHaveBeenCalledWith('foo')
           })
         })
 
@@ -153,7 +153,7 @@ import ReactView from '../lib/react-view'
           })
 
           it('should call onScroll callback', function () {
-            expect(spies.scrollTopStream).toHaveBeenCalledWith(26)
+            expect(spies.scrollTopS).toHaveBeenCalledWith(26)
           })
         })
       })

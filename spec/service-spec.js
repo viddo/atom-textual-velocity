@@ -8,22 +8,22 @@ describe('service', function () {
 
   beforeEach(function () {
     spies = {
-      columnsProp: jasmine.createSpy('columnsProp'),
-      fieldsProp: jasmine.createSpy('fieldsProp'),
-      fileReadersProp: jasmine.createSpy('fileReadersProp'),
-      fileWritersProp: jasmine.createSpy('fileWritersProp')
+      columnsP: jasmine.createSpy('columnsP'),
+      fieldsP: jasmine.createSpy('fieldsP'),
+      fileReadersP: jasmine.createSpy('fileReadersP'),
+      fileWritersP: jasmine.createSpy('fileWritersP')
     }
 
     service = new Service()
-    service.columnsProp.onValue(spies.columnsProp)
-    service.fieldsProp.onValue(spies.fieldsProp)
-    service.fileReadersProp.onValue(spies.fileReadersProp)
-    service.fileWritersProp.onValue(spies.fileWritersProp)
+    service.columnsP.onValue(spies.columnsP)
+    service.fieldsP.onValue(spies.fieldsP)
+    service.fileReadersP.onValue(spies.fileReadersP)
+    service.fileWritersP.onValue(spies.fileWritersP)
 
-    spies.columnsProp.reset()
-    spies.fieldsProp.reset()
-    spies.fileReadersProp.reset()
-    spies.fileWritersProp.reset()
+    spies.columnsP.reset()
+    spies.fieldsP.reset()
+    spies.fileReadersP.reset()
+    spies.fileWritersP.reset()
   })
 
   afterEach(function () {
@@ -52,10 +52,10 @@ describe('service', function () {
       })
 
       it('should register a new column', function () {
-        expect(spies.columnsProp).toHaveBeenCalledWith([column])
-        expect(spies.fieldsProp).not.toHaveBeenCalled()
-        expect(spies.fileReadersProp).not.toHaveBeenCalled()
-        expect(spies.fileWritersProp).not.toHaveBeenCalled()
+        expect(spies.columnsP).toHaveBeenCalledWith([column])
+        expect(spies.fieldsP).not.toHaveBeenCalled()
+        expect(spies.fileReadersP).not.toHaveBeenCalled()
+        expect(spies.fileWritersP).not.toHaveBeenCalled()
       })
 
       it('should throw error on invalid input', function () {
@@ -93,10 +93,10 @@ describe('service', function () {
           value: file => 'val'
         }
         publicAPI.registerFields(field)
-        expect(spies.columnsProp).not.toHaveBeenCalled()
-        expect(spies.fieldsProp).toHaveBeenCalledWith([field])
-        expect(spies.fileReadersProp).not.toHaveBeenCalled()
-        expect(spies.fileWritersProp).not.toHaveBeenCalled()
+        expect(spies.columnsP).not.toHaveBeenCalled()
+        expect(spies.fieldsP).toHaveBeenCalledWith([field])
+        expect(spies.fileReadersP).not.toHaveBeenCalled()
+        expect(spies.fileWritersP).not.toHaveBeenCalled()
       })
     })
 
@@ -107,10 +107,10 @@ describe('service', function () {
           read: (path, callback) => {}
         }
         publicAPI.registerFileReaders(fileReader)
-        expect(spies.columnsProp).not.toHaveBeenCalled()
-        expect(spies.fieldsProp).not.toHaveBeenCalled()
-        expect(spies.fileReadersProp).toHaveBeenCalledWith([fileReader])
-        expect(spies.fileWritersProp).not.toHaveBeenCalled()
+        expect(spies.columnsP).not.toHaveBeenCalled()
+        expect(spies.fieldsP).not.toHaveBeenCalled()
+        expect(spies.fileReadersP).toHaveBeenCalledWith([fileReader])
+        expect(spies.fileWritersP).not.toHaveBeenCalled()
       })
     })
 
@@ -121,10 +121,10 @@ describe('service', function () {
           write: (path, str, callback) => {}
         }
         publicAPI.registerFileWriters(fileWriter)
-        expect(spies.columnsProp).not.toHaveBeenCalled()
-        expect(spies.fieldsProp).not.toHaveBeenCalled()
-        expect(spies.fileReadersProp).not.toHaveBeenCalled()
-        expect(spies.fileWritersProp).toHaveBeenCalledWith([fileWriter])
+        expect(spies.columnsP).not.toHaveBeenCalled()
+        expect(spies.fieldsP).not.toHaveBeenCalled()
+        expect(spies.fileReadersP).not.toHaveBeenCalled()
+        expect(spies.fileWritersP).toHaveBeenCalledWith([fileWriter])
       })
     })
   })

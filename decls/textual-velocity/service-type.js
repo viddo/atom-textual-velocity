@@ -1,7 +1,7 @@
 declare type ServiceType = {
-  columnsProp: Bacon.Property,
-  editCellStream: Bacon.Stream,
-  fieldsProp: Bacon.Property,
-  fileReadersProp: Bacon.Property,
-  fileWritersProp: Bacon.Property
+  columnsP: Bacon.Property,
+  editCellS: Bacon.Stream,
+  fieldsP: Bacon.Property,
+  fileReadersP: Bacon.Property,
+  fileWritersP: Bacon.Property
 }

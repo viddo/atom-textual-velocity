@@ -25,33 +25,33 @@ describe('presenter', function () {
 
   beforeEach(function () {
     buses = {
-      editCellNameProp: new Bacon.Bus(),
-      filesProp: new Bacon.Bus(),
-      forcedScrollTopProp: new Bacon.Bus(),
-      listHeightProp: new Bacon.Bus(),
-      loadingStream: new Bacon.Bus(),
-      openFileStream: new Bacon.Bus(),
-      notesPathStream: new Bacon.Bus(),
-      paginationProp: new Bacon.Bus(),
-      rowHeightProp: new Bacon.Bus(),
-      saveEditedCellContentStream: new Bacon.Bus(),
-      selectedIndexProp: new Bacon.Bus(),
-      sifterResultProp: new Bacon.Bus()
+      editCellNameP: new Bacon.Bus(),
+      filesP: new Bacon.Bus(),
+      forcedScrollTopP: new Bacon.Bus(),
+      listHeightP: new Bacon.Bus(),
+      loadingS: new Bacon.Bus(),
+      openFileS: new Bacon.Bus(),
+      notesPathS: new Bacon.Bus(),
+      paginationP: new Bacon.Bus(),
+      rowHeightP: new Bacon.Bus(),
+      saveEditedCellContentS: new Bacon.Bus(),
+      selectedIndexP: new Bacon.Bus(),
+      sifterResultP: new Bacon.Bus()
     }
 
     const interactor = {
-      editCellNameProp: buses.editCellNameProp.toProperty(undefined),
-      filesProp: buses.filesProp.toProperty([]),
-      forcedScrollTopProp: buses.forcedScrollTopProp.toProperty(undefined),
-      listHeightProp: buses.listHeightProp.toProperty(123),
-      loadingStream: buses.loadingStream,
-      openFileStream: buses.openFileStream,
-      notesPathStream: buses.notesPathStream,
-      paginationProp: buses.paginationProp.toProperty({start: 0, limit: 5}),
-      rowHeightProp: buses.rowHeightProp.toProperty(23),
-      saveEditedCellContentStream: buses.saveEditedCellContentStream,
-      selectedIndexProp: buses.selectedIndexProp.toProperty(undefined),
-      sifterResultProp: buses.sifterResultProp.toProperty()
+      editCellNameP: buses.editCellNameP.toProperty(undefined),
+      filesP: buses.filesP.toProperty([]),
+      forcedScrollTopP: buses.forcedScrollTopP.toProperty(undefined),
+      listHeightP: buses.listHeightP.toProperty(123),
+      loadingS: buses.loadingS,
+      openFileS: buses.openFileS,
+      notesPathS: buses.notesPathS,
+      paginationP: buses.paginationP.toProperty({start: 0, limit: 5}),
+      rowHeightP: buses.rowHeightP.toProperty(23),
+      saveEditedCellContentS: buses.saveEditedCellContentS,
+      selectedIndexP: buses.selectedIndexP.toProperty(undefined),
+      sifterResultP: buses.sifterResultP.toProperty()
     }
 
     nameColumn = {
@@ -68,83 +68,83 @@ describe('presenter', function () {
       width: 10,
       cellContent: (file, template) => file.ext
     }
-    const columnsProp = Bacon.constant([nameColumn, extColumn])
+    const columnsP = Bacon.constant([nameColumn, extColumn])
     spyOn(nameColumn, 'cellContent').andCallThrough()
 
-    presenter = new Presenter(interactor, columnsProp)
+    presenter = new Presenter(interactor, columnsP)
 
     spies = {
-      columnHeadersProp: jasmine.createSpy('columnHeadersProp'),
-      forcedScrollTopProp: jasmine.createSpy('forcedScrollTopProp'),
-      itemsCountProp: jasmine.createSpy('itemsCountProp'),
-      listHeightProp: jasmine.createSpy('listHeightProp'),
-      loadingStream: jasmine.createSpy('loadingStream'),
-      paginationProp: jasmine.createSpy('paginationProp'),
-      openPathStream: jasmine.createSpy('openPathStream'),
-      selectedPathStream: jasmine.createSpy('selectedPathStream'),
-      rowHeightProp: jasmine.createSpy('rowHeightProp'),
-      rowsStream: jasmine.createSpy('rowsStream'),
-      searchStrProp: jasmine.createSpy('searchStrProp'),
-      sortProp: jasmine.createSpy('sortProp')
+      columnHeadersP: jasmine.createSpy('columnHeadersP'),
+      forcedScrollTopP: jasmine.createSpy('forcedScrollTopP'),
+      itemsCountP: jasmine.createSpy('itemsCountP'),
+      listHeightP: jasmine.createSpy('listHeightP'),
+      loadingS: jasmine.createSpy('loadingS'),
+      paginationP: jasmine.createSpy('paginationP'),
+      openPathS: jasmine.createSpy('openPathS'),
+      selectedPathS: jasmine.createSpy('selectedPathS'),
+      rowHeightP: jasmine.createSpy('rowHeightP'),
+      rowsS: jasmine.createSpy('rowsS'),
+      searchStrP: jasmine.createSpy('searchStrP'),
+      sortP: jasmine.createSpy('sortP')
     }
-    presenter.columnHeadersProp.onValue(spies.columnHeadersProp)
-    presenter.forcedScrollTopProp.onValue(spies.forcedScrollTopProp)
-    presenter.itemsCountProp.onValue(spies.itemsCountProp)
-    presenter.listHeightProp.onValue(spies.listHeightProp)
-    presenter.loadingStream.onValue(spies.loadingStream)
-    presenter.paginationProp.onValue(spies.paginationProp)
-    presenter.openPathStream.onValue(spies.openPathStream)
-    presenter.selectedPathStream.onValue(spies.selectedPathStream)
-    presenter.rowHeightProp.onValue(spies.rowHeightProp)
-    presenter.rowsStream.onValue(spies.rowsStream)
-    presenter.searchStrProp.onValue(spies.searchStrProp)
-    presenter.sortProp.onValue(spies.sortProp)
+    presenter.columnHeadersP.onValue(spies.columnHeadersP)
+    presenter.forcedScrollTopP.onValue(spies.forcedScrollTopP)
+    presenter.itemsCountP.onValue(spies.itemsCountP)
+    presenter.listHeightP.onValue(spies.listHeightP)
+    presenter.loadingS.onValue(spies.loadingS)
+    presenter.paginationP.onValue(spies.paginationP)
+    presenter.openPathS.onValue(spies.openPathS)
+    presenter.selectedPathS.onValue(spies.selectedPathS)
+    presenter.rowHeightP.onValue(spies.rowHeightP)
+    presenter.rowsS.onValue(spies.rowsS)
+    presenter.searchStrP.onValue(spies.searchStrP)
+    presenter.sortP.onValue(spies.sortP)
   })
 
   it('should yield some initial state independent props', function () {
-    expect(spies.columnHeadersProp).toHaveBeenCalledWith(jasmine.any(Array))
-    expect(spies.forcedScrollTopProp).toHaveBeenCalledWith(undefined)
-    expect(spies.listHeightProp).toHaveBeenCalledWith(123)
-    expect(spies.paginationProp).toHaveBeenCalledWith({start: 0, limit: 5})
-    expect(spies.rowHeightProp).toHaveBeenCalledWith(23)
+    expect(spies.columnHeadersP).toHaveBeenCalledWith(jasmine.any(Array))
+    expect(spies.forcedScrollTopP).toHaveBeenCalledWith(undefined)
+    expect(spies.listHeightP).toHaveBeenCalledWith(123)
+    expect(spies.paginationP).toHaveBeenCalledWith({start: 0, limit: 5})
+    expect(spies.rowHeightP).toHaveBeenCalledWith(23)
   })
 
   it('should not yield any values for props that depend on the initial sifter result', function () {
-    expect(spies.itemsCountProp).not.toHaveBeenCalled()
-    expect(spies.rowsStream).not.toHaveBeenCalled()
-    expect(spies.searchStrProp).not.toHaveBeenCalled()
-    expect(spies.sortProp).not.toHaveBeenCalled()
+    expect(spies.itemsCountP).not.toHaveBeenCalled()
+    expect(spies.rowsS).not.toHaveBeenCalled()
+    expect(spies.searchStrP).not.toHaveBeenCalled()
+    expect(spies.sortP).not.toHaveBeenCalled()
   })
 
-  describe('when interactor loadingStream stream is triggered', function () {
+  describe('when interactor loadingS stream is triggered', function () {
     let allFiles
 
     beforeEach(function () {
-      const notesPathStream = NotesPath(__dirname)
-      buses.notesPathStream.push(notesPathStream)
-      buses.loadingStream.push()
+      const notesPathS = NotesPath(__dirname)
+      buses.notesPathS.push(notesPathS)
+      buses.loadingS.push()
 
-      // simulate filesProp beings populated:
-      buses.filesProp.push([])
+      // simulate filesP beings populated:
+      buses.filesP.push([])
       allFiles = R.times(i => {
-        const file = notesPathStream.newFile(`file ${i}.md`)
+        const file = notesPathS.newFile(`file ${i}.md`)
         file.content = `content of file ${i}`
         return file
       }, 10)
-      buses.filesProp.push(allFiles)
+      buses.filesP.push(allFiles)
     })
 
-    it('should trigger presenter loadingStream stream', function () {
-      expect(spies.loadingStream).toHaveBeenCalled()
+    it('should trigger presenter loadingS stream', function () {
+      expect(spies.loadingS).toHaveBeenCalled()
     })
 
     it('should not yield rows just yet', function () {
-      expect(spies.rowsStream).not.toHaveBeenCalled()
+      expect(spies.rowsS).not.toHaveBeenCalled()
     })
 
     describe('when there is a sifter result', function () {
       beforeEach(function () {
-        buses.sifterResultProp.push(
+        buses.sifterResultP.push(
           newSifterResult({
             total: 10,
             items: allFiles.map(file => ({id: allFiles.indexOf(file)}))
@@ -153,22 +153,22 @@ describe('presenter', function () {
       })
 
       it('should yields values for props related to results', function () {
-        expect(spies.itemsCountProp).toHaveBeenCalledWith(10)
-        expect(spies.rowsStream).toHaveBeenCalled()
-        expect(spies.searchStrProp).toHaveBeenCalledWith('')
-        expect(spies.sortProp).toHaveBeenCalledWith({field: 'name', direction: 'desc'})
+        expect(spies.itemsCountP).toHaveBeenCalledWith(10)
+        expect(spies.rowsS).toHaveBeenCalled()
+        expect(spies.searchStrP).toHaveBeenCalledWith('')
+        expect(spies.sortP).toHaveBeenCalledWith({field: 'name', direction: 'desc'})
       })
 
       it('should yields rows', function () {
-        expect(spies.rowsStream.mostRecentCall.args[0]).toEqual(jasmine.any(Array))
-        expect(spies.rowsStream.mostRecentCall.args[0].length).toEqual(5)
-        expect(spies.rowsStream.mostRecentCall.args[0][0]).toEqual({
+        expect(spies.rowsS.mostRecentCall.args[0]).toEqual(jasmine.any(Array))
+        expect(spies.rowsS.mostRecentCall.args[0].length).toEqual(5)
+        expect(spies.rowsS.mostRecentCall.args[0][0]).toEqual({
           id: jasmine.any(String),
           index: jasmine.any(Number),
           selected: false,
           cells: jasmine.any(Array)
         })
-        expect(spies.rowsStream.mostRecentCall.args[0][0].cells).toEqual([
+        expect(spies.rowsS.mostRecentCall.args[0][0].cells).toEqual([
           {content: 'file 0', editCellName: 'name'},
           {content: '.md', editCellName: undefined}
         ])
@@ -177,7 +177,7 @@ describe('presenter', function () {
 
     describe('when a search query is given', function () {
       beforeEach(function () {
-        buses.sifterResultProp.push(
+        buses.sifterResultP.push(
           newSifterResult({
             tokens: [{
               string: 'str',
@@ -193,14 +193,14 @@ describe('presenter', function () {
       })
 
       it('should yield new valus for props related to results', function () {
-        expect(spies.itemsCountProp).toHaveBeenCalledWith(7)
-        expect(spies.searchStrProp).toHaveBeenCalledWith('str')
+        expect(spies.itemsCountP).toHaveBeenCalledWith(7)
+        expect(spies.searchStrP).toHaveBeenCalledWith('str')
       })
 
       it('should yield new rows', function () {
-        expect(spies.rowsStream.mostRecentCall.args[0]).toEqual(jasmine.any(Array))
-        expect(spies.rowsStream.mostRecentCall.args[0].length).toEqual(5)
-        expect(spies.rowsStream.mostRecentCall.args[0][0]).toEqual(
+        expect(spies.rowsS.mostRecentCall.args[0]).toEqual(jasmine.any(Array))
+        expect(spies.rowsS.mostRecentCall.args[0].length).toEqual(5)
+        expect(spies.rowsS.mostRecentCall.args[0][0]).toEqual(
           jasmine.objectContaining({
             id: jasmine.any(String),
             cells: [
@@ -209,8 +209,8 @@ describe('presenter', function () {
             ]
           })
         )
-        expect(spies.rowsStream.mostRecentCall.args[0].map(x => x.index)).toEqual([0, 1, 2, 3, 4], 'index in asc order')
-        expect(spies.rowsStream.mostRecentCall.args[0].map(x => x.selected)).not.toContain(true, 'all items unselected')
+        expect(spies.rowsS.mostRecentCall.args[0].map(x => x.index)).toEqual([0, 1, 2, 3, 4], 'index in asc order')
+        expect(spies.rowsS.mostRecentCall.args[0].map(x => x.selected)).not.toContain(true, 'all items unselected')
       })
 
       it('should provide tokens to cellContent to highlight matches', function () {
@@ -219,19 +219,19 @@ describe('presenter', function () {
         expect(nameColumn.cellContent.mostRecentCall.args[1].content).toEqual(jasmine.any(Function))
       })
 
-      describe('when interactor paginationProp changes', function () {
+      describe('when interactor paginationP changes', function () {
         beforeEach(function () {
-          buses.paginationProp.push({start: 4, limit: 3})
+          buses.paginationP.push({start: 4, limit: 3})
         })
 
-        it('should update the paginationProp', function () {
-          expect(spies.paginationProp).toHaveBeenCalledWith({start: 4, limit: 3})
+        it('should update the paginationP', function () {
+          expect(spies.paginationP).toHaveBeenCalledWith({start: 4, limit: 3})
         })
 
         it('should yields rows', function () {
-          expect(spies.rowsStream.mostRecentCall.args[0]).toEqual(jasmine.any(Array))
-          expect(spies.rowsStream.mostRecentCall.args[0].length).toEqual(3)
-          expect(spies.rowsStream.mostRecentCall.args[0].map(x => x.cells)).toEqual([
+          expect(spies.rowsS.mostRecentCall.args[0]).toEqual(jasmine.any(Array))
+          expect(spies.rowsS.mostRecentCall.args[0].length).toEqual(3)
+          expect(spies.rowsS.mostRecentCall.args[0].map(x => x.cells)).toEqual([
             [{content: 'file 7', editCellName: 'name'}, {content: '.md', editCellName: undefined}],
             [{content: 'file 8', editCellName: 'name'}, {content: '.md', editCellName: undefined}],
             [{content: 'file 9', editCellName: 'name'}, {content: '.md', editCellName: undefined}]
@@ -239,53 +239,53 @@ describe('presenter', function () {
         })
       })
 
-      describe('when interactor forcedScrollTopProp changes', function () {
+      describe('when interactor forcedScrollTopP changes', function () {
         beforeEach(function () {
-          buses.forcedScrollTopProp.push(0)
+          buses.forcedScrollTopP.push(0)
         })
 
         it('should yield new value on prop', function () {
-          expect(spies.forcedScrollTopProp).toHaveBeenCalledWith(0)
+          expect(spies.forcedScrollTopP).toHaveBeenCalledWith(0)
         })
       })
 
       describe('when a file is selected', function () {
         beforeEach(function () {
-          buses.selectedIndexProp.push(2)
+          buses.selectedIndexP.push(2)
         })
 
         it('should yield new rows', function () {
-          expect(spies.rowsStream.mostRecentCall.args[0]).toEqual(jasmine.any(Array))
-          expect(spies.rowsStream.mostRecentCall.args[0].length).toEqual(5)
-          expect(spies.rowsStream.mostRecentCall.args[0].map(x => x.index)).toEqual([0, 1, 2, 3, 4], 'index should still be from 0 in asc order')
-          expect(spies.rowsStream.mostRecentCall.args[0].map(x => x.selected)).toEqual([false, false, true, false, false], 'selected index selected')
+          expect(spies.rowsS.mostRecentCall.args[0]).toEqual(jasmine.any(Array))
+          expect(spies.rowsS.mostRecentCall.args[0].length).toEqual(5)
+          expect(spies.rowsS.mostRecentCall.args[0].map(x => x.index)).toEqual([0, 1, 2, 3, 4], 'index should still be from 0 in asc order')
+          expect(spies.rowsS.mostRecentCall.args[0].map(x => x.selected)).toEqual([false, false, true, false, false], 'selected index selected')
         })
 
         it('should preview the item', function () {
-          expect(spies.selectedPathStream).toHaveBeenCalled()
-          expect(spies.selectedPathStream.mostRecentCall.args[0]).toMatch(/.+file 5.md/)
-          expect(spies.openPathStream).not.toHaveBeenCalled()
+          expect(spies.selectedPathS).toHaveBeenCalled()
+          expect(spies.selectedPathS.mostRecentCall.args[0]).toMatch(/.+file 5.md/)
+          expect(spies.openPathS).not.toHaveBeenCalled()
         })
 
         it('should open file when triggered by that open stream', function () {
-          expect(spies.openPathStream).not.toHaveBeenCalled()
-          buses.openFileStream.push()
-          expect(spies.openPathStream).toHaveBeenCalled()
-          expect(spies.openPathStream.mostRecentCall.args[0]).toMatch(/.+file 5.md/)
+          expect(spies.openPathS).not.toHaveBeenCalled()
+          buses.openFileS.push()
+          expect(spies.openPathS).toHaveBeenCalled()
+          expect(spies.openPathS.mostRecentCall.args[0]).toMatch(/.+file 5.md/)
         })
       })
 
       it('should open new file when there is no selected file', function () {
-        expect(spies.openPathStream).not.toHaveBeenCalled()
-        buses.openFileStream.push()
-        expect(spies.openPathStream).toHaveBeenCalled()
-        expect(spies.openPathStream.mostRecentCall.args[0]).toMatch(/.+str.md/)
+        expect(spies.openPathS).not.toHaveBeenCalled()
+        buses.openFileS.push()
+        expect(spies.openPathS).toHaveBeenCalled()
+        expect(spies.openPathS.mostRecentCall.args[0]).toMatch(/.+str.md/)
 
-        buses.sifterResultProp.push(
+        buses.sifterResultP.push(
           newSifterResult({query: ''})
         )
-        buses.openFileStream.push()
-        expect(spies.openPathStream.mostRecentCall.args[0]).toMatch(/.+untitled.md/)
+        buses.openFileS.push()
+        expect(spies.openPathS.mostRecentCall.args[0]).toMatch(/.+untitled.md/)
       })
     })
   })

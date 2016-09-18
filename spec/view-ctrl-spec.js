@@ -16,13 +16,13 @@ describe('view-ctrl', function () {
     atom.config.set('textual-velocity.sortField', 'content')
 
     buses = {
-      clickedRowStream: new Bacon.Bus(),
-      keyDownStream: new Bacon.Bus(),
-      keyInputStream: new Bacon.Bus(),
-      listHeightStream: new Bacon.Bus(),
-      sortDirectionStream: new Bacon.Bus(),
-      sortFieldStream: new Bacon.Bus(),
-      scrollTopStream: new Bacon.Bus()
+      clickedRowS: new Bacon.Bus(),
+      keyDownS: new Bacon.Bus(),
+      keyInputS: new Bacon.Bus(),
+      listHeightS: new Bacon.Bus(),
+      sortDirectionS: new Bacon.Bus(),
+      sortFieldS: new Bacon.Bus(),
+      scrollTopS: new Bacon.Bus()
     }
 
     DOMNode = document.createElement('div')
@@ -33,44 +33,44 @@ describe('view-ctrl', function () {
     }
 
     testView = new ReactView(testPanel)
-    testView.clickedCellStream = buses.clickedRowStream
-    testView.keyDownStream = buses.keyDownStream
-    testView.listHeightStream = buses.listHeightStream
-    testView.sortDirectionStream = buses.sortDirectionStream
-    testView.sortFieldStream = buses.sortFieldStream
-    testView.scrollTopStream = buses.scrollTopStream
-    testView.textInputStream = buses.keyInputStream
+    testView.clickedCellS = buses.clickedRowS
+    testView.keyDownS = buses.keyDownS
+    testView.listHeightS = buses.listHeightS
+    testView.sortDirectionS = buses.sortDirectionS
+    testView.sortFieldS = buses.sortFieldS
+    testView.scrollTopS = buses.scrollTopS
+    testView.textInputS = buses.keyInputS
 
     viewCtrl = new ViewCtrl(testView)
 
     spies = {
-      activePathStream: jasmine.createSpy('activePathStream'),
-      clickedCellStream: jasmine.createSpy('clickedCellStream'),
-      keyDownStream: jasmine.createSpy('keyDownStream'),
-      keyEnterStream: jasmine.createSpy('keyEnterStream'),
-      keyEscStream: jasmine.createSpy('keyEscStream'),
-      keyUpStream: jasmine.createSpy('keyUpStream'),
-      listHeightStream: jasmine.createSpy('listHeightStream'),
-      rowHeightStream: jasmine.createSpy('rowHeightStream'),
-      scrollTopStream: jasmine.createSpy('scrollTopStream'),
-      sessionStartStream: jasmine.createSpy('sessionStartStream'),
-      sortDirectionStream: jasmine.createSpy('sortDirectionStream'),
-      sortFieldStream: jasmine.createSpy('sortFieldStream'),
-      textInputStream: jasmine.createSpy('textInputStream')
+      activePathS: jasmine.createSpy('activePathS'),
+      clickedCellS: jasmine.createSpy('clickedCellS'),
+      keyDownS: jasmine.createSpy('keyDownS'),
+      keyEnterS: jasmine.createSpy('keyEnterS'),
+      keyEscS: jasmine.createSpy('keyEscS'),
+      keyUpS: jasmine.createSpy('keyUpS'),
+      listHeightS: jasmine.createSpy('listHeightS'),
+      rowHeightS: jasmine.createSpy('rowHeightS'),
+      scrollTopS: jasmine.createSpy('scrollTopS'),
+      sessionStartS: jasmine.createSpy('sessionStartS'),
+      sortDirectionS: jasmine.createSpy('sortDirectionS'),
+      sortFieldS: jasmine.createSpy('sortFieldS'),
+      textInputS: jasmine.createSpy('textInputS')
     }
-    viewCtrl.activePathStream.onValue(spies.activePathStream)
-    viewCtrl.clickedCellStream.onValue(spies.clickedCellStream)
-    viewCtrl.keyDownStream.onValue(spies.keyDownStream)
-    viewCtrl.keyEnterStream.onValue(spies.keyEnterStream)
-    viewCtrl.keyEscStream.onValue(spies.keyEscStream)
-    viewCtrl.keyUpStream.onValue(spies.keyUpStream)
-    viewCtrl.listHeightStream.onValue(spies.listHeightStream)
-    viewCtrl.rowHeightStream.onValue(spies.rowHeightStream)
-    viewCtrl.scrollTopStream.onValue(spies.scrollTopStream)
-    viewCtrl.sessionStartStream.onValue(spies.sessionStartStream)
-    viewCtrl.sortDirectionStream.onValue(spies.sortDirectionStream)
-    viewCtrl.sortFieldStream.onValue(spies.sortFieldStream)
-    viewCtrl.textInputStream.onValue(spies.textInputStream)
+    viewCtrl.activePathS.onValue(spies.activePathS)
+    viewCtrl.clickedCellS.onValue(spies.clickedCellS)
+    viewCtrl.keyDownS.onValue(spies.keyDownS)
+    viewCtrl.keyEnterS.onValue(spies.keyEnterS)
+    viewCtrl.keyEscS.onValue(spies.keyEscS)
+    viewCtrl.keyUpS.onValue(spies.keyUpS)
+    viewCtrl.listHeightS.onValue(spies.listHeightS)
+    viewCtrl.rowHeightS.onValue(spies.rowHeightS)
+    viewCtrl.scrollTopS.onValue(spies.scrollTopS)
+    viewCtrl.sessionStartS.onValue(spies.sessionStartS)
+    viewCtrl.sortDirectionS.onValue(spies.sortDirectionS)
+    viewCtrl.sortFieldS.onValue(spies.sortFieldS)
+    viewCtrl.textInputS.onValue(spies.textInputS)
   })
 
   afterEach(function () {
@@ -85,9 +85,9 @@ describe('view-ctrl', function () {
     })
 
     it('should start session', function () {
-      expect(spies.sessionStartStream).toHaveBeenCalled()
+      expect(spies.sessionStartS).toHaveBeenCalled()
 
-      const req = spies.sessionStartStream.mostRecentCall.args[0]
+      const req = spies.sessionStartS.mostRecentCall.args[0]
       expect(req.rootPath).toMatch(/.+test$/, 'should pass root path from config')
       expect(req.rootPath).not.toContain('~', 'should not allow home dir since it is most likely too big to handle for now')
       expect(req.ignoredNames).toEqual(atom.config.get('core.ignoredNames', 'should pass ignored filenames from config'))
@@ -95,14 +95,14 @@ describe('view-ctrl', function () {
     })
 
     it('should have values for initial streams', function () {
-      expect(spies.listHeightStream).toHaveBeenCalledWith(123)
-      expect(spies.rowHeightStream).toHaveBeenCalledWith(25)
+      expect(spies.listHeightS).toHaveBeenCalledWith(123)
+      expect(spies.rowHeightS).toHaveBeenCalledWith(25)
     })
 
     describe('when a row is clicked', function () {
-      it('should yield a index on clickedCellStream', function () {
-        buses.clickedRowStream.push(3)
-        expect(spies.clickedCellStream).toHaveBeenCalledWith(3)
+      it('should yield a index on clickedCellS', function () {
+        buses.clickedRowS.push(3)
+        expect(spies.clickedCellS).toHaveBeenCalledWith(3)
       })
     })
 
@@ -117,71 +117,71 @@ describe('view-ctrl', function () {
       })
 
       it('should search on normal text input', function () {
-        buses.keyInputStream.push('')
-        expect(spies.textInputStream).toHaveBeenCalledWith('')
-        buses.keyInputStream.push('a')
-        expect(spies.textInputStream).toHaveBeenCalledWith('a')
-        buses.keyInputStream.push('a test')
-        expect(spies.textInputStream).toHaveBeenCalledWith('a test')
+        buses.keyInputS.push('')
+        expect(spies.textInputS).toHaveBeenCalledWith('')
+        buses.keyInputS.push('a')
+        expect(spies.textInputS).toHaveBeenCalledWith('a')
+        buses.keyInputS.push('a test')
+        expect(spies.textInputS).toHaveBeenCalledWith('a test')
 
-        expect(spies.keyEnterStream).not.toHaveBeenCalled()
-        expect(spies.keyDownStream).not.toHaveBeenCalled()
-        expect(spies.keyUpStream).not.toHaveBeenCalled()
+        expect(spies.keyEnterS).not.toHaveBeenCalled()
+        expect(spies.keyDownS).not.toHaveBeenCalled()
+        expect(spies.keyUpS).not.toHaveBeenCalled()
       })
 
       it('should yield open event on enter', function () {
         const event = newKeyEvent(13) // enter
-        buses.keyDownStream.push(event)
-        expect(spies.keyEnterStream).toHaveBeenCalled()
+        buses.keyDownS.push(event)
+        expect(spies.keyEnterS).toHaveBeenCalled()
         expect(event.preventDefault).toHaveBeenCalled()
 
-        expect(spies.textInputStream).not.toHaveBeenCalled()
-        expect(spies.keyDownStream).not.toHaveBeenCalled()
-        expect(spies.keyUpStream).not.toHaveBeenCalled()
+        expect(spies.textInputS).not.toHaveBeenCalled()
+        expect(spies.keyDownS).not.toHaveBeenCalled()
+        expect(spies.keyUpS).not.toHaveBeenCalled()
       })
 
       it('should yield selection by index on up/down events', function () {
         let event = newKeyEvent(38) // up
-        buses.keyDownStream.push(event)
+        buses.keyDownS.push(event)
         expect(event.preventDefault).toHaveBeenCalled()
-        expect(spies.keyUpStream).toHaveBeenCalledWith(event)
-        expect(spies.keyDownStream).not.toHaveBeenCalled()
-        expect(spies.keyEnterStream).not.toHaveBeenCalled()
-        expect(spies.textInputStream).not.toHaveBeenCalled()
+        expect(spies.keyUpS).toHaveBeenCalledWith(event)
+        expect(spies.keyDownS).not.toHaveBeenCalled()
+        expect(spies.keyEnterS).not.toHaveBeenCalled()
+        expect(spies.textInputS).not.toHaveBeenCalled()
 
-        spies.keyDownStream.reset()
-        spies.keyUpStream.reset()
+        spies.keyDownS.reset()
+        spies.keyUpS.reset()
         event = newKeyEvent(40) // down
-        buses.keyDownStream.push(event)
+        buses.keyDownS.push(event)
         expect(event.preventDefault).toHaveBeenCalled()
-        expect(spies.keyUpStream).not.toHaveBeenCalled()
-        expect(spies.keyDownStream).toHaveBeenCalledWith(event)
+        expect(spies.keyUpS).not.toHaveBeenCalled()
+        expect(spies.keyDownS).toHaveBeenCalledWith(event)
         expect(event.preventDefault).toHaveBeenCalled()
 
-        expect(spies.keyEnterStream).not.toHaveBeenCalled()
-        expect(spies.textInputStream).not.toHaveBeenCalled()
+        expect(spies.keyEnterS).not.toHaveBeenCalled()
+        expect(spies.textInputS).not.toHaveBeenCalled()
 
-        spies.keyDownStream.reset()
-        spies.keyUpStream.reset()
+        spies.keyDownS.reset()
+        spies.keyUpS.reset()
         event = newKeyEvent(30) // else?
-        buses.keyDownStream.push(event)
-        expect(spies.keyUpStream).not.toHaveBeenCalled()
-        expect(spies.keyDownStream).not.toHaveBeenCalled()
+        buses.keyDownS.push(event)
+        expect(spies.keyUpS).not.toHaveBeenCalled()
+        expect(spies.keyDownS).not.toHaveBeenCalled()
         expect(event.preventDefault).not.toHaveBeenCalled()
-        expect(spies.keyEnterStream).not.toHaveBeenCalled()
-        expect(spies.textInputStream).not.toHaveBeenCalled()
+        expect(spies.keyEnterS).not.toHaveBeenCalled()
+        expect(spies.textInputS).not.toHaveBeenCalled()
       })
     })
 
     describe('when sort changes', function () {
       beforeEach(function () {
-        atom.config.set('textual-velocity.sortDirectionStream', 'asc')
+        atom.config.set('textual-velocity.sortDirectionS', 'asc')
         atom.config.set('textual-velocity.sortfield', 'content')
       })
 
       it('should yield values on sort streams', function () {
-        expect(spies.sortDirectionStream).toHaveBeenCalledWith('asc')
-        expect(spies.sortFieldStream).toHaveBeenCalledWith('content')
+        expect(spies.sortDirectionS).toHaveBeenCalledWith('asc')
+        expect(spies.sortFieldS).toHaveBeenCalledWith('content')
       })
     })
   })

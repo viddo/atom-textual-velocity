@@ -1,5 +1,5 @@
 declare type PathWatcherType = {
-  initialScanDoneProp: Bacon.Property,
-  sifterProp: Bacon.Property,
+  initialScanDoneP: Bacon.Property,
+  sifterP: Bacon.Property,
   dispose: Function
 }
