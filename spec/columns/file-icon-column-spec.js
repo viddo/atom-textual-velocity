@@ -27,12 +27,9 @@ describe('columns/file-icon-column', function () {
     it('should return a kind of AST from which a DOM can be created', function () {
       expect(cellContent).toEqual(jasmine.any(Object), 'title')
       expect(cellContent.attrs).toEqual({
-        title: 'File extension: .md',
         className: 'icon icon-file-text',
-        'data-name': 'markdown.md',
-        'data-path': '/notes/markdown.md'
+        'data-name': 'markdown.md'
       })
-      expect(cellContent.content).toEqual(jasmine.any(String))
     })
   })
 })
