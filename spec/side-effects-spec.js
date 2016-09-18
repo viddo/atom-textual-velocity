@@ -155,9 +155,14 @@ describe('side-effects', function () {
     it('should save row height if there is a valid <td> element to get height from', function () {
       panel.getItem().querySelector.andReturn({clientHeight: 28})
       triggerResizeEvent()
-      expect(spies.rowHeightProp).not.toHaveBeenCalled()
-      advanceClock(1000)
+      panel.getItem().querySelector.andReturn({clientHeight: 29})
+      triggerResizeEvent()
       expect(spies.rowHeightProp).toHaveBeenCalledWith(28)
+
+      advanceClock(1000)
+      panel.getItem().querySelector.andReturn({clientHeight: 30})
+      triggerResizeEvent()
+      expect(spies.rowHeightProp).toHaveBeenCalledWith(30)
       expect(panel.getItem().querySelector).toHaveBeenCalledWith('td')
     })
 
