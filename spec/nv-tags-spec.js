@@ -35,53 +35,6 @@ describe('nv-tags', function () {
     disposable.dispose()
   })
 
-  describe('registered file-reader', function () {
-    var fileReader, path, callback
-
-    beforeEach(function () {
-      fileReader = publicServiceAPI.registerFileReaders.mostRecentCall.args[0]
-      callback = jasmine.createSpy('callback')
-    })
-
-    describe('.read', function () {
-      it('should return tags for a valid file', function () {
-        path = Path.join(__dirname, 'fixtures', 'standard', 'notational-velocity-tags.txt')
-        fileReader.read(path, callback)
-        waitsFor(function () {
-          return callback.calls.length >= 1
-        })
-        runs(function () {
-          expect(callback.mostRecentCall.args[0]).toBeFalsy()
-          expect(callback.mostRecentCall.args[1]).toEqual(['beep', 'boop'])
-        })
-      })
-
-      it('should return null for a file that have no xattrs set', function () {
-        path = Path.join(__dirname, 'fixtures', 'standard', 'empty.md')
-        fileReader.read(path, callback)
-        waitsFor(function () {
-          return callback.calls.length >= 1
-        })
-        runs(function () {
-          expect(callback.mostRecentCall.args[0]).toBeFalsy()
-          expect(callback.mostRecentCall.args[1]).toEqual(null)
-        })
-      })
-
-      it('should return error if file does not exist', function () {
-        fileReader.read('nonexisting', callback)
-        waitsFor(function () {
-          return callback.calls.length >= 1
-        })
-        runs(function () {
-          expect(callback.mostRecentCall.args[0]).toBeDefined()
-          expect(callback.mostRecentCall.args[0].code).toEqual('ENOENT')
-          expect(callback.mostRecentCall.args[1]).toBeFalsy()
-        })
-      })
-    })
-  })
-
   describe('registered field', function () {
     var field
 
@@ -127,40 +80,62 @@ describe('nv-tags', function () {
     })
   })
 
-  describe('registered file-writer', function () {
-    var fileReader, fileWriter
+  describe('registered file reader+writer', function () {
+    var fileReader, fileWriter, path, callback
 
     beforeEach(function () {
       fileReader = publicServiceAPI.registerFileReaders.mostRecentCall.args[0]
       fileWriter = publicServiceAPI.registerFileWriters.mostRecentCall.args[0]
+      callback = jasmine.createSpy('callback')
     })
 
-    describe('.write', function () {
-      it('should tags to file of given path', function () {
-        var readSpy = jasmine.createSpy('fileReader.read')
-        var writeSpy = jasmine.createSpy('fileWriter.write')
-        var tmpFile = temp.createWriteStream('tmp')
-        tmpFile.write('foo')
-        tmpFile.end()
-        fileWriter.write(tmpFile.path, 'beep boop', writeSpy)
+    it('should write/read tags to file of given path', function () {
+      var readSpy = jasmine.createSpy('fileReader.read')
+      var writeSpy = jasmine.createSpy('fileWriter.write')
+      var tmpFile = temp.createWriteStream('tmp')
+      tmpFile.write('foo')
+      tmpFile.end()
+      fileWriter.write(tmpFile.path, 'beep boop', writeSpy)
 
-        waitsFor(function () {
-          return writeSpy.calls.length >= 1
-        })
-        runs(function () {
-          expect(writeSpy.mostRecentCall.args[0]).toBeFalsy()
-          expect(writeSpy.mostRecentCall.args[1]).toBeFalsy()
-          fileReader.read(tmpFile.path, readSpy)
-        })
+      waitsFor(function () {
+        return writeSpy.calls.length >= 1
+      })
+      runs(function () {
+        expect(writeSpy.mostRecentCall.args[0]).toBeFalsy()
+        expect(writeSpy.mostRecentCall.args[1]).toBeFalsy()
+        fileReader.read(tmpFile.path, readSpy)
+      })
 
-        // assumes fileReader working/tested in-depth separately
-        waitsFor(function () {
-          return readSpy.calls.length >= 1
-        })
-        runs(function () {
-          expect(readSpy.mostRecentCall.args[0]).toBeFalsy()
-          expect(readSpy.mostRecentCall.args[1]).toEqual(['beep', 'boop'])
-        })
+      waitsFor(function () {
+        return readSpy.calls.length >= 1
+      })
+      runs(function () {
+        expect(readSpy.mostRecentCall.args[0]).toBeFalsy()
+        expect(readSpy.mostRecentCall.args[1]).toEqual(['beep', 'boop'])
+      })
+    })
+
+    it('should return null for a read file that have no xattrs set', function () {
+      path = Path.join(__dirname, 'fixtures', 'standard', 'empty.md')
+      fileReader.read(path, callback)
+      waitsFor(function () {
+        return callback.calls.length >= 1
+      })
+      runs(function () {
+        expect(callback.mostRecentCall.args[0]).toBeFalsy()
+        expect(callback.mostRecentCall.args[1]).toEqual(null)
+      })
+    })
+
+    it('should return error if read file does not exist', function () {
+      fileReader.read('nonexisting', callback)
+      waitsFor(function () {
+        return callback.calls.length >= 1
+      })
+      runs(function () {
+        expect(callback.mostRecentCall.args[0]).toBeDefined()
+        expect(callback.mostRecentCall.args[0].code).toEqual('ENOENT')
+        expect(callback.mostRecentCall.args[1]).toBeFalsy()
       })
     })
   })
