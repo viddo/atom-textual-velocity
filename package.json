@@ -29,7 +29,7 @@
     }
   },
   "dependencies": {
-    "baconjs": "0.7.86",
+    "baconjs": "0.7.87",
     "chokidar": "1.6.0",
     "classnames": "2.2.5",
     "fs-plus": "2.9.1",
@@ -52,7 +52,7 @@
     "eslint-config-standard-jsx": "3.0.1",
     "eslint-plugin-flowtype": "2.18.2",
     "eslint-plugin-promise": "2.0.1",
-    "eslint-plugin-react": "6.2.2",
+    "eslint-plugin-react": "6.3.0",
     "eslint-plugin-standard": "2.0.0",
     "flow-bin": "0.32.0",
     "temp": "0.8.3"
