@@ -9,11 +9,6 @@ environment:
 
 ### Generic setup follows ###
 build_script:
-  - ps: Install-Product node $env:nodejs_version
-  # Need to update npm to fix this bug: https://github.com/nodejs/node-gyp/pull/952
-  - IF %nodejs_version% LSS 6 npm -g install npm@2
-  - IF %nodejs_version% EQU 6 npm -g install npm@3
-  - IF %nodejs_version% LSS 1 set PATH=%APPDATA%\npm;%PATH%
   - ps: iex ((new-object net.webclient).DownloadString('https://gist.githubusercontent.com/viddo/711fcf2b9ebcc4a717da284fad4d5a38/raw/09fde224d3720a20e9b8df4c53357b2e6b323e07/build-package.ps1'))
 
 version: "{build}"
