@@ -9,7 +9,7 @@ environment:
 
 ### Generic setup follows ###
 build_script:
-  - ps: iex ((new-object net.webclient).DownloadString('https://raw.githubusercontent.com/atom/ci/master/build-package.ps1'))
+  - ps: iex ((new-object net.webclient).DownloadString('https://gist.githubusercontent.com/viddo/711fcf2b9ebcc4a717da284fad4d5a38/raw/09fde224d3720a20e9b8df4c53357b2e6b323e07/build-package.ps1'))
 
 version: "{build}"
 platform: x64
