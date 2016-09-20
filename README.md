@@ -1,4 +1,4 @@
-# Textual Velocity for Atom [![Build Status](http://travis-ci.org/viddo/atom-textual-velocity.png?branch=master)](http://travis-ci.org/viddo/atom-textual-velocity)
+# Textual Velocity for Atom [![Travis Build Status](http://travis-ci.org/viddo/atom-textual-velocity.png?branch=master)](http://travis-ci.org/viddo/atom-textual-velocity) [![CircleCI Build status](https://circleci.com/gh/viddo/atom-textual-velocity/tree/clean.png?style=shield&circle-token=:circle-token)](https://circleci.com/gh/viddo/atom-textual-velocity)
 _Note that this package is still WIP, see [v1 roadmap milestone](https://github.com/viddo/atom-textual-velocity/milestones) for details.  See the [change log](CHANGELOG.md) for what's new._
 
 Your mental notes at your fingertips!
