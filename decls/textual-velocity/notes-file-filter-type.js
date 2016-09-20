@@ -1,3 +1,3 @@
-declare type NotesPathFilterType = {
+declare type NotesFileFilterType = {
   isAccepted (path: string): boolean
 }
