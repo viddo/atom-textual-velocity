@@ -67,7 +67,7 @@ describe('side-effects', function () {
       saveEditedCellContentS: buses.saveEditedCellContentS,
       selectedPathS: buses.previewItemS,
       rowHeightP: buses.rowHeightP.toProperty(20),
-      rowsS: buses.rowsS.toProperty(),
+      rowsS: buses.rowsS,
       searchStrP: buses.searchStrP.toProperty(),
       sortP: buses.sortP.toProperty()
     }

@@ -2,6 +2,7 @@
 
 import Bacon from 'baconjs'
 import R from 'ramda'
+import Path from 'path'
 import Presenter from '../lib/presenter'
 import NotesPath from '../lib/notes-path'
 
@@ -35,7 +36,7 @@ describe('presenter', function () {
       paginationP: new Bacon.Bus(),
       rowHeightP: new Bacon.Bus(),
       saveEditedCellContentS: new Bacon.Bus(),
-      selectedIndexP: new Bacon.Bus(),
+      selectedPathS: new Bacon.Bus(),
       sifterResultP: new Bacon.Bus()
     }
 
@@ -50,7 +51,7 @@ describe('presenter', function () {
       paginationP: buses.paginationP.toProperty({start: 0, limit: 5}),
       rowHeightP: buses.rowHeightP.toProperty(23),
       saveEditedCellContentS: buses.saveEditedCellContentS,
-      selectedIndexP: buses.selectedIndexP.toProperty(undefined),
+      selectedPathS: buses.selectedPathS,
       sifterResultP: buses.sifterResultP.toProperty()
     }
 
@@ -251,14 +252,14 @@ describe('presenter', function () {
 
       describe('when a file is selected', function () {
         beforeEach(function () {
-          buses.selectedIndexP.push(2)
+          buses.selectedPathS.push(Path.join(__dirname, 'file 5.md'))
         })
 
         it('should yield new rows', function () {
           expect(spies.rowsS.mostRecentCall.args[0]).toEqual(jasmine.any(Array))
           expect(spies.rowsS.mostRecentCall.args[0].length).toEqual(5)
           expect(spies.rowsS.mostRecentCall.args[0].map(x => x.index)).toEqual([0, 1, 2, 3, 4], 'index should still be from 0 in asc order')
-          expect(spies.rowsS.mostRecentCall.args[0].map(x => x.selected)).toEqual([false, false, true, false, false], 'selected index selected')
+          expect(spies.rowsS.mostRecentCall.args[0].findIndex(x => x.selected)).toEqual(2)
         })
 
         it('should preview the item', function () {

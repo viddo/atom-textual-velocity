@@ -62,7 +62,7 @@ describe('interactor', function () {
       openFileS: jasmine.createSpy('openFileS'),
       paginationP: jasmine.createSpy('paginationP'),
       rowHeightP: jasmine.createSpy('rowHeightP'),
-      selectedIndexP: jasmine.createSpy('selectedIndexP'),
+      selectedPathS: jasmine.createSpy('selectedPathS'),
       sifterResultP: jasmine.createSpy('sifterResultP')
     }
 
@@ -97,7 +97,7 @@ describe('interactor', function () {
     interactor.openFileS.onValue(spies.openFileS)
     interactor.paginationP.onValue(spies.paginationP)
     interactor.rowHeightP.onValue(spies.rowHeightP)
-    interactor.selectedIndexP.onValue(spies.selectedIndexP)
+    interactor.selectedPathS.onValue(spies.selectedPathS)
     interactor.sifterResultP.onValue(spies.sifterResultP)
 
     buses.rowHeightS.push(20)
@@ -126,7 +126,7 @@ describe('interactor', function () {
       expect(spies.notesPathS).toHaveBeenCalled()
       expect(spies.paginationP).toHaveBeenCalledWith({start: 0, limit: 5})
       expect(spies.rowHeightP).toHaveBeenCalledWith(20)
-      expect(spies.selectedIndexP).toHaveBeenCalledWith(undefined)
+      expect(spies.selectedPathS).not.toHaveBeenCalled()
 
       buses.sifterP.push(
         new Sifter([
@@ -176,12 +176,10 @@ describe('interactor', function () {
         buses.textInputS.push('fil')
         expect(spies.sifterResultP.mostRecentCall.args[0].query).toEqual('fil')
         expect(spies.paginationP.mostRecentCall.args[0]).toEqual({start: 0, limit: 5})
-        expect(spies.selectedIndexP.mostRecentCall.args[0]).toEqual(undefined, 'should reset selection')
 
         // clickedCellS
-        spies.selectedIndexP.reset()
         buses.clickedCellS.push(3)
-        expect(spies.selectedIndexP).toHaveBeenCalledWith(3)
+        expect(spies.selectedPathS).toHaveBeenCalledWith('/notes/file 6.md')
         expect(spies.paginationP).toHaveBeenCalledWith({start: 0, limit: 5})
 
         // listHeightS
@@ -199,18 +197,18 @@ describe('interactor', function () {
 
         // reset
         spies.paginationP.reset()
-        spies.selectedIndexP.reset()
+        spies.selectedPathS.reset()
         spies.sifterResultP.reset()
         buses.keyEscS.push()
         expect(spies.paginationP).toHaveBeenCalledWith({start: 0, limit: 8})
-        expect(spies.selectedIndexP).toHaveBeenCalledWith(undefined)
+        expect(spies.selectedPathS).toHaveBeenCalledWith(undefined)
         expect(spies.sifterResultP).toHaveBeenCalled()
 
         // 2nd textInputS
         spies.sifterResultP.reset()
         buses.textInputS.push('file')
         expect(spies.paginationP).toHaveBeenCalledWith({start: 0, limit: 8})
-        expect(spies.selectedIndexP).toHaveBeenCalledWith(undefined)
+        expect(spies.selectedPathS).toHaveBeenCalledWith(undefined)
 
         // sort direction+field
         spies.sifterResultP.reset()
@@ -219,41 +217,41 @@ describe('interactor', function () {
         expect(spies.sifterResultP.mostRecentCall.args[0].options.sort[0]).toEqual({field: 'content', direction: 'asc'}, 'should have changed sort')
 
         // select prev (by offset)
-        spies.selectedIndexP.reset()
+        spies.selectedPathS.reset()
         buses.keyUpS.push()
-        expect(spies.selectedIndexP.mostRecentCall.args[0]).toEqual(9, 'should select last item')
+        expect(spies.selectedPathS.mostRecentCall.args[0]).toEqual('/notes/file 9.md', 'should select last item')
         R.times(() => { buses.keyUpS.push() }, 5)
-        expect(spies.selectedIndexP.mostRecentCall.args[0]).toEqual(4, 'should stepped index back the same amount of events')
+        expect(spies.selectedPathS.mostRecentCall.args[0]).toEqual('/notes/file 4.md', 'should stepped index back the same amount of events')
         R.times(() => { buses.keyUpS.push() }, 4)
-        expect(spies.selectedIndexP.mostRecentCall.args[0]).toEqual(0, 'should stepped index back the same amount of events')
+        expect(spies.selectedPathS.mostRecentCall.args[0]).toEqual('/notes/file 0.md', 'should stepped index back the same amount of events')
         R.times(() => { buses.keyUpS.push() }, 3)
-        expect(spies.selectedIndexP.mostRecentCall.args[0]).toEqual(0, 'should stay on first item')
+        expect(spies.selectedPathS.mostRecentCall.args[0]).toEqual('/notes/file 0.md', 'should stay on first item')
 
         // select next (by offset)
         buses.keyEscS.push(undefined) // to reset selection
-        spies.selectedIndexP.reset()
+        spies.selectedPathS.reset()
         buses.keyDownS.push()
-        expect(spies.selectedIndexP.mostRecentCall.args[0]).toEqual(0, 'should start at the beginning of list')
+        expect(spies.selectedPathS.mostRecentCall.args[0]).toEqual('/notes/file 0.md', 'should start at the beginning of list')
         R.times(() => { buses.keyDownS.push() }, 5)
-        expect(spies.selectedIndexP.mostRecentCall.args[0]).toEqual(5, 'should stepped index forward the same amount of events')
+        expect(spies.selectedPathS.mostRecentCall.args[0]).toEqual('/notes/file 5.md', 'should stepped index forward the same amount of events')
         R.times(() => { buses.keyDownS.push() }, 6)
-        expect(spies.selectedIndexP.mostRecentCall.args[0]).toEqual(9, 'should stop at end of list')
+        expect(spies.selectedPathS.mostRecentCall.args[0]).toEqual('/notes/file 9.md', 'should stop at end of list')
 
         // active path/files change
-        spies.selectedIndexP.reset()
+        spies.selectedPathS.reset()
         buses.activePathS.push('/notes/file 7.md')
-        expect(spies.selectedIndexP.mostRecentCall.args[0]).toEqual(7, 'should set the index to found file')
+        expect(spies.selectedPathS.mostRecentCall.args[0]).toEqual('/notes/file 7.md', 'should set the index to found file')
 
-        spies.selectedIndexP.reset()
+        spies.selectedPathS.reset()
         allFiles = [
           new NotesFile(`new-file1.md`, str => `/notes/new-file1`),
           new NotesFile(`new-file2.md`, str => `/notes/new-file2`)
         ].concat(allFiles)
         buses.sifterP.push(new Sifter(allFiles))
-        expect(spies.selectedIndexP.mostRecentCall.args[0]).toEqual(9, 'should update selected index')
+        expect(spies.selectedPathS.mostRecentCall.args[0]).toEqual('/notes/file 7.md', 'should update selected index')
 
         buses.activePathS.push('/notes/whatever')
-        expect(spies.selectedIndexP.mostRecentCall.args[0]).toEqual(undefined, 'should unset index when there is no match')
+        expect(spies.selectedPathS.mostRecentCall.args[0]).toEqual(undefined, 'should unset index when there is no match')
       })
     })
 
