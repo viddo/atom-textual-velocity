@@ -14,8 +14,8 @@ describe('interactor', function () {
       abortEditCellS: new Bacon.Bus(),
       activePathS: new Bacon.Bus(),
       clickedCellS: new Bacon.Bus(),
-      editCellS: new Bacon.Bus(),
       dblClickedCell: new Bacon.Bus(),
+      editCellS: new Bacon.Bus(),
       initialScanDoneP: new Bacon.Bus(),
       keyDownS: new Bacon.Bus(),
       keyEnterS: new Bacon.Bus(),
@@ -43,8 +43,8 @@ describe('interactor', function () {
       keyUpS: buses.keyUpS,
       listHeightS: buses.listHeightS,
       rowHeightS: buses.rowHeightS,
-      scrollTopS: buses.scrollTopS,
       saveEditedCellContentS: buses.saveEditedCellContentS,
+      scrollTopS: buses.scrollTopS,
       sessionStartS: buses.sessionStartS,
       sortDirectionS: buses.sortDirectionS,
       sortFieldS: buses.sortFieldS,
@@ -58,8 +58,8 @@ describe('interactor', function () {
       forcedScrollTopP: jasmine.createSpy('forcedScrollTopP'),
       listHeightP: jasmine.createSpy('listHeightP'),
       loadingS: jasmine.createSpy('loadingS'),
-      openFileS: jasmine.createSpy('openFileS'),
       notesPathS: jasmine.createSpy('notesPathS'),
+      openFileS: jasmine.createSpy('openFileS'),
       paginationP: jasmine.createSpy('paginationP'),
       rowHeightP: jasmine.createSpy('rowHeightP'),
       selectedIndexP: jasmine.createSpy('selectedIndexP'),
@@ -93,8 +93,8 @@ describe('interactor', function () {
     interactor.forcedScrollTopP.onValue(spies.forcedScrollTopP)
     interactor.listHeightP.onValue(spies.listHeightP)
     interactor.loadingS.onValue(spies.loadingS)
-    interactor.openFileS.onValue(spies.openFileS)
     interactor.notesPathS.onValue(spies.notesPathS)
+    interactor.openFileS.onValue(spies.openFileS)
     interactor.paginationP.onValue(spies.paginationP)
     interactor.rowHeightP.onValue(spies.rowHeightP)
     interactor.selectedIndexP.onValue(spies.selectedIndexP)
@@ -146,7 +146,6 @@ describe('interactor', function () {
         allFiles = R.times(i => {
           return new NotesFile(`file ${i}.md`, str => `/notes/${str}`)
         }, 10)
-        advanceClock(1000) // due to debounced sifterP
         buses.sifterP.push(new Sifter(allFiles))
         buses.initialScanDoneP.push(true)
       })
@@ -231,7 +230,7 @@ describe('interactor', function () {
         expect(spies.selectedIndexP.mostRecentCall.args[0]).toEqual(0, 'should stay on first item')
 
         // select next (by offset)
-        buses.clickedCellS.push(undefined)  // reset selection
+        buses.keyEscS.push(undefined) // to reset selection
         spies.selectedIndexP.reset()
         buses.keyDownS.push()
         expect(spies.selectedIndexP.mostRecentCall.args[0]).toEqual(0, 'should start at the beginning of list')
@@ -240,10 +239,19 @@ describe('interactor', function () {
         R.times(() => { buses.keyDownS.push() }, 6)
         expect(spies.selectedIndexP.mostRecentCall.args[0]).toEqual(9, 'should stop at end of list')
 
-        // active path change
+        // active path/files change
         spies.selectedIndexP.reset()
         buses.activePathS.push('/notes/file 7.md')
         expect(spies.selectedIndexP.mostRecentCall.args[0]).toEqual(7, 'should set the index to found file')
+
+        spies.selectedIndexP.reset()
+        allFiles = [
+          new NotesFile(`new-file1.md`, str => `/notes/new-file1`),
+          new NotesFile(`new-file2.md`, str => `/notes/new-file2`)
+        ].concat(allFiles)
+        buses.sifterP.push(new Sifter(allFiles))
+        expect(spies.selectedIndexP.mostRecentCall.args[0]).toEqual(9, 'should update selected index')
+
         buses.activePathS.push('/notes/whatever')
         expect(spies.selectedIndexP.mostRecentCall.args[0]).toEqual(undefined, 'should unset index when there is no match')
       })
