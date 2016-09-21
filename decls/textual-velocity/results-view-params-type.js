@@ -5,12 +5,7 @@ declare type ResultsViewParamsType = {
   listHeight: number,
   paginationStart: number,
   rowHeight: number,
-  rows: Array<{
-    id: string,
-    index: number,
-    selected: boolean,
-    cells: Array<CellType>
-  }>,
+  rows: Array<RowType>,
   searchStr: string,
   sort: SifterResultSortType
 }

@@ -5,5 +5,5 @@ declare type SearchResultsType = {
   notesPath: NotesPathType,
   sifterResult: SifterResultType,
   pagination: PaginationType,
-  selectedPath?: string
+  selectedRelPath?: string
 }

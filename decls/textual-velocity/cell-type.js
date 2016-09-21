@@ -1,4 +1,4 @@
 declare type CellType = {
-  field: string,
+  editCellName: string | void,
   content: CellContentType
 }

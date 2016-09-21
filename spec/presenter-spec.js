@@ -2,7 +2,6 @@
 
 import Bacon from 'baconjs'
 import R from 'ramda'
-import Path from 'path'
 import Presenter from '../lib/presenter'
 import NotesPath from '../lib/notes-path'
 
@@ -36,7 +35,7 @@ describe('presenter', function () {
       paginationP: new Bacon.Bus(),
       rowHeightP: new Bacon.Bus(),
       saveEditedCellContentS: new Bacon.Bus(),
-      selectedPathS: new Bacon.Bus(),
+      selectedRelPathS: new Bacon.Bus(),
       sifterResultP: new Bacon.Bus()
     }
 
@@ -51,7 +50,7 @@ describe('presenter', function () {
       paginationP: buses.paginationP.toProperty({start: 0, limit: 5}),
       rowHeightP: buses.rowHeightP.toProperty(23),
       saveEditedCellContentS: buses.saveEditedCellContentS,
-      selectedPathS: buses.selectedPathS,
+      selectedRelPathS: buses.selectedRelPathS,
       sifterResultP: buses.sifterResultP.toProperty()
     }
 
@@ -121,7 +120,7 @@ describe('presenter', function () {
     let notes
 
     beforeEach(function () {
-      const notesPathP = NotesPath(__dirname)
+      const notesPathP = NotesPath('/notes')
       buses.notesPathP.push(notesPathP)
       buses.loadingS.push()
 
@@ -167,12 +166,11 @@ describe('presenter', function () {
       it('should yields rows', function () {
         expect(spies.rowsS.mostRecentCall.args[0]).toEqual(jasmine.any(Array))
         expect(spies.rowsS.mostRecentCall.args[0].length).toEqual(5)
-        expect(spies.rowsS.mostRecentCall.args[0][0]).toEqual({
-          id: jasmine.any(String),
-          index: jasmine.any(Number),
-          selected: false,
-          cells: jasmine.any(Array)
-        })
+        const row = spies.rowsS.mostRecentCall.args[0][0]
+        expect(row.id).toEqual(jasmine.any(String))
+        expect(row.relPath).toEqual(jasmine.any(String))
+        expect(row.selected).toBe(false)
+        expect(row.cells).toEqual(jasmine.any(Array))
         expect(spies.rowsS.mostRecentCall.args[0][0].cells).toEqual([
           {content: 'note 0', editCellName: 'name'},
           {content: '.md', editCellName: undefined}
@@ -215,8 +213,9 @@ describe('presenter', function () {
             ]
           })
         )
-        expect(spies.rowsS.mostRecentCall.args[0].map(x => x.index)).toEqual([0, 1, 2, 3, 4], 'index in asc order')
-        expect(spies.rowsS.mostRecentCall.args[0].indexOf(x => x.selected)).toEqual(-1, 'all items unselected')
+        expect(spies.rowsS.mostRecentCall.args[0][0].relPath).toEqual('note 3.md', 'relPath in asc order')
+        expect(spies.rowsS.mostRecentCall.args[0][4].relPath).toEqual('note 7.md', 'relPath in asc order')
+        expect(spies.rowsS.mostRecentCall.args[0].indexOf(row => row.selected)).toEqual(-1, 'all items unselected')
       })
 
       it('should format cell contents', function () {
@@ -261,14 +260,14 @@ describe('presenter', function () {
 
       describe('when a note is selected', function () {
         beforeEach(function () {
-          buses.selectedPathS.push(Path.join(__dirname, 'note 5.md'))
+          buses.selectedRelPathS.push('note 5.md')
         })
 
         it('should yield new rows', function () {
           expect(spies.rowsS.mostRecentCall.args[0]).toEqual(jasmine.any(Array))
           expect(spies.rowsS.mostRecentCall.args[0].length).toEqual(5)
-          expect(spies.rowsS.mostRecentCall.args[0].map(x => x.index)).toEqual([0, 1, 2, 3, 4], 'index should still be from 0 in asc order')
-          expect(spies.rowsS.mostRecentCall.args[0].findIndex(x => x.selected)).toEqual(2)
+          expect(spies.rowsS.mostRecentCall.args[0][0].relPath).toEqual('note 3.md', 'should start from first note')
+          expect(spies.rowsS.mostRecentCall.args[0].findIndex(row => row.selected)).toEqual(2)
         })
 
         it('should preview the item', function () {
@@ -286,16 +285,19 @@ describe('presenter', function () {
       })
 
       it('should open new note when there is no selected note', function () {
+        buses.selectedRelPathS.push('note 3.md') // preqrequisite for open
+
         expect(spies.openPathS).not.toHaveBeenCalled()
         buses.openFileS.push()
         expect(spies.openPathS).toHaveBeenCalled()
-        expect(spies.openPathS.mostRecentCall.args[0]).toMatch(/.+str.md/)
+        expect(spies.openPathS.mostRecentCall.args[0]).toEqual('/notes/note 3.md')
 
         buses.sifterResultP.push(
           newSifterResult({query: ''})
         )
+        buses.selectedRelPathS.push(undefined)
         buses.openFileS.push()
-        expect(spies.openPathS.mostRecentCall.args[0]).toMatch(/.+untitled.md/)
+        expect(spies.openPathS.mostRecentCall.args[0]).toEqual('/notes/untitled.md')
       })
     })
   })

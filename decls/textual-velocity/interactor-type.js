@@ -12,6 +12,6 @@ declare type InteractorType = {
   paginationP: Bacon.Property,
   rowHeightP: Bacon.Property,
   saveEditedCellContentS: Bacon.Stream,
-  selectedPathS: Bacon.Stream,
+  selectedRelPathS: Bacon.Stream,
   sifterResultP: Bacon.Property
 }
