@@ -73,7 +73,7 @@ describe('path-watcher-factory', () => {
       })
 
       waitsFor('all files to be read', () => {
-        return this.sifterPSpy.calls.length >= 7
+        return this.sifterPSpy.mostRecentCall.args[0].items[2].content
       })
       runs(() => {
         const files = this.sifterPSpy.mostRecentCall.args[0].items
