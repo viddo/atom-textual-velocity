@@ -1,6 +1,5 @@
 'use babel'
 
-import NotesFile from '../../lib/notes-file'
 import FileIconColumn from '../../lib/columns/file-icon-column'
 
 describe('columns/file-icon-column', function () {
@@ -17,11 +16,16 @@ describe('columns/file-icon-column', function () {
   })
 
   describe('.cellContent', function () {
-    let file, cellContent
+    let note, path, cellContent
 
     beforeEach(function () {
-      file = new NotesFile('markdown.md', relPath => `/notes/${relPath}`)
-      cellContent = column.cellContent(file)
+      path = '/notes/markdown.md'
+      note = {
+        id: '',
+        name: 'markdown',
+        ext: '.md'
+      }
+      cellContent = column.cellContent({note: note, path: path})
     })
 
     it('should return a kind of AST from which a DOM can be created', function () {

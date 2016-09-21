@@ -1,6 +1,5 @@
 'use babel'
 
-import NotesFile from '../../lib/notes-file'
 import StatsDateColumn from '../../lib/columns/stats-date-column'
 
 describe('columns/stats-date-column', function () {
@@ -27,20 +26,25 @@ describe('columns/stats-date-column', function () {
   })
 
   describe('.cellContent', function () {
-    let file
+    let path, note
 
     beforeEach(function () {
-      file = new NotesFile('markdown.md', relPath => `/notes/${relPath}`)
+      path = '/notes/markdown.md'
+      note = {
+        id: '',
+        name: 'markdown',
+        ext: '.md'
+      }
     })
 
     it('should return an empty string if there is no date for given prop', function () {
-      expect(column.cellContent(file)).toEqual('')
+      expect(column.cellContent({note: note, path: path})).toEqual('')
     })
 
     it('should return diffing time from now', function () {
-      file.stats = {birthtime: new Date()}
-      expect(column.cellContent(file)).toEqual(jasmine.any(String))
-      expect(column.cellContent(file)).not.toEqual('')
+      note.stats = {birthtime: new Date()}
+      expect(column.cellContent({note: note, path: path})).toEqual(jasmine.any(String))
+      expect(column.cellContent({note: note, path: path})).not.toEqual('')
     })
   })
 })

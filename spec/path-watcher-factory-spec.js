@@ -3,7 +3,6 @@
 import Bacon from 'baconjs'
 import fs from 'fs'
 import Path from 'path'
-import R from 'ramda'
 import temp from 'temp'
 import NotesFileFilter from '../lib/notes-file-filter'
 import NotesPath from '../lib/notes-path'
@@ -37,10 +36,10 @@ describe('path-watcher-factory', () => {
       const tempDirPath = temp.mkdirSync('empty-dir')
       this.realPath = fs.realpathSync(tempDirPath)
 
-      fs.writeFileSync(Path.join(this.realPath, 'file-0.txt'), '1')
-      fs.writeFileSync(Path.join(this.realPath, 'file-1.txt'), '2')
+      fs.writeFileSync(Path.join(this.realPath, 'note-1.txt'), '1')
+      fs.writeFileSync(Path.join(this.realPath, 'note-2.txt'), '2')
       fs.writeFileSync(Path.join(this.realPath, 'other.zip'), '')
-      fs.writeFileSync(Path.join(this.realPath, 'file-2.txt'), '3')
+      fs.writeFileSync(Path.join(this.realPath, 'note-3.txt'), '3')
 
       this.notesPath = NotesPath(this.realPath)
       this.notesFileFilter = new NotesFileFilter(this.realPath)
@@ -67,49 +66,49 @@ describe('path-watcher-factory', () => {
       })
       runs(() => {
         expect(this.initialScanDonePSpy.mostRecentCall.args[0]).toEqual(true, 'initialScanDone should be ready')
-        expect(this.sifterPSpy.calls[1].args[0].items).toEqual(R.repeat(jasmine.any(Object), 3), 'files should have some entries')
-        expect(this.sifterPSpy.calls[2].args[0].items[1].path).toMatch(/.+file-1\.txt$/, 'file should have a path')
-        expect(this.sifterPSpy.calls[3].args[0].items[2].path).toMatch(/.+file-2\.txt$/, 'file should have a path')
+        expect(this.sifterPSpy.calls[1].args[0].items).toEqual(jasmine.any(Object), 'files should have some entries')
+        expect(this.sifterPSpy.calls[2].args[0].items['note-1.txt']).toBeDefined()
+        expect(this.sifterPSpy.calls[3].args[0].items['note-3.txt']).toBeDefined()
       })
 
       waitsFor('all files to be read', () => {
-        return this.sifterPSpy.mostRecentCall.args[0].items[2].content
+        return this.sifterPSpy.mostRecentCall.args[0].items['note-3.txt'].content
       })
       runs(() => {
         const files = this.sifterPSpy.mostRecentCall.args[0].items
-        expect(files[0].content).toEqual('1', 'file should have content')
-        expect(files[1].content).toEqual('2', 'file should have content')
-        expect(files[2].content).toEqual('3', 'file should have content')
+        expect(files['note-1.txt'].content).toEqual('1', 'file should have content')
+        expect(files['note-2.txt'].content).toEqual('2', 'file should have content')
+        expect(files['note-3.txt'].content).toEqual('3', 'file should have content')
 
-        expect(files[0].contentAsInt).toEqual(1)
+        expect(files['note-1.txt'].contentAsInt).toEqual(1)
       })
 
       runs(() => {
-        this.prevContent = this.sifterPSpy.mostRecentCall.args[0].items[0].content
+        this.prevContent = this.sifterPSpy.mostRecentCall.args[0].items['note-1.txt'].content
         this.sifterPSpy.reset()
-        fs.writeFileSync(Path.join(this.realPath, 'file-0.txt'), 'meh something longer than one word')
+        fs.writeFileSync(Path.join(this.realPath, 'note-1.txt'), 'meh something longer than one word')
       })
       waitsFor('file change', () => {
         return this.sifterPSpy.calls.length >= 2
       })
       runs(() => {
         const files = this.sifterPSpy.mostRecentCall.args[0].items
-        expect(files[0].content).not.toEqual(this.prevContent, 'should have updated changed file')
-        expect(files[0].contentAsInt).toBeNaN(NaN, 'should have updated field value')
+        expect(files['note-1.txt'].content).not.toEqual(this.prevContent, 'should have updated changed file')
+        expect(files['note-1.txt'].contentAsInt).toBeNaN(NaN, 'should have updated field value')
       })
 
       runs(() => {
         this.sifterPSpy.reset()
-        fs.unlinkSync(Path.join(this.realPath, 'file-0.txt'))
-        fs.unlinkSync(Path.join(this.realPath, 'file-1.txt'))
+        fs.unlinkSync(Path.join(this.realPath, 'note-1.txt'))
+        fs.unlinkSync(Path.join(this.realPath, 'note-2.txt'))
         fs.unlinkSync(Path.join(this.realPath, 'other.zip'))
       })
       waitsFor('for all files to have been removed', () => {
         return this.sifterPSpy.calls.length >= 2
       })
       runs(() => {
-        expect(this.sifterPSpy.calls[1].args[0].items.length).toEqual(1)
-        expect(this.sifterPSpy.calls[1].args[0].items[0].relPath).toEqual('file-2.txt')
+        expect(Object.keys(this.sifterPSpy.calls[1].args[0].items).length).toEqual(1, 'shold only have one note left')
+        expect(this.sifterPSpy.calls[1].args[0].items['note-3.txt']).toBeDefined()
       })
     })
   })

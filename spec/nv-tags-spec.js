@@ -60,8 +60,8 @@ describe('nv-tags', function () {
 
     describe('.cellContent', function () {
       it('should return the tags as a space separated string', function () {
-        var file = {nvtags: ['beep', 'boop']}
-        var cellContent = column.cellContent(file)
+        var note = {nvtags: ['beep', 'boop']}
+        var cellContent = column.cellContent({note: note})
 
         expect(cellContent).toEqual(jasmine.any(Array))
         expect(cellContent[0]).toEqual({
@@ -71,8 +71,8 @@ describe('nv-tags', function () {
       })
 
       it('should return nothing for nonvalid prop', function () {
-        expect(column.cellContent({nvtags: {}})).toBeFalsy()
-        expect(column.cellContent({nvtags: null})).toBeFalsy()
+        expect(column.cellContent({note: {nvtags: {}}})).toBeFalsy()
+        expect(column.cellContent({note: {nvtags: null}})).toBeFalsy()
       })
     })
   })

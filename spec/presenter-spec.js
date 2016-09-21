@@ -27,12 +27,12 @@ describe('presenter', function () {
   beforeEach(function () {
     buses = {
       editCellNameP: new Bacon.Bus(),
-      filesP: new Bacon.Bus(),
       forcedScrollTopP: new Bacon.Bus(),
       listHeightP: new Bacon.Bus(),
       loadingS: new Bacon.Bus(),
       openFileS: new Bacon.Bus(),
-      notesPathS: new Bacon.Bus(),
+      notesP: new Bacon.Bus(),
+      notesPathP: new Bacon.Bus(),
       paginationP: new Bacon.Bus(),
       rowHeightP: new Bacon.Bus(),
       saveEditedCellContentS: new Bacon.Bus(),
@@ -42,12 +42,12 @@ describe('presenter', function () {
 
     const interactor = {
       editCellNameP: buses.editCellNameP.toProperty(undefined),
-      filesP: buses.filesP.toProperty([]),
       forcedScrollTopP: buses.forcedScrollTopP.toProperty(undefined),
       listHeightP: buses.listHeightP.toProperty(123),
       loadingS: buses.loadingS,
       openFileS: buses.openFileS,
-      notesPathS: buses.notesPathS,
+      notesP: buses.notesP.toProperty([]),
+      notesPathP: buses.notesPathP.toProperty(),
       paginationP: buses.paginationP.toProperty({start: 0, limit: 5}),
       rowHeightP: buses.rowHeightP.toProperty(23),
       saveEditedCellContentS: buses.saveEditedCellContentS,
@@ -57,17 +57,17 @@ describe('presenter', function () {
 
     nameColumn = {
       editCellName: 'name',
-      editCellStr: file => file.name,
+      editCellStr: note => note.name,
       sortField: 'name',
       title: 'Filename',
       width: 90,
-      cellContent: (file, template) => file.name
+      cellContent: (params: CellContentParamsType) => params.note.name
     }
     extColumn = {
       sortField: 'ext',
       title: 'File extension',
       width: 10,
-      cellContent: (file, template) => file.ext
+      cellContent: (params: CellContentParamsType) => params.note.ext
     }
     const columnsP = Bacon.constant([nameColumn, extColumn])
     spyOn(nameColumn, 'cellContent').andCallThrough()
@@ -117,22 +117,26 @@ describe('presenter', function () {
     expect(spies.sortP).not.toHaveBeenCalled()
   })
 
-  describe('when interactor loadingS stream is triggered', function () {
-    let allFiles
+  describe('when interactor loading stream is triggered', function () {
+    let notes
 
     beforeEach(function () {
-      const notesPathS = NotesPath(__dirname)
-      buses.notesPathS.push(notesPathS)
+      const notesPathP = NotesPath(__dirname)
+      buses.notesPathP.push(notesPathP)
       buses.loadingS.push()
 
-      // simulate filesP beings populated:
-      buses.filesP.push([])
-      allFiles = R.times(i => {
-        const file = notesPathS.newFile(`file ${i}.md`)
-        file.content = `content of file ${i}`
-        return file
+      // simulate notesP beings populated:
+      buses.notesP.push({})
+      notes = {}
+      R.times(i => {
+        notes[`note ${i}.md`] = {
+          id: `id-${i}`,
+          name: `note ${i}`,
+          ext: '.md',
+          content: `content of note ${i}`
+        }
       }, 10)
-      buses.filesP.push(allFiles)
+      buses.notesP.push(notes)
     })
 
     it('should trigger presenter loadingS stream', function () {
@@ -148,7 +152,7 @@ describe('presenter', function () {
         buses.sifterResultP.push(
           newSifterResult({
             total: 10,
-            items: allFiles.map(file => ({id: allFiles.indexOf(file)}))
+            items: Object.keys(notes).map(relPath => ({id: relPath}))
           })
         )
       })
@@ -170,7 +174,7 @@ describe('presenter', function () {
           cells: jasmine.any(Array)
         })
         expect(spies.rowsS.mostRecentCall.args[0][0].cells).toEqual([
-          {content: 'file 0', editCellName: 'name'},
+          {content: 'note 0', editCellName: 'name'},
           {content: '.md', editCellName: undefined}
         ])
       })
@@ -186,9 +190,10 @@ describe('presenter', function () {
             }],
             query: 'str',
             total: 7,
-            items: allFiles
+            items: Object
+              .keys(notes)
               .slice(3)
-              .map(file => ({id: allFiles.indexOf(file)}))
+              .map(relPath => ({id: relPath}))
           })
         )
       })
@@ -205,19 +210,23 @@ describe('presenter', function () {
           jasmine.objectContaining({
             id: jasmine.any(String),
             cells: [
-              {content: 'file 3', editCellName: 'name'},
+              {content: 'note 3', editCellName: 'name'},
               {content: '.md', editCellName: undefined}
             ]
           })
         )
         expect(spies.rowsS.mostRecentCall.args[0].map(x => x.index)).toEqual([0, 1, 2, 3, 4], 'index in asc order')
-        expect(spies.rowsS.mostRecentCall.args[0].map(x => x.selected)).not.toContain(true, 'all items unselected')
+        expect(spies.rowsS.mostRecentCall.args[0].indexOf(x => x.selected)).toEqual(-1, 'all items unselected')
       })
 
-      it('should provide tokens to cellContent to highlight matches', function () {
+      it('should format cell contents', function () {
         expect(nameColumn.cellContent).toHaveBeenCalled()
-        expect(nameColumn.cellContent.mostRecentCall.args[1]).toEqual(jasmine.any(Object))
-        expect(nameColumn.cellContent.mostRecentCall.args[1].content).toEqual(jasmine.any(Function))
+
+        const params = nameColumn.cellContent.mostRecentCall.args[0]
+        expect(params.note).toEqual(jasmine.objectContaining({id: jasmine.any(String)}), 'should provide note')
+        expect(params.path).toEqual(jasmine.any(String), 'should provide path')
+        expect(params.searchMatch).toEqual(jasmine.any(Object), 'should provide tokens to cellContent to highlight matches')
+        expect(params.searchMatch.content).toEqual(jasmine.any(Function))
       })
 
       describe('when interactor paginationP changes', function () {
@@ -233,9 +242,9 @@ describe('presenter', function () {
           expect(spies.rowsS.mostRecentCall.args[0]).toEqual(jasmine.any(Array))
           expect(spies.rowsS.mostRecentCall.args[0].length).toEqual(3)
           expect(spies.rowsS.mostRecentCall.args[0].map(x => x.cells)).toEqual([
-            [{content: 'file 7', editCellName: 'name'}, {content: '.md', editCellName: undefined}],
-            [{content: 'file 8', editCellName: 'name'}, {content: '.md', editCellName: undefined}],
-            [{content: 'file 9', editCellName: 'name'}, {content: '.md', editCellName: undefined}]
+            [{content: 'note 7', editCellName: 'name'}, {content: '.md', editCellName: undefined}],
+            [{content: 'note 8', editCellName: 'name'}, {content: '.md', editCellName: undefined}],
+            [{content: 'note 9', editCellName: 'name'}, {content: '.md', editCellName: undefined}]
           ])
         })
       })
@@ -250,9 +259,9 @@ describe('presenter', function () {
         })
       })
 
-      describe('when a file is selected', function () {
+      describe('when a note is selected', function () {
         beforeEach(function () {
-          buses.selectedPathS.push(Path.join(__dirname, 'file 5.md'))
+          buses.selectedPathS.push(Path.join(__dirname, 'note 5.md'))
         })
 
         it('should yield new rows', function () {
@@ -264,19 +273,19 @@ describe('presenter', function () {
 
         it('should preview the item', function () {
           expect(spies.selectedPathS).toHaveBeenCalled()
-          expect(spies.selectedPathS.mostRecentCall.args[0]).toMatch(/.+file 5.md/)
+          expect(spies.selectedPathS.mostRecentCall.args[0]).toMatch(/.+note 5.md/)
           expect(spies.openPathS).not.toHaveBeenCalled()
         })
 
-        it('should open file when triggered by that open stream', function () {
+        it('should open note when triggered by that open stream', function () {
           expect(spies.openPathS).not.toHaveBeenCalled()
           buses.openFileS.push()
           expect(spies.openPathS).toHaveBeenCalled()
-          expect(spies.openPathS.mostRecentCall.args[0]).toMatch(/.+file 5.md/)
+          expect(spies.openPathS.mostRecentCall.args[0]).toMatch(/.+note 5.md/)
         })
       })
 
-      it('should open new file when there is no selected file', function () {
+      it('should open new note when there is no selected note', function () {
         expect(spies.openPathS).not.toHaveBeenCalled()
         buses.openFileS.push()
         expect(spies.openPathS).toHaveBeenCalled()

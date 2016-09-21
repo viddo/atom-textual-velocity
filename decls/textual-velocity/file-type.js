@@ -1,4 +1,4 @@
-declare type FileischType = {
+declare type FileType = {
   relPath: string,
   stats?: FsStatsType
 }
