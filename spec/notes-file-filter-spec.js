@@ -33,5 +33,9 @@ describe('notes-file-filter', () => {
       expect(notesFileFilter.isAccepted(Path.join(__dirname, '.git/index'))).toBe(false)
       expect(notesFileFilter.isAccepted(Path.join(__dirname, '.DS_Store'))).toBe(false)
     })
+
+    it('returns false for nv/nvalt settings file', function () {
+      expect(notesFileFilter.isAccepted(Path.join(__dirname, 'Notes & Settings'))).toBe(false)
+    })
   })
 })
