@@ -3,9 +3,11 @@ var temp = require('temp').track()
 var Service = require('../lib/service')
 var NVTags = require('../lib/nv-tags')
 
-var unsup = NVTags.getUnsupportedError()
-if (unsup) {
-  return console.warn('nv-tags-specs not run: ', unsup)
+var unsupErr = NVTags.getUnsupportedError()
+if (unsupErr) {
+  console.warn('nv-tags-specs not run:')
+  console.warn(unsupErr)
+  return
 }
 
 describe('nv-tags', function () {
