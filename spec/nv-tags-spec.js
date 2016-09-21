@@ -1,17 +1,12 @@
 var Path = require('path')
 var temp = require('temp').track()
-
-try {
-  // Test if optionalDependencies are available, otherwise skip these specs
-  var bplist = require('bplist') // eslint-disable-line
-  var xattr = require('fs-xattr') // eslint-disable-line
-} catch (err) {
-  console.warn('nv-tags-specs not run: ', err)
-  return
-}
-
 var Service = require('../lib/service')
 var NVTags = require('../lib/nv-tags')
+
+var unsup = NVTags.getUnsupportedError()
+if (unsup) {
+  return console.warn('nv-tags-specs not run: ', unsup)
+}
 
 describe('nv-tags', function () {
   var disposable, publicServiceAPI
