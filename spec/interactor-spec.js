@@ -246,10 +246,20 @@ describe('interactor', function () {
         buses.activePathS.push('/notes/note 7.md')
         expect(spies.selectedRelPathS.mostRecentCall.args[0]).toEqual('note 7.md', 'should set the relPath to found note')
 
+        spies.selectedRelPathS.reset()
         buses.activePathS.push('/notes/whatever')
         expect(spies.selectedRelPathS.mostRecentCall.args[0]).toEqual(undefined, 'should unset relPath when there is no match')
-        buses.activePathS.push('/notes2/note 7.md')
+        buses.activePathS.push('/another_dir/note 7.md')
         expect(spies.selectedRelPathS.mostRecentCall.args[0]).toEqual(undefined, 'should not set for matching relPath in another dir')
+
+        // files changes, e.g. rename
+        spies.selectedRelPathS.reset()
+        notes['renamed note 6.md'] = notes['note 6.md']
+        delete notes['note 6.md']
+        buses.saveEditedCellContentS.push('renamed note 6.md')
+        buses.sifterP.push(new Sifter(notes))
+        buses.sifterP.push(new Sifter(notes))
+        expect(spies.selectedRelPathS.mostRecentCall.args[0]).toEqual('renamed note 6.md', 'should set selected to the renamed file')
       })
     })
 

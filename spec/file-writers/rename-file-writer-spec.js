@@ -11,24 +11,31 @@ describe('rename-file-writer', function () {
 
     beforeEach(function () {
       oldPath = '/path/to/notes/old-file-path.txt'
-      spyOn(fs, 'rename')
+      spyOn(fs, 'renameSync')
+      spyOn(fs, 'utimesSync')
       callbackSpy = jasmine.createSpy('callback')
     })
 
-    it('should do nothing if given empty base', function () {
+    it('should do nothing if given empty value', function () {
       fileWriter.write(oldPath, '', callbackSpy)
-      expect(fs.rename).not.toHaveBeenCalled()
+      expect(fs.renameSync).not.toHaveBeenCalled()
+      expect(fs.utimesSync).not.toHaveBeenCalled()
+      expect(callbackSpy).not.toHaveBeenCalled()
     })
 
-    it('should not allow path separator in the string', function () {
-      const base = Path.join('only', 'use', 'this-last-piece.txt')
-      fileWriter.write(oldPath, base, callbackSpy)
-      expect(fs.rename).toHaveBeenCalledWith(oldPath, '/path/to/notes/this-last-piece.txt', callbackSpy)
+    it('should not allow path separator', function () {
+      const str = Path.join('only', 'use', 'this-last-piece.txt')
+      fileWriter.write(oldPath, str, callbackSpy)
+      expect(fs.renameSync).toHaveBeenCalledWith(oldPath, '/path/to/notes/this-last-piece.txt')
+      expect(fs.utimesSync).toHaveBeenCalled()
+      expect(callbackSpy).toHaveBeenCalledWith(null, null)
     })
 
-    it('should trim and normalize base', function () {
+    it('should trim and normalize value', function () {
       fileWriter.write(oldPath, '  test.txt  ', callbackSpy)
-      expect(fs.rename).toHaveBeenCalledWith(oldPath, '/path/to/notes/test.txt', callbackSpy)
+      expect(fs.renameSync).toHaveBeenCalledWith(oldPath, '/path/to/notes/test.txt')
+      expect(fs.utimesSync).toHaveBeenCalled()
+      expect(callbackSpy).toHaveBeenCalledWith(null, null)
     })
   })
 })
