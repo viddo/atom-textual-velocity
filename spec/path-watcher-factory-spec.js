@@ -22,8 +22,8 @@ describe('path-watcher-factory', () => {
       statsFileReader
     ])
     const fieldsP = Bacon.constant([
-      {filePropName: 'name'},
-      {filePropName: 'contentAsInt', value: file => parseInt(file.content)}
+      {notePropName: 'name'},
+      {notePropName: 'contentAsInt', value: file => parseInt(file.content)}
     ])
     pathWatcherFactory = new PathWatcherFactory({
       fileReadersP: fileReadersP,

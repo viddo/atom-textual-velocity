@@ -9,7 +9,7 @@ describe('columns/stats-date-column', function () {
     column = new StatsDateColumn({
       sortField: 'created-date',
       title: 'Created date',
-      filePropName: 'birthtime'
+      notePropName: 'birthtime'
     })
   })
 

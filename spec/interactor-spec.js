@@ -79,8 +79,8 @@ describe('interactor', function () {
       columnsP: {},
       editCellS: buses.editCellS,
       fieldsP: Bacon.constant([
-        {filePropName: 'name'},
-        {filePropName: 'ext'}
+        {notePropName: 'name'},
+        {notePropName: 'ext'}
       ]),
       fileReadersP: {},
       fileWritersP: {}

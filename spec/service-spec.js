@@ -89,7 +89,7 @@ describe('service', function () {
     describe('.registerFields', function () {
       it('should register a new field', function () {
         const field = {
-          filePropName: 'test',
+          notePropName: 'test',
           value: file => 'val'
         }
         publicAPI.registerFields(field)
@@ -103,7 +103,7 @@ describe('service', function () {
     describe('.registerFileReaders', function () {
       it('should register a new file reader', function () {
         const fileReader = {
-          filePropName: 'test',
+          notePropName: 'test',
           read: (path, callback) => {}
         }
         publicAPI.registerFileReaders(fileReader)
