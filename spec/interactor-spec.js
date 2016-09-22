@@ -48,7 +48,7 @@ describe('interactor', function () {
       sortDirectionS: buses.sortDirectionS,
       sortFieldS: buses.sortFieldS,
       textInputS: buses.textInputS,
-      deactivate: jasmine.createSpy('viewCtrl.deactivate')
+      dispose: jasmine.createSpy('viewCtrl.dispose')
     }
 
     spies = {

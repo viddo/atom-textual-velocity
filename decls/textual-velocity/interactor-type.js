@@ -1,6 +1,3 @@
-import fs from 'fs'
-import Bacon from 'fs'
-
 declare type InteractorType = {
   editCellNameP: Bacon.Property,
   forcedScrollTopP: Bacon.Property,

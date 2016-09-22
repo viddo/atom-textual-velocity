@@ -1,5 +1,3 @@
-import Bacon from 'fs'
-
 declare type ViewCtrlType = {
   abortEditCellS: Bacon.Stream,
   activePathS: Bacon.Stream,
@@ -17,5 +15,5 @@ declare type ViewCtrlType = {
   sortDirectionS: Bacon.Stream,
   sortFieldS: Bacon.Stream,
   textInputS: Bacon.Stream,
-  deactivate (): void
+  dispose (): void
 }

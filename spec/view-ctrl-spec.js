@@ -1,11 +1,10 @@
-/* @flow */
+'use babel'
 
-import Bacon from 'baconjs'
-import ReactView from '../lib/react-view'
+import {TestUtils} from 'react-for-atom'
 import ViewCtrl from '../lib/view-ctrl'
 
 describe('view-ctrl', function () {
-  let buses, DOMNode, testPanel, testView, viewCtrl, spies
+  let DOMNode, panel, viewCtrl, spies
   let showSpy: Function
 
   beforeEach(function () {
@@ -15,33 +14,14 @@ describe('view-ctrl', function () {
     atom.config.set('textual-velocity.sortDirection', 'asc')
     atom.config.set('textual-velocity.sortField', 'content')
 
-    buses = {
-      clickedRowS: new Bacon.Bus(),
-      keyDownS: new Bacon.Bus(),
-      keyInputS: new Bacon.Bus(),
-      listHeightS: new Bacon.Bus(),
-      sortDirectionS: new Bacon.Bus(),
-      sortFieldS: new Bacon.Bus(),
-      scrollTopS: new Bacon.Bus()
-    }
-
     DOMNode = document.createElement('div')
-    showSpy = jasmine.createSpy('testPanel.show')
-    testPanel = {
+    showSpy = jasmine.createSpy('panel.show')
+    panel = {
       getItem: () => DOMNode,
       show: showSpy
     }
 
-    testView = new ReactView(testPanel)
-    testView.clickedCellS = buses.clickedRowS
-    testView.keyDownS = buses.keyDownS
-    testView.listHeightS = buses.listHeightS
-    testView.sortDirectionS = buses.sortDirectionS
-    testView.sortFieldS = buses.sortFieldS
-    testView.scrollTopS = buses.scrollTopS
-    testView.textInputS = buses.keyInputS
-
-    viewCtrl = new ViewCtrl(testView)
+    viewCtrl = new ViewCtrl(panel)
 
     spies = {
       activePathS: jasmine.createSpy('activePathS'),
@@ -74,7 +54,8 @@ describe('view-ctrl', function () {
   })
 
   afterEach(function () {
-    viewCtrl.deactivate()
+    viewCtrl.dispose()
+    DOMNode = null
   })
 
   describe('when activated', function () {
@@ -99,13 +80,6 @@ describe('view-ctrl', function () {
       expect(spies.rowHeightS).toHaveBeenCalledWith(25)
     })
 
-    describe('when a row is clicked', function () {
-      it('should yield a index on clickedCellS', function () {
-        buses.clickedRowS.push(3)
-        expect(spies.clickedCellS).toHaveBeenCalledWith(3)
-      })
-    })
-
     describe('when there is key events', function () {
       let newKeyEvent
 
@@ -117,11 +91,11 @@ describe('view-ctrl', function () {
       })
 
       it('should search on normal text input', function () {
-        buses.keyInputS.push('')
+        viewCtrl._textInputBus.push('')
         expect(spies.textInputS).toHaveBeenCalledWith('')
-        buses.keyInputS.push('a')
+        viewCtrl._textInputBus.push('a')
         expect(spies.textInputS).toHaveBeenCalledWith('a')
-        buses.keyInputS.push('a test')
+        viewCtrl._textInputBus.push('a test')
         expect(spies.textInputS).toHaveBeenCalledWith('a test')
 
         expect(spies.keyEnterS).not.toHaveBeenCalled()
@@ -131,7 +105,7 @@ describe('view-ctrl', function () {
 
       it('should yield open event on enter', function () {
         const event = newKeyEvent(13) // enter
-        buses.keyDownS.push(event)
+        viewCtrl._keyDownBus.push(event)
         expect(spies.keyEnterS).toHaveBeenCalled()
         expect(event.preventDefault).toHaveBeenCalled()
 
@@ -142,7 +116,7 @@ describe('view-ctrl', function () {
 
       it('should yield selection by index on up/down events', function () {
         let event = newKeyEvent(38) // up
-        buses.keyDownS.push(event)
+        viewCtrl._keyDownBus.push(event)
         expect(event.preventDefault).toHaveBeenCalled()
         expect(spies.keyUpS).toHaveBeenCalledWith(event)
         expect(spies.keyDownS).not.toHaveBeenCalled()
@@ -152,7 +126,7 @@ describe('view-ctrl', function () {
         spies.keyDownS.reset()
         spies.keyUpS.reset()
         event = newKeyEvent(40) // down
-        buses.keyDownS.push(event)
+        viewCtrl._keyDownBus.push(event)
         expect(event.preventDefault).toHaveBeenCalled()
         expect(spies.keyUpS).not.toHaveBeenCalled()
         expect(spies.keyDownS).toHaveBeenCalledWith(event)
@@ -164,7 +138,7 @@ describe('view-ctrl', function () {
         spies.keyDownS.reset()
         spies.keyUpS.reset()
         event = newKeyEvent(30) // else?
-        buses.keyDownS.push(event)
+        viewCtrl._keyDownBus.push(event)
         expect(spies.keyUpS).not.toHaveBeenCalled()
         expect(spies.keyDownS).not.toHaveBeenCalled()
         expect(event.preventDefault).not.toHaveBeenCalled()
@@ -182,6 +156,135 @@ describe('view-ctrl', function () {
       it('should yield values on sort streams', function () {
         expect(spies.sortDirectionS).toHaveBeenCalledWith('asc')
         expect(spies.sortFieldS).toHaveBeenCalledWith('content')
+      })
+    })
+
+    describe('.renderLoading', function () {
+      beforeEach(function () {
+        const listHeight = 101
+        viewCtrl.renderLoading(listHeight)
+      })
+
+      it('should render loading DOM', function () {
+        expect(DOMNode.outerHTML).toContain('loading')
+        expect(DOMNode.outerHTML).toContain('height: 101px')
+      })
+    })
+
+    describe('.renderResults', function () {
+      describe('given an empty set', function () {
+        beforeEach(function () {
+          viewCtrl.renderResults({
+            listHeight: 123,
+            rowHeight: 25,
+            scrollTop: 0,
+            selectedIndex: undefined,
+            searchStr: '',
+            itemsCount: 0,
+            paginationStart: 0,
+            sort: {},
+            columns: [],
+            rows: []
+          })
+        })
+
+        it('should render the panel DOM', function () {
+          expect(DOMNode.innerHTML).not.toEqual('')
+        })
+      })
+
+      describe('given some data', function () {
+        let html
+
+        beforeEach(function () {
+          viewCtrl.renderResults({
+            DOMNode: DOMNode,
+            listHeight: 25,
+            rowHeight: 20,
+            scrollTop: 0,
+            selectedIndex: 1,
+            searchStr: '',
+            itemsCount: 3,
+            paginationStart: 0,
+            sort: {field: 'name', direction: 'desc'},
+            columns: [
+              {title: 'Name', id: 'title', width: 70},
+              {title: 'Updated', id: 'last_updated_at', width: 15},
+              {title: 'Created', id: 'created_date', width: 15}
+            ],
+            rows: [{
+              id: 2,
+              cells: [
+                {content: 'foobar'},
+                {content: '3 days ago'},
+                {content: 'yesterday'}
+              ]
+            }, {
+              id: 3,
+              selected: true,
+              cells: [
+                {content: 'baz'},
+                {content: '3 days ago'},
+                {content: 'today'}
+              ]
+            }, {
+              id: 1,
+              cells: [
+                {content: 'qux'},
+                {content: '1 year ago'},
+                {content: '1 year ago'}
+              ]
+            }],
+            callbacks: {
+              onSearch: spies.search,
+              onKeyDown: spies.keyDown,
+              onScroll: spies.scroll,
+              onClickRow: spies.clickRow,
+              onSortByField: spies.sortField,
+              onChangeSortDirection: spies.sortDirection,
+              onResize: spies.resize
+            }
+          })
+          html = DOMNode.innerHTML
+        })
+
+        it('should render columns', function () {
+          expect(html).toContain('Name')
+          expect(html).toContain('Updated')
+          expect(html).toContain('Created')
+        })
+
+        it('should render rows', function () {
+          expect(html).toContain('foobar')
+          expect(html).toContain('baz')
+          expect(html).toContain('qux')
+
+          expect(html).toContain('3 days ago')
+          expect(html).toContain('today')
+        })
+
+        describe('when searching', function () {
+          beforeEach(function () {
+            const input = DOMNode.querySelector('input')
+            input.value = 'foo'
+            TestUtils.Simulate.change(input)
+          })
+
+          it('should call onSearch callback', function () {
+            expect(spies.textInputS).toHaveBeenCalledWith('foo')
+          })
+        })
+
+        describe('when scrolling', function () {
+          beforeEach(function () {
+            const scrollableList = DOMNode.querySelector('div[style*=overflow]')
+            TestUtils.Simulate.scroll(scrollableList, {target: {scrollTop: 26}})
+          })
+
+          it('should call onScroll callback', function () {
+            expect(spies.scrollTopS).toHaveBeenCalledWith(26)
+          })
+        })
       })
     })
   })

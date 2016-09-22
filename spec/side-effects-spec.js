@@ -2,11 +2,11 @@
 
 import Bacon from 'baconjs'
 import SideEffects from '../lib/side-effects'
-import ReactView from '../lib/react-view'
+import ViewCtrl from '../lib/view-ctrl'
 import defaultConfig from '../lib/default-config'
 
 describe('side-effects', function () {
-  let workspaceElement, buses, panel, sideEffects, view, presenter, spies, input
+  let workspaceElement, buses, panel, sideEffects, viewCtrl, presenter, spies, input
 
   const assertTextInputFocus = () => {
     expect(input.select).not.toHaveBeenCalled()
@@ -24,6 +24,7 @@ describe('side-effects', function () {
       columnHeadersP: new Bacon.Bus(),
       forcedScrollTopP: new Bacon.Bus(),
       itemsCountP: new Bacon.Bus(),
+      listHeightS: new Bacon.Bus(),
       loadingS: new Bacon.Bus(),
       openPathS: new Bacon.Bus(),
       paginationP: new Bacon.Bus(),
@@ -33,14 +34,6 @@ describe('side-effects', function () {
       rowsS: new Bacon.Bus(),
       searchStrP: new Bacon.Bus(),
       sortP: new Bacon.Bus(),
-
-      clickedCellS: new Bacon.Bus(),
-      keyDownS: new Bacon.Bus(),
-      listHeightS: new Bacon.Bus(),
-      sortDirectionS: new Bacon.Bus(),
-      sortFieldS: new Bacon.Bus(),
-      scrollTopS: new Bacon.Bus(),
-      textInputS: new Bacon.Bus(),
 
       columnsP: new Bacon.Bus(),
       editCellS: new Bacon.Bus(),
@@ -72,16 +65,9 @@ describe('side-effects', function () {
       sortP: buses.sortP.toProperty()
     }
 
-    view = new ReactView(panel)
-    view.clickedCellS = buses.clickedCellS
-    view.keyDownS = buses.keyDownS
-    view.listHeightS = buses.listHeightS
-    view.sortDirectionS = buses.sortDirectionS
-    view.sortFieldS = buses.sortFieldS
-    view.scrollTopS = buses.scrollTopS
-    view.textInputS = buses.textInputS
-    spyOn(view, 'renderLoading')
-    spyOn(view, 'renderResults')
+    viewCtrl = new ViewCtrl(panel)
+    spyOn(viewCtrl, 'renderLoading')
+    spyOn(viewCtrl, 'renderResults')
 
     panel = atom.workspace.addTopPanel({
       item: document.createElement('div')
@@ -96,7 +82,7 @@ describe('side-effects', function () {
       fileWritersP: buses.fileWritersP
     }
 
-    sideEffects = new SideEffects(panel, view, presenter, service)
+    sideEffects = new SideEffects(panel, viewCtrl, presenter, service)
 
     spies = {
       listHeightS: jasmine.createSpy('listHeight'),
@@ -135,14 +121,22 @@ describe('side-effects', function () {
     expect(spies.listHeightS.calls.length).toEqual(1)
   })
 
-  it('should save sortP direction when changed', function () {
-    buses.sortDirectionS.push('asc')
-    expect(spies.sortDirectionS).toHaveBeenCalled()
-  })
+  it('should save sort direction and field when changed', function () {
+    buses.sortP.push({field: 'name', direction: 'asc'})
+    expect(spies.sortDirectionS).toHaveBeenCalledWith('asc')
+    expect(spies.sortFieldS).toHaveBeenCalledWith('name')
 
-  it('should save sortP field when changed', function () {
-    buses.sortFieldS.push('asc')
-    expect(spies.sortFieldS).toHaveBeenCalled()
+    spies.sortDirectionS.reset()
+    spies.sortFieldS.reset()
+    buses.sortP.push({field: 'name', direction: 'desc'})
+    expect(spies.sortDirectionS).toHaveBeenCalledWith('desc')
+    expect(spies.sortFieldS).not.toHaveBeenCalled()
+
+    spies.sortDirectionS.reset()
+    spies.sortFieldS.reset()
+    buses.sortP.push({field: 'ext', direction: 'desc'})
+    expect(spies.sortDirectionS).not.toHaveBeenCalled()
+    expect(spies.sortFieldS).toHaveBeenCalledWith('ext')
   })
 
   describe('when window resizes', function () {
@@ -234,7 +228,7 @@ describe('side-effects', function () {
     })
 
     it('should render loading', function () {
-      expect(view.renderLoading).toHaveBeenCalledWith(100)
+      expect(viewCtrl.renderLoading).toHaveBeenCalledWith(100)
     })
   })
 
@@ -248,30 +242,30 @@ describe('side-effects', function () {
 
     // Test values in sequence since interrelated
     it('should render on some yielded values', function () {
-      expect(view.renderResults).not.toHaveBeenCalledWith()
+      expect(viewCtrl.renderResults).not.toHaveBeenCalledWith()
 
       // render on rowsS
       buses.rowsS.push([])
-      expect(view.renderResults).toHaveBeenCalledWith(jasmine.any(Object))
+      expect(viewCtrl.renderResults).toHaveBeenCalledWith(jasmine.any(Object))
 
       // do NOT render on the others
-      view.renderResults.reset()
+      viewCtrl.renderResults.reset()
       atom.config.set('textual-velocity.rowHeight', 20)
       buses.itemsCountP.push(23)
       buses.rowHeightP.push(20)
       buses.searchStrP.push('beep')
       buses.sortP.push({field: 'content', direction: 'asc'})
-      expect(view.renderResults).not.toHaveBeenCalled()
+      expect(viewCtrl.renderResults).not.toHaveBeenCalled()
 
       // render on scroll
-      view.renderResults.reset()
+      viewCtrl.renderResults.reset()
       buses.forcedScrollTopP.push(42)
-      expect(view.renderResults).toHaveBeenCalled()
+      expect(viewCtrl.renderResults).toHaveBeenCalled()
 
       // render on list height
-      view.renderResults.reset()
+      viewCtrl.renderResults.reset()
       buses.listHeightS.push(100)
-      expect(view.renderResults).toHaveBeenCalled()
+      expect(viewCtrl.renderResults).toHaveBeenCalled()
     })
   })
 
