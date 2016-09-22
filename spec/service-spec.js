@@ -30,11 +30,11 @@ describe('service', function () {
     service.dispose()
   })
 
-  describe('.publicAPI', function () {
-    let publicAPI
+  describe('.v0', function () {
+    let v0
 
     beforeEach(function () {
-      publicAPI = service.publicAPI()
+      v0 = service.v0()
     })
 
     describe('.registerColumns', function () {
@@ -48,7 +48,7 @@ describe('service', function () {
           width: 33,
           cellContent: (file, res) => 'cellContent'
         }
-        publicAPI.registerColumns(column)
+        v0.registerColumns(column)
       })
 
       it('should register a new column', function () {
@@ -71,15 +71,15 @@ describe('service', function () {
 
         spyOn(console, 'warn')
         spyOn(console, 'error')
-        publicAPI.registerColumns(R.omit('title', column))
+        v0.registerColumns(R.omit('title', column))
         expect(console.error).toHaveBeenCalled()
 
         console.error.reset()
-        publicAPI.registerColumns(R.omit('sortField', column))
+        v0.registerColumns(R.omit('sortField', column))
         expect(console.error).toHaveBeenCalled()
 
         console.error.reset()
-        publicAPI.registerColumns(R.omit('cellContent', column))
+        v0.registerColumns(R.omit('cellContent', column))
         expect(console.error).toHaveBeenCalled()
 
         expect(console.warn).not.toHaveBeenCalled()
@@ -92,7 +92,7 @@ describe('service', function () {
           notePropName: 'test',
           value: file => 'val'
         }
-        publicAPI.registerFields(field)
+        v0.registerFields(field)
         expect(spies.columnsP).not.toHaveBeenCalled()
         expect(spies.fieldsP).toHaveBeenCalledWith([field])
         expect(spies.fileReadersP).not.toHaveBeenCalled()
@@ -106,7 +106,7 @@ describe('service', function () {
           notePropName: 'test',
           read: (path, callback) => {}
         }
-        publicAPI.registerFileReaders(fileReader)
+        v0.registerFileReaders(fileReader)
         expect(spies.columnsP).not.toHaveBeenCalled()
         expect(spies.fieldsP).not.toHaveBeenCalled()
         expect(spies.fileReadersP).toHaveBeenCalledWith([fileReader])
@@ -120,7 +120,7 @@ describe('service', function () {
           editCellName: 'test',
           write: (path, str, callback) => {}
         }
-        publicAPI.registerFileWriters(fileWriter)
+        v0.registerFileWriters(fileWriter)
         expect(spies.columnsP).not.toHaveBeenCalled()
         expect(spies.fieldsP).not.toHaveBeenCalled()
         expect(spies.fileReadersP).not.toHaveBeenCalled()

@@ -1,7 +1,7 @@
 var Path = require('path')
 var temp = require('temp').track()
-var Service = require('../lib/service')
-var NVTags = require('../lib/nv-tags')
+var Service = require('../../lib/service')
+var NVTags = require('../../lib/service-consumers/nv-tags')
 
 var unsupErr = NVTags.getUnsupportedError()
 if (unsupErr) {
@@ -10,18 +10,18 @@ if (unsupErr) {
   return
 }
 
-describe('nv-tags', function () {
+describe('service-consumers/nv-tags', function () {
   var disposable, publicServiceAPI
 
   beforeEach(function () {
     var service = new Service()
-    publicServiceAPI = service.publicAPI() // integration tested through main-spec.js and CI env
+    publicServiceAPI = service.v0() // integration tested through main-spec.js and CI env
     spyOn(publicServiceAPI, 'registerColumns')
     spyOn(publicServiceAPI, 'registerFields')
     spyOn(publicServiceAPI, 'registerFileReaders')
     spyOn(publicServiceAPI, 'registerFileWriters')
 
-    disposable = NVTags.consumeTextualVelocityServiceV0(publicServiceAPI)
+    disposable = NVTags.consumeServiceV0(publicServiceAPI)
     expect(publicServiceAPI.registerColumns).toHaveBeenCalled()
     expect(publicServiceAPI.registerFields).toHaveBeenCalled()
     expect(publicServiceAPI.registerFileReaders).toHaveBeenCalled()
@@ -113,7 +113,7 @@ describe('nv-tags', function () {
     })
 
     it('should return null for a read file that have no xattrs set', function () {
-      path = Path.join(__dirname, 'fixtures', 'standard', 'empty.md')
+      path = Path.join(__dirname, '..', 'fixtures', 'standard', 'empty.md')
       fileReader.read(path, callback)
       waitsFor(function () {
         return callback.calls.length >= 1
