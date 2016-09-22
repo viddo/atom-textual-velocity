@@ -3,6 +3,7 @@ declare type PresenterType = {
   forcedScrollTopP: Bacon.Property,
   itemsCountP: Bacon.Property,
   listHeightP: Bacon.Property,
+  loadingProgressP: Bacon.Property,
   loadingS: Bacon.Stream,
   openPathS: Bacon.Stream,
   paginationP: Bacon.Property,

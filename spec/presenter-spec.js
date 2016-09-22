@@ -78,6 +78,7 @@ describe('presenter', function () {
       forcedScrollTopP: jasmine.createSpy('forcedScrollTopP'),
       itemsCountP: jasmine.createSpy('itemsCountP'),
       listHeightP: jasmine.createSpy('listHeightP'),
+      loadingProgressP: jasmine.createSpy('loadingProgressP'),
       loadingS: jasmine.createSpy('loadingS'),
       paginationP: jasmine.createSpy('paginationP'),
       openPathS: jasmine.createSpy('openPathS'),
@@ -91,6 +92,7 @@ describe('presenter', function () {
     presenter.forcedScrollTopP.onValue(spies.forcedScrollTopP)
     presenter.itemsCountP.onValue(spies.itemsCountP)
     presenter.listHeightP.onValue(spies.listHeightP)
+    presenter.loadingProgressP.onValue(spies.loadingProgressP)
     presenter.loadingS.onValue(spies.loadingS)
     presenter.paginationP.onValue(spies.paginationP)
     presenter.openPathS.onValue(spies.openPathS)
@@ -105,6 +107,7 @@ describe('presenter', function () {
     expect(spies.columnHeadersP).toHaveBeenCalledWith(jasmine.any(Array))
     expect(spies.forcedScrollTopP).toHaveBeenCalledWith(undefined)
     expect(spies.listHeightP).toHaveBeenCalledWith(123)
+    expect(spies.loadingProgressP).toHaveBeenCalledWith({total: 0, read: 0})
     expect(spies.paginationP).toHaveBeenCalledWith({start: 0, limit: 5})
     expect(spies.rowHeightP).toHaveBeenCalledWith(23)
   })
@@ -135,10 +138,12 @@ describe('presenter', function () {
           content: `content of note ${i}`
         }
       }, 10)
+      notes['note 9.md'].content = undefined // simulate last item not read yet
       buses.notesP.push(notes)
     })
 
-    it('should trigger presenter loadingS stream', function () {
+    it('should trigger presenter loading observables', function () {
+      expect(spies.loadingProgressP).toHaveBeenCalledWith({total: 10, read: 9})
       expect(spies.loadingS).toHaveBeenCalled()
     })
 
@@ -148,6 +153,8 @@ describe('presenter', function () {
 
     describe('when there is a sifter result', function () {
       beforeEach(function () {
+        notes['note 9.md'].content = `some final content` // simulate last item read
+        buses.notesP.push(notes)
         buses.sifterResultP.push(
           newSifterResult({
             total: 10,
@@ -158,6 +165,7 @@ describe('presenter', function () {
 
       it('should yields values for props related to results', function () {
         expect(spies.itemsCountP).toHaveBeenCalledWith(10)
+        expect(spies.loadingProgressP).toHaveBeenCalledWith({})
         expect(spies.rowsS).toHaveBeenCalled()
         expect(spies.searchStrP).toHaveBeenCalledWith('')
         expect(spies.sortP).toHaveBeenCalledWith({field: 'name', direction: 'desc'})

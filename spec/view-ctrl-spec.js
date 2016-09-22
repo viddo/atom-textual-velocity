@@ -182,6 +182,7 @@ describe('view-ctrl', function () {
             searchStr: '',
             itemsCount: 0,
             paginationStart: 0,
+            loadingProgress: {read: 0, total: 3},
             sort: {},
             columns: [],
             rows: []
@@ -190,6 +191,10 @@ describe('view-ctrl', function () {
 
         it('should render the panel DOM', function () {
           expect(DOMNode.innerHTML).not.toEqual('')
+        })
+
+        it('should not render loading progress', function () {
+          expect(DOMNode.innerText).toContain('0 of 3 notes')
         })
       })
 
@@ -205,6 +210,7 @@ describe('view-ctrl', function () {
             selectedIndex: 1,
             searchStr: '',
             itemsCount: 3,
+            loadingProgress: {},
             paginationStart: 0,
             sort: {field: 'name', direction: 'desc'},
             columns: [
@@ -234,16 +240,7 @@ describe('view-ctrl', function () {
                 {content: '1 year ago'},
                 {content: '1 year ago'}
               ]
-            }],
-            callbacks: {
-              onSearch: spies.search,
-              onKeyDown: spies.keyDown,
-              onScroll: spies.scroll,
-              onClickRow: spies.clickRow,
-              onSortByField: spies.sortField,
-              onChangeSortDirection: spies.sortDirection,
-              onResize: spies.resize
-            }
+            }]
           })
           html = DOMNode.innerHTML
         })
@@ -252,6 +249,10 @@ describe('view-ctrl', function () {
           expect(html).toContain('Name')
           expect(html).toContain('Updated')
           expect(html).toContain('Created')
+        })
+
+        it('should not render loading progress anymore', function () {
+          expect(DOMNode.innerText).not.toContain('notes')
         })
 
         it('should render rows', function () {
