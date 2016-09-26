@@ -1,6 +1,6 @@
 declare type RowType = {
   id: string,
-  relPath: number,
+  filename: number,
   selected: boolean,
   cells: Array<CellType|EditCellType>
 }

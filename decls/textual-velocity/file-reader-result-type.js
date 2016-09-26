@@ -1,5 +1,5 @@
 declare type FileReaderResultType = {
-  relPath: string,
+  filename: string,
   notePropName: string,
   value: any
 }

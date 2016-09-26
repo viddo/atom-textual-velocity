@@ -1,4 +1,4 @@
 declare type FileType = {
-  relPath: string,
+  filename: string,
   stats: FsStatsType
 }

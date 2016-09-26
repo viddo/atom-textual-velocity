@@ -1,5 +1,5 @@
 declare type NotesPathType = {
   root: string,
-  fullPath (relPath: string): string,
-  relPath (path: string): string
+  fullPath (filename: string): string,
+  filename (path: string): string
 }

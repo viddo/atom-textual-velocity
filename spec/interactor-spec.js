@@ -61,7 +61,7 @@ describe('interactor', function () {
       openFileS: jasmine.createSpy('openFileS'),
       paginationP: jasmine.createSpy('paginationP'),
       rowHeightP: jasmine.createSpy('rowHeightP'),
-      selectedRelPathS: jasmine.createSpy('selectedRelPathS'),
+      selectedFilenameS: jasmine.createSpy('selectedFilenameS'),
       sifterResultP: jasmine.createSpy('sifterResultP')
     }
 
@@ -97,7 +97,7 @@ describe('interactor', function () {
     interactor.openFileS.onValue(spies.openFileS)
     interactor.paginationP.onValue(spies.paginationP)
     interactor.rowHeightP.onValue(spies.rowHeightP)
-    interactor.selectedRelPathS.onValue(spies.selectedRelPathS)
+    interactor.selectedFilenameS.onValue(spies.selectedFilenameS)
     interactor.sifterResultP.onValue(spies.sifterResultP)
 
     buses.rowHeightS.push(20)
@@ -128,7 +128,7 @@ describe('interactor', function () {
       expect(spies.notesPathP).toHaveBeenCalled()
       expect(spies.paginationP).toHaveBeenCalledWith({start: 0, limit: 5})
       expect(spies.rowHeightP).toHaveBeenCalledWith(20)
-      expect(spies.selectedRelPathS).not.toHaveBeenCalled()
+      expect(spies.selectedFilenameS).not.toHaveBeenCalled()
 
       notes = {
         'note1.md': {
@@ -184,7 +184,7 @@ describe('interactor', function () {
 
         // clickedCellS
         buses.clickedCellS.push('note 6.md')
-        expect(spies.selectedRelPathS).toHaveBeenCalledWith('note 6.md')
+        expect(spies.selectedFilenameS).toHaveBeenCalledWith('note 6.md')
         expect(spies.paginationP).toHaveBeenCalledWith({start: 0, limit: 5})
 
         // listHeightS
@@ -202,18 +202,18 @@ describe('interactor', function () {
 
         // reset
         spies.paginationP.reset()
-        spies.selectedRelPathS.reset()
+        spies.selectedFilenameS.reset()
         spies.sifterResultP.reset()
         buses.keyEscS.push()
         expect(spies.paginationP).toHaveBeenCalledWith({start: 0, limit: 8})
-        expect(spies.selectedRelPathS).toHaveBeenCalledWith(undefined)
+        expect(spies.selectedFilenameS).toHaveBeenCalledWith(undefined)
         expect(spies.sifterResultP).toHaveBeenCalled()
 
         // 2nd textInputS
         spies.sifterResultP.reset()
         buses.textInputS.push('note')
         expect(spies.paginationP).toHaveBeenCalledWith({start: 0, limit: 8})
-        expect(spies.selectedRelPathS).toHaveBeenCalledWith(undefined)
+        expect(spies.selectedFilenameS).toHaveBeenCalledWith(undefined)
 
         // sort direction+field
         spies.sifterResultP.reset()
@@ -222,45 +222,45 @@ describe('interactor', function () {
         expect(spies.sifterResultP.mostRecentCall.args[0].options.sort[0]).toEqual({field: 'content', direction: 'asc'}, 'should have changed sort')
 
         // select prev (by offset)
-        spies.selectedRelPathS.reset()
+        spies.selectedFilenameS.reset()
         buses.keyUpS.push()
-        expect(spies.selectedRelPathS.mostRecentCall.args[0]).toEqual('note 9.md', 'should select last item')
+        expect(spies.selectedFilenameS.mostRecentCall.args[0]).toEqual('note 9.md', 'should select last item')
         R.times(() => { buses.keyUpS.push() }, 5)
-        expect(spies.selectedRelPathS.mostRecentCall.args[0]).toEqual('note 4.md', 'should stepped relPath back the same amount of events')
+        expect(spies.selectedFilenameS.mostRecentCall.args[0]).toEqual('note 4.md', 'should stepped filename back the same amount of events')
         R.times(() => { buses.keyUpS.push() }, 4)
-        expect(spies.selectedRelPathS.mostRecentCall.args[0]).toEqual('note 0.md', 'should stepped relPath back the same amount of events')
+        expect(spies.selectedFilenameS.mostRecentCall.args[0]).toEqual('note 0.md', 'should stepped filename back the same amount of events')
         R.times(() => { buses.keyUpS.push() }, 3)
-        expect(spies.selectedRelPathS.mostRecentCall.args[0]).toEqual('note 0.md', 'should stay on first item')
+        expect(spies.selectedFilenameS.mostRecentCall.args[0]).toEqual('note 0.md', 'should stay on first item')
 
         // select next (by offset)
         buses.keyEscS.push(undefined) // to reset selection
-        spies.selectedRelPathS.reset()
+        spies.selectedFilenameS.reset()
         buses.keyDownS.push()
-        expect(spies.selectedRelPathS.mostRecentCall.args[0]).toEqual('note 0.md', 'should start at the beginning of list')
+        expect(spies.selectedFilenameS.mostRecentCall.args[0]).toEqual('note 0.md', 'should start at the beginning of list')
         R.times(() => { buses.keyDownS.push() }, 5)
-        expect(spies.selectedRelPathS.mostRecentCall.args[0]).toEqual('note 5.md', 'should stepped relPath forward the same amount of events')
+        expect(spies.selectedFilenameS.mostRecentCall.args[0]).toEqual('note 5.md', 'should stepped filename forward the same amount of events')
         R.times(() => { buses.keyDownS.push() }, 6)
-        expect(spies.selectedRelPathS.mostRecentCall.args[0]).toEqual('note 9.md', 'should stop at end of list')
+        expect(spies.selectedFilenameS.mostRecentCall.args[0]).toEqual('note 9.md', 'should stop at end of list')
 
         // active path/notes change
-        spies.selectedRelPathS.reset()
+        spies.selectedFilenameS.reset()
         buses.activePathS.push('/notes/note 7.md')
-        expect(spies.selectedRelPathS.mostRecentCall.args[0]).toEqual('note 7.md', 'should set the relPath to found note')
+        expect(spies.selectedFilenameS.mostRecentCall.args[0]).toEqual('note 7.md', 'should set the filename to found note')
 
-        spies.selectedRelPathS.reset()
+        spies.selectedFilenameS.reset()
         buses.activePathS.push('/notes/whatever')
-        expect(spies.selectedRelPathS.mostRecentCall.args[0]).toEqual(undefined, 'should unset relPath when there is no match')
+        expect(spies.selectedFilenameS.mostRecentCall.args[0]).toEqual(undefined, 'should unset filename when there is no match')
         buses.activePathS.push('/another_dir/note 7.md')
-        expect(spies.selectedRelPathS.mostRecentCall.args[0]).toEqual(undefined, 'should not set for matching relPath in another dir')
+        expect(spies.selectedFilenameS.mostRecentCall.args[0]).toEqual(undefined, 'should not set for matching filename in another dir')
 
         // files changes, e.g. rename
-        spies.selectedRelPathS.reset()
+        spies.selectedFilenameS.reset()
         notes['renamed note 6.md'] = notes['note 6.md']
         delete notes['note 6.md']
         buses.saveEditedCellContentS.push('renamed note 6.md')
         buses.sifterP.push(new Sifter(notes))
         buses.sifterP.push(new Sifter(notes))
-        expect(spies.selectedRelPathS.mostRecentCall.args[0]).toEqual('renamed note 6.md', 'should set selected to the renamed file')
+        expect(spies.selectedFilenameS.mostRecentCall.args[0]).toEqual('renamed note 6.md', 'should set selected to the renamed file')
       })
     })
 

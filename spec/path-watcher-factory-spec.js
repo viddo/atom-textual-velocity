@@ -85,7 +85,7 @@ describe('path-watcher-factory', () => {
 
         waitsFor('all notes to be read', () => {
           const notes = sifterPSpy.mostRecentCall.args[0].items
-          return Object.keys(notes).every(relPath => notes[relPath].ready)
+          return Object.keys(notes).every(filename => notes[filename].ready)
         })
         runs(() => {
           const notes = sifterPSpy.mostRecentCall.args[0].items
@@ -175,7 +175,7 @@ describe('path-watcher-factory', () => {
 
         waitsFor('all notes to be read', () => {
           const notes = sifterPSpy.mostRecentCall.args[0].items
-          return Object.keys(notes).every(relPath => notes[relPath].ready)
+          return Object.keys(notes).every(filename => notes[filename].ready)
         })
         runs(() => {
           expect(testFileReader.read.calls.length).toEqual(2, 'should only call testFileReader for non-cached files')
