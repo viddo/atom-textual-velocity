@@ -4,7 +4,7 @@ import R from 'ramda'
 import Service from '../lib/service'
 
 describe('service', function () {
-  let spies, service, notes
+  let spies, service
 
   beforeEach(function () {
     spies = {
@@ -14,8 +14,7 @@ describe('service', function () {
       fileWritersP: jasmine.createSpy('fileWritersP')
     }
 
-    notes = {}
-    service = new Service(notes)
+    service = new Service()
     service.columnsP.onValue(spies.columnsP)
     service.fieldsP.onValue(spies.fieldsP)
     service.fileReadersP.onValue(spies.fileReadersP)

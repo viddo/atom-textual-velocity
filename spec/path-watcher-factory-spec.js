@@ -37,7 +37,7 @@ describe('path-watcher-factory', () => {
   })
 
   describe('.watch', function () {
-    let cachedNotes, notesFileFilter, notesPath, sifterPSpy, initialScanDonePSpy, pathWatcher, prevContent, unsubInitialScanDone, unsubFilesP
+    let notesCache, notesFileFilter, notesPath, sifterPSpy, initialScanDonePSpy, pathWatcher, prevContent, unsubInitialScanDone, unsubFilesP
 
     beforeEach(function () {
       const tempDirPath = temp.mkdirSync('empty-dir')
@@ -63,8 +63,8 @@ describe('path-watcher-factory', () => {
 
     describe('when called without cached notes', function () {
       beforeEach(function () {
-        cachedNotes = {}
-        pathWatcher = pathWatcherFactory.watch(cachedNotes, notesPath, notesFileFilter)
+        notesCache = {}
+        pathWatcher = pathWatcherFactory.watch(notesCache, notesPath, notesFileFilter)
 
         unsubInitialScanDone = pathWatcher.initialScanDoneP.onValue(initialScanDonePSpy)
         unsubFilesP = pathWatcher.sifterP.onValue(sifterPSpy)
@@ -129,10 +129,10 @@ describe('path-watcher-factory', () => {
     })
 
     describe('when called with cached notes', function () {
-      let cachedNotes
+      let notesCache
 
       beforeEach(function () {
-        cachedNotes = {
+        notesCache = {
           'note-1.txt': { // note that have all values read, not changed
             stats: fs.statSync(notesPath.fullPath('note-1.txt')),
             name: 'note-1',
@@ -153,14 +153,14 @@ describe('path-watcher-factory', () => {
             }
           }
         }
-        pathWatcher = pathWatcherFactory.watch(cachedNotes, notesPath, notesFileFilter)
+        pathWatcher = pathWatcherFactory.watch(notesCache, notesPath, notesFileFilter)
 
         unsubInitialScanDone = pathWatcher.initialScanDoneP.onValue(initialScanDonePSpy)
         unsubFilesP = pathWatcher.sifterP.onValue(sifterPSpy)
       })
 
       it('should return a watcher that handles the life-cycle of a given path', function () {
-        expect(sifterPSpy.calls[0].args[0].items).toEqual(cachedNotes, 'items should be the cached list')
+        expect(sifterPSpy.calls[0].args[0].items).toEqual(notesCache, 'items should be the cached list')
 
         waitsFor('watcher to be ready', () => {
           return initialScanDonePSpy.calls.length >= 1
