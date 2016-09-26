@@ -107,7 +107,7 @@ describe('presenter', function () {
     expect(spies.columnHeadersP).toHaveBeenCalledWith(jasmine.any(Array))
     expect(spies.forcedScrollTopP).toHaveBeenCalledWith(undefined)
     expect(spies.listHeightP).toHaveBeenCalledWith(123)
-    expect(spies.loadingProgressP).toHaveBeenCalledWith({total: 0, read: 0})
+    expect(spies.loadingProgressP).toHaveBeenCalledWith({total: 0, ready: 0})
     expect(spies.paginationP).toHaveBeenCalledWith({start: 0, limit: 5})
     expect(spies.rowHeightP).toHaveBeenCalledWith(23)
   })
@@ -135,15 +135,16 @@ describe('presenter', function () {
           id: `id-${i}`,
           name: `note ${i}`,
           ext: '.md',
-          content: `content of note ${i}`
+          content: `content of note ${i}`,
+          ready: true
         }
       }, 10)
-      notes['note 9.md'].content = undefined // simulate last item not read yet
+      notes['note 9.md'].ready = false // simulate last item not ready yet
       buses.notesP.push(notes)
     })
 
     it('should trigger presenter loading observables', function () {
-      expect(spies.loadingProgressP).toHaveBeenCalledWith({total: 10, read: 9})
+      expect(spies.loadingProgressP).toHaveBeenCalledWith({total: 10, ready: 9})
       expect(spies.loadingS).toHaveBeenCalled()
     })
 
@@ -153,7 +154,7 @@ describe('presenter', function () {
 
     describe('when there is a sifter result', function () {
       beforeEach(function () {
-        notes['note 9.md'].content = `some final content` // simulate last item read
+        notes['note 9.md'].ready = true // simulate last item ready
         buses.notesP.push(notes)
         buses.sifterResultP.push(
           newSifterResult({
@@ -165,7 +166,7 @@ describe('presenter', function () {
 
       it('should yields values for props related to results', function () {
         expect(spies.itemsCountP).toHaveBeenCalledWith(10)
-        expect(spies.loadingProgressP).toHaveBeenCalledWith({})
+        expect(spies.loadingProgressP).toHaveBeenCalledWith({total: 0, ready: 0})
         expect(spies.rowsS).toHaveBeenCalled()
         expect(spies.searchStrP).toHaveBeenCalledWith('')
         expect(spies.sortP).toHaveBeenCalledWith({field: 'name', direction: 'desc'})

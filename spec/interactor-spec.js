@@ -83,7 +83,8 @@ describe('interactor', function () {
         {notePropName: 'ext'}
       ]),
       fileReadersP: {},
-      fileWritersP: {}
+      fileWritersP: {},
+      notes: {}
     }
 
     interactor = new Interactor(viewCtrl, pathWatcherFactory, service)

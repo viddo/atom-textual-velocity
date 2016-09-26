@@ -1,3 +1,3 @@
 declare type PathWatcherFactoryType = {
-  watch (path: NotesPathType, filter: NotesFileFilterType): PathWatcherType
+  watch (notes: Object, path: NotesPathType, filter: NotesFileFilterType): PathWatcherType
 }

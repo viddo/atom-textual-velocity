@@ -27,6 +27,7 @@ describe('side-effects', function () {
       listHeightS: new Bacon.Bus(),
       loadingProgressP: new Bacon.Bus(),
       loadingS: new Bacon.Bus(),
+      notesP: new Bacon.Bus(),
       openPathS: new Bacon.Bus(),
       paginationP: new Bacon.Bus(),
       saveEditedCellContentS: new Bacon.Bus(),
@@ -57,6 +58,7 @@ describe('side-effects', function () {
       listHeightP: buses.listHeightS.toProperty(100),
       loadingProgressP: buses.loadingProgressP.toProperty({read: 0, total: 0}),
       loadingS: buses.loadingS,
+      notesP: buses.notesP,
       openPathS: buses.openPathS,
       paginationP: buses.paginationP.toProperty({start: 0, limit: 0}),
       saveEditedCellContentS: buses.saveEditedCellContentS,
@@ -81,7 +83,8 @@ describe('side-effects', function () {
       editCellS: buses.editCellS,
       fieldsP: buses.fieldsP,
       fileReadersP: buses.fileReadersP,
-      fileWritersP: buses.fileWritersP
+      fileWritersP: buses.fileWritersP,
+      notes: {}
     }
 
     sideEffects = new SideEffects(panel, viewCtrl, presenter, service)

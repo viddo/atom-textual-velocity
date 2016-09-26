@@ -1,3 +1,5 @@
 declare type FsStatsType =
-  | (fs.Stats & {birthtime: Date | void})
-  | {}
+  | (fs.Stats & {
+    mtime: Date,
+    birthtime?: Date
+  })

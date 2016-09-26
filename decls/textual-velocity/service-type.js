@@ -3,5 +3,6 @@ declare type ServiceType = {
   editCellS: Bacon.Stream,
   fieldsP: Bacon.Property,
   fileReadersP: Bacon.Property,
-  fileWritersP: Bacon.Property
+  fileWritersP: Bacon.Property,
+  notes: Object
 }

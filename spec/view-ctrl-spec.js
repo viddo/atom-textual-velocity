@@ -194,7 +194,7 @@ describe('view-ctrl', function () {
         })
 
         it('should not render loading progress', function () {
-          expect(DOMNode.innerText).toContain('0 of 3 notes')
+          expect(DOMNode.innerText).not.toContain('0 of 3 notes')
         })
       })
 
