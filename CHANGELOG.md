@@ -3,10 +3,18 @@ All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](http://semver.org/) and [keepachangelog.com](http://keepachangelog.com/).
 
 ## [unreleased]
+### Added
+- Rename note, by double-click a note or keyboard shortcut (`cmd+r` when focused on search)
+- Service API draft for easier integration, see [nvTags](lib/service-consumers/nv-tags.js) for example usage
+
 ### Changed
-- Internals completely refactored, to make changes/new features easier to implement+test
-- Using [Flowtype](https://flowtype.org/) to find bugs easier
+- Internals completely refactored, primarily to make changes and new features easier to implement+test
 - Updated all dependencies to latest stable versions
+- Extracted file icons to a column of its own
+
+### Fixed
+- #9 Upgrading chokidar to v1.6.0
+- #20 Do not load nvTags if the platform doesn't support the necessary dependencies
 
 ## [0.7.0] - 2016-03-29
 ### Added
@@ -36,7 +44,7 @@ This project adheres to [Semantic Versioning](http://semver.org/) and [keepachan
 
 ### Fixed
 - Confirm-save dialog appears even if there are no changes
-- .md is always added when new files are created #12
+- #12 .md is always added when new files are created
 
 ## [0.3.0] - 2016-02-10
 ### Changed
