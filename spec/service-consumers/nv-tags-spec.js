@@ -1,16 +1,16 @@
 var Path = require('path')
 var temp = require('temp').track()
 var Service = require('../../lib/service')
-var NVTags = require('../../lib/service-consumers/nv-tags')
+var nvTags = require('../../lib/service-consumers/nv-tags')
 
-var unsupErr = NVTags.getUnsupportedError()
+var unsupErr = nvTags.getUnsupportedError()
 
 describe('service-consumers/nv-tags', function () {
   it('should return a disposable object even if tags will not be loaded', function () {
     var service = new Service()
     var serviceV0 = service.v0() // integration tested through main-spec.js and CI env
-    spyOn(NVTags, 'getUnsupportedError').andReturn('not supported')
-    var disposable = NVTags.consumeServiceV0(serviceV0)
+    spyOn(nvTags, 'getUnsupportedError').andReturn('not supported')
+    var disposable = nvTags.consumeServiceV0(serviceV0)
     expect(disposable.dispose).toEqual(jasmine.any(Function))
   })
 })
@@ -32,7 +32,7 @@ describe('service-consumers/nv-tags', function () {
     spyOn(v0, 'registerFileReaders')
     spyOn(v0, 'registerFileWriters')
 
-    disposable = NVTags.consumeServiceV0(v0)
+    disposable = nvTags.consumeServiceV0(v0)
     expect(v0.registerColumns).toHaveBeenCalled()
     expect(v0.registerFields).toHaveBeenCalled()
     expect(v0.registerFileReaders).toHaveBeenCalled()
