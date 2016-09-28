@@ -103,7 +103,7 @@ describe('service-consumers/nv-tags', function () {
       var tmpFile = temp.createWriteStream('tmp')
       tmpFile.write('foo')
       tmpFile.end()
-      fileWriter.write(tmpFile.path, 'beep boop', writeSpy)
+      fileWriter.write(tmpFile.path, 'beep boop boop beep', writeSpy)
 
       waitsFor(function () {
         return writeSpy.calls.length >= 1
