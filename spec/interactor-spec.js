@@ -9,6 +9,7 @@ describe('interactor', function () {
   let buses, interactor, spies
 
   beforeEach(function () {
+    spyOn(Date, 'now').andReturn(0)
     buses = {
       abortEditCellS: new Bacon.Bus(),
       activePathS: new Bacon.Bus(),
@@ -244,6 +245,9 @@ describe('interactor', function () {
 
         // active path/notes change
         spies.selectedFilenameS.reset()
+        buses.activePathS.push('/notes/note 9.md')
+        expect(spies.selectedFilenameS).not.toHaveBeenCalled() // path change should only trigger after some delay of a user interaction to avoid jumpy behavior
+        Date.now.andReturn(1000)
         buses.activePathS.push('/notes/note 7.md')
         expect(spies.selectedFilenameS.mostRecentCall.args[0]).toEqual('note 7.md', 'should set the filename to found note')
 
