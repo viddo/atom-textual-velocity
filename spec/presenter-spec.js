@@ -35,6 +35,7 @@ describe('presenter', function () {
       paginationP: new Bacon.Bus(),
       rowHeightP: new Bacon.Bus(),
       saveEditedCellContentS: new Bacon.Bus(),
+      searchStrS: new Bacon.Bus(),
       selectedFilenameS: new Bacon.Bus(),
       sifterResultP: new Bacon.Bus()
     }
@@ -50,6 +51,7 @@ describe('presenter', function () {
       paginationP: buses.paginationP.toProperty({start: 0, limit: 5}),
       rowHeightP: buses.rowHeightP.toProperty(23),
       saveEditedCellContentS: buses.saveEditedCellContentS,
+      searchStrS: buses.searchStrS,
       selectedFilenameS: buses.selectedFilenameS,
       sifterResultP: buses.sifterResultP.toProperty()
     }
@@ -156,6 +158,7 @@ describe('presenter', function () {
       beforeEach(function () {
         notes['note 9.md'].ready = true // simulate last item ready
         buses.notesP.push(notes)
+        buses.searchStrS.push('')
         buses.sifterResultP.push(
           newSifterResult({
             total: 10,
@@ -189,6 +192,7 @@ describe('presenter', function () {
 
     describe('when a search query is given', function () {
       beforeEach(function () {
+        buses.searchStrS.push('STR')
         buses.sifterResultP.push(
           newSifterResult({
             tokens: [{
@@ -207,7 +211,7 @@ describe('presenter', function () {
 
       it('should yield new valus for props related to results', function () {
         expect(spies.itemsCountP).toHaveBeenCalledWith(7)
-        expect(spies.searchStrP).toHaveBeenCalledWith('str')
+        expect(spies.searchStrP).toHaveBeenCalledWith('STR')
       })
 
       it('should yield new rows', function () {
@@ -301,6 +305,7 @@ describe('presenter', function () {
         expect(spies.openPathS).toHaveBeenCalled()
         expect(spies.openPathS.mostRecentCall.args[0]).toEqual('/notes/note 3.md')
 
+        buses.searchStrS.push('')
         buses.sifterResultP.push(
           newSifterResult({query: ''})
         )

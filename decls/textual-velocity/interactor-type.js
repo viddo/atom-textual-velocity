@@ -9,6 +9,7 @@ declare type InteractorType = {
   paginationP: Bacon.Property,
   rowHeightP: Bacon.Property,
   saveEditedCellContentS: Bacon.Stream,
+  searchStrS: Bacon.Stream,
   selectedFilenameS: Bacon.Stream,
   sifterResultP: Bacon.Property
 }
