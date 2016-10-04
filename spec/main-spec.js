@@ -2,91 +2,90 @@
 /* global CustomEvent */
 
 import Path from 'path'
+import R from 'ramda'
 
-describe('textual-velocity package', () => {
-  let workspaceElement, activationError
+describe('main', () => {
+  beforeEach(function () {
+    jasmine.useRealClock()
+    this.workspaceElement = atom.views.getView(atom.workspace)
+    jasmine.attachToDOM(this.workspaceElement)
 
-  beforeEach(() => {
-    activationError = null
-    jasmine.unspy(window, 'setTimeout') // remove spy that screws up debounce
-    workspaceElement = atom.views.getView(atom.workspace)
-    jasmine.attachToDOM(workspaceElement)
+    atom.config.set('textual-velocity.path', __dirname) // ./spec
 
     // Spy on fatal notifications to extract activationErroror, to re-throw it here
     spyOn(atom.notifications, 'addFatalError').andCallFake((msg, d) => {
-      activationError = new Error([msg, d.detail, d.stack].join("\n")) // eslint-disable-line
+      const err = new Error([msg, d.detail, d.stack].join('\n'))
+      jasmine.getEnv().currentSpec.fail(err)
+    })
+    spyOn(console, 'error').andCallFake((msg, explanation = '') => {
+      const err = new Error(msg + explanation.toString())
+      jasmine.getEnv().currentSpec.fail(err)
     })
 
     atom.configDirPath = Path.join(__dirname, 'fixtures')
   })
 
-  it('package is lazy-loaded', () => {
+  it('package is lazy-loaded', function () {
     expect(atom.packages.isPackageLoaded('textual-velocity')).toBe(false)
     expect(atom.packages.isPackageActive('textual-velocity')).toBe(false)
   })
 
-  describe('when start-session command is triggered', () => {
-    let [promise] = []
-
-    beforeEach(() => {
-      promise = atom.packages.activatePackage('textual-velocity')
-      workspaceElement.dispatchEvent(new CustomEvent('textual-velocity:start-session', {bubbles: true}))
+  describe('when start-session command is triggered', function () {
+    beforeEach(function () {
+      const promise = atom.packages.activatePackage('textual-velocity')
+      this.workspaceElement.dispatchEvent(new CustomEvent('textual-velocity:start-session', {bubbles: true}))
       waitsForPromise(() => {
-        if (activationError) throw activationError
         return promise
       })
-    })
-
-    afterEach(() => {
-      if (!activationError) {
-        atom.packages.deactivatePackage('textual-velocity')
-      }
-    })
-
-    it('creates a top panel for the session', () => {
-      let panels = atom.workspace.getTopPanels()
-      expect(panels.length).toEqual(1)
-      expect(panels[0].getItem().querySelector('.tv-search')).toBeDefined()
-      expect(panels[0].getItem().querySelector('.tv-items')).toBeDefined()
-    })
-
-    it('removes the start-session command', () => {
-      expect(atom.commands.getSnapshot()['textual-velocity:start-session']).toBeUndefined()
-    })
-
-    it('adds a stop-session command', () => {
-      expect(atom.commands.getSnapshot()['textual-velocity:stop-session']).toBeDefined()
-    })
-
-    describe('when stop-session command is triggered', () => {
-      beforeEach(() => {
-        if (!activationError) {
-          workspaceElement.dispatchEvent(new CustomEvent('textual-velocity:stop-session', {bubbles: true}))
-        }
-      })
-
-      it('destroys the panels', () => {
-        expect(atom.workspace.getTopPanels().length).toEqual(0)
-      })
-
-      it('adds a start-session command again', () => {
-        expect(atom.commands.getSnapshot()['textual-velocity:start-session']).toBeDefined()
-      })
-
-      it('removes the stop-session command', () => {
-        expect(atom.commands.getSnapshot()['textual-velocity:stop-session']).toBeUndefined()
+      runs(() => {
+        this.panel = R.last(atom.workspace.getTopPanels())
       })
     })
 
-    describe('when package is desactivated', () => {
-      beforeEach(() => {
-        if (!activationError) {
-          atom.packages.deactivatePackage('textual-velocity')
-        }
+    afterEach(function () {
+      atom.packages.deactivatePackage('textual-velocity')
+      this.panel = null
+    })
+
+    it('creates a top panel for the session', function () {
+      expect(this.panel.getItem().querySelector('.textual-velocity')).toEqual(jasmine.any(HTMLElement))
+    })
+
+    it('should replaced start-session command with a stop-session command', function () {
+      const commands = atom.commands.getSnapshot()
+      expect(commands['textual-velocity:start-session']).toBeUndefined()
+      expect(commands['textual-velocity:stop-session']).toBeDefined()
+    })
+
+    describe('when files are loaded', function () {
+      beforeEach(function () {
+        waitsFor(() => {
+          return this.panel.getItem().innerHTML.match('<input') // implicitly asserts search input too
+        })
       })
 
-      it('removes the panels', () => {
-        expect(atom.workspace.getTopPanels().length).toEqual(0)
+      it('should render rows', function () {
+        expect(this.panel.getItem().innerHTML).toContain('tv-items')
+      })
+
+      describe('when stop-session command is triggered', function () {
+        beforeEach(function () {
+          const promise = atom.packages.activatePackage('textual-velocity')
+          this.workspaceElement.dispatchEvent(new CustomEvent('textual-velocity:stop-session', {bubbles: true}))
+          waitsForPromise(() => {
+            return promise
+          })
+        })
+
+        it('should not render rows anymore', function () {
+          expect(atom.workspace.getTopPanels()).toEqual([])
+        })
+
+        it('should replaced stop-session command with a start-session command', function () {
+          const commands = atom.commands.getSnapshot()
+          expect(commands['textual-velocity:start-session']).toBeDefined()
+          expect(commands['textual-velocity:stop-session']).toBeUndefined()
+        })
       })
     })
   })

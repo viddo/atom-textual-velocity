@@ -3,4 +3,5 @@
 npm-debug.log
 node_modules
 spec/fixtures/notes
+TODOs.md
 wip
