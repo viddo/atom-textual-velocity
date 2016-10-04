@@ -15,6 +15,7 @@ This project adheres to [Semantic Versioning](http://semver.org/) and [keepachan
 ### Fixed
 - #9 Upgrading chokidar to v1.6.0
 - #20 Do not load nvTags if the platform doesn't support the necessary dependencies
+- #8 Performance improvements; The first initial load is incremental, which makes the notes scan somewhat slower but on the other hand the UI is no longer unresponsive during this phase. However, after this initial load is almost instant.
 
 ## [0.7.0] - 2016-03-29
 ### Added
