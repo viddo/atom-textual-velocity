@@ -1,0 +1,4 @@
+- Check that all CIs pass?
+- Add `[vX.Y.Z] - yyyy-mm-dd` below `[unreleased]` section in [CHANGELOG.md](CHANGELOG.md)
+- Run `apm publish [mayor|minor|path]`
+- Copy-paste just-released version info from the [changelog](CHANGELOG.md), to the new [relesed version info](https://github.com/viddo/atom-textual-velocity/releases)
