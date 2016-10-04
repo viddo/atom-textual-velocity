@@ -3,6 +3,12 @@ All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](http://semver.org/) and [keepachangelog.com](http://keepachangelog.com/).
 
 ## [unreleased]
+
+
+
+## [0.8.0] - 2016-10-04
+[Happy Cinnamon Bun Day! :tada:](http://kanelbullensdag.se/en/)
+
 ### Added
 - Rename note, by double-click a note or keyboard shortcut (`cmd+r` when focused on search)
 - Service API draft for easier integration, see [nvTags](lib/service-consumers/nv-tags.js) for example usage
