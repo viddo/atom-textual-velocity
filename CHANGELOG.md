@@ -3,8 +3,8 @@ All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](http://semver.org/) and [keepachangelog.com](http://keepachangelog.com/).
 
 ## [unreleased]
-
-
+### Added
+- #22 Allow to change default/new file extension
 
 ## [0.8.0] - 2016-10-04
 [Happy Cinnamon Bun Day! :tada:](http://kanelbullensdag.se/en/)

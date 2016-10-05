@@ -298,6 +298,7 @@ describe('presenter', function () {
       })
 
       it('should open new note when there is no selected note', function () {
+        atom.config.set('textual-velocity.defaultExt', 'md')
         buses.selectedFilenameS.push('note 3.md') // preqrequisite for open
 
         expect(spies.openPathS).not.toHaveBeenCalled()
@@ -311,7 +312,11 @@ describe('presenter', function () {
         )
         buses.selectedFilenameS.push(undefined)
         buses.openFileS.push()
-        expect(spies.openPathS.mostRecentCall.args[0]).toEqual('/notes/untitled.md')
+        expect(spies.openPathS.mostRecentCall.args[0]).toEqual('/notes/untitled.md', 'should have default file extension')
+
+        atom.config.set('textual-velocity.defaultExt', '.txt')
+        buses.openFileS.push()
+        expect(spies.openPathS.mostRecentCall.args[0]).toEqual('/notes/untitled.txt', 'should have custom file extension')
       })
     })
   })
