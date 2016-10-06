@@ -90,6 +90,7 @@ describe('service-consumers/nv-tags', function () {
 
   describe('registered file reader+writer', function () {
     var fileReader, fileWriter, path, callback
+    var fileStats = {}
 
     beforeEach(function () {
       fileReader = v0.registerFileReaders.mostRecentCall.args[0]
@@ -111,7 +112,7 @@ describe('service-consumers/nv-tags', function () {
       runs(function () {
         expect(writeSpy.mostRecentCall.args[0]).toBeFalsy()
         expect(writeSpy.mostRecentCall.args[1]).toBeFalsy()
-        fileReader.read(tmpFile.path, readSpy)
+        fileReader.read(tmpFile.path, fileStats, readSpy)
       })
 
       waitsFor(function () {
@@ -125,7 +126,7 @@ describe('service-consumers/nv-tags', function () {
 
     it('should return null for a read file that have no xattrs set', function () {
       path = Path.join(__dirname, '..', 'fixtures', 'standard', 'empty.md')
-      fileReader.read(path, callback)
+      fileReader.read(path, fileStats, callback)
       waitsFor(function () {
         return callback.calls.length >= 1
       })
@@ -136,7 +137,7 @@ describe('service-consumers/nv-tags', function () {
     })
 
     it('should return error if read file does not exist', function () {
-      fileReader.read('nonexisting', callback)
+      fileReader.read('nonexisting', fileStats, callback)
       waitsFor(function () {
         return callback.calls.length >= 1
       })
