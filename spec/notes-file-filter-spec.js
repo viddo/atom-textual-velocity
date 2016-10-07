@@ -1,5 +1,6 @@
 'use babel'
 
+import defaultConfig from '../lib/default-config'
 import Path from 'path'
 import NotesFileFilter from '../lib/notes-file-filter'
 
@@ -7,9 +8,11 @@ describe('notes-file-filter', () => {
   let notesFileFilter
 
   beforeEach(function () {
+    atom.config.set('textual-velocity.ignoredNames', defaultConfig.ignoredNames.default)
+    atom.config.set('textual-velocity.excludeVcsIgnoredPaths', defaultConfig.excludeVcsIgnoredPaths.default)
     notesFileFilter = new NotesFileFilter(__dirname, {
-      exclusions: atom.config.get('core.ignoredNames'),
-      excludeVcsIgnores: atom.config.get('core.excludeVcsIgnoredPaths')
+      exclusions: atom.config.get('textual-velocity.ignoredNames'),
+      excludeVcsIgnores: atom.config.get('textual-velocity.excludeVcsIgnoredPaths')
     })
   })
 
