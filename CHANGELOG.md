@@ -2,12 +2,12 @@
 All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](http://semver.org/) and [keepachangelog.com](http://keepachangelog.com/).
 
-## [unreleased]
+## [0.9.0] - 2016-10-07
 ### Added
 - #22 Allow to change default/new file extension
 
 ### Fixed
-- Note stats was not updated on changes like before (ee00e9f)
+- Note stats not being updated on file changes like before [1e55e10](https://github.com/viddo/atom-textual-velocity/commit/1e55e108c5ffcecab99a4c91867bdb2bdd994198)
 
 ## [0.8.0] - 2016-10-04
 [Happy Cinnamon Bun Day! :tada:](http://kanelbullensdag.se/en/)
