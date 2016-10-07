@@ -6,6 +6,9 @@ This project adheres to [Semantic Versioning](http://semver.org/) and [keepachan
 ### Added
 - #22 Allow to change default/new file extension
 
+### Fixed
+- Note stats was not updated on changes like before (ee00e9f)
+
 ## [0.8.0] - 2016-10-04
 [Happy Cinnamon Bun Day! :tada:](http://kanelbullensdag.se/en/)
 

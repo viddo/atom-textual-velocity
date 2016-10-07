@@ -1,4 +1,4 @@
 declare type FileReaderType = {
   notePropName: string,
-  read (path: string, callback: NodeCallbackType): void
+  read (path: string, fileStats: FsStatsType, callback: NodeCallbackType): void
 }

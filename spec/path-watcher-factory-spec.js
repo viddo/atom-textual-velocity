@@ -17,7 +17,7 @@ describe('path-watcher-factory', () => {
     jasmine.useRealClock()
 
     testFileReader = {
-      read: (path, callback) => callback(null, path),
+      read: (path, stats, callback) => callback(null, path),
       notePropName: 'test'
     }
     spyOn(testFileReader, 'read').andCallThrough()
