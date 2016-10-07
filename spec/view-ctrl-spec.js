@@ -71,8 +71,9 @@ describe('view-ctrl', function () {
       const req = spies.sessionStartS.mostRecentCall.args[0]
       expect(req.rootPath).toMatch(/.+test$/, 'should pass root path from config')
       expect(req.rootPath).not.toContain('~', 'should not allow home dir since it is most likely too big to handle for now')
-      expect(req.ignoredNames).toEqual(atom.config.get('core.ignoredNames', 'should pass ignored filenames from config'))
-      expect(req.excludeVcsIgnoredPaths).toEqual(atom.config.get('core.excludeVcsIgnoredPaths'), 'should pass excludeVcsIgnoredPaths filenames from config')
+      expect(req.ignoredNames).toEqual(jasmine.any(Array))
+      expect(req.ignoredNames.length).toBeGreaterThan(0)
+      expect(req.excludeVcsIgnoredPaths).toEqual(atom.config.get('textual-velocity.excludeVcsIgnoredPaths'), 'should pass excludeVcsIgnoredPaths filenames from config')
     })
 
     it('should have values for initial streams', function () {
