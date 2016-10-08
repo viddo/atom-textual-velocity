@@ -3,13 +3,13 @@
 import NotesCache from '../lib/notes-cache'
 
 describe('notes-cache', () => {
-  let notesCache, loadSpy, saveSpy
+  let notesCache, loadSpy
 
   beforeEach(function () {
     atom.enablePersistence = true
     atom.stateStore.clear()
     loadSpy = jasmine.createSpy('load')
-    saveSpy = jasmine.createSpy('save')
+    spyOn(atom.stateStore, 'save').andCallThrough()
     notesCache = new NotesCache()
   })
 
@@ -34,9 +34,9 @@ describe('notes-cache', () => {
     runs(() => {
       notes = loadSpy.mostRecentCall.args[0]
       notes['some-file'] = {}
-      notesCache.save(saveSpy)
+      notesCache.save()
     })
-    waitsFor(() => saveSpy.calls.length >= 1)
+    waitsFor(() => atom.stateStore.save.calls.length >= 1)
     runs(() => {
       loadSpy.reset()
       notesCache.load(loadSpy)
@@ -60,9 +60,9 @@ describe('notes-cache', () => {
       jasmine.attachToDOM(workspaceView)
       atom.commands.dispatch(workspaceView, 'textual-velocity:clear-notes-cache')
 
-      notesCache.save(saveSpy)
+      notesCache.save()
     })
-    waitsFor(() => saveSpy.calls.length >= 1)
+    waitsFor(() => atom.stateStore.save.calls.length >= 1)
     runs(() => {
       loadSpy.reset()
       notesCache.load(loadSpy)
@@ -85,9 +85,9 @@ describe('notes-cache', () => {
 
       atom.config.set('textual-velocity.path', 'new/path')
 
-      notesCache.save(saveSpy)
+      notesCache.save()
     })
-    waitsFor(() => saveSpy.calls.length >= 1)
+    waitsFor(() => atom.stateStore.save.calls.length >= 1)
     runs(() => {
       loadSpy.reset()
       notesCache.load(loadSpy)

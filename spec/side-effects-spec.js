@@ -58,7 +58,7 @@ describe('side-effects', function () {
       listHeightP: buses.listHeightS.toProperty(100),
       loadingProgressP: buses.loadingProgressP.toProperty({read: 0, total: 0}),
       loadingS: buses.loadingS,
-      notesP: buses.notesP,
+      notesP: buses.notesP.toProperty({}),
       openPathS: buses.openPathS,
       paginationP: buses.paginationP.toProperty({start: 0, limit: 0}),
       saveEditedCellContentS: buses.saveEditedCellContentS,
@@ -87,7 +87,9 @@ describe('side-effects', function () {
       notes: {}
     }
 
-    sideEffects = new SideEffects(panel, viewCtrl, presenter, service)
+    const notesCache = {save: jasmine.createSpy('notesCache.save')}
+
+    sideEffects = new SideEffects(panel, viewCtrl, presenter, service, notesCache)
 
     spies = {
       listHeightS: jasmine.createSpy('listHeight'),
