@@ -1,101 +1,68 @@
 'use babel'
 
+import {it, fit} from './_async-spec-helpers' // eslint-disable-line
 import NotesCache from '../lib/notes-cache'
 
 describe('notes-cache', () => {
-  let notesCache, loadSpy, saveSpy
+  let notesCache
 
   beforeEach(function () {
     atom.enablePersistence = true
     atom.stateStore.clear()
-    loadSpy = jasmine.createSpy('load')
-    saveSpy = jasmine.createSpy('save')
     notesCache = new NotesCache()
   })
 
   afterEach(function () {
+    atom.enablePersistence = false
     notesCache.dispose()
     atom.stateStore.clear()
-    atom.enablePersistence = false
   })
 
-  it('should load an empty cache object if there is none', function () {
-    notesCache.load(loadSpy)
-    waitsFor(() => loadSpy.calls.length)
-    runs(() => {
-      expect(loadSpy).toHaveBeenCalledWith({})
-    })
+  it('should load cache object if it was saved', async function () {
+    const notes = await notesCache.load()
+    expect(notes).toEqual({})
+    notes['some-file'] = {}
+
+    try {
+      await notesCache.save()
+    } catch (err) {
+      this.fail('save should work')
+    }
+    const notes2 = await notesCache.load()
+    expect(notes2).toEqual(notes)
   })
 
-  it('should load cache object if it was saved', function () {
-    let notes
-    notesCache.load(loadSpy)
-    waitsFor(() => loadSpy.calls.length >= 1)
-    runs(() => {
-      notes = loadSpy.mostRecentCall.args[0]
-      notes['some-file'] = {}
-      notesCache.save(saveSpy)
-    })
-    waitsFor(() => saveSpy.calls.length >= 1)
-    runs(() => {
-      loadSpy.reset()
-      notesCache.load(loadSpy)
-    })
-    waitsFor(() => loadSpy.calls.length >= 1)
-    runs(() => {
-      expect(loadSpy.mostRecentCall.args[0]).toEqual(notes)
-    })
+  it('should discard current notes cache when clear-notes-cache is called', async function () {
+    const notes = await notesCache.load()
+    notes['some-file'] = {}
+
+    const workspaceView = atom.views.getView(atom.workspace)
+    jasmine.attachToDOM(workspaceView)
+    atom.commands.dispatch(workspaceView, 'textual-velocity:clear-notes-cache')
+
+    try {
+      await notesCache.save()
+    } catch (err) {
+      this.fail('save should work')
+    }
+    const notes2 = await notesCache.load()
+    expect(notes2).not.toEqual(notes)
+    expect(notes2).toEqual({})
   })
 
-  it('should discard current notes cache when clear-notes-cache is called', function () {
-    let notes
+  it('should discard current notes cache when notes path changes', async function () {
+    const notes = await notesCache.load()
+    notes['some-file'] = {}
 
-    notesCache.load(loadSpy)
-    waitsFor(() => loadSpy.calls.length >= 1)
-    runs(() => {
-      notes = loadSpy.mostRecentCall.args[0]
-      notes['some-file'] = {}
+    atom.config.set('textual-velocity.path', 'new/path')
 
-      const workspaceView = atom.views.getView(atom.workspace)
-      jasmine.attachToDOM(workspaceView)
-      atom.commands.dispatch(workspaceView, 'textual-velocity:clear-notes-cache')
-
-      notesCache.save(saveSpy)
-    })
-    waitsFor(() => saveSpy.calls.length >= 1)
-    runs(() => {
-      loadSpy.reset()
-      notesCache.load(loadSpy)
-    })
-    waitsFor(() => loadSpy.calls.length >= 1)
-    runs(() => {
-      expect(loadSpy.mostRecentCall.args[0]).toEqual({})
-      expect(loadSpy.mostRecentCall.args[0]).not.toEqual(notes)
-    })
-  })
-
-  it('should discard current notes cache when notes path changes', function () {
-    let notes
-
-    notesCache.load(loadSpy)
-    waitsFor(() => loadSpy.calls.length >= 1)
-    runs(() => {
-      notes = loadSpy.mostRecentCall.args[0]
-      notes['some-file'] = {}
-
-      atom.config.set('textual-velocity.path', 'new/path')
-
-      notesCache.save(saveSpy)
-    })
-    waitsFor(() => saveSpy.calls.length >= 1)
-    runs(() => {
-      loadSpy.reset()
-      notesCache.load(loadSpy)
-    })
-    waitsFor(() => loadSpy.calls.length >= 1)
-    runs(() => {
-      expect(loadSpy.mostRecentCall.args[0]).toEqual({})
-      expect(loadSpy.mostRecentCall.args[0]).not.toEqual(notes)
-    })
+    try {
+      await notesCache.save()
+    } catch (err) {
+      this.fail('save should work')
+    }
+    const notes2 = await notesCache.load()
+    expect(notes2).not.toEqual(notes)
+    expect(notes2).toEqual({})
   })
 })

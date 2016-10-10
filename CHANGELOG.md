@@ -4,11 +4,14 @@ This project adheres to [Semantic Versioning](http://semver.org/) and [keepachan
 
 ## [unreleased]
 ### Added
-- #27 Option to exclude certain files from search
+- Option to exclude certain files from search [#29](https://github.com/viddo/atom-textual-velocity/pull/29)
+
+### Fixed
+- Notes cache not saved properly [#32](https://github.com/viddo/atom-textual-velocity/pull/32)
 
 ## [0.9.0] - 2016-10-07
 ### Added
-- #22 Allow to change default/new file extension
+- Allow to change default/new file extension [#22](https://github.com/viddo/atom-textual-velocity/pull/22)
 
 ### Fixed
 - Note stats not being updated on file changes like before [1e55e10](https://github.com/viddo/atom-textual-velocity/commit/1e55e108c5ffcecab99a4c91867bdb2bdd994198)
@@ -26,13 +29,13 @@ This project adheres to [Semantic Versioning](http://semver.org/) and [keepachan
 - Extracted file icons to a column of its own
 
 ### Fixed
-- #9 Upgrading chokidar to v1.6.0
-- #20 Do not load nvTags if the platform doesn't support the necessary dependencies
-- #8 Performance improvements; The first initial load is incremental, which makes the notes scan somewhat slower but on the other hand the UI is no longer unresponsive during this phase. However, after this initial load is almost instant.
+- Upgrading chokidar to v1.6.0 [#9](https://github.com/viddo/atom-textual-velocity/issues/9)
+- Do not load nvTags if the platform doesn't support the necessary dependencies [#20](https://github.com/viddo/atom-textual-velocity/issues/20)
+- Performance improvements; The first initial load is incremental, which makes the notes scan somewhat slower but on the other hand the UI is no longer unresponsive during this phase. However, after this initial load is almost instant. [#8](https://github.com/viddo/atom-textual-velocity/issues/8)
 
 ## [0.7.0] - 2016-03-29
 ### Added
-- Add ability to change sorting and direction #2
+- Add ability to change sorting and direction [#2](https://github.com/viddo/atom-textual-velocity/issues/2)
 - Close preview when item is deselected
 
 ### Changed
@@ -58,7 +61,7 @@ This project adheres to [Semantic Versioning](http://semver.org/) and [keepachan
 
 ### Fixed
 - Confirm-save dialog appears even if there are no changes
-- #12 .md is always added when new files are created
+- `.md` is always added when new files are created [#12](https://github.com/viddo/atom-textual-velocity/issues/12)
 
 ## [0.3.0] - 2016-02-10
 ### Changed
@@ -89,7 +92,7 @@ This project adheres to [Semantic Versioning](http://semver.org/) and [keepachan
 - Internal structure, file/class names etc.
 
 ### Fixed
-- Reset search on `<ESC>`
+- Reset search on <kbd>ESC</kbd>
 - Do not open new file on enter unless there is at least one char in the search input
 
 ## [0.1.2] - 2016-02-05
@@ -97,7 +100,7 @@ This project adheres to [Semantic Versioning](http://semver.org/) and [keepachan
 - Command name `textual-velocity` => `textual-velocity`
 
 ### Fixed
-- `<enter>` with selected file focus on selected file instead of opening new buffer
+- <kbd>ENTER</kbd> with selected file focus on selected file instead of opening new buffer
 
 ## [0.1.0] - 2016-02-04
 - [M{D,L}P](https://twitter.com/jopas/status/515301088660959233)
