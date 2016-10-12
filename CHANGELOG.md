@@ -20,13 +20,13 @@ This project adheres to [Semantic Versioning](http://semver.org/) and [keepachan
 [Happy Cinnamon Bun Day! :tada:](http://kanelbullensdag.se/en/)
 
 ### Added
-- Rename note, by double-click a note or keyboard shortcut (`cmd+r` when focused on search)
+- Rename note, by double-clicking a note or keyboard shortcut (`cmd+r` when focused on search)
 - Service API draft for easier integration, see [nvTags](lib/service-consumers/nv-tags.js) for example usage
 
 ### Changed
-- Internals completely refactored, primarily to make changes and new features easier to implement+test
+- Internals completely refactored, mainly to make changes and new features easier to implement+test
 - Updated all dependencies to latest stable versions
-- Extracted file icons to a column of its own
+- Extracted file icons to its own column definition
 
 ### Fixed
 - Upgrading chokidar to v1.6.0 [#9](https://github.com/viddo/atom-textual-velocity/issues/9)
