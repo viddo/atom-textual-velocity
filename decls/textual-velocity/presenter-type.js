@@ -5,7 +5,6 @@ declare type PresenterType = {
   listHeightP: Bacon.Property,
   loadingProgressP: Bacon.Property,
   loadingS: Bacon.Stream,
-  notesP: Bacon.Property,
   openPathS: Bacon.Stream,
   paginationP: Bacon.Property,
   selectedPathS: Bacon.Stream,
