@@ -5,6 +5,7 @@ This project adheres to [Semantic Versioning](http://semver.org/) and [keepachan
 ## [unreleased]
 ### Added
 - Option to exclude certain files from search [#29](https://github.com/viddo/atom-textual-velocity/pull/29)
+- Add a custom editor for notes preview [#25](https://github.com/viddo/atom-textual-velocity/pull/25)
 
 ### Fixed
 - Notes cache not saved properly [#32](https://github.com/viddo/atom-textual-velocity/pull/32)
