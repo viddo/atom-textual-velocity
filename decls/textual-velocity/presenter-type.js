@@ -10,6 +10,7 @@ declare type PresenterType = {
   rowHeightP: Bacon.Property,
   rowsS: Bacon.Stream,
   saveEditedCellContentS: Bacon.Stream,
+  searchRegexP: Bacon.Property,
   searchStrP: Bacon.Property,
   selectedContentP: Bacon.Property,
   selectedPathP: Bacon.Property,

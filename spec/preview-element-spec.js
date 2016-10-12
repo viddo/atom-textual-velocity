@@ -18,16 +18,25 @@ describe('preview-element', function () {
     expect(preview.getLongTitle()).toEqual(jasmine.any(String))
   })
 
-  describe('when note is set', function () {
+  describe('when preview is updated', function () {
+    let html
+
     beforeEach(function () {
-      preview.setNote('/test/path.txt', 'foo\nbar\nbaz')
+      preview.updatePreview('/test/path.txt', 'foo\nbar\nbaz', /ba/)
+      html = preview.innerHTML
     })
 
-    it('should update the preview content', function () {
-      const html = preview.rootElement.innerHTML
+    it('should render content', function () {
       expect(html).toContain('foo')
-      expect(html).toContain('bar<br>')
-      expect(html).toContain('baz')
+    })
+
+    it('should highlight matches', function () {
+      expect(html).toMatch(/<span class=".+">ba<\/span>r/)
+      expect(html).toMatch(/<span class=".+">ba<\/span>z/)
+    })
+
+    it('should render new lines', function () {
+      expect(html).toContain('<br>')
     })
 
     it('should have a path', function () {

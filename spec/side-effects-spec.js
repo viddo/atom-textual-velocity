@@ -32,6 +32,7 @@ describe('side-effects', function () {
       saveEditedCellContentS: new Bacon.Bus(),
       rowHeightP: new Bacon.Bus(),
       rowsS: new Bacon.Bus(),
+      searchRegexP: new Bacon.Bus(),
       searchStrP: new Bacon.Bus(),
       selectedContentP: new Bacon.Bus(),
       selectedPathP: new Bacon.Bus(),
@@ -63,6 +64,7 @@ describe('side-effects', function () {
       rowHeightP: buses.rowHeightP.toProperty(20),
       rowsS: buses.rowsS,
       saveEditedCellContentS: buses.saveEditedCellContentS,
+      searchRegexP: buses.searchRegexP.toProperty(),
       searchStrP: buses.searchStrP.toProperty(),
       selectedContentP: buses.selectedContentP.toProperty(),
       selectedPathP: buses.selectedPathP.toProperty(),
@@ -278,7 +280,8 @@ describe('side-effects', function () {
     describe('when selected a note that is not yet open', function () {
       beforeEach(function () {
         buses.selectedPathP.push('/notes/file.txt')
-        buses.selectedContentP.push('foobar')
+        buses.selectedContentP.push('foo\nbar\nbaz')
+        buses.searchRegexP.push(/ba/)
         advanceClock(1000) // due to atom.workspace.open delay
         waitsFor(() => atom.workspace.getPaneItems().length)
       })

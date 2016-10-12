@@ -1,9 +1,10 @@
 declare type SearchResultsType = {
   columns: Array<ColumnType>,
   editCellName: string | void,
-  notes: Array<Object>,
+  items: Array<{id: string, score: number}>,
+  notes: Object,
   notesPath: NotesPathType,
-  sifterResult: SifterResultType,
   pagination: PaginationType,
+  searchRegex: RegExp,
   selectedFilename?: string
 }

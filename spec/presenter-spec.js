@@ -2,8 +2,8 @@
 
 import Bacon from 'baconjs'
 import R from 'ramda'
-import Presenter from '../lib/presenter'
 import NotesPath from '../lib/notes-path'
+import Presenter from '../lib/presenter'
 
 describe('presenter', function () {
   let buses, presenter, spies, nameColumn, extColumn
@@ -29,9 +29,9 @@ describe('presenter', function () {
       forcedScrollTopP: new Bacon.Bus(),
       listHeightP: new Bacon.Bus(),
       loadingS: new Bacon.Bus(),
-      openFileS: new Bacon.Bus(),
       notesP: new Bacon.Bus(),
       notesPathP: new Bacon.Bus(),
+      openFileS: new Bacon.Bus(),
       paginationP: new Bacon.Bus(),
       rowHeightP: new Bacon.Bus(),
       saveEditedCellContentS: new Bacon.Bus(),
@@ -45,9 +45,9 @@ describe('presenter', function () {
       forcedScrollTopP: buses.forcedScrollTopP.toProperty(undefined),
       listHeightP: buses.listHeightP.toProperty(123),
       loadingS: buses.loadingS,
-      openFileS: buses.openFileS,
       notesP: buses.notesP.toProperty([]),
       notesPathP: buses.notesPathP.toProperty(),
+      openFileS: buses.openFileS,
       paginationP: buses.paginationP.toProperty({start: 0, limit: 5}),
       rowHeightP: buses.rowHeightP.toProperty(23),
       saveEditedCellContentS: buses.saveEditedCellContentS,
@@ -82,10 +82,11 @@ describe('presenter', function () {
       listHeightP: jasmine.createSpy('listHeightP'),
       loadingProgressP: jasmine.createSpy('loadingProgressP'),
       loadingS: jasmine.createSpy('loadingS'),
-      paginationP: jasmine.createSpy('paginationP'),
       openPathS: jasmine.createSpy('openPathS'),
+      paginationP: jasmine.createSpy('paginationP'),
       rowHeightP: jasmine.createSpy('rowHeightP'),
       rowsS: jasmine.createSpy('rowsS'),
+      searchRegexP: jasmine.createSpy('searchRegexP'),
       searchStrP: jasmine.createSpy('searchStrP'),
       selectedContentP: jasmine.createSpy('selectedContentP'),
       selectedPathP: jasmine.createSpy('selectedPathP'),
@@ -97,13 +98,14 @@ describe('presenter', function () {
     presenter.listHeightP.onValue(spies.listHeightP)
     presenter.loadingProgressP.onValue(spies.loadingProgressP)
     presenter.loadingS.onValue(spies.loadingS)
-    presenter.paginationP.onValue(spies.paginationP)
     presenter.openPathS.onValue(spies.openPathS)
-    presenter.selectedContentP.onValue(spies.selectedContentP)
-    presenter.selectedPathP.onValue(spies.selectedPathP)
+    presenter.paginationP.onValue(spies.paginationP)
     presenter.rowHeightP.onValue(spies.rowHeightP)
     presenter.rowsS.onValue(spies.rowsS)
+    presenter.searchRegexP.onValue(spies.searchRegexP)
     presenter.searchStrP.onValue(spies.searchStrP)
+    presenter.selectedContentP.onValue(spies.selectedContentP)
+    presenter.selectedPathP.onValue(spies.selectedPathP)
     presenter.sortP.onValue(spies.sortP)
   })
 
@@ -173,6 +175,7 @@ describe('presenter', function () {
         expect(spies.itemsCountP).toHaveBeenCalledWith(10)
         expect(spies.loadingProgressP).toHaveBeenCalledWith({total: 0, ready: 0})
         expect(spies.rowsS).toHaveBeenCalled()
+        expect(spies.searchRegexP).toHaveBeenCalledWith(undefined)
         expect(spies.searchStrP).toHaveBeenCalledWith('')
         expect(spies.sortP).toHaveBeenCalledWith({field: 'name', direction: 'desc'})
       })
@@ -213,6 +216,7 @@ describe('presenter', function () {
 
       it('should yield new valus for props related to results', function () {
         expect(spies.itemsCountP).toHaveBeenCalledWith(7)
+        expect(spies.searchRegexP).toHaveBeenCalledWith(jasmine.any(RegExp))
         expect(spies.searchStrP).toHaveBeenCalledWith('STR')
       })
 
