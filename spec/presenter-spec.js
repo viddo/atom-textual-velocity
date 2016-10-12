@@ -88,7 +88,7 @@ describe('presenter', function () {
       rowsS: jasmine.createSpy('rowsS'),
       searchStrP: jasmine.createSpy('searchStrP'),
       selectedContentP: jasmine.createSpy('selectedContentP'),
-      selectedPathS: jasmine.createSpy('selectedPathS'),
+      selectedPathP: jasmine.createSpy('selectedPathP'),
       sortP: jasmine.createSpy('sortP')
     }
     presenter.columnHeadersP.onValue(spies.columnHeadersP)
@@ -100,7 +100,7 @@ describe('presenter', function () {
     presenter.paginationP.onValue(spies.paginationP)
     presenter.openPathS.onValue(spies.openPathS)
     presenter.selectedContentP.onValue(spies.selectedContentP)
-    presenter.selectedPathS.onValue(spies.selectedPathS)
+    presenter.selectedPathP.onValue(spies.selectedPathP)
     presenter.rowHeightP.onValue(spies.rowHeightP)
     presenter.rowsS.onValue(spies.rowsS)
     presenter.searchStrP.onValue(spies.searchStrP)
@@ -285,12 +285,12 @@ describe('presenter', function () {
           expect(spies.rowsS.mostRecentCall.args[0].findIndex(row => row.selected)).toEqual(2)
         })
 
-        it('should preview the item', function () {
-          expect(spies.selectedPathS).toHaveBeenCalled()
-          expect(spies.selectedPathS.mostRecentCall.args[0]).toMatch(/.+note 5.md/)
+        it('should yield selected path', function () {
+          expect(spies.selectedPathP).toHaveBeenCalled()
+          expect(spies.selectedPathP.mostRecentCall.args[0]).toMatch(/.+note 5.md/)
         })
 
-        it('should yield note content', function () {
+        it('should yield selected note content', function () {
           expect(spies.selectedContentP).toHaveBeenCalled()
           expect(spies.selectedContentP.mostRecentCall.args[0]).toEqual('content of note 5')
         })
@@ -312,7 +312,7 @@ describe('presenter', function () {
           })
 
           it('should yield empty path', function () {
-            expect(spies.selectedPathS.mostRecentCall.args[0]).toBeFalsy()
+            expect(spies.selectedPathP.mostRecentCall.args[0]).toBeFalsy()
           })
 
           it('should should yield empty content', function () {

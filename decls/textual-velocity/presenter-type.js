@@ -7,12 +7,11 @@ declare type PresenterType = {
   loadingS: Bacon.Stream,
   openPathS: Bacon.Stream,
   paginationP: Bacon.Property,
-  selectedPathS: Bacon.Stream,
   rowHeightP: Bacon.Property,
   rowsS: Bacon.Stream,
   saveEditedCellContentS: Bacon.Stream,
   searchStrP: Bacon.Property,
   selectedContentP: Bacon.Property,
-  selectedPathS: Bacon.Stream,
+  selectedPathP: Bacon.Property,
   sortP: Bacon.Property
 }

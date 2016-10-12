@@ -34,7 +34,7 @@ describe('side-effects', function () {
       rowsS: new Bacon.Bus(),
       searchStrP: new Bacon.Bus(),
       selectedContentP: new Bacon.Bus(),
-      selectedPathS: new Bacon.Bus(),
+      selectedPathP: new Bacon.Bus(),
       sortP: new Bacon.Bus(),
 
       columnsP: new Bacon.Bus(),
@@ -65,7 +65,7 @@ describe('side-effects', function () {
       saveEditedCellContentS: buses.saveEditedCellContentS,
       searchStrP: buses.searchStrP.toProperty(),
       selectedContentP: buses.selectedContentP.toProperty(),
-      selectedPathS: buses.selectedPathS,
+      selectedPathP: buses.selectedPathP.toProperty(),
       sortP: buses.sortP.toProperty()
     }
 
@@ -277,7 +277,7 @@ describe('side-effects', function () {
   describe('preview', function () {
     describe('when selected a note that is not yet open', function () {
       beforeEach(function () {
-        buses.selectedPathS.push('/notes/file.txt')
+        buses.selectedPathP.push('/notes/file.txt')
         buses.selectedContentP.push('foobar')
         advanceClock(1000) // due to atom.workspace.open delay
         waitsFor(() => atom.workspace.getPaneItems().length)
@@ -288,7 +288,7 @@ describe('side-effects', function () {
       })
 
       it('should close open tab pane item when deselected', function () {
-        buses.selectedPathS.push(undefined)
+        buses.selectedPathP.push(undefined)
         buses.selectedContentP.push(undefined)
         expect(atom.workspace.getPaneItems()).not.toEqual([])
         advanceClock(1000)
@@ -299,7 +299,7 @@ describe('side-effects', function () {
         atom.workspace.open('other.txt')
         waitsFor(() => atom.workspace.getActivePaneItem().getPath().endsWith('other.txt'))
         runs(() => {
-          buses.selectedPathS.push(undefined)
+          buses.selectedPathP.push(undefined)
           buses.selectedContentP.push(undefined)
           advanceClock(1000)
           expect(atom.workspace.getPaneItems().length).toEqual(2)
@@ -312,7 +312,7 @@ describe('side-effects', function () {
         atom.workspace.open('/notes/open.txt')
         waitsFor(() => atom.workspace.getActivePaneItem())
         runs(() => {
-          buses.selectedPathS.push('/notes/open.txt')
+          buses.selectedPathP.push('/notes/open.txt')
           buses.selectedContentP.push('already active')
           advanceClock(1000)
         })
