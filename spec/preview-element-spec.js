@@ -24,9 +24,10 @@ describe('preview-element', function () {
     })
 
     it('should update the preview content', function () {
-      expect(preview.innerHTML).toContain('foo')
-      expect(preview.innerHTML).toContain('bar<br>')
-      expect(preview.innerHTML).toContain('baz')
+      const html = preview.rootElement.innerHTML
+      expect(html).toContain('foo')
+      expect(html).toContain('bar<br>')
+      expect(html).toContain('baz')
     })
 
     it('should have a path', function () {
