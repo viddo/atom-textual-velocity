@@ -18,7 +18,7 @@ describe('side-effects', function () {
 
   beforeEach(function () {
     atom.config.set('textual-velocity.listHeight', 123)
-    spyOn(atom.workspace, 'open')
+    spyOn(atom.workspace, 'open').andCallThrough()
 
     buses = {
       columnHeadersP: new Bacon.Bus(),
@@ -30,10 +30,11 @@ describe('side-effects', function () {
       openPathS: new Bacon.Bus(),
       paginationP: new Bacon.Bus(),
       saveEditedCellContentS: new Bacon.Bus(),
-      previewItemS: new Bacon.Bus(),
       rowHeightP: new Bacon.Bus(),
       rowsS: new Bacon.Bus(),
       searchStrP: new Bacon.Bus(),
+      selectedContentP: new Bacon.Bus(),
+      selectedPathS: new Bacon.Bus(),
       sortP: new Bacon.Bus(),
 
       columnsP: new Bacon.Bus(),
@@ -59,11 +60,12 @@ describe('side-effects', function () {
       loadingS: buses.loadingS,
       openPathS: buses.openPathS,
       paginationP: buses.paginationP.toProperty({start: 0, limit: 0}),
-      saveEditedCellContentS: buses.saveEditedCellContentS,
-      selectedPathS: buses.previewItemS,
       rowHeightP: buses.rowHeightP.toProperty(20),
       rowsS: buses.rowsS,
+      saveEditedCellContentS: buses.saveEditedCellContentS,
       searchStrP: buses.searchStrP.toProperty(),
+      selectedContentP: buses.selectedContentP.toProperty(),
+      selectedPathS: buses.selectedPathS,
       sortP: buses.sortP.toProperty()
     }
 
@@ -272,18 +274,53 @@ describe('side-effects', function () {
     })
   })
 
-  describe('when preview stream yields a path', function () {
-    beforeEach(function () {
-      buses.previewItemS.push('/notes/file.txt')
+  describe('preview', function () {
+    describe('when selected a note that is not yet open', function () {
+      beforeEach(function () {
+        buses.selectedPathS.push('/notes/file.txt')
+        buses.selectedContentP.push('foobar')
+        advanceClock(1000) // due to atom.workspace.open delay
+        waitsFor(() => atom.workspace.getPaneItems().length)
+      })
+
+      it('should open a tab with a preview of the note content', function () {
+        expect(atom.workspace.getPaneItems()[0].getPath()).toEqual('/notes/file.txt')
+      })
+
+      it('should close open tab pane item when deselected', function () {
+        buses.selectedPathS.push(undefined)
+        buses.selectedContentP.push(undefined)
+        expect(atom.workspace.getPaneItems()).not.toEqual([])
+        advanceClock(1000)
+        expect(atom.workspace.getPaneItems()).toEqual([])
+      })
+
+      it('should not close open preview when deselected and other item is open', function () {
+        atom.workspace.open('other.txt')
+        waitsFor(() => atom.workspace.getActivePaneItem().getPath().endsWith('other.txt'))
+        runs(() => {
+          buses.selectedPathS.push(undefined)
+          buses.selectedContentP.push(undefined)
+          advanceClock(1000)
+          expect(atom.workspace.getPaneItems().length).toEqual(2)
+        })
+      })
     })
 
-    it('should preview the file using a pending text editor', function () {
-      expect(atom.workspace.open).not.toHaveBeenCalled()
-      advanceClock(1000)
-      expect(atom.workspace.open).toHaveBeenCalled()
-      expect(atom.workspace.open.mostRecentCall.args[0]).toEqual('/notes/file.txt')
-      expect(atom.workspace.open.mostRecentCall.args[1].pending).toBe(true)
-      expect(atom.workspace.open.mostRecentCall.args[1].activatePane).toBe(false)
+    describe('when selected a note that is already open and active', function () {
+      beforeEach(function () {
+        atom.workspace.open('/notes/open.txt')
+        waitsFor(() => atom.workspace.getActivePaneItem())
+        runs(() => {
+          buses.selectedPathS.push('/notes/open.txt')
+          buses.selectedContentP.push('already active')
+          advanceClock(1000)
+        })
+      })
+
+      it('should not open any preview', function () {
+        expect(atom.workspace.getPaneItems().length).toEqual(1)
+      })
     })
   })
 

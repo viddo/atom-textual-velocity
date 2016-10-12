@@ -84,10 +84,11 @@ describe('presenter', function () {
       loadingS: jasmine.createSpy('loadingS'),
       paginationP: jasmine.createSpy('paginationP'),
       openPathS: jasmine.createSpy('openPathS'),
-      selectedPathS: jasmine.createSpy('selectedPathS'),
       rowHeightP: jasmine.createSpy('rowHeightP'),
       rowsS: jasmine.createSpy('rowsS'),
       searchStrP: jasmine.createSpy('searchStrP'),
+      selectedContentP: jasmine.createSpy('selectedContentP'),
+      selectedPathS: jasmine.createSpy('selectedPathS'),
       sortP: jasmine.createSpy('sortP')
     }
     presenter.columnHeadersP.onValue(spies.columnHeadersP)
@@ -98,6 +99,7 @@ describe('presenter', function () {
     presenter.loadingS.onValue(spies.loadingS)
     presenter.paginationP.onValue(spies.paginationP)
     presenter.openPathS.onValue(spies.openPathS)
+    presenter.selectedContentP.onValue(spies.selectedContentP)
     presenter.selectedPathS.onValue(spies.selectedPathS)
     presenter.rowHeightP.onValue(spies.rowHeightP)
     presenter.rowsS.onValue(spies.rowsS)
@@ -286,6 +288,14 @@ describe('presenter', function () {
         it('should preview the item', function () {
           expect(spies.selectedPathS).toHaveBeenCalled()
           expect(spies.selectedPathS.mostRecentCall.args[0]).toMatch(/.+note 5.md/)
+        })
+
+        it('should yield note content', function () {
+          expect(spies.selectedContentP).toHaveBeenCalled()
+          expect(spies.selectedContentP.mostRecentCall.args[0]).toEqual('content of note 5')
+        })
+
+        it('should not yield a value on openPath stream', function () {
           expect(spies.openPathS).not.toHaveBeenCalled()
         })
 
@@ -294,6 +304,20 @@ describe('presenter', function () {
           buses.openFileS.push()
           expect(spies.openPathS).toHaveBeenCalled()
           expect(spies.openPathS.mostRecentCall.args[0]).toMatch(/.+note 5.md/)
+        })
+
+        describe('when a note is deselected', function () {
+          beforeEach(function () {
+            buses.selectedFilenameS.push(undefined)
+          })
+
+          it('should yield empty path', function () {
+            expect(spies.selectedPathS.mostRecentCall.args[0]).toBeFalsy()
+          })
+
+          it('should should yield empty content', function () {
+            expect(spies.selectedContentP.mostRecentCall.args[0]).toBeFalsy()
+          })
         })
       })
 
