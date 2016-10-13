@@ -41,3 +41,5 @@ addons:
     - git
     - libgnome-keyring-dev
     - fakeroot
+  code_climate:
+    repo_token: 87dc83c7f5b2b14f1d4ab2a155bcd69d2c097c4828e811027327705a6b1cd1a6
