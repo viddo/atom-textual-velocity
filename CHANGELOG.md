@@ -3,9 +3,14 @@ All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](http://semver.org/) and [keepachangelog.com](http://keepachangelog.com/).
 
 ## [unreleased]
+
+## [0.10.0] - 2016-10-14
 ### Added
 - Option to exclude certain files from search [#29](https://github.com/viddo/atom-textual-velocity/pull/29)
-- Add a custom editor for notes preview [#25](https://github.com/viddo/atom-textual-velocity/pull/25)
+
+### Changed
+- Use a custom editor for notes preview [#25](https://github.com/viddo/atom-textual-velocity/pull/25)
+- Updated dependencies [#36](https://github.com/viddo/atom-textual-velocity/pull/36/commits/8bfe21f7adea39e3384bb2839822b80021d52d6a)
 
 ### Fixed
 - Notes cache not saved properly [#32](https://github.com/viddo/atom-textual-velocity/pull/32)
@@ -27,10 +32,10 @@ This project adheres to [Semantic Versioning](http://semver.org/) and [keepachan
 ### Changed
 - Internals completely refactored, mainly to make changes and new features easier to implement+test
 - Updated all dependencies to latest stable versions
+  - Upgrading chokidar to v1.6.0 [#9](https://github.com/viddo/atom-textual-velocity/issues/9)
 - Extracted file icons to its own column definition
 
 ### Fixed
-- Upgrading chokidar to v1.6.0 [#9](https://github.com/viddo/atom-textual-velocity/issues/9)
 - Do not load nvTags if the platform doesn't support the necessary dependencies [#20](https://github.com/viddo/atom-textual-velocity/issues/20)
 - Performance improvements; The first initial load is incremental, which makes the notes scan somewhat slower but on the other hand the UI is no longer unresponsive during this phase. However, after this initial load is almost instant. [#8](https://github.com/viddo/atom-textual-velocity/issues/8)
 
