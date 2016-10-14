@@ -308,6 +308,13 @@ describe('side-effects', function () {
           expect(atom.workspace.getPaneItems().length).toEqual(2)
         })
       })
+
+      it('should leave preview open if there is no content for selected path', function () {
+        buses.selectedContentP.push(undefined)
+        advanceClock(1000)
+        expect(atom.workspace.getPaneItems()).not.toEqual([])
+        expect(atom.workspace.getPaneItems()[0].getPath()).toEqual('/notes/file.txt')
+      })
     })
 
     describe('when selected a note that is already open and active', function () {

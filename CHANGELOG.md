@@ -3,6 +3,8 @@ All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](http://semver.org/) and [keepachangelog.com](http://keepachangelog.com/).
 
 ## [unreleased]
+#### Fixed
+- Fix note rename throwing error _Uncaught TypeError: Cannot read property 'replace' of undefined_ [#37](https://github.com/viddo/atom-textual-velocity/issues/37)
 
 ## [0.10.0] - 2016-10-14
 ### Added
