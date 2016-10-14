@@ -87,7 +87,8 @@ describe('view-ctrl', function () {
       beforeEach(function () {
         newKeyEvent = (keyCode) => ({
           keyCode: keyCode,
-          preventDefault: jasmine.createSpy('preventDefault')
+          preventDefault: jasmine.createSpy('preventDefault'),
+          stopPropagation: jasmine.createSpy('stopPropagation')
         })
       })
 
@@ -109,6 +110,7 @@ describe('view-ctrl', function () {
         viewCtrl._keyDownBus.push(event)
         expect(spies.keyEnterS).toHaveBeenCalled()
         expect(event.preventDefault).toHaveBeenCalled()
+        expect(event.stopPropagation).toHaveBeenCalled()
 
         expect(spies.textInputS).not.toHaveBeenCalled()
         expect(spies.keyDownS).not.toHaveBeenCalled()
@@ -119,6 +121,7 @@ describe('view-ctrl', function () {
         let event = newKeyEvent(38) // up
         viewCtrl._keyDownBus.push(event)
         expect(event.preventDefault).toHaveBeenCalled()
+        expect(event.stopPropagation).toHaveBeenCalled()
         expect(spies.keyUpS).toHaveBeenCalledWith(event)
         expect(spies.keyDownS).not.toHaveBeenCalled()
         expect(spies.keyEnterS).not.toHaveBeenCalled()
@@ -129,9 +132,9 @@ describe('view-ctrl', function () {
         event = newKeyEvent(40) // down
         viewCtrl._keyDownBus.push(event)
         expect(event.preventDefault).toHaveBeenCalled()
+        expect(event.stopPropagation).toHaveBeenCalled()
         expect(spies.keyUpS).not.toHaveBeenCalled()
         expect(spies.keyDownS).toHaveBeenCalledWith(event)
-        expect(event.preventDefault).toHaveBeenCalled()
 
         expect(spies.keyEnterS).not.toHaveBeenCalled()
         expect(spies.textInputS).not.toHaveBeenCalled()
@@ -143,6 +146,7 @@ describe('view-ctrl', function () {
         expect(spies.keyUpS).not.toHaveBeenCalled()
         expect(spies.keyDownS).not.toHaveBeenCalled()
         expect(event.preventDefault).not.toHaveBeenCalled()
+        expect(event.stopPropagation).not.toHaveBeenCalled()
         expect(spies.keyEnterS).not.toHaveBeenCalled()
         expect(spies.textInputS).not.toHaveBeenCalled()
       })

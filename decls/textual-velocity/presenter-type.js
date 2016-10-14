@@ -5,13 +5,14 @@ declare type PresenterType = {
   listHeightP: Bacon.Property,
   loadingProgressP: Bacon.Property,
   loadingS: Bacon.Stream,
-  notesP: Bacon.Property,
   openPathS: Bacon.Stream,
   paginationP: Bacon.Property,
-  selectedPathS: Bacon.Stream,
   rowHeightP: Bacon.Property,
   rowsS: Bacon.Stream,
   saveEditedCellContentS: Bacon.Stream,
+  searchRegexP: Bacon.Property,
   searchStrP: Bacon.Property,
+  selectedContentP: Bacon.Property,
+  selectedPathP: Bacon.Property,
   sortP: Bacon.Property
 }
