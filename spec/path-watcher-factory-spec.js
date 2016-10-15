@@ -198,20 +198,15 @@ describe('path-watcher-factory', () => {
         })
 
         runs(() => {
-          prevContent = sifterPSpy.mostRecentCall.args[0].items['note-1.txt'].content
-          sifterPSpy.reset()
           testFileReader.read.reset()
           fs.writeFileSync(notesPath.fullPath('note-1.txt'), 'meh something longer than one word')
         })
         waitsFor('note content change', () => {
-          return sifterPSpy.calls.length >= 2 // one for each file reader
+          return sifterPSpy.mostRecentCall.args[0].items['note-1.txt'].content !== '1' // should have updated changed note
         })
         runs(() => {
           expect(testFileReader.read).toHaveBeenCalled()
-
-          const notes = sifterPSpy.mostRecentCall.args[0].items
-          expect(notes['note-1.txt'].content).not.toEqual(prevContent, 'should have updated changed note')
-          expect(notes['note-1.txt'].contentAsInt).toBeNaN(NaN, 'should have updated field value')
+          expect(sifterPSpy.mostRecentCall.args[0].items['note-1.txt'].contentAsInt).toBeNaN(NaN, 'should have updated field value')
         })
 
         runs(() => {
