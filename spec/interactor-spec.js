@@ -22,6 +22,7 @@ describe('interactor', function () {
       keyEscS: new Bacon.Bus(),
       keyUpS: new Bacon.Bus(),
       listHeightS: new Bacon.Bus(),
+      newFilenameS: new Bacon.Bus(),
       rowHeightS: new Bacon.Bus(),
       saveEditedCellContentS: new Bacon.Bus(),
       scrollTopS: new Bacon.Bus(),
@@ -68,6 +69,7 @@ describe('interactor', function () {
 
     const pathWatcher = {
       initialScanDoneP: buses.initialScanDoneP.toProperty(),
+      newFilenameS: buses.newFilenameS,
       sifterP: buses.sifterP.toProperty(new Sifter([])),
       dispose: spies.disposePathWatcher
     }
@@ -261,8 +263,7 @@ describe('interactor', function () {
         spies.selectedFilenameS.reset()
         notes['renamed note 6.md'] = notes['note 6.md']
         delete notes['note 6.md']
-        buses.saveEditedCellContentS.push('renamed note 6.md')
-        buses.sifterP.push(new Sifter(notes))
+        buses.newFilenameS.push('renamed note 6.md')
         buses.sifterP.push(new Sifter(notes))
         expect(spies.selectedFilenameS.mostRecentCall.args[0]).toEqual('renamed note 6.md', 'should set selected to the renamed file')
       })
