@@ -37,7 +37,7 @@ describe('path-watcher-factory', () => {
   })
 
   describe('.watch', function () {
-    let notesCache, notesFileFilter, notesPath, sifterPSpy, initialScanDonePSpy, pathWatcher, prevContent, unsubInitialScanDone, unsubFilesP
+    let newFilenameSpy, notesCache, notesFileFilter, notesPath, sifterPSpy, initialScanDonePSpy, pathWatcher, prevContent, unsubInitialScanDone, unsubFilesP, unsubNewFilename
 
     beforeEach(function () {
       const tempDirPath = temp.mkdirSync('empty-dir')
@@ -52,12 +52,10 @@ describe('path-watcher-factory', () => {
 
       sifterPSpy = jasmine.createSpy('sifterP')
       initialScanDonePSpy = jasmine.createSpy('initialScanDoneP')
+      newFilenameSpy = jasmine.createSpy('newFilenameS')
     })
 
     afterEach(function () {
-      unsubInitialScanDone()
-      unsubFilesP()
-      pathWatcher.dispose()
       temp.cleanupSync()
     })
 
@@ -67,7 +65,15 @@ describe('path-watcher-factory', () => {
         pathWatcher = pathWatcherFactory.watch(notesCache, notesPath, notesFileFilter)
 
         unsubInitialScanDone = pathWatcher.initialScanDoneP.onValue(initialScanDonePSpy)
+        unsubNewFilename = pathWatcher.newFilenameS.onValue(newFilenameSpy)
         unsubFilesP = pathWatcher.sifterP.onValue(sifterPSpy)
+      })
+
+      afterEach(function () {
+        unsubInitialScanDone()
+        unsubNewFilename()
+        unsubFilesP()
+        pathWatcher.dispose()
       })
 
       it('should return a watcher that handles the life-cycle of a given path', function () {
@@ -81,6 +87,7 @@ describe('path-watcher-factory', () => {
           expect(sifterPSpy.calls[1].args[0].items).toEqual(jasmine.any(Object), 'notes should have some entries')
           expect(sifterPSpy.calls[2].args[0].items['note-1.txt']).toBeDefined()
           expect(sifterPSpy.calls[3].args[0].items['note-3.txt']).toBeDefined()
+          expect(newFilenameSpy.mostRecentCall.args[0]).toEqual('note-3.txt')
         })
 
         waitsFor('all notes to be read', () => {

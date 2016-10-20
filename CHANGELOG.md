@@ -3,6 +3,8 @@ All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](http://semver.org/) and [keepachangelog.com](http://keepachangelog.com/).
 
 ## [unreleased]
+#### Fixed
+- Fix saving a new note causes the preview of last selected item to open [#41](https://github.com/viddo/atom-textual-velocity/issues/41)
 
 ## [0.10.1] - 2016-10-14
 #### Fixed
