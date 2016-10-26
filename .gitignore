@@ -1,5 +1,6 @@
 .DS_Store
 .tern-project
+elm-stuff
 npm-debug.log
 node_modules
 spec/fixtures/notes
