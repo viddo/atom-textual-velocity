@@ -318,29 +318,65 @@ describe('side-effects', function () {
     })
 
     describe('when selected a note that is already open and active', function () {
-      beforeEach(function () {
+      it('should reuse open editor if possible', function () {
+        // open a note
         atom.workspace.open('/notes/open.txt')
-        waitsFor(() => atom.workspace.getActivePaneItem())
+        waitsFor(() => {
+          const activeItem = atom.workspace.getActivePaneItem()
+          return activeItem && activeItem.getPath() === '/notes/open.txt'
+        })
         runs(() => {
+          // select same note
           buses.selectedPathP.push('/notes/open.txt')
-          buses.selectedContentP.push('already active')
+          buses.selectedContentP.push('already open but not active')
+          buses.searchRegexP.push(null)
+          advanceClock(1000)
+          expect(atom.workspace.getPaneItems().length).toEqual(1) // should not open any preview
+
+          // select another note
+          buses.selectedPathP.push('/notes/open2.txt')
+          buses.selectedContentP.push('another file')
           advanceClock(1000)
         })
-      })
-
-      it('should not open any preview', function () {
-        expect(atom.workspace.getPaneItems().length).toEqual(1)
+        waitsFor(() => {
+          const activeItem = atom.workspace.getActivePaneItem()
+          return activeItem && activeItem.getPath() === '/notes/open2.txt'
+        })
+        runs(() => {
+          // select already open file again
+          buses.selectedPathP.push('/notes/open.txt')
+          buses.selectedContentP.push('already open but not active')
+          advanceClock(1000)
+          expect(atom.workspace.getActivePaneItem().getPath()).toMatch(/open.txt$/)
+          expect(atom.workspace.getPaneItems().length).toEqual(1) // closed preview
+        })
       })
     })
   })
 
   describe('when open stream yields a path', function () {
     beforeEach(function () {
-      buses.openPathS.push('/notes/file.txt')
+      // preview
+      buses.selectedPathP.push('/notes/file.txt')
+      buses.selectedContentP.push('this should open a preview first')
+      buses.searchRegexP.push(null)
+      advanceClock(1000)
+      waitsFor(() => {
+        return atom.workspace.getPaneItems().length === 1 // wait for the preview
+      })
+      runs(() => {
+        buses.openPathS.push('/notes/file.txt')
+      })
     })
 
-    it('should open text editor for file', function () {
+    it('should replace preview with a normal text editor for file', function () {
       expect(atom.workspace.open).toHaveBeenCalledWith('/notes/file.txt')
+      waitsFor(() => {
+        return atom.workspace.getPaneItems().length === 1 // wait for the editor to open
+      })
+      runs(() => {
+        expect(atom.workspace.getPaneItems().length).toEqual(1) // should have closed preview
+      })
     })
   })
 
