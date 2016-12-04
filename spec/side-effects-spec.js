@@ -380,6 +380,32 @@ describe('side-effects', function () {
     })
   })
 
+  describe('when preview is clicked', function () {
+    beforeEach(function () {
+      // preview
+      buses.selectedPathP.push('/notes/file.txt')
+      buses.selectedContentP.push('this should open a preview first')
+      buses.searchRegexP.push(null)
+      advanceClock(1000)
+      waitsFor(() => {
+        return atom.workspace.getPaneItems().length === 1 // wait for the preview
+      })
+      runs(() => {
+        atom.workspace.getPaneItems()[0].click()
+      })
+    })
+
+    it('should replace preview with a normal text editor for file', function () {
+      expect(atom.workspace.open).toHaveBeenCalledWith('/notes/file.txt')
+      waitsFor(() => {
+        return atom.workspace.getPaneItems().length === 1 // wait for the editor to open
+      })
+      runs(() => {
+        expect(atom.workspace.getPaneItems().length).toEqual(1) // should have closed preview
+      })
+    })
+  })
+
   describe('when columns change', function () {
     beforeEach(function () {
       atom.config.setSchema('textual-velocity', {

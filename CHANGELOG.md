@@ -3,6 +3,8 @@ All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](http://semver.org/) and [keepachangelog.com](http://keepachangelog.com/).
 
 ## [unreleased]
+#### Fixed
+- Replace preview with text editor when clicked (related to previous change [#43](https://github.com/viddo/atom-textual-velocity/issues/43))
 
 ## [0.11.0] - 2016-11-19
 #### Changed
