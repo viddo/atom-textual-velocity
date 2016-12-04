@@ -8,7 +8,7 @@ For those of you who used [Notational Velocity](http://notational.net/) or [nvAl
 
 Caveats:
  - Still WIP, see the [change log](CHANGELOG.md) for what's been done so far, and [v1 roadmap milestone](https://github.com/viddo/atom-textual-velocity/milestones) for planned/upcoming features.
- - Developed and tested on MacOSX, it _should_ work fine on Linux and Windows too but there's not guarantees right now. Help is appreciated!
+ - Developed and tested on MacOSX, it _should_ work fine on Linux and Windows too but there's no guarantees right now. Help is appreciated!
  - Due to Atom's purpose of being a _text_-editor only text files are intended to be supported, compared to the single-database option NV offers.
 
 ## Usage
