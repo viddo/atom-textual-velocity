@@ -3,6 +3,8 @@ All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](http://semver.org/) and [keepachangelog.com](http://keepachangelog.com/).
 
 ## [unreleased]
+#### Fixed
+- Regression from previous fix, preventing new note from being created on <kbd>enter</kbd>
 
 ## [0.11.1] - 2016-12-04
 #### Fixed

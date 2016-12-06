@@ -82,6 +82,7 @@ describe('presenter', function () {
       listHeightP: jasmine.createSpy('listHeightP'),
       loadingProgressP: jasmine.createSpy('loadingProgressP'),
       loadingS: jasmine.createSpy('loadingS'),
+      newPathP: jasmine.createSpy('newPathP'),
       openPathS: jasmine.createSpy('openPathS'),
       paginationP: jasmine.createSpy('paginationP'),
       rowHeightP: jasmine.createSpy('rowHeightP'),
@@ -98,6 +99,7 @@ describe('presenter', function () {
     presenter.listHeightP.onValue(spies.listHeightP)
     presenter.loadingProgressP.onValue(spies.loadingProgressP)
     presenter.loadingS.onValue(spies.loadingS)
+    presenter.newPathP.onValue(spies.newPathP)
     presenter.openPathS.onValue(spies.openPathS)
     presenter.paginationP.onValue(spies.paginationP)
     presenter.rowHeightP.onValue(spies.rowHeightP)
@@ -129,6 +131,8 @@ describe('presenter', function () {
     let notes
 
     beforeEach(function () {
+      atom.config.set('textual-velocity.defaultExt', 'md')
+
       const notesPathP = NotesPath('/notes')
       buses.notesPathP.push(notesPathP)
       buses.loadingS.push()
@@ -307,7 +311,6 @@ describe('presenter', function () {
           expect(spies.openPathS).not.toHaveBeenCalled()
           buses.openFileS.push()
           expect(spies.openPathS).toHaveBeenCalled()
-          expect(spies.openPathS.mostRecentCall.args[0]).toMatch(/.+note 5.md/)
         })
 
         describe('when a note is deselected', function () {
@@ -326,25 +329,27 @@ describe('presenter', function () {
       })
 
       it('should open new note when there is no selected note', function () {
-        atom.config.set('textual-velocity.defaultExt', 'md')
         buses.selectedFilenameS.push('note 3.md') // preqrequisite for open
 
         expect(spies.openPathS).not.toHaveBeenCalled()
         buses.openFileS.push()
         expect(spies.openPathS).toHaveBeenCalled()
-        expect(spies.openPathS.mostRecentCall.args[0]).toEqual('/notes/note 3.md')
+        expect(spies.selectedPathP.mostRecentCall.args[0]).toEqual('/notes/note 3.md')
+        expect(spies.newPathP.mostRecentCall.args[0]).toEqual('/notes/STR.md', 'new path should have a default extension')
 
         buses.searchStrS.push('')
         buses.sifterResultP.push(
           newSifterResult({query: ''})
         )
         buses.selectedFilenameS.push(undefined)
-        buses.openFileS.push()
-        expect(spies.openPathS.mostRecentCall.args[0]).toEqual('/notes/untitled.md', 'should have default file extension')
+        buses.searchStrS.push('')
+        expect(spies.openPathS).toHaveBeenCalled()
+        expect(spies.newPathP.mostRecentCall.args[0]).toEqual('/notes/untitled.md', 'new path should have default file name + extension')
 
         atom.config.set('textual-velocity.defaultExt', '.txt')
-        buses.openFileS.push()
-        expect(spies.openPathS.mostRecentCall.args[0]).toEqual('/notes/untitled.txt', 'should have custom file extension')
+        buses.searchStrS.push('')
+        expect(spies.openPathS).toHaveBeenCalled()
+        expect(spies.newPathP.mostRecentCall.args[0]).toEqual('/notes/untitled.txt', 'new path should have custom file extension')
       })
     })
   })
