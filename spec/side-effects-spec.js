@@ -27,6 +27,7 @@ describe('side-effects', function () {
       listHeightS: new Bacon.Bus(),
       loadingProgressP: new Bacon.Bus(),
       loadingS: new Bacon.Bus(),
+      newPathP: new Bacon.Bus(),
       openPathS: new Bacon.Bus(),
       paginationP: new Bacon.Bus(),
       saveEditedCellContentS: new Bacon.Bus(),
@@ -59,6 +60,7 @@ describe('side-effects', function () {
       listHeightP: buses.listHeightS.toProperty(100),
       loadingProgressP: buses.loadingProgressP.toProperty({read: 0, total: 0}),
       loadingS: buses.loadingS,
+      newPathP: buses.newPathP.toProperty(),
       openPathS: buses.openPathS,
       paginationP: buses.paginationP.toProperty({start: 0, limit: 0}),
       rowHeightP: buses.rowHeightP.toProperty(20),
@@ -354,28 +356,52 @@ describe('side-effects', function () {
     })
   })
 
-  describe('when open stream yields a path', function () {
-    beforeEach(function () {
-      // preview
-      buses.selectedPathP.push('/notes/file.txt')
-      buses.selectedContentP.push('this should open a preview first')
-      buses.searchRegexP.push(null)
-      advanceClock(1000)
-      waitsFor(() => {
-        return atom.workspace.getPaneItems().length === 1 // wait for the preview
+  describe('when open stream yields an event', function () {
+    describe('when there is a selected path', function () {
+      beforeEach(function () {
+        // preview
+        buses.selectedPathP.push('/notes/file.txt')
+        buses.selectedContentP.push('this should open a preview first')
+        buses.searchRegexP.push(null)
+        buses.newPathP.push('a-new-file')
+        advanceClock(1000)
+        waitsFor(() => {
+          return atom.workspace.getPaneItems().length === 1 // wait for the preview
+        })
+        runs(() => {
+          buses.openPathS.push(null)
+        })
       })
-      runs(() => {
-        buses.openPathS.push('/notes/file.txt')
+
+      it('should replace preview with a normal text editor for file', function () {
+        expect(atom.workspace.open).toHaveBeenCalledWith('/notes/file.txt')
+        waitsFor(() => {
+          return atom.workspace.getPaneItems().length === 1 // wait for the editor to open
+        })
+        runs(() => {
+          expect(atom.workspace.getPaneItems().length).toEqual(1) // should have closed preview
+        })
       })
     })
 
-    it('should replace preview with a normal text editor for file', function () {
-      expect(atom.workspace.open).toHaveBeenCalledWith('/notes/file.txt')
-      waitsFor(() => {
-        return atom.workspace.getPaneItems().length === 1 // wait for the editor to open
+    describe('when there is no selected path', function () {
+      beforeEach(function () {
+        // preview
+        buses.selectedPathP.push(null)
+        buses.selectedContentP.push(null)
+        buses.searchRegexP.push(null)
+        buses.newPathP.push('/notes/a-new-file.txt')
+        buses.openPathS.push(null)
       })
-      runs(() => {
-        expect(atom.workspace.getPaneItems().length).toEqual(1) // should have closed preview
+
+      it('should open a new text editor for path representing search query', function () {
+        expect(atom.workspace.open).toHaveBeenCalledWith('/notes/a-new-file.txt')
+        waitsFor(() => {
+          return atom.workspace.getPaneItems().length === 1 // wait for the editor to open
+        })
+        runs(() => {
+          expect(atom.workspace.getPaneItems().length).toEqual(1) // should have closed preview
+        })
       })
     })
   })
@@ -385,6 +411,7 @@ describe('side-effects', function () {
       // preview
       buses.selectedPathP.push('/notes/file.txt')
       buses.selectedContentP.push('this should open a preview first')
+      buses.newPathP.push('/notes/fil.md')
       buses.searchRegexP.push(null)
       advanceClock(1000)
       waitsFor(() => {
