@@ -49,7 +49,7 @@ describe('path-scan-task', () => {
   it('should yield add events for each file found in dir', function () {
     expect(addSpy).toHaveBeenCalled()
     expect(addSpy.calls.length).toEqual(4)
-    expect(addSpy.calls[0].args[0]).toEqual('note-1.txt')
-    expect(addSpy.calls[0].args[1]).toEqual(jasmine.any(Object))
+    expect(addSpy.calls[0].args[0].filename).toEqual(jasmine.any(String))
+    expect(addSpy.calls[0].args[0].stats).toEqual(jasmine.any(Object))
   })
 })
