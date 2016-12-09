@@ -4,7 +4,7 @@ type StartInitialScanActionType = {
 }
 type ScannedFileActionType = {
   type: 'SCANNED_FILE',
-  file: FileType
+  rawFile: RawFileType
 }
 type InitialScanDoneActionType = {
   type: 'INITIAL_SCAN_DONE'
@@ -13,16 +13,18 @@ type DisposeActionType = {
   type: 'DISPOSE'
 }
 
-type InitialScanStoreType = {
+type InitialScanStateType = {
   done: boolean,
-  files: Array<FileType>
+  rawFiles: Array<RawFileType>
 }
-type UiStoreType = {
+type NotesStateType = any
+type UiStateType = {
   listHeight: number
 }
-type StoreType = {
-  initialScan: InitialScanStoreType,
-  ui: UiStoreType
+type StateType = {
+  initialScan: InitialScanStateType,
+  notes: NotesStateType,
+  ui: UiStateType
 }
 
 type FsStatsType =
@@ -32,7 +34,17 @@ type FsStatsType =
   })
 
 
-type FileType = {
+type RawFileType = {
   filename: string,
   stats: FsStatsType
+}
+
+type NoteFieldType = {
+  notePropName: string,
+  value?: (note: any, filename: string) => any
+}
+
+type NotesFieldsType = {
+  add (field: NoteFieldType): void,
+  allFields (): Array<NoteFieldType>
 }

@@ -40,8 +40,8 @@ describe('initial-scan epic', () => {
 
       const [, action] = store.getActions()
       expect(action.type).toEqual('SCANNED_FILE')
-      expect(action.file.filename).toEqual('an-example.txt')
-      expect(action.file.stats).toEqual(jasmine.any(Object))
+      expect(action.rawFile.filename).toEqual('an-example.txt')
+      expect(action.rawFile.stats).toEqual(jasmine.any(Object))
     })
   })
 
