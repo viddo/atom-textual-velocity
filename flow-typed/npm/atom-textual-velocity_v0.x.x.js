@@ -1,82 +1,91 @@
-type ActionType =
-  | StartInitialScanActionType
-  | ScannedFileActionType
-  | InitialScanDoneActionType
-  | DisposeActionType
-type StartInitialScanActionType = {
+type Action =
+  | StartInitialScan
+  | ScannedFile
+  | InitialScanDone
+  | Dispose
+type StartInitialScan = {
   type: 'START_INITIAL_SCAN'
 }
-type ScannedFileActionType = {
+type ScannedFile = {
   type: 'SCANNED_FILE',
-  rawFile: RawFileType
+  rawFile: RawFile
 }
-type InitialScanDoneActionType = {
+type InitialScanDone = {
   type: 'INITIAL_SCAN_DONE'
 }
-type DisposeActionType = {
+type Dispose = {
   type: 'DISPOSE'
 }
 
-type ColumnStateType = {
-  title: string,
-  width: number
-}
-type ConfigStateType = {
+type Config = {
   dir: string,
   listHeight: number,
   rowHeight: number,
   sortDirection: string,
   sortField: string
 }
-type InitialScanStateType = {
+type InitialScan = {
   done: boolean,
-  rawFiles: Array<RawFileType>
+  rawFiles: Array<RawFile>
 }
-type NotesStateType = any
-type PaginationStateType = {
+type Notes = any
+type Pagination = {
   start: number,
   limit: number
 }
-type RowStateType = {
+type Row = {
   id: string,
   filename: string,
   selected: boolean,
   cells: Array<CellType|EditCellType>
 }
-type StateType = {
-  columns: Array<ColumnStateType>,
-  config: ConfigStateType,
-  initialScan: InitialScanStateType,
-  notes: NotesStateType,
-  pagination: PaginationStateType,
+type State = {
+  columns: Array<{
+    title: string,
+    width: number
+  }>,
+  config: Config,
+  initialScan: InitialScan,
+  notes: Notes,
+  pagination: Pagination,
   query: string,
-  rows: Array<RowStateType>
+  rows: Array<Row>
 }
 
-type FsStatsType =
+type FsStats =
   | (fs.Stats & {
     mtime: Date,
     birthtime?: Date
   })
 
 
-type RawFileType = {
+type RawFile = {
   filename: string,
-  stats: FsStatsType
+  stats: FsStats
 }
 
-type NoteFieldType = {
+type NoteField = {
   notePropName: string,
   value?: (note: any, filename: string) => any
 }
 
-type NotesFieldsType = {
-  add (field: NoteFieldType): void,
+type NotesFields = {
+  add (field: NoteField): void,
   propNames (): Array<string>,
-  all (): Array<NoteFieldType>
+  all (): Array<NoteField>
 }
 
-type ColumnsType = {
-  add (column: ColumnType): void,
-  all (): Array<ColumnType>
+type Columns = {
+  add (column: Column): void,
+  all (): Array<Column>
+}
+type Column = {
+  cellContent (params: CellContentParamsType): CellContentType,
+  description: string,
+  editCellName?: string,
+  editCellStr?: (note: NoteType) => string,
+  position?: number,
+  sortField: string,
+  title: string,
+  width: number
 }

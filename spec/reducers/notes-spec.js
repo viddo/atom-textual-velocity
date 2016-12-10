@@ -5,8 +5,8 @@ import NotesFields from '../../lib/notes-fields'
 import NotesReducer from '../../lib/reducers/notes'
 
 describe('notes reducer', () => {
-  let state: NotesStateType
-  let rawNotes: Array<RawFileType>
+  let state: Notes
+  let rawNotes: Array<RawFile>
 
   describe('when initial-scan-done action', function () {
     beforeEach(function () {

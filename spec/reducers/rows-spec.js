@@ -7,10 +7,10 @@ import NotesFields from '../../lib/notes-fields'
 import RowsReducer from '../../lib/reducers/rows'
 
 describe('rows reducer', () => {
-  let state: Array<RowStateType>
-  let newState: StateType
+  let state: Array<Row>
+  let newState: State
   let rowsReducer
-  let action: ActionType
+  let action: Action
 
   describe('when initial-scan-done action', function () {
     beforeEach(function () {
