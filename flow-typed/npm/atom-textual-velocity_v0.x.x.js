@@ -1,4 +1,8 @@
-type ActionType = StartInitialScanActionType | ScannedFileActionType | InitialScanDoneActionType | DisposeActionType
+type ActionType =
+  | StartInitialScanActionType
+  | ScannedFileActionType
+  | InitialScanDoneActionType
+  | DisposeActionType
 type StartInitialScanActionType = {
   type: 'START_INITIAL_SCAN'
 }
@@ -13,18 +17,40 @@ type DisposeActionType = {
   type: 'DISPOSE'
 }
 
+type ColumnStateType = {
+  title: string,
+  width: number
+}
+type ConfigStateType = {
+  dir: string,
+  listHeight: number,
+  rowHeight: number,
+  sortDirection: string,
+  sortField: string
+}
 type InitialScanStateType = {
   done: boolean,
   rawFiles: Array<RawFileType>
 }
 type NotesStateType = any
-type UiStateType = {
-  listHeight: number
+type PaginationStateType = {
+  start: number,
+  limit: number
+}
+type RowStateType = {
+  id: string,
+  filename: string,
+  selected: boolean,
+  cells: Array<CellType|EditCellType>
 }
 type StateType = {
+  columns: Array<ColumnStateType>,
+  config: ConfigStateType,
   initialScan: InitialScanStateType,
   notes: NotesStateType,
-  ui: UiStateType
+  pagination: PaginationStateType,
+  query: string,
+  rows: Array<RowStateType>
 }
 
 type FsStatsType =
@@ -46,5 +72,11 @@ type NoteFieldType = {
 
 type NotesFieldsType = {
   add (field: NoteFieldType): void,
-  allFields (): Array<NoteFieldType>
+  propNames (): Array<string>,
+  all (): Array<NoteFieldType>
+}
+
+type ColumnsType = {
+  add (column: ColumnType): void,
+  all (): Array<ColumnType>
 }

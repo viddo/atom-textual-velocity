@@ -31,11 +31,22 @@ describe('notes reducer', () => {
       state = notesReducer(state, initialScanDone(), rawNotes)
     })
 
-    it('should apply notesFields on notes', function () {
+    it('should reduce notes from raw notes', function () {
       expect(Object.keys(state).length).toEqual(2)
+    })
+
+    it('should apply notesFields on notes', function () {
       expect(state['a.txt']).toEqual(jasmine.any(Object))
       expect(state['a.txt'].ext).toEqual('txt')
       expect(state['b.md'].ext).toEqual('md')
+    })
+
+    it('should set an unique id on the note', function () {
+      expect(state['a.txt'].id).toEqual(jasmine.any(String))
+    })
+
+    it('should set stats object on note', function () {
+      expect(state['a.txt'].stats).toEqual(jasmine.any(Object))
     })
   })
 })

@@ -40,8 +40,17 @@ describe('initial-scan epic', () => {
 
       const [, action] = store.getActions()
       expect(action.type).toEqual('SCANNED_FILE')
+      expect(action.rawFile).toEqual(jasmine.any(Object))
       expect(action.rawFile.filename).toEqual('an-example.txt')
+    })
+
+    it('should have converted stats strings to date object', function () {
+      const [, action] = store.getActions()
       expect(action.rawFile.stats).toEqual(jasmine.any(Object))
+      expect(action.rawFile.stats.atime).toEqual(jasmine.any(Date))
+      expect(action.rawFile.stats.birthtime).toEqual(jasmine.any(Date))
+      expect(action.rawFile.stats.ctime).toEqual(jasmine.any(Date))
+      expect(action.rawFile.stats.mtime).toEqual(jasmine.any(Date))
     })
   })
 
