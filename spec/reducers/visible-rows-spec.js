@@ -4,12 +4,12 @@ import Columns from '../../lib/columns'
 import FileIconColumn from '../../lib/columns/file-icon-column'
 import SummaryColumn from '../../lib/columns/summary-column'
 import NotesFields from '../../lib/notes-fields'
-import RowsReducer from '../../lib/reducers/rows'
+import VisibleRowsReducer from '../../lib/reducers/visible-rows'
 
-describe('rows reducer', () => {
+describe('visibleRows reducer', () => {
   let state: Array<Row>
   let newState: State
-  let rowsReducer
+  let visibleRowsReducer
   let action: Action
 
   describe('when initial-scan-done action', function () {
@@ -41,17 +41,17 @@ describe('rows reducer', () => {
           limit: 3
         },
         query: '',
-        rows: []
+        visibleRows: []
       }
       state = []
 
-      rowsReducer = RowsReducer(columns, notesFields)
+      visibleRowsReducer = VisibleRowsReducer(columns, notesFields)
     })
 
     it('should return state if initial scan is not done yet', function () {
       const prevState = state
       action = {type: 'START_INITIAL_SCAN'}
-      state = rowsReducer(state, action, newState)
+      state = visibleRowsReducer(state, action, newState)
       expect(prevState).toBe(state)
     })
 
@@ -86,10 +86,10 @@ describe('rows reducer', () => {
           }
         }
         action = {type: 'INITIAL_SCAN_DONE'}
-        state = rowsReducer(state, action, newState)
+        state = visibleRowsReducer(state, action, newState)
       })
 
-      it('should return initial rows', function () {
+      it('should return initial visibleRows', function () {
         expect(state).toEqual(jasmine.any(Array))
         expect(state.length).toEqual(3)
       })
