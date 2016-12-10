@@ -49,7 +49,7 @@ type State = {
   notes: Notes,
   pagination: Pagination,
   query: string,
-  rows: Array<Row>
+  visibleRows: Array<Row>
 }
 
 type FsStats =
