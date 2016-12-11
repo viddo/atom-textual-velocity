@@ -5,7 +5,7 @@ import SideEffects from '../lib/side-effects'
 import ViewCtrl from '../lib/view-ctrl'
 import defaultConfig from '../lib/default-config'
 
-describe('side-effects', function () {
+xdescribe('side-effects', function () {
   let workspaceElement, buses, panel, sideEffects, viewCtrl, presenter, spies, input
 
   const assertTextInputFocus = () => {

@@ -2,6 +2,7 @@ type Action =
   | StartInitialScan
   | ScannedFile
   | InitialScanDone
+  | Search
   | Scrolled
   | Dispose
 type StartInitialScan = {
@@ -13,6 +14,10 @@ type ScannedFile = {
 }
 type InitialScanDone = {
   type: 'INITIAL_SCAN_DONE'
+}
+type Search = {
+  type: 'SEARCH',
+  query: string
 }
 type Scrolled = {
   type: 'SCROLLED',
@@ -41,19 +46,23 @@ type Pagination = {
 type Row = {
   id: string,
   filename: string,
-  selected: boolean,
-  cells: Array<CellType|EditCellType>
+  cells: Array<Cell>
+}
+type Cell = {
+  content: CellContentType
+}
+type ColumnHeader = {
+  title: string,
+  width: number
 }
 type State = {
-  columns: Array<{
-    title: string,
-    width: number
-  }>,
+  columnHeaders: Array<ColumnHeader>,
   config: Config,
+  forcedScrollTop: ?number,
   initialScan: InitialScan,
   notes: Notes,
   pagination: Pagination,
-  query: string,
+  sifterResult: SifterResult,
   visibleRows: Array<Row>
 }
 
@@ -72,6 +81,27 @@ type RawFile = {
 type NoteField = {
   notePropName: string,
   value?: (note: any, filename: string) => any
+}
+
+type SifterResult = {
+  items: Array<{
+    id: string,
+    score: number
+  }>,
+  options: {
+    fields: Array<string>,
+    limit?: number | void,
+    sort: Array<{
+      direction: string,
+      field: string
+    }>
+  },
+  query: string,
+  tokens: Array<{
+    string: string,
+    regex: RegExp
+  }>,
+  total: number
 }
 
 type NotesFields = {

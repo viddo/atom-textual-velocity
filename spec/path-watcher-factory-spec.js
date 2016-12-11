@@ -10,7 +10,7 @@ import PathWatcherFactory from '../lib/path-watcher-factory'
 
 temp.track()
 
-describe('path-watcher-factory', () => {
+xdescribe('path-watcher-factory', () => {
   let pathWatcherFactory, testFileReader
 
   beforeEach(function () {
