@@ -2,6 +2,7 @@ type Action =
   | StartInitialScan
   | ScannedFile
   | InitialScanDone
+  | Search
   | Scrolled
   | Dispose
 type StartInitialScan = {
@@ -13,6 +14,10 @@ type ScannedFile = {
 }
 type InitialScanDone = {
   type: 'INITIAL_SCAN_DONE'
+}
+type Search = {
+  type: 'SEARCH',
+  query: string
 }
 type Scrolled = {
   type: 'SCROLLED',
@@ -50,6 +55,7 @@ type State = {
     width: number
   }>,
   config: Config,
+  forcedScrollTop: ?number,
   initialScan: InitialScan,
   notes: Notes,
   pagination: Pagination,
