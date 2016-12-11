@@ -2,6 +2,7 @@ type Action =
   | StartInitialScan
   | ScannedFile
   | InitialScanDone
+  | Scrolled
   | Dispose
 type StartInitialScan = {
   type: 'START_INITIAL_SCAN'
@@ -12,6 +13,10 @@ type ScannedFile = {
 }
 type InitialScanDone = {
   type: 'INITIAL_SCAN_DONE'
+}
+type Scrolled = {
+  type: 'SCROLLED',
+  scrollTop: number
 }
 type Dispose = {
   type: 'DISPOSE'
