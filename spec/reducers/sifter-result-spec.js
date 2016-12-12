@@ -1,6 +1,6 @@
 /* @flow */
 
-import {initialScanDone, search, scrolled} from '../../lib/action-creators'
+import {initialScanDone, search, scroll} from '../../lib/action-creators'
 import NotesFields from '../../lib/notes-fields'
 import SifterResultReducer from '../../lib/reducers/sifter-result'
 
@@ -130,7 +130,7 @@ describe('sifter-result reducer', () => {
 
       beforeEach(function () {
         prevState = state
-        state = sifterResultReducer(state, scrolled(0), nextState)
+        state = sifterResultReducer(state, scroll(0), nextState)
       })
 
       it('should return prev state', function () {

@@ -1,6 +1,6 @@
 /* @flow */
 
-import {scrolled} from '../../lib/action-creators'
+import {scroll} from '../../lib/action-creators'
 import paginationReducer from '../../lib/reducers/pagination'
 
 describe('pagination reducer', () => {
@@ -19,7 +19,7 @@ describe('pagination reducer', () => {
         start: 0,
         limit: 50
       }
-      state = paginationReducer(state, scrolled(50), config)
+      state = paginationReducer(state, scroll(50), config)
     })
 
     it('should update start value', function () {
