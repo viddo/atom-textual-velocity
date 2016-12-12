@@ -27,7 +27,7 @@ describe('sifter-result reducer', () => {
         total: 0
       }
       nextState = {
-        columns: [],
+        columnHeaders: [],
         config: {
           dir: '/notes',
           listHeight: 123,

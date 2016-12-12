@@ -5,7 +5,7 @@ import R from 'ramda'
 import NotesPath from '../lib/notes-path'
 import Presenter from '../lib/presenter'
 
-describe('presenter', function () {
+xdescribe('presenter', function () {
   let buses, presenter, spies, nameColumn, extColumn
 
   const newSifterResult = (obj = {}) => {

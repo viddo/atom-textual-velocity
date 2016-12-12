@@ -5,7 +5,7 @@ import R from 'ramda'
 import Sifter from 'sifter'
 import Interactor from '../lib/interactor'
 
-describe('interactor', function () {
+xdescribe('interactor', function () {
   let buses, interactor, spies
 
   beforeEach(function () {

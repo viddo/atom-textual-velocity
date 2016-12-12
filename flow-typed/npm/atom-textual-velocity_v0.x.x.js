@@ -51,11 +51,12 @@ type Row = {
 type Cell = {
   content: CellContentType
 }
+type ColumnHeader = {
+  title: string,
+  width: number
+}
 type State = {
-  columns: Array<{
-    title: string,
-    width: number
-  }>,
+  columnHeaders: Array<ColumnHeader>,
   config: Config,
   forcedScrollTop: ?number,
   initialScan: InitialScan,

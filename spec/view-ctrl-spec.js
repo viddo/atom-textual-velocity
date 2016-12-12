@@ -3,7 +3,7 @@
 import {TestUtils} from 'react-for-atom'
 import ViewCtrl from '../lib/view-ctrl'
 
-describe('view-ctrl', function () {
+xdescribe('view-ctrl', function () {
   let DOMNode, panel, viewCtrl, spies
   let showSpy: Function
 

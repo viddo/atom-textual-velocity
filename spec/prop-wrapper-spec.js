@@ -2,7 +2,7 @@
 
 import PropWrapper from '../lib/prop-wrapper'
 
-describe('prop-wrapper', function () {
+xdescribe('prop-wrapper', function () {
   let propWrapper, testObj, testObj2, propSpy
 
   beforeEach(function () {

@@ -17,7 +17,7 @@ describe('visible-rows reducer', () => {
     columns.add(new FileIconColumn({sortField: 'ext'}))
 
     nextState = {
-      columns: [],
+      columnHeaders: [],
       config: {
         dir: '/notes',
         listHeight: 75,
