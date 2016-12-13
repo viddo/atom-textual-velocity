@@ -7,7 +7,7 @@ import SummaryColumn from '../../lib/columns/summary-column'
 import VisibleRowsReducer from '../../lib/reducers/visible-rows'
 
 describe('visible-rows reducer', () => {
-  let state: Array<Row>
+  let state: Array<VisibleRow>
   let nextState: State
   let visibleRowsReducer
   let prevState

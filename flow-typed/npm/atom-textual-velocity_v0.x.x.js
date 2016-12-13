@@ -1,3 +1,33 @@
+import * as actions from '../../lib/action-creators'
+
+type MainPropsWithoutActions = {
+  columnHeaders: Array<ColumnHeader>,
+  forcedScrollTop: ?number,
+  initialScanDone: boolean,
+  initialScanFilesCount: number,
+  itemsCount: number,
+  listHeight: number,
+  paginationStart: number,
+  query: string,
+  rowHeight: number,
+  sortDirection: SortDirection,
+  sortField: string,
+  visibleRows: Array<VisibleRow>
+}
+
+type MainActions = {
+  actions: {
+    changeRowHeight: typeof actions.changeRowHeight,
+    changeSortDirection: typeof actions.changeSortDirection,
+    changeSortField: typeof actions.changeSortField,
+    resizeList: typeof actions.resizeList,
+    scroll: typeof actions.scroll,
+    search: typeof actions.changeSortDirection
+  }
+}
+
+type MainProps = MainPropsWithoutActions & MainActions
+
 type Action =
   | StartInitialScan
   | ScannedFile
@@ -58,7 +88,7 @@ type Config = {
   dir: string,
   listHeight: number,
   rowHeight: number,
-  sortDirection: string,
+  sortDirection: SortDirection,
   sortField: string
 }
 type InitialScan = {
@@ -70,12 +100,14 @@ type Pagination = {
   start: number,
   limit: number
 }
-type Row = {
-  id: string,
+type VisibleRow = {
+  cells: Array<Cell>,
   filename: string,
-  cells: Array<Cell>
+  id: string,
+  selected: boolean
 }
 type Cell = {
+  className: string,
   content: CellContentType
 }
 type ColumnHeader = {
@@ -91,7 +123,7 @@ type State = {
   notes: Notes,
   pagination: Pagination,
   sifterResult: SifterResult,
-  visibleRows: Array<Row>
+  visibleRows: Array<VisibleRow>
 }
 
 type FsStats =
@@ -144,6 +176,7 @@ type Columns = {
 }
 type Column = {
   cellContent (params: CellContentParamsType): CellContentType,
+  className?: string,
   description: string,
   editCellName?: string,
   editCellStr?: (note: NoteType) => string,
