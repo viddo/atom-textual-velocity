@@ -6,6 +6,8 @@ type Action =
   | Scrolled
   | ChangedListHeight
   | ChangedRowHeight
+  | ChangedSortDirection
+  | ChangedSortField
   | ResizedList
   | Dispose
 type StartInitialScan = {
@@ -34,6 +36,14 @@ type ChangedRowHeight = {
   type: 'CHANGED_ROW_HEIGHT',
   rowHeight: number
 }
+type ChangedSortDirection = {
+  type: 'CHANGED_SORT_DIRECTION',
+  sortDirection: SortDirection
+}
+type ChangedSortField = {
+  type: 'CHANGED_SORT_FIELD',
+  sortField: string
+}
 type ResizedList = {
   type: 'RESIZED_LIST',
   listHeight: number
@@ -41,6 +51,8 @@ type ResizedList = {
 type Dispose = {
   type: 'DISPOSE'
 }
+
+type SortDirection = 'desc' | 'asc'
 
 type Config = {
   dir: string,
@@ -67,6 +79,7 @@ type Cell = {
   content: CellContentType
 }
 type ColumnHeader = {
+  sortField: string,
   title: string,
   width: number
 }
