@@ -1,6 +1,6 @@
 /* @flow */
 
-import {initialScanDone} from '../../lib/action-creators'
+import {initialScanDone, resizeList, changeListHeight} from '../../lib/action-creators'
 import setupConfigReducer from '../../lib/reducers/config'
 
 describe('config reducer', () => {
@@ -22,5 +22,48 @@ describe('config reducer', () => {
     const prevState = state
     state = configReducer(state, initialScanDone())
     expect(state).toBe(prevState)
+  })
+
+  describe('when resized list', function () {
+    beforeEach(function () {
+      state = configReducer(state, resizeList(123))
+    })
+
+    it('should update list height', function () {
+      expect(state.listHeight).toEqual(123)
+    })
+  })
+
+  describe('when resized list', function () {
+    beforeEach(function () {
+      state = configReducer(state, resizeList(123))
+    })
+
+    it('should update list height', function () {
+      expect(state.listHeight).toEqual(123)
+    })
+  })
+
+  describe('when change list height', function () {
+    beforeEach(function () {
+      state = configReducer(state, changeListHeight(123))
+    })
+
+    it('should update list height', function () {
+      expect(state.listHeight).toEqual(123)
+    })
+  })
+
+  describe('when other random action', function () {
+    let prevState
+
+    beforeEach(function () {
+      prevState = state
+      state = configReducer(state, initialScanDone())
+    })
+
+    it('should update list height', function () {
+      expect(prevState).toBe(state)
+    })
   })
 })

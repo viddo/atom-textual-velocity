@@ -4,6 +4,8 @@ type Action =
   | InitialScanDone
   | Search
   | Scrolled
+  | ChangedListHeight
+  | ResizedList
   | Dispose
 type StartInitialScan = {
   type: 'START_INITIAL_SCAN'
@@ -22,6 +24,14 @@ type Search = {
 type Scrolled = {
   type: 'SCROLLED',
   scrollTop: number
+}
+type ChangedListHeight = {
+  type: 'CHANGED_LIST_HEIGHT',
+  listHeight: number
+}
+type ResizedList = {
+  type: 'RESIZED_LIST',
+  listHeight: number
 }
 type Dispose = {
   type: 'DISPOSE'

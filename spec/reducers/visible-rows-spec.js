@@ -1,6 +1,6 @@
 /* @flow */
 
-import {startInitialScan, initialScanDone, search, scroll} from '../../lib/action-creators'
+import {startInitialScan, initialScanDone, search, scroll, changeListHeight, resizeList} from '../../lib/action-creators'
 import Columns from '../../lib/columns'
 import FileIconColumn from '../../lib/columns/file-icon-column'
 import SummaryColumn from '../../lib/columns/summary-column'
@@ -10,6 +10,7 @@ describe('visible-rows reducer', () => {
   let state: Array<Row>
   let nextState: State
   let visibleRowsReducer
+  let prevState
 
   beforeEach(function () {
     const columns = new Columns()
@@ -58,7 +59,7 @@ describe('visible-rows reducer', () => {
         }
       },
       pagination: {
-        start: 1,
+        start: 0,
         limit: 3
       },
       sifterResult: {
@@ -87,34 +88,115 @@ describe('visible-rows reducer', () => {
     visibleRowsReducer = VisibleRowsReducer(columns)
   })
 
-  const actions = [
-    {
-      desc: 'initial scan is done',
-      createAction: () => initialScanDone()
-    }, {
-      desc: 'search',
-      createAction: () => search('test')
-    }, {
-      desc: 'scrolled',
-      createAction: () => scroll(123)
-    }
-  ]
-  actions.forEach(action => {
-    describe(`when ${action.desc}`, function () {
-      beforeEach(function () {
-        state = visibleRowsReducer(state, action.createAction(), nextState)
-      })
+  describe('when initial scan is done', function () {
+    beforeEach(function () {
+      prevState = state
+      state = visibleRowsReducer(state, initialScanDone(), nextState)
+    })
 
-      it('should return paginated rows', function () {
-        expect(state).toEqual(jasmine.any(Array))
-        expect(state.map(x => x.id)).toEqual([1, 2, 3])
-        expect(state.map(x => x.filename)).toEqual(['bob.txt', 'cesar.txt', 'david.txt'])
-        expect(state.map(x => x.cells)).toEqual(jasmine.any(Array))
-      })
+    it('should updated state', function () {
+      expect(state).not.toBe(prevState)
+    })
+
+    it('should return paginated rows', function () {
+      expect(state).toEqual(jasmine.any(Array))
+      expect(state.map(x => x.id)).toEqual([0, 1, 2])
+      expect(state.map(x => x.filename)).toEqual(['alice.txt', 'bob.txt', 'cesar.txt'])
+      expect(state.map(x => x.cells)).toEqual(jasmine.any(Array))
     })
   })
 
-  describe('when random action', function () {
+  describe('when search', function () {
+    beforeEach(function () {
+      prevState = state
+      nextState.sifterResult.query = 'a' // alice, cesar, david
+      nextState.sifterResult.items = [
+        {id: 'alice.txt', score: 0.1},
+        {id: 'cesar.txt', score: 0.1},
+        {id: 'david.txt', score: 0.1}
+      ]
+      state = visibleRowsReducer(state, search('a'), nextState)
+    })
+
+    it('should updated state', function () {
+      expect(state).not.toBe(prevState)
+    })
+
+    it('should return paginated rows', function () {
+      expect(state).toEqual(jasmine.any(Array))
+      expect(state.map(x => x.id)).toEqual([0, 2, 3])
+      expect(state.map(x => x.filename)).toEqual(['alice.txt', 'cesar.txt', 'david.txt'])
+      expect(state.map(x => x.cells)).toEqual(jasmine.any(Array))
+    })
+  })
+
+  describe('when scrolled', function () {
+    beforeEach(function () {
+      prevState = state
+      nextState.pagination = {
+        start: 1,
+        limit: 3
+      }
+      state = visibleRowsReducer(state, scroll(25), nextState)
+    })
+
+    it('should updated state', function () {
+      expect(state).not.toBe(prevState)
+    })
+
+    it('should return paginated rows', function () {
+      expect(state).toEqual(jasmine.any(Array))
+      expect(state.map(x => x.id)).toEqual([1, 2, 3])
+      expect(state.map(x => x.filename)).toEqual(['bob.txt', 'cesar.txt', 'david.txt'])
+      expect(state.map(x => x.cells)).toEqual(jasmine.any(Array))
+    })
+  })
+
+  describe('when resized list', function () {
+    beforeEach(function () {
+      prevState = state
+      nextState.pagination = {
+        start: 1,
+        limit: 100
+      }
+      state = visibleRowsReducer(state, resizeList(1001), nextState)
+    })
+
+    it('should updated state', function () {
+      expect(state).not.toBe(prevState)
+    })
+
+    it('should return paginated rows', function () {
+      expect(state).toEqual(jasmine.any(Array))
+      expect(state.map(x => x.id)).toEqual([1, 2, 3, 4])
+      expect(state.map(x => x.filename)).toEqual(['bob.txt', 'cesar.txt', 'david.txt', 'eric.txt'])
+      expect(state.map(x => x.cells)).toEqual(jasmine.any(Array))
+    })
+  })
+
+  describe('when changed list height', function () {
+    beforeEach(function () {
+      prevState = state
+      nextState.pagination = {
+        start: 1,
+        limit: 100
+      }
+      state = visibleRowsReducer(state, changeListHeight(1001), nextState)
+    })
+
+    it('should updated state', function () {
+      expect(state).not.toBe(prevState)
+    })
+
+    it('should return paginated rows', function () {
+      expect(state).toEqual(jasmine.any(Array))
+      expect(state.map(x => x.id)).toEqual([1, 2, 3, 4])
+      expect(state.map(x => x.filename)).toEqual(['bob.txt', 'cesar.txt', 'david.txt', 'eric.txt'])
+      expect(state.map(x => x.cells)).toEqual(jasmine.any(Array))
+    })
+  })
+
+  describe('when other random action', function () {
     let prevState
 
     beforeEach(function () {
