@@ -4,6 +4,11 @@ type Action =
   | InitialScanDone
   | Search
   | Scrolled
+  | ChangedListHeight
+  | ChangedRowHeight
+  | ChangedSortDirection
+  | ChangedSortField
+  | ResizedList
   | Dispose
 type StartInitialScan = {
   type: 'START_INITIAL_SCAN'
@@ -23,9 +28,31 @@ type Scrolled = {
   type: 'SCROLLED',
   scrollTop: number
 }
+type ChangedListHeight = {
+  type: 'CHANGED_LIST_HEIGHT',
+  listHeight: number
+}
+type ChangedRowHeight = {
+  type: 'CHANGED_ROW_HEIGHT',
+  rowHeight: number
+}
+type ChangedSortDirection = {
+  type: 'CHANGED_SORT_DIRECTION',
+  sortDirection: SortDirection
+}
+type ChangedSortField = {
+  type: 'CHANGED_SORT_FIELD',
+  sortField: string
+}
+type ResizedList = {
+  type: 'RESIZED_LIST',
+  listHeight: number
+}
 type Dispose = {
   type: 'DISPOSE'
 }
+
+type SortDirection = 'desc' | 'asc'
 
 type Config = {
   dir: string,
@@ -52,6 +79,7 @@ type Cell = {
   content: CellContentType
 }
 type ColumnHeader = {
+  sortField: string,
   title: string,
   width: number
 }

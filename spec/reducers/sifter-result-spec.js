@@ -1,6 +1,6 @@
 /* @flow */
 
-import {initialScanDone, search, scroll} from '../../lib/action-creators'
+import {initialScanDone, search, scroll, changeSortField, changeSortDirection} from '../../lib/action-creators'
 import NotesFields from '../../lib/notes-fields'
 import SifterResultReducer from '../../lib/reducers/sifter-result'
 
@@ -90,6 +90,41 @@ describe('sifter-result reducer', () => {
 
       it('should return results for empty query', function () {
         expect(state.query).toEqual('')
+        expect(state.items.length).toBeGreaterThan(0)
+      })
+    })
+
+    describe('when changed sort field', function () {
+      beforeEach(function () {
+        nextState.config.sortField = 'name'
+        state = sifterResultReducer(state, changeSortField(nextState.config.sortField), nextState)
+      })
+
+      it('should return results', function () {
+        expect(state.items.length).toBeGreaterThan(0)
+        expect(state.query).toEqual('')
+      })
+
+      it('should order by new sort field', function () {
+        const ids = state.items.map(x => x.id)
+        expect(ids).toEqual(ids.sort())
+      })
+    })
+
+    describe('when changed sort direction', function () {
+      beforeEach(function () {
+        nextState.config.sortDirection = 'desc'
+        state = sifterResultReducer(state, changeSortDirection(nextState.config.sortDirection), nextState)
+      })
+
+      it('should return results', function () {
+        expect(state.items.length).toBeGreaterThan(0)
+        expect(state.query).toEqual('')
+      })
+
+      it('should order by new sort direction', function () {
+        const ids = state.items.map(x => x.id)
+        expect(ids).toEqual(ids.sort().reverse())
       })
     })
 
