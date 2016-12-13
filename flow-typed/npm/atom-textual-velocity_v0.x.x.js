@@ -5,6 +5,7 @@ type Action =
   | Search
   | Scrolled
   | ChangedListHeight
+  | ChangedRowHeight
   | ResizedList
   | Dispose
 type StartInitialScan = {
@@ -28,6 +29,10 @@ type Scrolled = {
 type ChangedListHeight = {
   type: 'CHANGED_LIST_HEIGHT',
   listHeight: number
+}
+type ChangedRowHeight = {
+  type: 'CHANGED_ROW_HEIGHT',
+  rowHeight: number
 }
 type ResizedList = {
   type: 'RESIZED_LIST',

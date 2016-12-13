@@ -1,6 +1,6 @@
 /* @flow */
 
-import {scroll, changeListHeight, resizeList, startInitialScan} from '../../lib/action-creators'
+import {scroll, changeListHeight, changeRowHeight, resizeList, startInitialScan} from '../../lib/action-creators'
 import paginationReducer from '../../lib/reducers/pagination'
 
 describe('pagination reducer', () => {
@@ -52,6 +52,18 @@ describe('pagination reducer', () => {
     it('should update limit', function () {
       expect(state.start).toEqual(0)
       expect(state.limit).toEqual(5) // 3 + visible padding
+    })
+  })
+
+  describe('when changed row height', function () {
+    beforeEach(function () {
+      config.rowHeight = 40
+      state = paginationReducer(state, changeRowHeight(config.rowHeight), config)
+    })
+
+    it('should update limit', function () {
+      expect(state.start).toEqual(0)
+      expect(state.limit).toEqual(27) // 25 + visible padding
     })
   })
 
