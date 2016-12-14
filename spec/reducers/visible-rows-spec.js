@@ -62,6 +62,7 @@ describe('visible-rows reducer', () => {
         start: 0,
         limit: 3
       },
+      selected: null,
       sifterResult: {
         items: [
           {id: 'alice.txt', score: 1.0},

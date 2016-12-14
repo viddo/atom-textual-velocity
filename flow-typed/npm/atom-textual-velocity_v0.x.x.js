@@ -36,6 +36,8 @@ type Action =
   | Search
   | Scrolled
   | KeyDown
+  | SelectPrevNote
+  | SelectNextNote
   | ResetSearch
   | ChangedListHeight
   | ChangedRowHeight
@@ -67,6 +69,12 @@ type KeyDown = {
 }
 type ResetSearch = {
   type: 'RESET_SEARCH'
+}
+type SelectNextNote = {
+  type: 'SELECT_NEXT_NOTE'
+}
+type SelectPrevNote = {
+  type: 'SELECT_PREV_NOTE'
 }
 type ChangedListHeight = {
   type: 'CHANGED_LIST_HEIGHT',
@@ -125,6 +133,10 @@ type ColumnHeader = {
   title: string,
   width: number
 }
+type Selected = ?{
+  index: number,
+  filename: string
+}
 type State = {
   columnHeaders: Array<ColumnHeader>,
   config: Config,
@@ -132,6 +144,8 @@ type State = {
   initialScan: InitialScan,
   notes: Notes,
   pagination: Pagination,
+  scrollTop: number,
+  selected: Selected,
   sifterResult: SifterResult,
   visibleRows: Array<VisibleRow>
 }
@@ -153,11 +167,12 @@ type NoteField = {
   value?: (note: any, filename: string) => any
 }
 
+type SifterResultItem = {
+  id: string,
+  score: number
+}
 type SifterResult = {
-  items: Array<{
-    id: string,
-    score: number
-  }>,
+  items: Array<SifterResultItem>,
   options: {
     fields: Array<string>,
     limit?: number | void,
@@ -198,7 +213,5 @@ type Column = {
 
 type KeyDownEvent = {
   keyCode: number,
-  preventDefault?: Function,
-  stopPropagation?: Function,
-  stopImmediatePropagation?: Function
+  preventDefault: Function
 }
