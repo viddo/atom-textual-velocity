@@ -20,6 +20,7 @@ type MainActions = {
     changeRowHeight: typeof actions.changeRowHeight,
     changeSortDirection: typeof actions.changeSortDirection,
     changeSortField: typeof actions.changeSortField,
+    keyDown: typeof actions.keyDown,
     resizeList: typeof actions.resizeList,
     scroll: typeof actions.scroll,
     search: typeof actions.changeSortDirection
@@ -34,6 +35,8 @@ type Action =
   | InitialScanDone
   | Search
   | Scrolled
+  | KeyDown
+  | ResetSearch
   | ChangedListHeight
   | ChangedRowHeight
   | ChangedSortDirection
@@ -57,6 +60,13 @@ type Search = {
 type Scrolled = {
   type: 'SCROLLED',
   scrollTop: number
+}
+type KeyDown = {
+  type: 'KEY_DOWN',
+  event: KeyDownEvent
+}
+type ResetSearch = {
+  type: 'RESET_SEARCH'
 }
 type ChangedListHeight = {
   type: 'CHANGED_LIST_HEIGHT',
@@ -184,4 +194,11 @@ type Column = {
   sortField: string,
   title: string,
   width: number
+}
+
+type KeyDownEvent = {
+  keyCode: number,
+  preventDefault?: Function,
+  stopPropagation?: Function,
+  stopImmediatePropagation?: Function
 }

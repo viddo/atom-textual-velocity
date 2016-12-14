@@ -1,6 +1,6 @@
 /* @flow */
 
-import {initialScanDone, search, scroll, changeSortField, changeSortDirection} from '../../lib/action-creators'
+import * as actions from '../../lib/action-creators'
 import NotesFields from '../../lib/notes-fields'
 import SifterResultReducer from '../../lib/reducers/sifter-result'
 
@@ -85,7 +85,18 @@ describe('sifter-result reducer', () => {
 
     describe('when initial scan is done', function () {
       beforeEach(function () {
-        state = sifterResultReducer(state, initialScanDone(), nextState)
+        state = sifterResultReducer(state, actions.initialScanDone(), nextState)
+      })
+
+      it('should return results for empty query', function () {
+        expect(state.query).toEqual('')
+        expect(state.items.length).toBeGreaterThan(0)
+      })
+    })
+
+    describe('when reset search', function () {
+      beforeEach(function () {
+        state = sifterResultReducer(state, actions.resetSearch(), nextState)
       })
 
       it('should return results for empty query', function () {
@@ -97,7 +108,7 @@ describe('sifter-result reducer', () => {
     describe('when changed sort field', function () {
       beforeEach(function () {
         nextState.config.sortField = 'name'
-        state = sifterResultReducer(state, changeSortField(nextState.config.sortField), nextState)
+        state = sifterResultReducer(state, actions.changeSortField(nextState.config.sortField), nextState)
       })
 
       it('should return results', function () {
@@ -114,7 +125,7 @@ describe('sifter-result reducer', () => {
     describe('when changed sort direction', function () {
       beforeEach(function () {
         nextState.config.sortDirection = 'desc'
-        state = sifterResultReducer(state, changeSortDirection(nextState.config.sortDirection), nextState)
+        state = sifterResultReducer(state, actions.changeSortDirection(nextState.config.sortDirection), nextState)
       })
 
       it('should return results', function () {
@@ -130,7 +141,7 @@ describe('sifter-result reducer', () => {
 
     describe('when search', function () {
       beforeEach(function () {
-        state = sifterResultReducer(state, search('md'), nextState)
+        state = sifterResultReducer(state, actions.search('md'), nextState)
       })
 
       it('should update query', function () {
@@ -165,7 +176,7 @@ describe('sifter-result reducer', () => {
 
       beforeEach(function () {
         prevState = state
-        state = sifterResultReducer(state, scroll(0), nextState)
+        state = sifterResultReducer(state, actions.scroll(0), nextState)
       })
 
       it('should return prev state', function () {
