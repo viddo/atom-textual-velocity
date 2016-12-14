@@ -94,7 +94,25 @@ describe('visible-rows reducer', () => {
       state = visibleRowsReducer(state, actions.initialScanDone(), nextState)
     })
 
-    it('should updated state', function () {
+    it('should update state', function () {
+      expect(state).not.toBe(prevState)
+    })
+
+    it('should return paginated rows', function () {
+      expect(state).toEqual(jasmine.any(Array))
+      expect(state.map(x => x.id)).toEqual([0, 1, 2])
+      expect(state.map(x => x.filename)).toEqual(['alice.txt', 'bob.md', 'cesar.txt'])
+      expect(state.map(x => x.cells)).toEqual(jasmine.any(Array))
+    })
+  })
+
+  describe('when reset search', function () {
+    beforeEach(function () {
+      prevState = state
+      state = visibleRowsReducer(state, actions.resetSearch(), nextState)
+    })
+
+    it('should update state', function () {
       expect(state).not.toBe(prevState)
     })
 
@@ -118,7 +136,7 @@ describe('visible-rows reducer', () => {
       state = visibleRowsReducer(state, actions.search('a'), nextState)
     })
 
-    it('should updated state', function () {
+    it('should update state', function () {
       expect(state).not.toBe(prevState)
     })
 
@@ -140,7 +158,7 @@ describe('visible-rows reducer', () => {
       state = visibleRowsReducer(state, actions.scroll(25), nextState)
     })
 
-    it('should updated state', function () {
+    it('should update state', function () {
       expect(state).not.toBe(prevState)
     })
 
@@ -162,7 +180,7 @@ describe('visible-rows reducer', () => {
       state = visibleRowsReducer(state, actions.resizeList(1001), nextState)
     })
 
-    it('should updated state', function () {
+    it('should update state', function () {
       expect(state).not.toBe(prevState)
     })
 
@@ -184,7 +202,7 @@ describe('visible-rows reducer', () => {
       state = visibleRowsReducer(state, actions.changeListHeight(1001), nextState)
     })
 
-    it('should updated state', function () {
+    it('should update state', function () {
       expect(state).not.toBe(prevState)
     })
 
@@ -206,7 +224,7 @@ describe('visible-rows reducer', () => {
       state = visibleRowsReducer(state, actions.changeRowHeight(15), nextState)
     })
 
-    it('should updated state', function () {
+    it('should update state', function () {
       expect(state).not.toBe(prevState)
     })
 
@@ -226,7 +244,7 @@ describe('visible-rows reducer', () => {
       state = visibleRowsReducer(state, actions.changeSortDirection('desc'), nextState)
     })
 
-    it('should updated state', function () {
+    it('should update state', function () {
       expect(state).not.toBe(prevState)
     })
 
@@ -253,7 +271,7 @@ describe('visible-rows reducer', () => {
       state = visibleRowsReducer(state, actions.changeSortField('ext'), nextState)
     })
 
-    it('should updated state', function () {
+    it('should update state', function () {
       expect(state).not.toBe(prevState)
     })
 
