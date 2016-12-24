@@ -74,7 +74,7 @@ describe('key-down epic', () => {
     })
 
     it('should not yield any reset action', function () {
-      const dispatchedActions = store.getActions().filter(action => action.type !== 'KEY_DOWN')
+      const dispatchedActions = store.getActions().filter(action => action.type !== actions.KEY_DOWN)
       expect(dispatchedActions).toEqual([])
     })
   })
@@ -87,7 +87,7 @@ describe('key-down epic', () => {
     })
 
     it('should no longer create any actions', function () {
-      const dispatchedActions = store.getActions().filter(action => action.type !== 'KEY_DOWN')
+      const dispatchedActions = store.getActions().filter(action => action.type !== actions.KEY_DOWN)
       expect(dispatchedActions).toEqual([actions.dispose()])
     })
   })
