@@ -3,7 +3,7 @@
 import {createEpicMiddleware} from 'redux-observable'
 import configureMockStore from 'redux-mock-store'
 import configEpic from '../../lib/epics/config'
-import {resizeList, changeRowHeight, changeSortDirection, changeSortField} from '../../lib/action-creators'
+import * as actions from '../../lib/action-creators'
 
 const epicMiddleware = createEpicMiddleware(configEpic)
 const mockStore = configureMockStore([epicMiddleware])
@@ -24,11 +24,11 @@ describe('config epic', () => {
   })
 
   it('should yield actions for initial values of config', function () {
-    const actions = store.getActions()
-    expect(actions[0]).toEqual({type: 'CHANGED_LIST_HEIGHT', listHeight: 0})
-    expect(actions[1]).toEqual({type: 'CHANGED_ROW_HEIGHT', rowHeight: 0})
-    expect(actions[2]).toEqual({type: 'CHANGED_SORT_DIRECTION', sortDirection: 'desc'})
-    expect(actions[3]).toEqual({type: 'CHANGED_SORT_FIELD', sortField: 'name'})
+    const dispatchedActions = store.getActions()
+    expect(dispatchedActions[0]).toEqual(actions.changeListHeight(0))
+    expect(dispatchedActions[1]).toEqual(actions.changeRowHeight(0))
+    expect(dispatchedActions[2]).toEqual(actions.changeSortDirection('desc'))
+    expect(dispatchedActions[3]).toEqual(actions.changeSortField('name'))
   })
 
   describe('when resized list action', function () {
@@ -37,7 +37,7 @@ describe('config epic', () => {
     beforeEach(function () {
       listHeightSpy = jasmine.createSpy('listHeight')
       atom.config.onDidChange('textual-velocity.listHeight', listHeightSpy)
-      store.dispatch(resizeList(123))
+      store.dispatch(actions.resizeList(123))
 
       waitsFor(() => listHeightSpy.calls.length > 0)
     })
@@ -48,8 +48,8 @@ describe('config epic', () => {
 
     it('should have yielded a last action', function () {
       const lastActions = store.getActions().slice(-2)
-      expect(lastActions[0]).toEqual({type: 'RESIZED_LIST', listHeight: 123})
-      expect(lastActions[1]).toEqual({type: 'CHANGED_LIST_HEIGHT', listHeight: 123})
+      expect(lastActions[0]).toEqual(actions.resizeList(123))
+      expect(lastActions[1]).toEqual(actions.changeListHeight(123))
     })
   })
 
@@ -59,7 +59,7 @@ describe('config epic', () => {
     beforeEach(function () {
       rowHeightSpy = jasmine.createSpy('rowHeight')
       atom.config.onDidChange('textual-velocity.rowHeight', rowHeightSpy)
-      store.dispatch(changeRowHeight(26))
+      store.dispatch(actions.changeRowHeight(26))
 
       waitsFor(() => rowHeightSpy.calls.length > 0)
     })
@@ -70,7 +70,7 @@ describe('config epic', () => {
 
     it('should have yielded a last action', function () {
       const lastActions = store.getActions().slice(-1)
-      expect(lastActions[0]).toEqual({type: 'CHANGED_ROW_HEIGHT', rowHeight: 26})
+      expect(lastActions[0]).toEqual(actions.changeRowHeight(26))
     })
   })
 
@@ -80,7 +80,7 @@ describe('config epic', () => {
     beforeEach(function () {
       sortDirectionSpy = jasmine.createSpy('sortDirection')
       atom.config.onDidChange('textual-velocity.sortDirection', sortDirectionSpy)
-      store.dispatch(changeSortDirection('asc'))
+      store.dispatch(actions.changeSortDirection('asc'))
 
       waitsFor(() => sortDirectionSpy.calls.length > 0)
     })
@@ -91,7 +91,7 @@ describe('config epic', () => {
 
     it('should have yielded a last action', function () {
       const lastActions = store.getActions().slice(-1)
-      expect(lastActions[0]).toEqual({type: 'CHANGED_SORT_DIRECTION', sortDirection: 'asc'})
+      expect(lastActions[0]).toEqual(actions.changeSortDirection('asc'))
     })
   })
 
@@ -101,7 +101,7 @@ describe('config epic', () => {
     beforeEach(function () {
       sortFieldSpy = jasmine.createSpy('sortField')
       atom.config.onDidChange('textual-velocity.sortField', sortFieldSpy)
-      store.dispatch(changeSortField('ext'))
+      store.dispatch(actions.changeSortField('ext'))
 
       waitsFor(() => sortFieldSpy.calls.length > 0)
     })
@@ -112,7 +112,7 @@ describe('config epic', () => {
 
     it('should have yielded a last action', function () {
       const lastActions = store.getActions().slice(-1)
-      expect(lastActions[0]).toEqual({type: 'CHANGED_SORT_FIELD', sortField: 'ext'})
+      expect(lastActions[0]).toEqual(actions.changeSortField('ext'))
     })
   })
 })

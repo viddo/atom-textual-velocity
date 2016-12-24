@@ -2,7 +2,6 @@ import * as actions from '../../lib/action-creators'
 
 type MainPropsWithoutActions = {
   columnHeaders: Array<ColumnHeader>,
-  forcedScrollTop: ?number,
   initialScanDone: boolean,
   initialScanFilesCount: number,
   itemsCount: number,
@@ -10,6 +9,7 @@ type MainPropsWithoutActions = {
   paginationStart: number,
   query: string,
   rowHeight: number,
+  scrollTop: number,
   sortDirection: SortDirection,
   sortField: string,
   visibleRows: Array<VisibleRow>
@@ -140,7 +140,6 @@ type Selected = ?{
 type State = {
   columnHeaders: Array<ColumnHeader>,
   config: Config,
-  forcedScrollTop: ?number,
   initialScan: InitialScan,
   notes: Notes,
   pagination: Pagination,
