@@ -1,17 +1,15 @@
 /* @flow */
 
 import * as actions from '../../lib/action-creators'
-import forcedScrollTopReducer from '../../lib/reducers/forced-scroll-top'
+import scrollTopReducer from '../../lib/reducers/scroll-top'
 
-describe('forced scrollTop reducer', () => {
-  let state: ?number
+describe('scroll-top reducer', () => {
+  let state: any
   let config: Config
-  let scrollTop: number
   let selected: Selected
 
   beforeEach(function () {
     state = undefined
-    scrollTop = 100
     selected = null
     config = {
       dir: '',
@@ -24,7 +22,7 @@ describe('forced scrollTop reducer', () => {
 
   describe('when search', function () {
     beforeEach(function () {
-      state = forcedScrollTopReducer(state, actions.search('abc'), scrollTop, config, selected)
+      state = scrollTopReducer(state, actions.search('abc'), config, selected)
     })
 
     it('should force scrollTop to top', function () {
@@ -34,7 +32,7 @@ describe('forced scrollTop reducer', () => {
 
   describe('when reset search', function () {
     beforeEach(function () {
-      state = forcedScrollTopReducer(state, actions.resetSearch(), scrollTop, config, selected)
+      state = scrollTopReducer(state, actions.resetSearch(), config, selected)
     })
 
     it('should force scrollTop to top', function () {
@@ -68,40 +66,45 @@ describe('forced scrollTop reducer', () => {
 
   describe('when any other action', function () {
     beforeEach(function () {
-      state = forcedScrollTopReducer(state, actions.startInitialScan(), scrollTop, config, selected)
+      state = 123
+      state = scrollTopReducer(state, actions.startInitialScan(), config, selected)
     })
 
-    it('should not force scrollTop', function () {
-      expect(state).toBe(null)
+    it('should return current scrollTop', function () {
+      expect(state).toEqual(123)
     })
   })
 
   function sharedAdjustScrollTopSpecs (action: Action) {
     describe('when there is no selection', function () {
       beforeEach(function () {
-        state = forcedScrollTopReducer(state, action, scrollTop, config, selected)
+        selected = null
+        state = 5
+        state = scrollTopReducer(state, action, config, selected)
       })
 
-      it('should not force scrollTop', function () {
-        expect(state).toBe(null)
+      it('should return current scrollTop', function () {
+        expect(state).toEqual(5)
       })
     })
 
     describe('when selected item is within the viewport', function () {
       beforeEach(function () {
         selected = {index: 5, filename: 'alice.txt'}
-        state = forcedScrollTopReducer(state, action, scrollTop, config, selected)
+        state = 25
+        state = scrollTopReducer(state, action, config, selected)
       })
 
-      it('should not force scrollTop', function () {
-        expect(state).toBe(null)
+      it('should return current scrollTop', function () {
+        expect(state).toEqual(25)
       })
     })
 
     describe('when selected item is before the viewport', function () {
       beforeEach(function () {
         selected = {index: 1, filename: 'alice.txt'}
-        state = forcedScrollTopReducer(state, action, scrollTop, config, selected)
+        state = 25
+        state = scrollTopReducer(state, action, config, selected)
       })
 
       it('should force scrollTop to have the selected item in view at top', function () {
@@ -112,7 +115,7 @@ describe('forced scrollTop reducer', () => {
     describe('when selected item is after the viewport', function () {
       beforeEach(function () {
         selected = {index: 20, filename: 'alice.txt'}
-        state = forcedScrollTopReducer(state, action, scrollTop, config, selected)
+        state = scrollTopReducer(state, action, config, selected)
       })
 
       it('should force scrollTop to have the selected item at the bottom of the viewport', function () {
@@ -122,9 +125,9 @@ describe('forced scrollTop reducer', () => {
 
     describe('when selected item is only half visible at the end of the viewport', function () {
       beforeEach(function () {
-        scrollTop = 5
+        state = 5
         selected = {index: 5, filename: 'alice.txt'}
-        state = forcedScrollTopReducer(state, action, scrollTop, config, selected)
+        state = scrollTopReducer(state, action, config, selected)
       })
 
       it('should force scrollTop to have the selected item at the bottom of the viewport', function () {
@@ -134,9 +137,9 @@ describe('forced scrollTop reducer', () => {
 
     describe('when selected item is only half visible at the top of the viewport', function () {
       beforeEach(function () {
-        scrollTop = 25
+        state = 25
         selected = {index: 1, filename: 'alice.txt'}
-        state = forcedScrollTopReducer(state, action, scrollTop, config, selected)
+        state = scrollTopReducer(state, action, config, selected)
       })
 
       it('should force scrollTop to have the selected item at the top of the viewport', function () {

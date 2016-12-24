@@ -1,82 +1,93 @@
 /* @flow */
 
-import {scroll, changeListHeight, changeRowHeight, resizeList, startInitialScan} from '../../lib/action-creators'
+import * as actions from '../../lib/action-creators'
 import paginationReducer from '../../lib/reducers/pagination'
 
 describe('pagination reducer', () => {
-  let config, state
+  let nextConfig, nextScrollTop, state, prevState
 
   beforeEach(function () {
-    config = {
+    nextConfig = {
       dir: '',
       listHeight: 1000,
-      rowHeight: 20,
+      rowHeight: 24,
       sortDirection: 'desc',
       sortField: ''
     }
-    state = {
-      start: 0,
-      limit: 50
-    }
+
+    nextScrollTop = 50
+
+    state = paginationReducer(state, actions.startInitialScan(), nextConfig, nextScrollTop)
   })
 
-  describe('when scrolled action', function () {
-    beforeEach(function () {
-      state = paginationReducer(state, scroll(50), config)
-    })
-
-    it('should update start value', function () {
-      expect(state.start).toEqual(2)
-      expect(state.limit).toEqual(50)
-    })
+  it('should set some defaults', function () {
+    expect(state.start).toEqual(0)
+    expect(state.limit).toEqual(0)
   })
 
-  describe('when changed list height', function () {
-    beforeEach(function () {
-      config.listHeight = 60
-      state = paginationReducer(state, changeListHeight(config.listHeight), config)
-    })
-
-    it('should update limit', function () {
-      expect(state.start).toEqual(0)
-      expect(state.limit).toEqual(5) // 3 + visible padding
-    })
-  })
-
-  describe('when resized list', function () {
-    beforeEach(function () {
-      config.listHeight = 60
-      state = paginationReducer(state, resizeList(config.listHeight), config)
-    })
-
-    it('should update limit', function () {
-      expect(state.start).toEqual(0)
-      expect(state.limit).toEqual(5) // 3 + visible padding
-    })
-  })
-
-  describe('when changed row height', function () {
-    beforeEach(function () {
-      config.rowHeight = 40
-      state = paginationReducer(state, changeRowHeight(config.rowHeight), config)
-    })
-
-    it('should update limit', function () {
-      expect(state.start).toEqual(0)
-      expect(state.limit).toEqual(27) // 25 + visible padding
-    })
-  })
-
-  describe('when other random action', function () {
-    let prevState
-
+  describe('when irrelevant action', function () {
     beforeEach(function () {
       prevState = state
-      state = paginationReducer(state, startInitialScan(), config)
+      state = paginationReducer(state, actions.startInitialScan(), nextConfig, nextScrollTop)
     })
 
     it('should keep prev state', function () {
       expect(state).toBe(prevState)
     })
   })
+
+  describe('when scrolled action', function () {
+    sharedPaginationCalculationSpecs(actions.scroll(nextScrollTop))
+  })
+
+  describe('when select prev', function () {
+    sharedPaginationCalculationSpecs(actions.selectPrevNote())
+  })
+
+  describe('when select next', function () {
+    sharedPaginationCalculationSpecs(actions.selectNextNote())
+  })
+
+  describe('when reset search', function () {
+    sharedPaginationCalculationSpecs(actions.resetSearch())
+  })
+
+  describe('when search', function () {
+    sharedPaginationCalculationSpecs(actions.search('abc'))
+  })
+
+  describe('when changed sort field', function () {
+    sharedPaginationCalculationSpecs(actions.changeSortField('ext'))
+  })
+
+  describe('when changed sort direction', function () {
+    sharedPaginationCalculationSpecs(actions.changeSortDirection('asc'))
+  })
+
+  describe('when changed list height', function () {
+    sharedPaginationCalculationSpecs(actions.changeListHeight(123))
+  })
+
+  describe('when resized list', function () {
+    sharedPaginationCalculationSpecs(actions.resizeList(123))
+  })
+
+  describe('when changed row height', function () {
+    sharedPaginationCalculationSpecs(actions.changeRowHeight(25))
+  })
+
+  describe('when initial scan is done', function () {
+    sharedPaginationCalculationSpecs(actions.initialScanDone())
+  })
+
+  function sharedPaginationCalculationSpecs (action: Action) {
+    beforeEach(function () {
+      state = paginationReducer(state, action, nextConfig, nextScrollTop)
+    })
+
+    it('should update values', function () {
+      expect(state.start).toEqual(2) // 2,5, rounded down
+      expect(state.limit).toEqual(43) // 41, +2 for visible padding
+    })
+  }
 })

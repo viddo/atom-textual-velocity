@@ -26,7 +26,6 @@ describe('visible-rows reducer', () => {
         sortDirection: 'asc',
         sortField: 'name'
       },
-      forcedScrollTop: null,
       initialScan: {
         done: false,
         rawFiles: []
@@ -62,6 +61,7 @@ describe('visible-rows reducer', () => {
         start: 0,
         limit: 3
       },
+      scrollTop: 0,
       selected: null,
       sifterResult: {
         items: [
