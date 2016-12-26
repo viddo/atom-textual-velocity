@@ -93,6 +93,17 @@ describe('epics/preview', () => {
         waitsFor(() => atom.workspace.getPaneItems().length === 0)
       })
 
+      describe('when click preview', function () {
+        beforeEach(function () {
+          atom.workspace.getPaneItems()[0].click()
+          waitsFor(() => !atom.workspace.getPaneItems()[0].tagName)
+        })
+
+        it('should open editor for given preview', function () {
+          expect(atom.workspace.getPaneItems()[0].getPath()).toEqual(jasmine.any(String))
+        })
+      })
+
       describe('when dispose action', function () {
         beforeEach(function () {
           store.dispatch(actions.dispose())

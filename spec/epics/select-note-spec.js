@@ -84,6 +84,42 @@ describe('epics/select-note', () => {
     epicMiddleware.replaceEpic(selectNoteEpic)
   })
 
+  describe('when active editor changes', function () {
+    describe('when there is a matching note', function () {
+      beforeEach(function () {
+        let done = false
+        atom.workspace.open('/notes/bob.md').then(() => {
+          advanceClock(1010)
+          done = true
+        })
+        waitsFor(() => done)
+      })
+
+      it('should dispatch action to select matching note', function () {
+        expect(store.getActions().slice(-1)[0]).toEqual(actions.selectNote({
+          index: 1,
+          filename: 'bob.md'
+        }))
+      })
+    })
+
+    describe('when there is no matching note', function () {
+      beforeEach(function () {
+        store.clearActions()
+        let done = false
+        atom.workspace.open('/other/file.ext').then(() => {
+          advanceClock(1010)
+          done = true
+        })
+        waitsFor(() => done)
+      })
+
+      it('should deselect note', function () {
+        expect(store.getActions()[0]).toEqual(actions.deselectNote())
+      })
+    })
+  })
+
   describe('when search action', function () {
     beforeEach(function () {
       store.dispatch(actions.search('abc'))
