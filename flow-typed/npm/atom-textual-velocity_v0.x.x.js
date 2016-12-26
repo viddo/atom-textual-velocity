@@ -36,9 +36,9 @@ type Action =
   | Search
   | Scrolled
   | KeyDown
-  | SelectPrevNote
-  | SelectNextNote
   | ResetSearch
+  | SelectNote
+  | DeselectNote
   | ChangedListHeight
   | ChangedRowHeight
   | ChangedSortDirection
@@ -70,11 +70,12 @@ type KeyDown = {
 type ResetSearch = {
   type: 'RESET_SEARCH'
 }
-type SelectNextNote = {
-  type: 'SELECT_NEXT_NOTE'
+type SelectNote = {
+  type: 'SELECT_NOTE',
+  selectedNote: selectedNote
 }
-type SelectPrevNote = {
-  type: 'SELECT_PREV_NOTE'
+type DeselectNote = {
+  type: 'DESELECT_NOTE'
 }
 type ChangedListHeight = {
   type: 'CHANGED_LIST_HEIGHT',
@@ -133,7 +134,7 @@ type ColumnHeader = {
   title: string,
   width: number
 }
-type Selected = ?{
+type SelectedNote = {
   index: number,
   filename: string
 }
@@ -144,7 +145,7 @@ type State = {
   notes: Notes,
   pagination: Pagination,
   scrollTop: number,
-  selected: Selected,
+  selectedNote: ?SelectedNote,
   sifterResult: SifterResult,
   visibleRows: Array<VisibleRow>
 }
