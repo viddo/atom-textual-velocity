@@ -20,7 +20,7 @@ type MainActions = {
     changeRowHeight: typeof actions.changeRowHeight,
     changeSortDirection: typeof actions.changeSortDirection,
     changeSortField: typeof actions.changeSortField,
-    keyDown: typeof actions.keyDown,
+    keyPress: typeof actions.keyPress,
     resizeList: typeof actions.resizeList,
     scroll: typeof actions.scroll,
     search: typeof actions.changeSortDirection
@@ -35,7 +35,7 @@ type Action =
   | InitialScanDone
   | Search
   | Scrolled
-  | KeyDown
+  | KeyPress
   | ResetSearch
   | SelectNote
   | DeselectNote
@@ -63,9 +63,9 @@ type Scrolled = {
   type: 'SCROLLED',
   scrollTop: number
 }
-type KeyDown = {
-  type: 'KEY_DOWN',
-  event: KeyDownEvent
+type KeyPress = {
+  type: 'KEY_PRESS',
+  event: KeyPressEvent
 }
 type ResetSearch = {
   type: 'RESET_SEARCH'
@@ -211,7 +211,7 @@ type Column = {
   width: number
 }
 
-type KeyDownEvent = {
+type KeyPressEvent = {
   keyCode: number,
   preventDefault: Function
 }
