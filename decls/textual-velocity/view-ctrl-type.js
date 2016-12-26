@@ -3,7 +3,7 @@ declare type ViewCtrlType = {
   activePathS: Bacon.Stream,
   clickedCellS: Bacon.Stream,
   dblClickedCellS: Bacon.Stream,
-  keyDownS: Bacon.Stream,
+  keyPressS: Bacon.Stream,
   keyEnterS: Bacon.Stream,
   keyEscS: Bacon.Stream,
   keyUpS: Bacon.Stream,

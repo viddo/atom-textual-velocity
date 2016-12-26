@@ -2,13 +2,13 @@
 
 import {createEpicMiddleware} from 'redux-observable'
 import configureMockStore from 'redux-mock-store'
-import keyDownEpic, {ESC} from '../../lib/epics/key-down'
+import keyPressEpic, {ESC} from '../../lib/epics/key-press'
 import * as actions from '../../lib/action-creators'
 
-const epicMiddleware = createEpicMiddleware(keyDownEpic)
+const epicMiddleware = createEpicMiddleware(keyPressEpic)
 const mockStore = configureMockStore([epicMiddleware])
 
-describe('epics/key-down', () => {
+describe('epics/key-press', () => {
   let store, event
 
   beforeEach(() => {
@@ -20,13 +20,13 @@ describe('epics/key-down', () => {
   })
 
   afterEach(function () {
-    epicMiddleware.replaceEpic(keyDownEpic)
+    epicMiddleware.replaceEpic(keyPressEpic)
   })
 
   describe('when ESC key down action', function () {
     beforeEach(function () {
       event.keyCode = ESC
-      store.dispatch(actions.keyDown(event))
+      store.dispatch(actions.keyPress(event))
     })
 
     it('should yield a reset search action', function () {
@@ -38,11 +38,11 @@ describe('epics/key-down', () => {
   describe('when random key down action', function () {
     beforeEach(function () {
       event.keyCode = 101
-      store.dispatch(actions.keyDown(event))
+      store.dispatch(actions.keyPress(event))
     })
 
     it('should not yield any reset action', function () {
-      const dispatchedActions = store.getActions().filter(action => action.type !== actions.KEY_DOWN)
+      const dispatchedActions = store.getActions().filter(action => action.type !== actions.KEY_PRESS)
       expect(dispatchedActions).toEqual([])
     })
   })
@@ -51,11 +51,11 @@ describe('epics/key-down', () => {
     beforeEach(function () {
       store.dispatch(actions.dispose())
       event.keyCode = ESC
-      store.dispatch(actions.keyDown(event))
+      store.dispatch(actions.keyPress(event))
     })
 
     it('should no longer create any actions', function () {
-      const dispatchedActions = store.getActions().filter(action => action.type !== actions.KEY_DOWN)
+      const dispatchedActions = store.getActions().filter(action => action.type !== actions.KEY_PRESS)
       expect(dispatchedActions).toEqual([actions.dispose()])
     })
   })

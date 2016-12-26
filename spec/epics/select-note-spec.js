@@ -11,7 +11,7 @@ const mockStore = configureMockStore([epicMiddleware])
 describe('epics/select-note', () => {
   let state: State
   let store
-  let keyDownEvent: KeyDownEvent
+  let keyPressEvent: KeyPressEvent
 
   beforeEach(() => {
     state = {
@@ -74,7 +74,7 @@ describe('epics/select-note', () => {
     }
 
     store = mockStore(state)
-    keyDownEvent = {
+    keyPressEvent = {
       keyCode: 0,
       preventDefault: jasmine.createSpy('preventDefault')
     }
@@ -229,16 +229,16 @@ describe('epics/select-note', () => {
 
   describe('when DOWN key down action', function () {
     beforeEach(function () {
-      keyDownEvent.keyCode = DOWN
+      keyPressEvent.keyCode = DOWN
     })
 
     describe('when there is no selected note', function () {
       beforeEach(function () {
-        store.dispatch(actions.keyDown(keyDownEvent))
+        store.dispatch(actions.keyPress(keyPressEvent))
       })
 
       it('should prevent default behavior of event to not move cursor in text field', function () {
-        expect(keyDownEvent.preventDefault).toHaveBeenCalled()
+        expect(keyPressEvent.preventDefault).toHaveBeenCalled()
       })
 
       it('should select first item', function () {
@@ -251,7 +251,7 @@ describe('epics/select-note', () => {
       it('should select next item until reaching end of list when called subsequently', function () {
         state.selectedNote = store.getActions().slice(-1)[0].selectedNote
         store = mockStore(state)
-        store.dispatch(actions.keyDown(keyDownEvent))
+        store.dispatch(actions.keyPress(keyPressEvent))
         expect(store.getActions().slice(-1)[0]).toEqual(actions.selectNote({
           index: 1,
           filename: 'bob.md'
@@ -259,7 +259,7 @@ describe('epics/select-note', () => {
 
         state.selectedNote = store.getActions().slice(-1)[0].selectedNote
         store = mockStore(state)
-        store.dispatch(actions.keyDown(keyDownEvent))
+        store.dispatch(actions.keyPress(keyPressEvent))
         expect(store.getActions().slice(-1)[0]).toEqual(actions.selectNote({
           index: 2,
           filename: 'cesar.txt'
@@ -267,10 +267,10 @@ describe('epics/select-note', () => {
 
         state.selectedNote = store.getActions().slice(-1)[0].selectedNote
         store = mockStore(state)
-        store.dispatch(actions.keyDown(keyDownEvent))
+        store.dispatch(actions.keyPress(keyPressEvent))
         state.selectedNote = store.getActions().slice(-1)[0].selectedNote
         store = mockStore(state)
-        store.dispatch(actions.keyDown(keyDownEvent))
+        store.dispatch(actions.keyPress(keyPressEvent))
         expect(store.getActions().slice(-1)[0]).toEqual(actions.selectNote({
           index: 2,
           filename: 'cesar.txt'
@@ -281,16 +281,16 @@ describe('epics/select-note', () => {
 
   describe('when UP key down action', function () {
     beforeEach(function () {
-      keyDownEvent.keyCode = UP
+      keyPressEvent.keyCode = UP
     })
 
     describe('when there is no selected note', function () {
       beforeEach(function () {
-        store.dispatch(actions.keyDown(keyDownEvent))
+        store.dispatch(actions.keyPress(keyPressEvent))
       })
 
       it('should prevent default behavior of event to not move cursor in text field', function () {
-        expect(keyDownEvent.preventDefault).toHaveBeenCalled()
+        expect(keyPressEvent.preventDefault).toHaveBeenCalled()
       })
 
       it('should select last item', function () {
@@ -303,7 +303,7 @@ describe('epics/select-note', () => {
       it('should select prev item until reaching start of list when called subsequently', function () {
         state.selectedNote = store.getActions().slice(-1)[0].selectedNote
         store = mockStore(state)
-        store.dispatch(actions.keyDown(keyDownEvent))
+        store.dispatch(actions.keyPress(keyPressEvent))
         expect(store.getActions().slice(-1)[0]).toEqual(actions.selectNote({
           index: 1,
           filename: 'bob.md'
@@ -311,7 +311,7 @@ describe('epics/select-note', () => {
 
         state.selectedNote = store.getActions().slice(-1)[0].selectedNote
         store = mockStore(state)
-        store.dispatch(actions.keyDown(keyDownEvent))
+        store.dispatch(actions.keyPress(keyPressEvent))
         expect(store.getActions().slice(-1)[0]).toEqual(actions.selectNote({
           index: 0,
           filename: 'alice.txt'
@@ -319,10 +319,10 @@ describe('epics/select-note', () => {
 
         state.selectedNote = store.getActions().slice(-1)[0].selectedNote
         store = mockStore(state)
-        store.dispatch(actions.keyDown(keyDownEvent))
+        store.dispatch(actions.keyPress(keyPressEvent))
         state.selectedNote = store.getActions().slice(-1)[0].selectedNote
         store = mockStore(state)
-        store.dispatch(actions.keyDown(keyDownEvent))
+        store.dispatch(actions.keyPress(keyPressEvent))
         expect(store.getActions().slice(-1)[0]).toEqual(actions.selectNote({
           index: 0,
           filename: 'alice.txt'
@@ -335,8 +335,8 @@ describe('epics/select-note', () => {
     let action
 
     beforeEach(function () {
-      keyDownEvent.keyCode = 101
-      action = actions.keyDown(keyDownEvent)
+      keyPressEvent.keyCode = 101
+      action = actions.keyPress(keyPressEvent)
       store.dispatch(action)
     })
 
