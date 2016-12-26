@@ -2,17 +2,78 @@
 
 import {createEpicMiddleware} from 'redux-observable'
 import configureMockStore from 'redux-mock-store'
-import keyPressEpic, {ESC} from '../../lib/epics/key-press'
+import keyPressEpic, {ENTER, ESC} from '../../lib/epics/key-press'
 import * as actions from '../../lib/action-creators'
 
 const epicMiddleware = createEpicMiddleware(keyPressEpic)
 const mockStore = configureMockStore([epicMiddleware])
 
 describe('epics/key-press', () => {
-  let store, event
+  let state: State
+  let store
+  let event: KeyPressEvent
 
   beforeEach(() => {
-    store = mockStore()
+    state = {
+      columnHeaders: [],
+      config: {
+        dir: '/notes',
+        listHeight: 75,
+        rowHeight: 25,
+        sortDirection: 'asc',
+        sortField: 'name'
+      },
+      initialScan: {
+        done: false,
+        rawFiles: []
+      },
+      notes: {
+        'alice.txt': {
+          id: 0,
+          name: 'alice',
+          ext: 'txt',
+          path: '/notes/alice.txt'
+        },
+        'bob.md': {
+          id: 1,
+          name: 'bob',
+          ext: 'md',
+          path: '/notes/bob.md'
+        },
+        'cesar.txt': {
+          id: 2,
+          name: 'cesar',
+          ext: 'txt',
+          path: '/notes/cesar.txt'
+        }
+      },
+      pagination: {
+        start: 0,
+        limit: 3
+      },
+      scrollTop: 0,
+      selectedNote: null,
+      sifterResult: {
+        items: [
+          {id: 'alice.txt', score: 1.0},
+          {id: 'bob.md', score: 0.9},
+          {id: 'cesar.txt', score: 0.8}
+        ],
+        options: {
+          fields: ['name', 'ext'],
+          sort: [{
+            field: 'name',
+            direction: 'asc'
+          }]
+        },
+        query: '',
+        tokens: [],
+        total: 3
+      },
+      visibleRows: []
+    }
+
+    store = mockStore(state)
     event = {
       keyCode: 0,
       preventDefault: jasmine.createSpy('preventDefault')
@@ -23,7 +84,47 @@ describe('epics/key-press', () => {
     epicMiddleware.replaceEpic(keyPressEpic)
   })
 
-  describe('when ESC key down action', function () {
+  describe('when ENTER key pressed', function () {
+    beforeEach(function () {
+      atom.config.set('textual-velocity.defaultExt', '.md')
+      event.keyCode = ENTER
+    })
+
+    describe('when there is no selected note', function () {
+      beforeEach(function () {
+        store.dispatch(actions.keyPress(event))
+        atom.config.set('textual-velocity.defaultExt', 'abc')
+        store.dispatch(actions.keyPress(event))
+        waitsFor(() => atom.workspace.getPaneItems().length >= 2)
+      })
+
+      it('should open a new untitled file', function () {
+        expect(atom.workspace.getPaneItems()[0].getPath()).toEqual('/notes/untitled.md')
+      })
+
+      it('should allow override defaut extension', function () {
+        expect(atom.workspace.getPaneItems()[1].getPath()).toEqual('/notes/untitled.abc')
+      })
+    })
+
+    describe('when there is a selected note', function () {
+      beforeEach(function () {
+        state.selectedNote = {
+          index: 0,
+          filename: 'alice.txt'
+        }
+        store = mockStore(state)
+        store.dispatch(actions.keyPress(event))
+        waitsFor(() => atom.workspace.getPaneItems().length >= 2)
+      })
+
+      it('should open path of selected note', function () {
+        expect(atom.workspace.getPaneItems()[0].getPath()).toEqual('/notes/alice.txt')
+      })
+    })
+  })
+
+  describe('when ESC key pressed', function () {
     beforeEach(function () {
       event.keyCode = ESC
       store.dispatch(actions.keyPress(event))
@@ -35,7 +136,7 @@ describe('epics/key-press', () => {
     })
   })
 
-  describe('when random key down action', function () {
+  describe('when random key pressed', function () {
     beforeEach(function () {
       event.keyCode = 101
       store.dispatch(actions.keyPress(event))
