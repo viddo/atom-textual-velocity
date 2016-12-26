@@ -40,12 +40,8 @@ describe('pagination reducer', () => {
     sharedPaginationCalculationSpecs(actions.scroll(nextScrollTop))
   })
 
-  describe('when select prev', function () {
-    sharedPaginationCalculationSpecs(actions.selectPrevNote())
-  })
-
-  describe('when select next', function () {
-    sharedPaginationCalculationSpecs(actions.selectNextNote())
+  describe('when select note', function () {
+    sharedPaginationCalculationSpecs(actions.selectNote({index: 0, filename: ''}))
   })
 
   describe('when reset search', function () {

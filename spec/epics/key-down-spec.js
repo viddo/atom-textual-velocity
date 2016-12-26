@@ -2,7 +2,7 @@
 
 import {createEpicMiddleware} from 'redux-observable'
 import configureMockStore from 'redux-mock-store'
-import keyDownEpic, {ESC, DOWN, UP} from '../../lib/epics/key-down'
+import keyDownEpic, {ESC} from '../../lib/epics/key-down'
 import * as actions from '../../lib/action-creators'
 
 const epicMiddleware = createEpicMiddleware(keyDownEpic)
@@ -32,38 +32,6 @@ describe('key-down epic', () => {
     it('should yield a reset search action', function () {
       const dispatchedActions = store.getActions()
       expect(dispatchedActions[1]).toEqual(actions.resetSearch())
-    })
-  })
-
-  describe('when DOWN key down action', function () {
-    beforeEach(function () {
-      event.keyCode = DOWN
-      store.dispatch(actions.keyDown(event))
-    })
-
-    it('should yield a reset search action', function () {
-      const dispatchedActions = store.getActions()
-      expect(dispatchedActions[1]).toEqual(actions.selectNextNote())
-    })
-
-    it('should prevent default behavior of event to not move cursor in text field', function () {
-      expect(event.preventDefault).toHaveBeenCalled()
-    })
-  })
-
-  describe('when UP key down action', function () {
-    beforeEach(function () {
-      event.keyCode = UP
-      store.dispatch(actions.keyDown(event))
-    })
-
-    it('should yield a reset search action', function () {
-      const dispatchedActions = store.getActions()
-      expect(dispatchedActions[1]).toEqual(actions.selectPrevNote())
-    })
-
-    it('should prevent default behavior of event to not move cursor in text field', function () {
-      expect(event.preventDefault).toHaveBeenCalled()
     })
   })
 
