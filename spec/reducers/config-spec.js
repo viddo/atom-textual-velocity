@@ -3,7 +3,7 @@
 import {initialScanDone, resizeList, changeListHeight, changeRowHeight, changeSortDirection, changeSortField} from '../../lib/action-creators'
 import setupConfigReducer from '../../lib/reducers/config'
 
-describe('config reducer', () => {
+describe('reducers/config', () => {
   let state, configReducer, expectedState
 
   beforeEach(function () {

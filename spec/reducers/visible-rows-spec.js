@@ -6,7 +6,7 @@ import FileIconColumn from '../../lib/columns/file-icon-column'
 import SummaryColumn from '../../lib/columns/summary-column'
 import VisibleRowsReducer from '../../lib/reducers/visible-rows'
 
-describe('visible-rows reducer', () => {
+describe('reducers/visible-rows', () => {
   let state: Array<VisibleRow>
   let nextState: State
   let visibleRowsReducer

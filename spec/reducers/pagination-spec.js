@@ -3,7 +3,7 @@
 import * as actions from '../../lib/action-creators'
 import paginationReducer from '../../lib/reducers/pagination'
 
-describe('pagination reducer', () => {
+describe('reducers/pagination', () => {
   let nextConfig, nextScrollTop, state, prevState
 
   beforeEach(function () {

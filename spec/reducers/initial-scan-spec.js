@@ -3,7 +3,7 @@
 import {scannedFile, initialScanDone} from '../../lib/action-creators'
 import initialScanReducer from '../../lib/reducers/initial-scan'
 
-describe('initial-scan reducer', () => {
+describe('reducers/initial-scan', () => {
   let state
 
   describe('when scanned-file action', function () {

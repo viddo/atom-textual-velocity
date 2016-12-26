@@ -14,7 +14,7 @@ import {
 const epicMiddleware = createEpicMiddleware(initalScanEpic)
 const mockStore = configureMockStore([epicMiddleware])
 
-describe('initial-scan epic', () => {
+describe('epics/initial-scan', () => {
   let store
 
   beforeEach(() => {

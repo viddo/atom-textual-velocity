@@ -8,7 +8,7 @@ import * as actions from '../../lib/action-creators'
 const epicMiddleware = createEpicMiddleware(keyDownEpic)
 const mockStore = configureMockStore([epicMiddleware])
 
-describe('key-down epic', () => {
+describe('epics/key-down', () => {
   let store, event
 
   beforeEach(() => {

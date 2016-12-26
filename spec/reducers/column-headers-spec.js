@@ -6,7 +6,7 @@ import FileIconColumn from '../../lib/columns/file-icon-column'
 import SummaryColumn from '../../lib/columns/summary-column'
 import setupColumnHeadersReducer from '../../lib/reducers/column-headers'
 
-describe('column-headers reducer', () => {
+describe('reducers/column-headers', () => {
   let state
   let columnHeadersReducer
 
