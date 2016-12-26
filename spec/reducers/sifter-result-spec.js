@@ -4,7 +4,7 @@ import * as actions from '../../lib/action-creators'
 import NotesFields from '../../lib/notes-fields'
 import SifterResultReducer from '../../lib/reducers/sifter-result'
 
-describe('sifter-result reducer', () => {
+describe('reducers/sifter-result', () => {
   let state: SifterResult
   let config: Config
   let notes: Notes

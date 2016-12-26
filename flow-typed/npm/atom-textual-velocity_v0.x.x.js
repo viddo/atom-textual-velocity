@@ -72,7 +72,7 @@ type ResetSearch = {
 }
 type SelectNote = {
   type: 'SELECT_NOTE',
-  selectedNote: selectedNote
+  selectedNote: SelectedNote
 }
 type DeselectNote = {
   type: 'DESELECT_NOTE'

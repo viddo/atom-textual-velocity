@@ -4,7 +4,7 @@ import {initialScanDone} from '../../lib/action-creators'
 import NotesFields from '../../lib/notes-fields'
 import NotesReducer from '../../lib/reducers/notes'
 
-describe('notes reducer', () => {
+describe('reducers/notes', () => {
   let state: Notes
   let rawNotes: Array<RawFile>
 

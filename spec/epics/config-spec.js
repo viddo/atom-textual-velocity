@@ -8,7 +8,7 @@ import * as actions from '../../lib/action-creators'
 const epicMiddleware = createEpicMiddleware(configEpic)
 const mockStore = configureMockStore([epicMiddleware])
 
-describe('config epic', () => {
+describe('epics/config', () => {
   let store
 
   beforeEach(() => {
