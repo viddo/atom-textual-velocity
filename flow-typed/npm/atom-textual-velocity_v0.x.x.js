@@ -1,5 +1,3 @@
-import * as actions from '../../lib/action-creators'
-
 type MainPropsWithoutActions = {
   columnHeaders: Array<ColumnHeader>,
   initialScanDone: boolean,
@@ -17,13 +15,14 @@ type MainPropsWithoutActions = {
 
 type MainActions = {
   actions: {
-    changeRowHeight: typeof actions.changeRowHeight,
-    changeSortDirection: typeof actions.changeSortDirection,
-    changeSortField: typeof actions.changeSortField,
-    keyPress: typeof actions.keyPress,
-    resizeList: typeof actions.resizeList,
-    scroll: typeof actions.scroll,
-    search: typeof actions.changeSortDirection
+    changeRowHeight: Function,
+    changeSortDirection: Function,
+    changeSortField: Function,
+    clickRow: Function,
+    keyPress: Function,
+    resizeList: Function,
+    scroll: Function,
+    search: Function
   }
 }
 
@@ -44,6 +43,7 @@ type Action =
   | ChangedSortDirection
   | ChangedSortField
   | ResizedList
+  | ClickRow
   | Dispose
 type StartInitialScan = {
   type: 'START_INITIAL_SCAN'
@@ -96,6 +96,10 @@ type ChangedSortField = {
 type ResizedList = {
   type: 'RESIZED_LIST',
   listHeight: number
+}
+type ClickRow = {
+  type: 'CLICK_ROW',
+  filename: string
 }
 type Dispose = {
   type: 'DISPOSE'

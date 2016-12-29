@@ -331,6 +331,19 @@ describe('epics/select-note', () => {
     })
   })
 
+  describe('when click row action', function () {
+    beforeEach(function () {
+      store.dispatch(actions.clickRow('bob.md'))
+    })
+
+    it('should select note', function () {
+      expect(store.getActions().slice(-1)[0]).toEqual(actions.selectNote({
+        index: 1,
+        filename: 'bob.md'
+      }))
+    })
+  })
+
   describe('when random key down action', function () {
     let action
 
