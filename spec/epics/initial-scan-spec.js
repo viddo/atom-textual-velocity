@@ -25,6 +25,7 @@ describe('epics/initial-scan', () => {
   })
 
   afterEach(function () {
+    store.dispatch(dispose()) // should terminate any running processes
     epicMiddleware.replaceEpic(initalScanEpic)
   })
 
@@ -56,17 +57,6 @@ describe('epics/initial-scan', () => {
       expect(action.rawFile.stats.birthtime).toEqual(jasmine.any(Date))
       expect(action.rawFile.stats.ctime).toEqual(jasmine.any(Date))
       expect(action.rawFile.stats.mtime).toEqual(jasmine.any(Date))
-    })
-  })
-
-  describe('when dispose action is triggered before task has finished', function () {
-    beforeEach(function () {
-      store.dispatch(startInitialScan())
-      store.dispatch(dispose())
-    })
-
-    it('should terminate task', function () {
-      expect(store.getActions().length).toEqual(2)
     })
   })
 })
