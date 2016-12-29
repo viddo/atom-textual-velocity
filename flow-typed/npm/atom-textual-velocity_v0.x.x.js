@@ -1,82 +1,25 @@
-import * as actions from '../../lib/action-creators'
-
-type MainPropsWithoutActions = {
-  columnHeaders: Array<ColumnHeader>,
-  initialScanDone: boolean,
-  initialScanFilesCount: number,
-  itemsCount: number,
-  listHeight: number,
-  paginationStart: number,
-  query: string,
-  rowHeight: number,
-  scrollTop: number,
-  sortDirection: SortDirection,
-  sortField: string,
-  visibleRows: Array<VisibleRow>
-}
-
-type MainActions = {
-  actions: {
-    changeRowHeight: typeof actions.changeRowHeight,
-    changeSortDirection: typeof actions.changeSortDirection,
-    changeSortField: typeof actions.changeSortField,
-    keyPress: typeof actions.keyPress,
-    resizeList: typeof actions.resizeList,
-    scroll: typeof actions.scroll,
-    search: typeof actions.changeSortDirection
-  }
-}
-
-type MainProps = MainPropsWithoutActions & MainActions
-
 type Action =
-  | StartInitialScan
-  | ScannedFile
-  | InitialScanDone
-  | Search
-  | Scrolled
-  | KeyPress
-  | ResetSearch
-  | SelectNote
-  | DeselectNote
   | ChangedListHeight
   | ChangedRowHeight
   | ChangedSortDirection
   | ChangedSortField
-  | ResizedList
+  | ClickRow
+  | DeselectNote
   | Dispose
-type StartInitialScan = {
-  type: 'START_INITIAL_SCAN'
+  | InitialScanDone
+  | KeyPress
+  | ResetSearch
+  | ResizedList
+  | ScannedFile
+  | Scrolled
+  | Search
+  | SelectNote
+  | StartInitialScan
+
+type Cell = {
+  content: CellContentType
 }
-type ScannedFile = {
-  type: 'SCANNED_FILE',
-  rawFile: RawFile
-}
-type InitialScanDone = {
-  type: 'INITIAL_SCAN_DONE'
-}
-type Search = {
-  type: 'SEARCH',
-  query: string
-}
-type Scrolled = {
-  type: 'SCROLLED',
-  scrollTop: number
-}
-type KeyPress = {
-  type: 'KEY_PRESS',
-  event: KeyPressEvent
-}
-type ResetSearch = {
-  type: 'RESET_SEARCH'
-}
-type SelectNote = {
-  type: 'SELECT_NOTE',
-  selectedNote: SelectedNote
-}
-type DeselectNote = {
-  type: 'DESELECT_NOTE'
-}
+
 type ChangedListHeight = {
   type: 'CHANGED_LIST_HEIGHT',
   listHeight: number
@@ -93,15 +36,32 @@ type ChangedSortField = {
   type: 'CHANGED_SORT_FIELD',
   sortField: string
 }
-type ResizedList = {
-  type: 'RESIZED_LIST',
-  listHeight: number
-}
-type Dispose = {
-  type: 'DISPOSE'
+
+type ClickRow = {
+  type: 'CLICK_ROW',
+  filename: string
 }
 
-type SortDirection = 'desc' | 'asc'
+type Column = {
+  cellContent (params: CellContentParamsType): CellContentType,
+  className?: string,
+  description: string,
+  editCellName?: string,
+  editCellStr?: (note: NoteType) => string,
+  position?: number,
+  sortField: string,
+  title: string,
+  width: number
+}
+type Columns = {
+  add (column: Column): void,
+  all (): Array<Column>
+}
+type ColumnHeader = {
+  sortField: string,
+  title: string,
+  width: number
+}
 
 type Config = {
   dir: string,
@@ -110,44 +70,17 @@ type Config = {
   sortDirection: SortDirection,
   sortField: string
 }
-type InitialScan = {
-  done: boolean,
-  rawFiles: Array<RawFile>
+
+type DeselectNote = {
+  type: 'DESELECT_NOTE'
 }
-type Notes = any
-type Pagination = {
-  start: number,
-  limit: number
-}
-type VisibleRow = {
-  cells: Array<Cell>,
-  filename: string,
-  id: string,
-  selected: boolean
+
+type Dispose = {
+  type: 'DISPOSE'
 }
 type Cell = {
   className: string,
   content: CellContentType
-}
-type ColumnHeader = {
-  sortField: string,
-  title: string,
-  width: number
-}
-type SelectedNote = {
-  index: number,
-  filename: string
-}
-type State = {
-  columnHeaders: Array<ColumnHeader>,
-  config: Config,
-  initialScan: InitialScan,
-  notes: Notes,
-  pagination: Pagination,
-  scrollTop: number,
-  selectedNote: ?SelectedNote,
-  sifterResult: SifterResult,
-  visibleRows: Array<VisibleRow>
 }
 
 type FsStats =
@@ -157,9 +90,62 @@ type FsStats =
   })
 
 
-type RawFile = {
-  filename: string,
-  stats: FsStats
+type InitialScan = {
+  done: boolean,
+  rawFiles: Array<RawFile>
+}
+
+type InitialScanDone = {
+  type: 'INITIAL_SCAN_DONE'
+}
+
+type KeyPress = {
+  type: 'KEY_PRESS',
+  event: KeyPressEvent
+}
+
+type KeyPressEvent = {
+  keyCode: number,
+  preventDefault: Function
+}
+
+type MainPropsWithoutActions = {
+  columnHeaders: Array<ColumnHeader>,
+  initialScanDone: boolean,
+  initialScanFilesCount: number,
+  itemsCount: number,
+  listHeight: number,
+  paginationStart: number,
+  query: string,
+  rowHeight: number,
+  scrollTop: number,
+  sortDirection: SortDirection,
+  sortField: string,
+  visibleRows: Array<VisibleRow>
+}
+type MainActions = {
+  actions: {
+    changeRowHeight: Function,
+    changeSortDirection: Function,
+    changeSortField: Function,
+    clickRow: Function,
+    keyPress: Function,
+    resizeList: Function,
+    scroll: Function,
+    search: Function
+  }
+}
+type MainProps = MainPropsWithoutActions & MainActions
+
+type Note = {
+  id: string,
+  name: string,
+  ext: string,
+  ready: boolean,
+  stats: FsStats,
+
+  // known fields that will exist, eventually
+  content?: string
 }
 
 type NoteField = {
@@ -167,10 +153,57 @@ type NoteField = {
   value?: (note: any, filename: string) => any
 }
 
-type SifterResultItem = {
-  id: string,
-  score: number
+type Notes = any
+
+type NotesFields = {
+  add (field: NoteField): void,
+  propNames (): Array<string>,
+  all (): Array<NoteField>
 }
+
+type Pagination = {
+  start: number,
+  limit: number
+}
+
+type RawFile = {
+  filename: string,
+  stats: FsStats
+}
+
+type ResizedList = {
+  type: 'RESIZED_LIST',
+  listHeight: number
+}
+
+type ResetSearch = {
+  type: 'RESET_SEARCH'
+}
+
+type ScannedFile = {
+  type: 'SCANNED_FILE',
+  rawFile: RawFile
+}
+
+type Scrolled = {
+  type: 'SCROLLED',
+  scrollTop: number
+}
+
+type Search = {
+  type: 'SEARCH',
+  query: string
+}
+
+type SelectNote = {
+  type: 'SELECT_NOTE',
+  selectedNote: SelectedNote
+}
+type SelectedNote = {
+  index: number,
+  filename: string
+}
+
 type SifterResult = {
   items: Array<SifterResultItem>,
   options: {
@@ -188,30 +221,32 @@ type SifterResult = {
   }>,
   total: number
 }
-
-type NotesFields = {
-  add (field: NoteField): void,
-  propNames (): Array<string>,
-  all (): Array<NoteField>
+type SifterResultItem = {
+  id: string,
+  score: number
 }
 
-type Columns = {
-  add (column: Column): void,
-  all (): Array<Column>
-}
-type Column = {
-  cellContent (params: CellContentParamsType): CellContentType,
-  className?: string,
-  description: string,
-  editCellName?: string,
-  editCellStr?: (note: NoteType) => string,
-  position?: number,
-  sortField: string,
-  title: string,
-  width: number
+type StartInitialScan = {
+  type: 'START_INITIAL_SCAN'
 }
 
-type KeyPressEvent = {
-  keyCode: number,
-  preventDefault: Function
+type State = {
+  columnHeaders: Array<ColumnHeader>,
+  config: Config,
+  initialScan: InitialScan,
+  notes: Notes,
+  pagination: Pagination,
+  scrollTop: number,
+  selectedNote: ?SelectedNote,
+  sifterResult: SifterResult,
+  visibleRows: Array<VisibleRow>
+}
+
+type SortDirection = 'desc' | 'asc'
+
+type VisibleRow = {
+  cells: Array<Cell>,
+  filename: string,
+  id: string,
+  selected: boolean
 }
