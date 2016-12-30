@@ -3,18 +3,18 @@
 import Path from 'path'
 import {createEpicMiddleware} from 'redux-observable'
 import configureMockStore from 'redux-mock-store'
-import initalScanEpic from '../../lib/epics/initial-scan'
+import pathWatcherEpic from '../../lib/epics/path-watcher'
 import {
   dispose,
   INITIAL_SCAN_DONE,
-  SCANNED_FILE,
+  FILE_ADDED,
   startInitialScan
 } from '../../lib/action-creators'
 
-const epicMiddleware = createEpicMiddleware(initalScanEpic)
+const epicMiddleware = createEpicMiddleware(pathWatcherEpic)
 const mockStore = configureMockStore([epicMiddleware])
 
-describe('epics/initial-scan', () => {
+describe('epics/path-watcher', () => {
   let store
 
   beforeEach(() => {
@@ -26,7 +26,7 @@ describe('epics/initial-scan', () => {
 
   afterEach(function () {
     store.dispatch(dispose()) // should terminate any running processes
-    epicMiddleware.replaceEpic(initalScanEpic)
+    epicMiddleware.replaceEpic(pathWatcherEpic)
   })
 
   it('should yield add events for each file found in dir', function () {
@@ -41,11 +41,11 @@ describe('epics/initial-scan', () => {
       waitsFor(() => store.getActions().slice(-1)[0].type === INITIAL_SCAN_DONE)
     })
 
-    it('should have yielded scanned-file actions for each file', function () {
+    it('should have yielded file-added actions for each file', function () {
       expect(store.getActions().length).toEqual(6)
 
       const [, action] = store.getActions()
-      expect(action.type).toEqual(SCANNED_FILE)
+      expect(action.type).toEqual(FILE_ADDED)
       expect(action.rawFile).toEqual(jasmine.any(Object))
       expect(action.rawFile.filename).toEqual('an-example.txt')
     })

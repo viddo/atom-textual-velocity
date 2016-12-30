@@ -6,11 +6,13 @@ type Action =
   | ClickRow
   | DeselectNote
   | Dispose
+  | FileAdded
+  | FileChanged
+  | FileDeleted
   | InitialScanDone
   | KeyPress
   | ResetSearch
   | ResizedList
-  | ScannedFile
   | Scrolled
   | Search
   | SelectNote
@@ -81,6 +83,19 @@ type Dispose = {
 type Cell = {
   className: string,
   content: CellContentType
+}
+
+type FileAdded = {
+  type: 'FILE_ADDED',
+  rawFile: RawFile
+}
+type FileChanged = {
+  type: 'FILE_CHANGED',
+  rawFile: RawFile
+}
+type FileDeleted = {
+  type: 'FILE_DELETED',
+  rawFile: RawFile
 }
 
 type FsStats =
@@ -178,11 +193,6 @@ type ResizedList = {
 
 type ResetSearch = {
   type: 'RESET_SEARCH'
-}
-
-type ScannedFile = {
-  type: 'SCANNED_FILE',
-  rawFile: RawFile
 }
 
 type Scrolled = {
