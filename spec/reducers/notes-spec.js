@@ -1,34 +1,41 @@
 /* @flow */
 
-import {initialScanDone} from '../../lib/action-creators'
+import * as actions from '../../lib/action-creators'
 import NotesFields from '../../lib/notes-fields'
-import NotesReducer from '../../lib/reducers/notes'
+import setupNotesReducer from '../../lib/reducers/notes'
 
 describe('reducers/notes', () => {
   let state: Notes
-  let rawNotes: Array<RawFile>
+  let nextInitialScan: InitialScan
+  let notesReducer
+
+  beforeEach(function () {
+    state = undefined
+    const notesFields = new NotesFields()
+    notesFields.add({
+      notePropName: 'ext',
+      value: (note, filename) => filename.split('.').slice(-1)[0]
+    })
+
+    // Some fields are set by a file-reader, in those cases the field is only there to indicate that the field exist
+    notesFields.add({notePropName: 'content'})
+
+    notesReducer = setupNotesReducer(notesFields)
+  })
 
   describe('when initial-scan-done action', function () {
     beforeEach(function () {
-      rawNotes = [{
-        filename: 'a.txt',
-        stats: {mtime: new Date()}
-      }, {
-        filename: 'b.md',
-        stats: {mtime: new Date()}
-      }]
-
-      const notesFields = new NotesFields()
-      notesFields.add({
-        notePropName: 'ext',
-        value: (note, filename) => filename.split('.').slice(-1)[0]
-      })
-
-      // Some fields are set by a file-reader, in those cases the field is only there to indicate that the field exist
-      notesFields.add({notePropName: 'content'})
-
-      const notesReducer = NotesReducer(notesFields)
-      state = notesReducer(state, initialScanDone(), rawNotes)
+      nextInitialScan = {
+        done: true,
+        rawFiles: [{
+          filename: 'a.txt',
+          stats: {mtime: new Date()}
+        }, {
+          filename: 'b.md',
+          stats: {mtime: new Date()}
+        }]
+      }
+      state = notesReducer(state, actions.initialScanDone(), nextInitialScan)
     })
 
     it('should reduce notes from raw notes', function () {
@@ -47,6 +54,65 @@ describe('reducers/notes', () => {
 
     it('should set stats object on note', function () {
       expect(state['a.txt'].stats).toEqual(jasmine.any(Object))
+    })
+  })
+
+  describe('when file is added', function () {
+    let action
+
+    beforeEach(function () {
+      nextInitialScan = {
+        done: false,
+        rawFiles: [{
+          filename: 'a.txt',
+          stats: {mtime: new Date()}
+        }, {
+          filename: 'b.md',
+          stats: {mtime: new Date()}
+        }]
+      }
+      action = actions.fileAdded({
+        filename: 'alice.txt',
+        stats: {mtime: new Date()}
+      })
+    })
+
+    describe('when initial scan is not yet done', function () {
+      beforeEach(function () {
+        state = notesReducer(state, action, nextInitialScan)
+      })
+
+      it('should not do anything', function () {
+        expect(state).toEqual({})
+      })
+    })
+
+    describe('when initial scan is done', function () {
+      beforeEach(function () {
+        nextInitialScan.done = true
+        state = notesReducer(state, action, nextInitialScan)
+      })
+
+      it('should add new note', function () {
+        expect(state).toEqual({
+          'alice.txt': {
+            id: jasmine.any(String),
+            stats: {mtime: jasmine.any(Date)},
+            ext: 'txt'
+          }
+        })
+      })
+
+      describe('when file is removed', function () {
+        beforeEach(function () {
+          action = actions.fileDeleted('alice.txt')
+          state = notesReducer(state, action, nextInitialScan)
+        })
+
+        it('should remove note', function () {
+          expect(state).toEqual({})
+        })
+      })
     })
   })
 })

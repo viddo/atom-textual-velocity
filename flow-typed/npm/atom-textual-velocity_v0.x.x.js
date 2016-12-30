@@ -95,7 +95,7 @@ type FileChanged = {
 }
 type FileDeleted = {
   type: 'FILE_DELETED',
-  rawFile: RawFile
+  filename: string
 }
 
 type FsStats =
