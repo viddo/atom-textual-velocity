@@ -3,7 +3,7 @@
 import StatsDateField from '../../lib/fields/stats-date-field'
 
 describe('fields/stats-date-field', function () {
-  let field: FieldType
+  let field
 
   describe('.notePropName', function () {
     it('should return given name', function () {
