@@ -65,6 +65,7 @@ describe('presenter', function () {
       cellContent: (params: CellContentParamsType) => params.note.name
     }
     extColumn = {
+      className: 'file-icons',
       sortField: 'ext',
       title: 'File extension',
       width: 10,
@@ -193,8 +194,8 @@ describe('presenter', function () {
         expect(row.selected).toBe(false)
         expect(row.cells).toEqual(jasmine.any(Array))
         expect(spies.rowsS.mostRecentCall.args[0][0].cells).toEqual([
-          {content: 'note 0', editCellName: 'name'},
-          {content: '.md', editCellName: undefined}
+          {className: '', content: 'note 0', editCellName: 'name'},
+          {className: 'file-icons', content: '.md', editCellName: undefined}
         ])
       })
     })
@@ -231,8 +232,8 @@ describe('presenter', function () {
           jasmine.objectContaining({
             id: jasmine.any(String),
             cells: [
-              {content: 'note 3', editCellName: 'name'},
-              {content: '.md', editCellName: undefined}
+              {className: '', content: 'note 3', editCellName: 'name'},
+              {className: 'file-icons', content: '.md', editCellName: undefined}
             ]
           })
         )
@@ -264,9 +265,9 @@ describe('presenter', function () {
           expect(spies.rowsS.mostRecentCall.args[0]).toEqual(jasmine.any(Array))
           expect(spies.rowsS.mostRecentCall.args[0].length).toEqual(3)
           expect(spies.rowsS.mostRecentCall.args[0].map(x => x.cells)).toEqual([
-            [{content: 'note 7', editCellName: 'name'}, {content: '.md', editCellName: undefined}],
-            [{content: 'note 8', editCellName: 'name'}, {content: '.md', editCellName: undefined}],
-            [{content: 'note 9', editCellName: 'name'}, {content: '.md', editCellName: undefined}]
+            [{className: '', content: 'note 7', editCellName: 'name'}, {className: 'file-icons', content: '.md', editCellName: undefined}],
+            [{className: '', content: 'note 8', editCellName: 'name'}, {className: 'file-icons', content: '.md', editCellName: undefined}],
+            [{className: '', content: 'note 9', editCellName: 'name'}, {className: 'file-icons', content: '.md', editCellName: undefined}]
           ])
         })
       })

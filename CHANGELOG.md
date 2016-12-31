@@ -8,6 +8,7 @@ This project adheres to [Semantic Versioning](http://semver.org/) and [keepachan
 
 #### Fixed
 - File icons not working since file-icons v2 release [#49](https://github.com/viddo/atom-textual-velocity/issues/49)
+- Rows not having consistent height
 
 ## [0.11.2] - 2016-12-05
 #### Fixed
