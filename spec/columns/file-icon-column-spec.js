@@ -23,6 +23,7 @@ describe('columns/file-icon-column', function () {
       note = {
         id: '',
         name: 'markdown',
+        fileIcons: null,
         ext: '.md'
       }
       cellContent = column.cellContent({note: note, path: path})
@@ -33,6 +34,21 @@ describe('columns/file-icon-column', function () {
       expect(cellContent.attrs).toEqual({
         className: 'icon icon-file-text',
         'data-name': 'markdown.md'
+      })
+    })
+
+    describe('when note.fileIcons are available', function () {
+      beforeEach(function () {
+        note.fileIcons = 'icon-file-text medium-blue'
+        cellContent = column.cellContent({note: note, path: path})
+      })
+
+      it('should utilize file icons instead', function () {
+        expect(cellContent).toEqual(jasmine.any(Object), 'title')
+        expect(cellContent.attrs).toEqual({
+          className: 'icon-file-text medium-blue',
+          'data-name': 'markdown.md'
+        })
       })
     })
   })

@@ -101,8 +101,10 @@ describe('service', function () {
     })
 
     describe('.registerFileReaders', function () {
+      let fileReader
+
       it('should register a new file reader', function () {
-        const fileReader = {
+        fileReader = {
           notePropName: 'test',
           read: (path, callback) => {}
         }
@@ -111,6 +113,13 @@ describe('service', function () {
         expect(spies.fieldsP).not.toHaveBeenCalled()
         expect(spies.fileReadersP).toHaveBeenCalledWith([fileReader])
         expect(spies.fileWritersP).not.toHaveBeenCalled()
+      })
+
+      describe('.deregisterFileReaders', function () {
+        it('should deregister an existing file reader', function () {
+          v0.deregisterFileReaders(fileReader)
+          expect(spies.fileReadersP).toHaveBeenCalledWith([])
+        })
       })
     })
 

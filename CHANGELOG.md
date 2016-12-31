@@ -6,6 +6,9 @@ This project adheres to [Semantic Versioning](http://semver.org/) and [keepachan
 #### Changed
 - Updated dependencies, fixed some flowtype complaints due to changes in new version
 
+#### Fixed
+- File icons not working since file-icons v2 release [#49](https://github.com/viddo/atom-textual-velocity/issues/49)
+
 ## [0.11.2] - 2016-12-05
 #### Fixed
 - Regression from previous fix #45, preventing new note from being created on <kbd>enter</kbd>

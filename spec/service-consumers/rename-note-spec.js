@@ -14,6 +14,7 @@ describe('service-consumers/rename-note', function () {
         registerColumns: jasmine.createSpy('registerColumns'),
         registerFields: jasmine.createSpy('registerFields'),
         registerFileReaders: jasmine.createSpy('registerFileReaders'),
+        deregisterFileReaders: jasmine.createSpy('deregisterFileReaders'),
         registerFileWriters: jasmine.createSpy('registerFileWriters'),
         editCell: jasmine.createSpy('editCell')
       }
