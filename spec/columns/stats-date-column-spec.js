@@ -3,7 +3,7 @@
 import StatsDateColumn from '../../lib/columns/stats-date-column'
 
 describe('columns/stats-date-column', function () {
-  let column: ColumnType
+  let column
 
   beforeEach(function () {
     column = new StatsDateColumn({

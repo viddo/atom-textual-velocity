@@ -3,6 +3,8 @@ All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](http://semver.org/) and [keepachangelog.com](http://keepachangelog.com/).
 
 ## [unreleased]
+#### Changed
+- Updated dependencies, fixed some flowtype complaints due to changes in new version
 
 ## [0.11.2] - 2016-12-05
 #### Fixed

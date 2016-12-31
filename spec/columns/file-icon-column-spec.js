@@ -3,7 +3,7 @@
 import FileIconColumn from '../../lib/columns/file-icon-column'
 
 describe('columns/file-icon-column', function () {
-  let column: ColumnType
+  let column
 
   beforeEach(function () {
     column = new FileIconColumn({sortField: 'ext'})

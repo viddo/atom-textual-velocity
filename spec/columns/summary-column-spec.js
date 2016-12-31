@@ -4,7 +4,7 @@ import SummaryColumn from '../../lib/columns/summary-column'
 import SearchMatch from '../../lib/search-match'
 
 describe('columns/summary-column', function () {
-  let column: ColumnType
+  let column
 
   beforeEach(function () {
     column = new SummaryColumn({sortField: 'name'})
