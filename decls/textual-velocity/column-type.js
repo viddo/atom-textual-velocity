@@ -1,9 +1,10 @@
 declare type ColumnType = {
+  cellContent (params: CellContentParamsType): CellContentType,
+  className?: string,
+  description: string,
   editCellName?: string,
+  editCellStr?: (note: NoteType) => string,
   sortField: string,
   title: string,
-  description: string,
-  width: number,
-  editCellStr?: (note: NoteType) => string,
-  cellContent (params: CellContentParamsType): CellContentType
+  width: number
 }

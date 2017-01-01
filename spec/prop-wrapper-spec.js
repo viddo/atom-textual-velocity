@@ -15,11 +15,11 @@ describe('prop-wrapper', function () {
     propWrapper.dispose()
   })
 
-  it('should have ', function () {
+  it('should have empty list by default', function () {
     expect(propSpy).toHaveBeenCalledWith([])
   })
 
-  it('should update prop on adding an item', function () {
+  it('should update prop on adding/removing item', function () {
     testObj = {}
     propWrapper.add(testObj)
     expect(propSpy).toHaveBeenCalledWith([testObj])
@@ -27,5 +27,8 @@ describe('prop-wrapper', function () {
     testObj2 = {}
     propWrapper.add(testObj2)
     expect(propSpy).toHaveBeenCalledWith([testObj, testObj2])
+
+    propWrapper.remove(testObj)
+    expect(propSpy).toHaveBeenCalledWith([testObj2])
   })
 })

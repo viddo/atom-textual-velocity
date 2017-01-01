@@ -60,7 +60,6 @@
     width: 100%;
   }
   tr {
-    height: @component-line-height;
     &:nth-child(odd) { background-color: @tree-view-background-color }
     &:nth-child(even) { background-color: lighten(@tree-view-background-color, 2%) }
   }
@@ -79,7 +78,8 @@
     color: @text-color-selected;
   }
   td, th {
-    padding: @component-icon-padding;
+    padding-left: @component-icon-padding;
+    padding-right: @component-icon-padding;
     max-width: 0; // required for overflow to work
     overflow: hidden;
     text-overflow: ellipsis;
@@ -91,6 +91,8 @@
     }
   }
   th {
+    padding-top: @component-icon-padding;
+    padding-bottom: @component-icon-padding;
     color: @text-color-subtle;
     cursor: pointer;
     &.is-selected {
@@ -102,6 +104,11 @@
     &.edit-cell-str {
       display: table-cell;
       padding: 0;
+    }
+    &.summary,
+    &.stats {
+      padding-top: @component-icon-padding;
+      padding-bottom: @component-icon-padding;
     }
   }
   .only-for-column-widths {
