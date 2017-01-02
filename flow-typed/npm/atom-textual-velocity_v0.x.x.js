@@ -18,8 +18,23 @@ type Action =
   | SelectNote
   | StartInitialScan
 
-type Cell = {
-  content: CellContentType
+type CellType = {
+  className: string|void,
+  content: CellContent
+}
+
+type CellContent =
+  | string
+  | {
+      attrs: Object,
+      content?: CellContent
+    }
+  | Array<CellContent>
+
+type CellContentParams = {
+  note: Note,
+  path: string,
+  searchMatch?: SearchMatch
 }
 
 type ChangedListHeight = {
@@ -45,11 +60,11 @@ type ClickRow = {
 }
 
 type Column = {
-  cellContent (params: CellContentParamsType): CellContentType,
+  cellContent (params: CellContentParams): CellContent,
   className?: string,
   description: string,
   editCellName?: string,
-  editCellStr?: (note: NoteType) => string,
+  editCellStr?: (note: Note) => string,
   position?: number,
   sortField: string,
   title: string,
@@ -79,10 +94,6 @@ type DeselectNote = {
 
 type Dispose = {
   type: 'DISPOSE'
-}
-type Cell = {
-  className: string,
-  content: CellContentType
 }
 
 type FileAdded = {
@@ -205,6 +216,10 @@ type Search = {
   query: string
 }
 
+type SearchMatch = {
+  content (str: string): [string, Object, string] | void
+}
+
 type SelectNote = {
   type: 'SELECT_NOTE',
   selectedNote: SelectedNote
@@ -255,7 +270,7 @@ type State = {
 type SortDirection = 'desc' | 'asc'
 
 type VisibleRow = {
-  cells: Array<Cell>,
+  cells: Array<CellType>,
   filename: string,
   id: string,
   selected: boolean
