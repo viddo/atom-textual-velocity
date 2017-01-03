@@ -43,10 +43,6 @@ describe('epics/preview', () => {
           ext: 'txt'
         }
       },
-      pagination: {
-        start: 0,
-        limit: 3
-      },
       scrollTop: 0,
       selectedNote: null,
       sifterResult: {
@@ -65,8 +61,7 @@ describe('epics/preview', () => {
         query: '',
         tokens: [],
         total: 3
-      },
-      visibleRows: []
+      }
     }
 
     store = mockStore(state)

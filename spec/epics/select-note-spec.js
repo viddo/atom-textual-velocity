@@ -47,10 +47,6 @@ describe('epics/select-note', () => {
           path: '/notes/cesar.txt'
         }
       },
-      pagination: {
-        start: 0,
-        limit: 3
-      },
       scrollTop: 0,
       selectedNote: null,
       sifterResult: {
@@ -69,8 +65,7 @@ describe('epics/select-note', () => {
         query: '',
         tokens: [],
         total: 3
-      },
-      visibleRows: []
+      }
     }
 
     store = mockStore(state)

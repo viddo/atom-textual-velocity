@@ -135,34 +135,6 @@ type KeyPressEvent = {
   preventDefault: Function
 }
 
-type MainPropsWithoutActions = {
-  columnHeaders: Array<ColumnHeader>,
-  initialScanDone: boolean,
-  initialScanFilesCount: number,
-  itemsCount: number,
-  listHeight: number,
-  paginationStart: number,
-  query: string,
-  rowHeight: number,
-  scrollTop: number,
-  sortDirection: SortDirection,
-  sortField: string,
-  visibleRows: Array<VisibleRow>
-}
-type MainActions = {
-  actions: {
-    changeRowHeight: Function,
-    changeSortDirection: Function,
-    changeSortField: Function,
-    clickRow: Function,
-    keyPress: Function,
-    resizeList: Function,
-    scroll: Function,
-    search: Function
-  }
-}
-type MainProps = MainPropsWithoutActions & MainActions
-
 type Note = {
   id: string,
   name: string,
@@ -260,11 +232,9 @@ type State = {
   config: Config,
   initialScan: InitialScan,
   notes: Notes,
-  pagination: Pagination,
   scrollTop: number,
   selectedNote: ?SelectedNote,
-  sifterResult: SifterResult,
-  visibleRows: Array<VisibleRow>
+  sifterResult: SifterResult
 }
 
 type SortDirection = 'desc' | 'asc'
