@@ -263,8 +263,7 @@ type State = {
   pagination: Pagination,
   scrollTop: number,
   selectedNote: ?SelectedNote,
-  sifterResult: SifterResult,
-  visibleRows: Array<VisibleRow>
+  sifterResult: SifterResult
 }
 
 type SortDirection = 'desc' | 'asc'
