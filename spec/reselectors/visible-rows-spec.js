@@ -4,6 +4,7 @@ import Columns from '../../lib/columns'
 import FileIconColumn from '../../lib/columns/file-icon-column'
 import SummaryColumn from '../../lib/columns/summary-column'
 import makeVisibleRowsSelector from '../../lib/reselectors/visible-rows'
+import paginationSelector from '../../lib/reselectors/pagination'
 
 describe('reselectors/visible-rows', () => {
   let state: State
@@ -19,7 +20,7 @@ describe('reselectors/visible-rows', () => {
       columnHeaders: [],
       config: {
         dir: '/notes',
-        listHeight: 75,
+        listHeight: 25,
         rowHeight: 25,
         sortDirection: 'asc',
         sortField: 'name'
@@ -55,10 +56,6 @@ describe('reselectors/visible-rows', () => {
           path: '/notes/eric.txt'
         }
       },
-      pagination: {
-        start: 0,
-        limit: 3
-      },
       scrollTop: 0,
       selectedNote: null,
       sifterResult: {
@@ -82,7 +79,7 @@ describe('reselectors/visible-rows', () => {
       }
     }
 
-    visibleRowsSelector = makeVisibleRowsSelector(columns)
+    visibleRowsSelector = makeVisibleRowsSelector(columns, paginationSelector)
   })
 
   describe('when initial scan is done', function () {
@@ -120,10 +117,6 @@ describe('reselectors/visible-rows', () => {
   describe('when scrolled', function () {
     beforeEach(function () {
       state.scrollTop = 25
-      state.pagination = {
-        start: 1,
-        limit: 3
-      }
       visibleRows = visibleRowsSelector(state)
     })
 
@@ -135,56 +128,30 @@ describe('reselectors/visible-rows', () => {
     })
   })
 
-  describe('when resized list', function () {
-    beforeEach(function () {
-      state.config.listHeight = 1001
-      state.pagination = {
-        start: 1,
-        limit: 100
-      }
-      visibleRows = visibleRowsSelector(state)
-    })
-
-    it('should return paginated rows', function () {
-      expect(visibleRows).toEqual(jasmine.any(Array))
-      expect(visibleRows.map(x => x.id)).toEqual([1, 2, 3, 4])
-      expect(visibleRows.map(x => x.filename)).toEqual(['bob.md', 'cesar.txt', 'david.md', 'eric.txt'])
-      expect(visibleRows.map(x => x.cells)).toEqual(jasmine.any(Array))
-    })
-  })
-
   describe('when changed list height', function () {
     beforeEach(function () {
       state.config.listHeight = 1001
-      state.pagination = {
-        start: 1,
-        limit: 100
-      }
       visibleRows = visibleRowsSelector(state)
     })
 
     it('should return paginated rows', function () {
       expect(visibleRows).toEqual(jasmine.any(Array))
-      expect(visibleRows.map(x => x.id)).toEqual([1, 2, 3, 4])
-      expect(visibleRows.map(x => x.filename)).toEqual(['bob.md', 'cesar.txt', 'david.md', 'eric.txt'])
+      expect(visibleRows.map(x => x.id)).toEqual([0, 1, 2, 3, 4])
+      expect(visibleRows.map(x => x.filename)).toEqual(['alice.txt', 'bob.md', 'cesar.txt', 'david.md', 'eric.txt'])
       expect(visibleRows.map(x => x.cells)).toEqual(jasmine.any(Array))
     })
   })
 
   describe('when changed row height', function () {
     beforeEach(function () {
-      state.config.rowHeight = 15
-      state.pagination = {
-        start: 1,
-        limit: 7
-      }
+      state.config.rowHeight = 12
       visibleRows = visibleRowsSelector(state)
     })
 
     it('should return paginated rows', function () {
       expect(visibleRows).toEqual(jasmine.any(Array))
-      expect(visibleRows.map(x => x.id)).toEqual([1, 2, 3, 4])
-      expect(visibleRows.map(x => x.filename)).toEqual(['bob.md', 'cesar.txt', 'david.md', 'eric.txt'])
+      expect(visibleRows.map(x => x.id)).toEqual([0, 1, 2, 3])
+      expect(visibleRows.map(x => x.filename)).toEqual(['alice.txt', 'bob.md', 'cesar.txt', 'david.md'])
       expect(visibleRows.map(x => x.cells)).toEqual(jasmine.any(Array))
     })
   })

@@ -260,7 +260,6 @@ type State = {
   config: Config,
   initialScan: InitialScan,
   notes: Notes,
-  pagination: Pagination,
   scrollTop: number,
   selectedNote: ?SelectedNote,
   sifterResult: SifterResult
