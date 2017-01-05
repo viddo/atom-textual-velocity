@@ -2,16 +2,15 @@
 
 import {createEpicMiddleware} from 'redux-observable'
 import configureMockStore from 'redux-mock-store'
-import keyPressEpic, {ENTER, ESC} from '../../lib/epics/key-press'
+import openNoteEpic from '../../lib/epics/open-note'
 import * as actions from '../../lib/action-creators'
 
-const epicMiddleware = createEpicMiddleware(keyPressEpic)
+const epicMiddleware = createEpicMiddleware(openNoteEpic)
 const mockStore = configureMockStore([epicMiddleware])
 
-describe('epics/key-press', () => {
+describe('epics/open-note', () => {
   let state: State
   let store
-  let event: KeyPressEvent
 
   beforeEach(() => {
     state = {
@@ -69,27 +68,24 @@ describe('epics/key-press', () => {
     }
 
     store = mockStore(state)
-    event = {
-      keyCode: 0,
-      preventDefault: jasmine.createSpy('preventDefault')
-    }
   })
 
   afterEach(function () {
-    epicMiddleware.replaceEpic(keyPressEpic)
+    epicMiddleware.replaceEpic(openNoteEpic)
   })
 
-  describe('when ENTER key pressed', function () {
+  describe('when open-note action', function () {
     beforeEach(function () {
       atom.config.set('textual-velocity.defaultExt', '.md')
-      event.keyCode = ENTER
     })
 
     describe('when there is no selected note', function () {
       beforeEach(function () {
-        store.dispatch(actions.keyPress(event))
+        store.dispatch(actions.openNote())
+
         atom.config.set('textual-velocity.defaultExt', 'abc')
-        store.dispatch(actions.keyPress(event))
+        store.dispatch(actions.openNote())
+
         waitsFor(() => atom.workspace.getPaneItems().length >= 2)
       })
 
@@ -109,7 +105,7 @@ describe('epics/key-press', () => {
           filename: 'alice.txt'
         }
         store = mockStore(state)
-        store.dispatch(actions.keyPress(event))
+        store.dispatch(actions.openNote())
         waitsFor(() => atom.workspace.getPaneItems().length >= 2)
       })
 
@@ -119,39 +115,14 @@ describe('epics/key-press', () => {
     })
   })
 
-  describe('when ESC key pressed', function () {
-    beforeEach(function () {
-      event.keyCode = ESC
-      store.dispatch(actions.keyPress(event))
-    })
-
-    it('should yield a reset search action', function () {
-      const dispatchedActions = store.getActions()
-      expect(dispatchedActions[1]).toEqual(actions.resetSearch())
-    })
-  })
-
-  describe('when random key pressed', function () {
-    beforeEach(function () {
-      event.keyCode = 101
-      store.dispatch(actions.keyPress(event))
-    })
-
-    it('should not yield any reset action', function () {
-      const dispatchedActions = store.getActions().filter(action => action.type !== actions.KEY_PRESS)
-      expect(dispatchedActions).toEqual([])
-    })
-  })
-
   describe('when dispose action', function () {
     beforeEach(function () {
       store.dispatch(actions.dispose())
-      event.keyCode = ESC
-      store.dispatch(actions.keyPress(event))
+      store.dispatch(actions.startInitialScan())
     })
 
     it('should no longer create any actions', function () {
-      const dispatchedActions = store.getActions().filter(action => action.type !== actions.KEY_PRESS)
+      const dispatchedActions = store.getActions().filter(action => action.type !== actions.START_INITIAL_SCAN)
       expect(dispatchedActions).toEqual([actions.dispose()])
     })
   })

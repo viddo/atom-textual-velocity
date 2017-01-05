@@ -48,8 +48,12 @@ describe('reducers/scroll-top', () => {
     sharedAdjustScrollTopSpecs(actions.changeListHeight(123))
   })
 
-  describe('when select note', function () {
-    sharedAdjustScrollTopSpecs(actions.selectNote({index: 0, filename: ''}))
+  describe('when select next', function () {
+    sharedAdjustScrollTopSpecs(actions.selectNext())
+  })
+
+  describe('when select prev', function () {
+    sharedAdjustScrollTopSpecs(actions.selectPrev())
   })
 
   describe('when any other action', function () {

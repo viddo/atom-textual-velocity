@@ -2,13 +2,13 @@
 
 import {createEpicMiddleware} from 'redux-observable'
 import configureMockStore from 'redux-mock-store'
-import previewEpic from '../../lib/epics/preview'
+import previewNoteEpic from '../../lib/epics/preview-note'
 import * as actions from '../../lib/action-creators'
 
-const epicMiddleware = createEpicMiddleware(previewEpic)
+const epicMiddleware = createEpicMiddleware(previewNoteEpic)
 const mockStore = configureMockStore([epicMiddleware])
 
-describe('epics/preview', () => {
+describe('epics/preview-note', () => {
   let state: State
   let store
 
@@ -64,27 +64,34 @@ describe('epics/preview', () => {
       }
     }
 
-    store = mockStore(state)
+    const getState = () => ({...state}) // make sure state is unique for each action
+    store = mockStore(getState)
   })
 
   afterEach(function () {
-    epicMiddleware.replaceEpic(previewEpic)
+    epicMiddleware.replaceEpic(previewNoteEpic)
   })
 
   describe('when select note', function () {
     describe('when there is no editor for path', function () {
       beforeEach(function () {
-        store.dispatch(actions.selectNote({index: 0, filename: 'alice.txt'}))
+        state.selectedNote = {
+          filename: 'alice.txt',
+          index: 0
+        }
+        store.dispatch(actions.selectNext())
 
-        waitsFor(() => atom.workspace.getPaneItems().length > 0)
+        expect(atom.workspace.getPaneItems()).toEqual([], 'there should not be any pane items yet')
+        waitsFor(() => atom.workspace.getPaneItems().length > 0) // waits for preview
       })
 
       it('should open preview', function () {
         expect(atom.workspace.getPaneItems()[0].tagName.toLowerCase()).toContain('preview')
       })
 
-      it('when deselect note should close preview', function () {
-        store.dispatch(actions.deselectNote())
+      it('should close preview when deselected note', function () {
+        state.selectedNote = null
+        store.dispatch(actions.resetSearch())
         waitsFor(() => atom.workspace.getPaneItems().length === 0)
       })
 
@@ -105,7 +112,11 @@ describe('epics/preview', () => {
         })
 
         it('should dispose elements and no longer open any previews', function () {
-          store.dispatch(actions.selectNote({index: 0, filename: 'alice.txt'}))
+          state.selectedNote = {
+            filename: 'alice.txt',
+            index: 0
+          }
+          store.dispatch(actions.selectNext())
           var done = false
           jasmine.useRealClock()
           setTimeout(function () {
@@ -122,11 +133,19 @@ describe('epics/preview', () => {
     describe('when a text editor for matching path is already open', function () {
       beforeEach(function () {
         atom.workspace.open('/notes/bob.md')
-        store.dispatch(actions.selectNote({index: 0, filename: 'alice.txt'}))
+        state.selectedNote = {
+          filename: 'alice.txt',
+          index: 0
+        }
+        store.dispatch(actions.selectNext())
 
         waitsFor(() => atom.workspace.getPaneItems().length === 2)
         runs(() => {
-          store.dispatch(actions.selectNote({index: 1, filename: 'bob.md'}))
+          state.selectedNote = {
+            filename: 'bob.md',
+            index: 1
+          }
+          store.dispatch(actions.selectNext())
         })
         waitsFor(() => atom.workspace.getPaneItems().length === 1) // should close the preview
       })

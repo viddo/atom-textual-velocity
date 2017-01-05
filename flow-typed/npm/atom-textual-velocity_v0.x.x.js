@@ -1,21 +1,23 @@
 type Action =
+  | ChangedActivePaneItem
   | ChangedListHeight
   | ChangedRowHeight
   | ChangedSortDirection
   | ChangedSortField
   | ClickRow
-  | DeselectNote
   | Dispose
   | FileAdded
   | FileChanged
   | FileDeleted
   | InitialScanDone
   | KeyPress
+  | OpenNote
   | ResetSearch
   | ResizedList
   | Scrolled
   | Search
-  | SelectNote
+  | SelectNext
+  | SelectPrev
   | StartInitialScan
 
 type CellType = {
@@ -35,6 +37,11 @@ type CellContentParams = {
   note: Note,
   path: string,
   searchMatch?: SearchMatch
+}
+
+type ChangedActivePaneItem = {
+  type: 'CHANGED_ACTIVE_PANE_ITEM',
+  path: ?string
 }
 
 type ChangedListHeight = {
@@ -88,10 +95,6 @@ type Config = {
   sortField: string
 }
 
-type DeselectNote = {
-  type: 'DESELECT_NOTE'
-}
-
 type Dispose = {
   type: 'DISPOSE'
 }
@@ -125,11 +128,6 @@ type InitialScanDone = {
   type: 'INITIAL_SCAN_DONE'
 }
 
-type KeyPress = {
-  type: 'KEY_PRESS',
-  event: KeyPressEvent
-}
-
 type KeyPressEvent = {
   keyCode: number,
   preventDefault: Function
@@ -157,6 +155,10 @@ type NotesFields = {
   add (field: NoteField): void,
   propNames (): Array<string>,
   all (): Array<NoteField>
+}
+
+type OpenNote = {
+  type: 'OPEN_NOTE'
 }
 
 type Pagination = {
@@ -192,9 +194,11 @@ type SearchMatch = {
   content (str: string): [string, Object, string] | void
 }
 
-type SelectNote = {
-  type: 'SELECT_NOTE',
-  selectedNote: SelectedNote
+type SelectNext = {
+  type: 'SELECT_NEXT'
+}
+type SelectPrev = {
+  type: 'SELECT_PREV'
 }
 type SelectedNote = {
   index: number,
