@@ -1,28 +1,24 @@
 /* @flow */
 
-import * as actions from '../../lib/action-creators'
+import * as A from '../../lib/action-creators'
 import scrollTopReducer from '../../lib/reducers/scroll-top'
 
 describe('reducers/scroll-top', () => {
   let state: any
-  let nextConfig: Config
+  let nextListHeight: number
+  let nextRowHeight: number
   let nextSelectedNote: ?SelectedNote
 
   beforeEach(function () {
     state = undefined
+    nextListHeight = 100
+    nextRowHeight = 20
     nextSelectedNote = null
-    nextConfig = {
-      dir: '',
-      listHeight: 100,
-      rowHeight: 20,
-      sortDirection: 'desc',
-      sortField: 'name'
-    }
   })
 
   describe('when search', function () {
     beforeEach(function () {
-      state = scrollTopReducer(state, actions.search('abc'), nextConfig, nextSelectedNote)
+      state = scrollTopReducer(state, A.search('abc'), nextListHeight, nextRowHeight, nextSelectedNote)
     })
 
     it('should force scrollTop to top', function () {
@@ -32,7 +28,7 @@ describe('reducers/scroll-top', () => {
 
   describe('when reset search', function () {
     beforeEach(function () {
-      state = scrollTopReducer(state, actions.resetSearch(), nextConfig, nextSelectedNote)
+      state = scrollTopReducer(state, A.resetSearch(), nextListHeight, nextRowHeight, nextSelectedNote)
     })
 
     it('should force scrollTop to top', function () {
@@ -41,21 +37,25 @@ describe('reducers/scroll-top', () => {
   })
 
   describe('when changed row height', function () {
-    sharedAdjustScrollTopSpecs(actions.changeRowHeight(25))
+    sharedAdjustScrollTopSpecs(A.changeRowHeight(25))
   })
 
   describe('when changed list height', function () {
-    sharedAdjustScrollTopSpecs(actions.changeListHeight(123))
+    sharedAdjustScrollTopSpecs(A.changeListHeight(123))
   })
 
-  describe('when select note', function () {
-    sharedAdjustScrollTopSpecs(actions.selectNote({index: 0, filename: ''}))
+  describe('when select next', function () {
+    sharedAdjustScrollTopSpecs(A.selectNext())
+  })
+
+  describe('when select prev', function () {
+    sharedAdjustScrollTopSpecs(A.selectPrev())
   })
 
   describe('when any other action', function () {
     beforeEach(function () {
       state = 123
-      state = scrollTopReducer(state, actions.startInitialScan(), nextConfig, nextSelectedNote)
+      state = scrollTopReducer(state, A.startInitialScan(), nextListHeight, nextRowHeight, nextSelectedNote)
     })
 
     it('should return current scrollTop', function () {
@@ -68,7 +68,7 @@ describe('reducers/scroll-top', () => {
       beforeEach(function () {
         nextSelectedNote = null
         state = 5
-        state = scrollTopReducer(state, action, nextConfig, nextSelectedNote)
+        state = scrollTopReducer(state, action, nextListHeight, nextRowHeight, nextSelectedNote)
       })
 
       it('should return current scrollTop', function () {
@@ -80,7 +80,7 @@ describe('reducers/scroll-top', () => {
       beforeEach(function () {
         nextSelectedNote = {index: 5, filename: 'alice.txt'}
         state = 25
-        state = scrollTopReducer(state, action, nextConfig, nextSelectedNote)
+        state = scrollTopReducer(state, action, nextListHeight, nextRowHeight, nextSelectedNote)
       })
 
       it('should return current scrollTop', function () {
@@ -92,7 +92,7 @@ describe('reducers/scroll-top', () => {
       beforeEach(function () {
         nextSelectedNote = {index: 1, filename: 'alice.txt'}
         state = 25
-        state = scrollTopReducer(state, action, nextConfig, nextSelectedNote)
+        state = scrollTopReducer(state, action, nextListHeight, nextRowHeight, nextSelectedNote)
       })
 
       it('should force scrollTop to have the selected item in view at top', function () {
@@ -103,7 +103,7 @@ describe('reducers/scroll-top', () => {
     describe('when selected item is after the viewport', function () {
       beforeEach(function () {
         nextSelectedNote = {index: 20, filename: 'alice.txt'}
-        state = scrollTopReducer(state, action, nextConfig, nextSelectedNote)
+        state = scrollTopReducer(state, action, nextListHeight, nextRowHeight, nextSelectedNote)
       })
 
       it('should force scrollTop to have the selected item at the bottom of the viewport', function () {
@@ -115,7 +115,7 @@ describe('reducers/scroll-top', () => {
       beforeEach(function () {
         state = 5
         nextSelectedNote = {index: 5, filename: 'alice.txt'}
-        state = scrollTopReducer(state, action, nextConfig, nextSelectedNote)
+        state = scrollTopReducer(state, action, nextListHeight, nextRowHeight, nextSelectedNote)
       })
 
       it('should force scrollTop to have the selected item at the bottom of the viewport', function () {
@@ -127,7 +127,7 @@ describe('reducers/scroll-top', () => {
       beforeEach(function () {
         state = 25
         nextSelectedNote = {index: 1, filename: 'alice.txt'}
-        state = scrollTopReducer(state, action, nextConfig, nextSelectedNote)
+        state = scrollTopReducer(state, action, nextListHeight, nextRowHeight, nextSelectedNote)
       })
 
       it('should force scrollTop to have the selected item at the top of the viewport', function () {

@@ -1,12 +1,11 @@
 /* @flow */
 
-import * as actions from '../../lib/action-creators'
+import * as A from '../../lib/action-creators'
 import NotesFields from '../../lib/notes-fields'
 import SifterResultReducer from '../../lib/reducers/sifter-result'
 
 describe('reducers/sifter-result', () => {
   let state: SifterResult
-  let config: Config
   let notes: Notes
   let sifterResultReducer
 
@@ -15,25 +14,6 @@ describe('reducers/sifter-result', () => {
       const notesFields = new NotesFields()
       notesFields.add({notePropName: 'name'})
       notesFields.add({notePropName: 'ext'})
-
-      state = {
-        items: [],
-        options: {
-          fields: [],
-          limit: 0,
-          sort: []
-        },
-        query: '',
-        tokens: [],
-        total: 0
-      }
-      config = {
-        dir: '/notes',
-        listHeight: 123,
-        rowHeight: 25,
-        sortDirection: 'asc',
-        sortField: 'ext'
-      }
 
       notes = {
         'alice.md': {
@@ -59,11 +39,12 @@ describe('reducers/sifter-result', () => {
       }
 
       sifterResultReducer = SifterResultReducer(notesFields)
+      state = sifterResultReducer(undefined, A.startInitialScan(), notes)
     })
 
     describe('when initial scan is done', function () {
       beforeEach(function () {
-        state = sifterResultReducer(state, actions.initialScanDone(), config, notes)
+        state = sifterResultReducer(state, A.initialScanDone(), notes)
       })
 
       it('should return results for empty query', function () {
@@ -74,7 +55,7 @@ describe('reducers/sifter-result', () => {
 
     describe('when reset search', function () {
       beforeEach(function () {
-        state = sifterResultReducer(state, actions.resetSearch(), config, notes)
+        state = sifterResultReducer(state, A.resetSearch(), notes)
       })
 
       it('should return results for empty query', function () {
@@ -85,8 +66,7 @@ describe('reducers/sifter-result', () => {
 
     describe('when changed sort field', function () {
       beforeEach(function () {
-        config.sortField = 'name'
-        state = sifterResultReducer(state, actions.changeSortField(config.sortField), config, notes)
+        state = sifterResultReducer(state, A.changeSortField('name'), notes)
       })
 
       it('should return results', function () {
@@ -102,8 +82,7 @@ describe('reducers/sifter-result', () => {
 
     describe('when changed sort direction', function () {
       beforeEach(function () {
-        config.sortDirection = 'desc'
-        state = sifterResultReducer(state, actions.changeSortDirection(config.sortDirection), config, notes)
+        state = sifterResultReducer(state, A.changeSortDirection('desc'), notes)
       })
 
       it('should return results', function () {
@@ -119,7 +98,7 @@ describe('reducers/sifter-result', () => {
 
     describe('when search', function () {
       beforeEach(function () {
-        state = sifterResultReducer(state, actions.search('md'), config, notes)
+        state = sifterResultReducer(state, A.search('md'), notes)
       })
 
       it('should update query', function () {
@@ -140,12 +119,23 @@ describe('reducers/sifter-result', () => {
         })
       })
 
-      it('should sort based on vars from config', function () {
-        expect(state.options.sort[0]).toEqual({field: 'ext', direction: 'asc'})
+      it('should have default sort', function () {
+        expect(state.options.sort[0]).toEqual({field: '$score', direction: 'desc'})
       })
 
-      it('should sort fallback on score in desc order', function () {
-        expect(state.options.sort[1]).toEqual({field: '$score', direction: 'desc'})
+      describe('when sort have been set', function () {
+        beforeEach(function () {
+          state.options.sort.unshift({field: 'name', direction: 'asc'})
+          state = sifterResultReducer(state, A.search('md'), notes)
+        })
+
+        it('should use sort defined by state', function () {
+          expect(state.options.sort[0]).toEqual({field: 'name', direction: 'asc'})
+        })
+
+        it('should use default sort as secondary fallback', function () {
+          expect(state.options.sort[1]).toEqual({field: '$score', direction: 'desc'})
+        })
       })
     })
 
@@ -154,7 +144,7 @@ describe('reducers/sifter-result', () => {
 
       beforeEach(function () {
         prevState = state
-        state = sifterResultReducer(state, actions.scroll(0), config, notes)
+        state = sifterResultReducer(state, A.scroll(0), notes)
       })
 
       it('should return prev state', function () {

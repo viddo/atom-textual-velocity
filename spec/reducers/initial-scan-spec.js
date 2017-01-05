@@ -1,6 +1,6 @@
 /* @flow */
 
-import {fileAdded, initialScanDone} from '../../lib/action-creators'
+import * as A from '../../lib/action-creators'
 import initialScanReducer from '../../lib/reducers/initial-scan'
 
 describe('reducers/initial-scan', () => {
@@ -8,11 +8,11 @@ describe('reducers/initial-scan', () => {
 
   describe('when file-added action', function () {
     beforeEach(function () {
-      state = initialScanReducer(state, fileAdded({
+      state = initialScanReducer(state, A.fileAdded({
         filename: 'a',
         stats: {mtime: new Date()}
       }))
-      state = initialScanReducer(state, fileAdded({
+      state = initialScanReducer(state, A.fileAdded({
         filename: 'b',
         stats: {mtime: new Date()}
       }))
@@ -30,7 +30,7 @@ describe('reducers/initial-scan', () => {
 
   describe('when initial-scan-done action', function () {
     beforeEach(function () {
-      state = initialScanReducer(state, initialScanDone())
+      state = initialScanReducer(state, A.initialScanDone())
     })
 
     it('should set done flag to true', function () {
@@ -38,7 +38,7 @@ describe('reducers/initial-scan', () => {
     })
 
     it('should no longer add new files to raw files', function () {
-      state = initialScanReducer(state, fileAdded({
+      state = initialScanReducer(state, A.fileAdded({
         filename: 'b',
         stats: {mtime: new Date()}
       }))

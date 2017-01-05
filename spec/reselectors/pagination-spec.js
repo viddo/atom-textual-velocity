@@ -9,25 +9,24 @@ describe('reselectors/pagination', () => {
   beforeEach(function () {
     state = {
       columnHeaders: [],
-      config: {
-        dir: '',
-        listHeight: 1000,
-        rowHeight: 24,
-        sortDirection: 'desc',
-        sortField: ''
-      },
+      dir: '',
       initialScan: {
         done: false,
         rawFiles: []
       },
+      listHeight: 1000,
       notes: {},
+      rowHeight: 24,
       scrollTop: 0,
       selectedNote: null,
       sifterResult: {
         items: [],
         options: {
           fields: [],
-          sort: []
+          sort: [
+            {field: 'name', direction: 'asc'},
+            {field: '$score', direction: 'desc'}
+          ]
         },
         query: '',
         tokens: [],
@@ -46,12 +45,12 @@ describe('reselectors/pagination', () => {
     expect(pagination.start).toEqual(2) // 2,5, rounded down
     expect(pagination.limit).toEqual(43) // 41 +2 for visible padding
 
-    state.config.listHeight = 100
+    state.listHeight = 100
     pagination = paginationSelector(state)
     expect(pagination.start).toEqual(2) // 2,5, rounded down
     expect(pagination.limit).toEqual(6) // 4.1 rounded down +2 for visible padding
 
-    state.config.rowHeight = 20
+    state.rowHeight = 20
     pagination = paginationSelector(state)
     expect(pagination.start).toEqual(2) // 2,5, rounded down
     expect(pagination.limit).toEqual(7) // 5 +2 for visible padding
