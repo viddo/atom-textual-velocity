@@ -1,7 +1,7 @@
 /* @flow */
 
 import {initialScanDone, resizeList, changeListHeight, changeRowHeight, changeSortDirection, changeSortField} from '../../lib/action-creators'
-import setupConfigReducer from '../../lib/reducers/config'
+import makeConfigReducer from '../../lib/reducers/config'
 
 describe('reducers/config', () => {
   let state, configReducer, expectedState
@@ -19,7 +19,7 @@ describe('reducers/config', () => {
     atom.config.set('textual-velocity.rowHeight', expectedState.rowHeight)
     atom.config.set('textual-velocity.sortDirection', expectedState.sortDirection)
     atom.config.set('textual-velocity.sortField', expectedState.sortField)
-    configReducer = setupConfigReducer()
+    configReducer = makeConfigReducer()
 
     state = configReducer(undefined, initialScanDone())
   })

@@ -2,7 +2,7 @@
 
 import * as A from '../../lib/action-creators'
 import NotesFields from '../../lib/notes-fields'
-import setupNotesReducer from '../../lib/reducers/notes'
+import makeNotesReducer from '../../lib/reducers/notes'
 
 describe('reducers/notes', () => {
   let state: Notes
@@ -20,7 +20,7 @@ describe('reducers/notes', () => {
     // Some fields are set by a file-reader, in those cases the field is only there to indicate that the field exist
     notesFields.add({notePropName: 'content'})
 
-    notesReducer = setupNotesReducer(notesFields)
+    notesReducer = makeNotesReducer(notesFields)
   })
 
   describe('when initial-scan-done action', function () {
