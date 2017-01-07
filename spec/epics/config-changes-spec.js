@@ -2,10 +2,10 @@
 
 import {createEpicMiddleware} from 'redux-observable'
 import configureMockStore from 'redux-mock-store'
-import configEpic from '../../lib/epics/config'
+import configChangesEpic from '../../lib/epics/config-changes'
 import * as actions from '../../lib/action-creators'
 
-const epicMiddleware = createEpicMiddleware(configEpic)
+const epicMiddleware = createEpicMiddleware(configChangesEpic)
 const mockStore = configureMockStore([epicMiddleware])
 
 describe('epics/config', () => {
@@ -20,7 +20,7 @@ describe('epics/config', () => {
   })
 
   afterEach(function () {
-    epicMiddleware.replaceEpic(configEpic)
+    epicMiddleware.replaceEpic(configChangesEpic)
   })
 
   it('should yield actions for initial values of config', function () {
