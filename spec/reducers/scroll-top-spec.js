@@ -36,14 +36,6 @@ describe('reducers/scroll-top', () => {
     })
   })
 
-  describe('when changed row height', function () {
-    sharedAdjustScrollTopSpecs(A.changeRowHeight(25))
-  })
-
-  describe('when changed list height', function () {
-    sharedAdjustScrollTopSpecs(A.changeListHeight(123))
-  })
-
   describe('when select next', function () {
     sharedAdjustScrollTopSpecs(A.selectNext())
   })
