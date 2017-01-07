@@ -15,17 +15,12 @@ describe('epics/active-pane-item', () => {
   beforeEach(() => {
     state = {
       columnHeaders: [],
-      config: {
-        dir: '/notes',
-        listHeight: 75,
-        rowHeight: 25,
-        sortDirection: 'asc',
-        sortField: 'name'
-      },
+      dir: '/notes',
       initialScan: {
         done: false,
         rawFiles: []
       },
+      listHeight: 75,
       notes: {
         'alice.txt': {
           id: 0,
@@ -46,6 +41,7 @@ describe('epics/active-pane-item', () => {
           path: '/notes/cesar.txt'
         }
       },
+      rowHeight: 25,
       scrollTop: 0,
       selectedNote: null,
       sifterResult: {
@@ -56,10 +52,10 @@ describe('epics/active-pane-item', () => {
         ],
         options: {
           fields: ['name', 'ext'],
-          sort: [{
-            field: 'name',
-            direction: 'asc'
-          }]
+          sort: [
+            {field: 'name', direction: 'asc'},
+            {field: '$score', direction: 'desc'}
+          ]
         },
         query: '',
         tokens: [],

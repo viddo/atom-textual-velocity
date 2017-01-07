@@ -87,14 +87,6 @@ type ColumnHeader = {
   width: number
 }
 
-type Config = {
-  dir: string,
-  listHeight: number,
-  rowHeight: number,
-  sortDirection: SortDirection,
-  sortField: string
-}
-
 type Dispose = {
   type: 'DISPOSE'
 }
@@ -233,9 +225,11 @@ type StartInitialScan = {
 
 type State = {
   columnHeaders: Array<ColumnHeader>,
-  config: Config,
+  dir: string,
   initialScan: InitialScan,
+  listHeight: number,
   notes: Notes,
+  rowHeight: number,
   scrollTop: number,
   selectedNote: ?SelectedNote,
   sifterResult: SifterResult

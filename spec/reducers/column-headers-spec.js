@@ -1,6 +1,6 @@
 /* @flow */
 
-import {initialScanDone} from '../../lib/action-creators'
+import * as A from '../../lib/action-creators'
 import Columns from '../../lib/columns'
 import FileIconColumn from '../../lib/columns/file-icon-column'
 import SummaryColumn from '../../lib/columns/summary-column'
@@ -19,7 +19,7 @@ describe('reducers/column-headers', () => {
   })
 
   it('should return defaults when state is missing', function () {
-    state = columnHeadersReducer(state, initialScanDone())
+    state = columnHeadersReducer(state, A.initialScanDone())
     expect(state).toEqual(jasmine.any(Array))
 
     expect(state[0].sortField).toEqual(jasmine.any(String))

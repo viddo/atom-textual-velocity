@@ -18,17 +18,12 @@ describe('reselectors/visible-rows', () => {
 
     state = {
       columnHeaders: [],
-      config: {
-        dir: '/notes',
-        listHeight: 25,
-        rowHeight: 25,
-        sortDirection: 'asc',
-        sortField: 'name'
-      },
+      dir: '/notes',
       initialScan: {
         done: false,
         rawFiles: []
       },
+      listHeight: 25,
       notes: {
         'alice.txt': {
           id: 0,
@@ -56,6 +51,7 @@ describe('reselectors/visible-rows', () => {
           path: '/notes/eric.txt'
         }
       },
+      rowHeight: 25,
       scrollTop: 0,
       selectedNote: null,
       sifterResult: {
@@ -68,10 +64,10 @@ describe('reselectors/visible-rows', () => {
         ],
         options: {
           fields: ['name', 'ext'],
-          sort: [{
-            field: 'name',
-            direction: 'asc'
-          }]
+          sort: [
+            {field: 'name', direction: 'asc'},
+            {field: '$score', direction: 'desc'}
+          ]
         },
         query: '',
         tokens: [],
@@ -130,7 +126,7 @@ describe('reselectors/visible-rows', () => {
 
   describe('when changed list height', function () {
     beforeEach(function () {
-      state.config.listHeight = 1001
+      state.listHeight = 1001
       visibleRows = visibleRowsSelector(state)
     })
 
@@ -144,7 +140,7 @@ describe('reselectors/visible-rows', () => {
 
   describe('when changed row height', function () {
     beforeEach(function () {
-      state.config.rowHeight = 12
+      state.rowHeight = 12
       visibleRows = visibleRowsSelector(state)
     })
 
@@ -158,7 +154,7 @@ describe('reselectors/visible-rows', () => {
 
   describe('when changed sort direction', function () {
     beforeEach(function () {
-      state.config.sortDirection = 'desc'
+      state.sifterResult.options.sort[0].direction = 'desc'
       state.sifterResult.items = state.sifterResult.items.reverse()
       visibleRows = visibleRowsSelector(state)
     })
@@ -173,7 +169,7 @@ describe('reselectors/visible-rows', () => {
 
   describe('when changed sort field', function () {
     beforeEach(function () {
-      state.config.sortField = 'ext'
+      state.sifterResult.options.sort[0].field = 'ext'
       state.sifterResult.items = state.sifterResult.items
         .sort((a: any, b: any) => {
           a = a.id.split('.')[1]

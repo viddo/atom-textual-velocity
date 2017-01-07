@@ -5,19 +5,13 @@ import selectedNoteReducer from '../../lib/reducers/selected-note'
 
 describe('reducers/selected-note', () => {
   let action: Action
-  let state: ?SelectedNote
-  let nextConfig: Config
+  let dir: string
   let nextSifterResult: SifterResult
   let selectedNote: SelectedNote
+  let state: ?SelectedNote
 
   beforeEach(function () {
-    nextConfig = {
-      dir: '/notes',
-      listHeight: 100,
-      rowHeight: 25,
-      sortDirection: 'desc',
-      sortField: 'name'
-    }
+    dir = '/notes'
     nextSifterResult = {
       items: [],
       options: {
@@ -28,7 +22,7 @@ describe('reducers/selected-note', () => {
       tokens: [],
       total: 0
     }
-    state = selectedNoteReducer(undefined, actions.startInitialScan(), nextConfig, nextSifterResult)
+    state = selectedNoteReducer(undefined, actions.startInitialScan(), dir, nextSifterResult)
     selectedNote = {
       filename: 'foo',
       index: 42
@@ -37,7 +31,7 @@ describe('reducers/selected-note', () => {
 
   describe('when search', function () {
     beforeEach(function () {
-      state = selectedNoteReducer(selectedNote, actions.search('abc'), nextConfig, nextSifterResult)
+      state = selectedNoteReducer(selectedNote, actions.search('abc'), dir, nextSifterResult)
     })
 
     it('should reset selection', function () {
@@ -47,7 +41,7 @@ describe('reducers/selected-note', () => {
 
   describe('when reset search', function () {
     beforeEach(function () {
-      state = selectedNoteReducer(selectedNote, actions.search('abc'), nextConfig, nextSifterResult)
+      state = selectedNoteReducer(selectedNote, actions.search('abc'), dir, nextSifterResult)
     })
 
     it('should reset selection', function () {
@@ -63,7 +57,7 @@ describe('reducers/selected-note', () => {
           {id: 'bob.md', score: 1},
           {id: 'cesar.md', score: 1}
         ]
-        state = selectedNoteReducer(selectedNote, actions.changedActivePaneItem('/notes/bob.md'), nextConfig, nextSifterResult)
+        state = selectedNoteReducer(selectedNote, actions.changedActivePaneItem('/notes/bob.md'), dir, nextSifterResult)
       })
 
       it('should select matching item', function () {
@@ -76,7 +70,7 @@ describe('reducers/selected-note', () => {
 
     describe('when is a non-note file', function () {
       beforeEach(function () {
-        state = selectedNoteReducer(selectedNote, actions.changedActivePaneItem('foo'), nextConfig, nextSifterResult)
+        state = selectedNoteReducer(selectedNote, actions.changedActivePaneItem('foo'), dir, nextSifterResult)
       })
 
       it('should unselect', function () {
@@ -92,7 +86,7 @@ describe('reducers/selected-note', () => {
         {id: 'bob.md', score: 1},
         {id: 'cesar.md', score: 1}
       ]
-      state = selectedNoteReducer(selectedNote, actions.clickRow('bob.md'), nextConfig, nextSifterResult)
+      state = selectedNoteReducer(selectedNote, actions.clickRow('bob.md'), dir, nextSifterResult)
     })
 
     it('should select matching item', function () {
@@ -116,7 +110,7 @@ describe('reducers/selected-note', () => {
     describe('when there is a selected note', function () {
       beforeEach(function () {
         selectedNote = {index: 0, filename: 'alice.txt'}
-        state = selectedNoteReducer(selectedNote, action, nextConfig, nextSifterResult)
+        state = selectedNoteReducer(selectedNote, action, dir, nextSifterResult)
       })
 
       it('should update selected index', function () {
@@ -129,7 +123,7 @@ describe('reducers/selected-note', () => {
 
     describe('when there is no selected note', function () {
       beforeEach(function () {
-        state = selectedNoteReducer(undefined, action, nextConfig, nextSifterResult)
+        state = selectedNoteReducer(undefined, action, dir, nextSifterResult)
       })
 
       it('should not yield any selection', function () {
@@ -151,7 +145,7 @@ describe('reducers/selected-note', () => {
     describe('when there is a selected note', function () {
       beforeEach(function () {
         selectedNote = {index: 0, filename: 'alice.txt'}
-        state = selectedNoteReducer(selectedNote, action, nextConfig, nextSifterResult)
+        state = selectedNoteReducer(selectedNote, action, dir, nextSifterResult)
       })
 
       it('should update selected index', function () {
@@ -164,7 +158,7 @@ describe('reducers/selected-note', () => {
 
     describe('when there is no selected note', function () {
       beforeEach(function () {
-        state = selectedNoteReducer(undefined, action, nextConfig, nextSifterResult)
+        state = selectedNoteReducer(undefined, action, dir, nextSifterResult)
       })
 
       it('should not yield any selection', function () {
@@ -185,7 +179,7 @@ describe('reducers/selected-note', () => {
 
     describe('when there is no selected note', function () {
       beforeEach(function () {
-        state = selectedNoteReducer(undefined, action, nextConfig, nextSifterResult)
+        state = selectedNoteReducer(undefined, action, dir, nextSifterResult)
       })
 
       it('should select first item', function () {
@@ -196,21 +190,21 @@ describe('reducers/selected-note', () => {
       })
 
       it('should select next item until reaching end of list when called subsequently', function () {
-        state = selectedNoteReducer(state, action, nextConfig, nextSifterResult)
+        state = selectedNoteReducer(state, action, dir, nextSifterResult)
         expect(state).toEqual({
           filename: 'bob.md',
           index: 1
         })
 
-        state = selectedNoteReducer(state, action, nextConfig, nextSifterResult)
+        state = selectedNoteReducer(state, action, dir, nextSifterResult)
         expect(state).toEqual({
           filename: 'cesar.md',
           index: 2
         })
 
-        state = selectedNoteReducer(state, action, nextConfig, nextSifterResult)
-        state = selectedNoteReducer(state, action, nextConfig, nextSifterResult)
-        state = selectedNoteReducer(state, action, nextConfig, nextSifterResult)
+        state = selectedNoteReducer(state, action, dir, nextSifterResult)
+        state = selectedNoteReducer(state, action, dir, nextSifterResult)
+        state = selectedNoteReducer(state, action, dir, nextSifterResult)
         expect(state).toEqual({
           filename: 'cesar.md',
           index: 2
@@ -231,7 +225,7 @@ describe('reducers/selected-note', () => {
 
     describe('when there is no selected note', function () {
       beforeEach(function () {
-        state = selectedNoteReducer(undefined, action, nextConfig, nextSifterResult)
+        state = selectedNoteReducer(undefined, action, dir, nextSifterResult)
       })
 
       it('should select last item', function () {
@@ -242,21 +236,21 @@ describe('reducers/selected-note', () => {
       })
 
       it('should select prev item until reaching start of list when called subsequently', function () {
-        state = selectedNoteReducer(state, action, nextConfig, nextSifterResult)
+        state = selectedNoteReducer(state, action, dir, nextSifterResult)
         expect(state).toEqual({
           filename: 'bob.md',
           index: 1
         })
 
-        state = selectedNoteReducer(state, action, nextConfig, nextSifterResult)
+        state = selectedNoteReducer(state, action, dir, nextSifterResult)
         expect(state).toEqual({
           filename: 'alice.txt',
           index: 0
         })
 
-        state = selectedNoteReducer(state, action, nextConfig, nextSifterResult)
-        state = selectedNoteReducer(state, action, nextConfig, nextSifterResult)
-        state = selectedNoteReducer(state, action, nextConfig, nextSifterResult)
+        state = selectedNoteReducer(state, action, dir, nextSifterResult)
+        state = selectedNoteReducer(state, action, dir, nextSifterResult)
+        state = selectedNoteReducer(state, action, dir, nextSifterResult)
         expect(state).toEqual({
           filename: 'alice.txt',
           index: 0
@@ -271,7 +265,7 @@ describe('reducers/selected-note', () => {
         nextSifterResult.items = [
           {id: 'foo', score: 1}
         ]
-        state = selectedNoteReducer(selectedNote, actions.initialScanDone(), nextConfig, nextSifterResult)
+        state = selectedNoteReducer(selectedNote, actions.initialScanDone(), dir, nextSifterResult)
       })
 
       it('should return state', function () {
@@ -281,7 +275,7 @@ describe('reducers/selected-note', () => {
 
     describe('when there are not items', function () {
       beforeEach(function () {
-        state = selectedNoteReducer(selectedNote, actions.initialScanDone(), nextConfig, nextSifterResult)
+        state = selectedNoteReducer(selectedNote, actions.initialScanDone(), dir, nextSifterResult)
       })
 
       it('should return null', function () {
