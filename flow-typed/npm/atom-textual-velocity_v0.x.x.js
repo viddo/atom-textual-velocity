@@ -10,7 +10,6 @@ type Action =
   | FileChanged
   | FileDeleted
   | InitialScanDone
-  | KeyPress
   | OpenNote
   | ResetSearch
   | ResizedList
@@ -79,7 +78,7 @@ type Column = {
 }
 type Columns = {
   add (column: Column): void,
-  all (): Array<Column>
+  map<T> (fn: (column: Column) => T): Array<T>
 }
 type ColumnHeader = {
   sortField: string,
@@ -146,7 +145,8 @@ type Notes = any
 type NotesFields = {
   add (field: NoteField): void,
   propNames (): Array<string>,
-  all (): Array<NoteField>
+  forEach<T> (fn: (noteField: NoteField) => T): void,
+  map<T> (fn: (noteField: NoteField) => T): Array<T>
 }
 
 type OpenNote = {

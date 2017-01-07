@@ -9,7 +9,28 @@ describe('notes-fields', () => {
     notesFields = new NotesFields()
   })
 
-  describe('.all', function () {
+  describe('.forEach', function () {
+    let testNoteField
+
+    beforeEach(function () {
+      testNoteField = {
+        notePropName: 'test',
+        value: (note, filename) => filename.split('.').slice(-1)[0]
+      }
+      notesFields.add(testNoteField)
+      notesFields.add({notePropName: 'content'}) // fields that only is there to indicate the existance of the field doesn't need a value transformer
+    })
+
+    it('should iterate each note field', function () {
+      const tmp = []
+      notesFields.forEach(noteField => {
+        tmp.push(noteField)
+      })
+      expect(tmp[0]).toEqual(testNoteField)
+    })
+  })
+
+  describe('.map', function () {
     beforeEach(function () {
       notesFields.add({
         notePropName: 'test',
@@ -18,10 +39,8 @@ describe('notes-fields', () => {
       notesFields.add({notePropName: 'content'}) // fields that only is there to indicate the existance of the field doesn't need a value transformer
     })
 
-    it('should return all fields that have been added', function () {
-      expect(notesFields.all()).toEqual(jasmine.any(Array))
-      expect(notesFields.all().length).toEqual(2)
-      expect(notesFields.all()[0].notePropName).toEqual('test')
+    it('should return map values', function () {
+      expect(notesFields.map(noteField => noteField.notePropName)).toEqual(['test', 'content'])
     })
   })
 
