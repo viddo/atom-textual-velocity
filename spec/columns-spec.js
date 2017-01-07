@@ -12,7 +12,7 @@ describe('columns', () => {
     columns = new Columns()
   })
 
-  describe('.all', function () {
+  describe('.map', function () {
     beforeEach(function () {
       columns.add({
         sortField: 'test-field',
@@ -52,10 +52,8 @@ describe('columns', () => {
       })
     })
 
-    it('should return all fields that have been added', function () {
-      expect(columns.all()).toEqual(jasmine.any(Array))
-      expect(columns.all().length).toEqual(1)
-      expect(columns.all()[0].title).toEqual('test')
+    it('should map resuts', function () {
+      expect(columns.map(column => column.title)).toEqual(['test'])
     })
   })
 })
