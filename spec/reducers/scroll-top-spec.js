@@ -1,6 +1,6 @@
 /* @flow */
 
-import * as actions from '../../lib/action-creators'
+import * as A from '../../lib/action-creators'
 import scrollTopReducer from '../../lib/reducers/scroll-top'
 
 describe('reducers/scroll-top', () => {
@@ -22,7 +22,7 @@ describe('reducers/scroll-top', () => {
 
   describe('when search', function () {
     beforeEach(function () {
-      state = scrollTopReducer(state, actions.search('abc'), nextConfig, nextSelectedNote)
+      state = scrollTopReducer(state, A.search('abc'), nextConfig, nextSelectedNote)
     })
 
     it('should force scrollTop to top', function () {
@@ -32,7 +32,7 @@ describe('reducers/scroll-top', () => {
 
   describe('when reset search', function () {
     beforeEach(function () {
-      state = scrollTopReducer(state, actions.resetSearch(), nextConfig, nextSelectedNote)
+      state = scrollTopReducer(state, A.resetSearch(), nextConfig, nextSelectedNote)
     })
 
     it('should force scrollTop to top', function () {
@@ -41,25 +41,25 @@ describe('reducers/scroll-top', () => {
   })
 
   describe('when changed row height', function () {
-    sharedAdjustScrollTopSpecs(actions.changeRowHeight(25))
+    sharedAdjustScrollTopSpecs(A.changeRowHeight(25))
   })
 
   describe('when changed list height', function () {
-    sharedAdjustScrollTopSpecs(actions.changeListHeight(123))
+    sharedAdjustScrollTopSpecs(A.changeListHeight(123))
   })
 
   describe('when select next', function () {
-    sharedAdjustScrollTopSpecs(actions.selectNext())
+    sharedAdjustScrollTopSpecs(A.selectNext())
   })
 
   describe('when select prev', function () {
-    sharedAdjustScrollTopSpecs(actions.selectPrev())
+    sharedAdjustScrollTopSpecs(A.selectPrev())
   })
 
   describe('when any other action', function () {
     beforeEach(function () {
       state = 123
-      state = scrollTopReducer(state, actions.startInitialScan(), nextConfig, nextSelectedNote)
+      state = scrollTopReducer(state, A.startInitialScan(), nextConfig, nextSelectedNote)
     })
 
     it('should return current scrollTop', function () {

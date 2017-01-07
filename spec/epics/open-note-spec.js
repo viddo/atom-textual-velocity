@@ -3,7 +3,7 @@
 import {createEpicMiddleware} from 'redux-observable'
 import configureMockStore from 'redux-mock-store'
 import openNoteEpic from '../../lib/epics/open-note'
-import * as actions from '../../lib/action-creators'
+import * as A from '../../lib/action-creators'
 
 const epicMiddleware = createEpicMiddleware(openNoteEpic)
 const mockStore = configureMockStore([epicMiddleware])
@@ -81,10 +81,10 @@ describe('epics/open-note', () => {
 
     describe('when there is no selected note', function () {
       beforeEach(function () {
-        store.dispatch(actions.openNote())
+        store.dispatch(A.openNote())
 
         atom.config.set('textual-velocity.defaultExt', 'abc')
-        store.dispatch(actions.openNote())
+        store.dispatch(A.openNote())
 
         waitsFor(() => atom.workspace.getPaneItems().length >= 2)
       })
@@ -105,7 +105,7 @@ describe('epics/open-note', () => {
           filename: 'alice.txt'
         }
         store = mockStore(state)
-        store.dispatch(actions.openNote())
+        store.dispatch(A.openNote())
         waitsFor(() => atom.workspace.getPaneItems().length >= 2)
       })
 
@@ -117,13 +117,13 @@ describe('epics/open-note', () => {
 
   describe('when dispose action', function () {
     beforeEach(function () {
-      store.dispatch(actions.dispose())
-      store.dispatch(actions.startInitialScan())
+      store.dispatch(A.dispose())
+      store.dispatch(A.startInitialScan())
     })
 
     it('should no longer create any actions', function () {
-      const dispatchedActions = store.getActions().filter(action => action.type !== actions.START_INITIAL_SCAN)
-      expect(dispatchedActions).toEqual([actions.dispose()])
+      const dispatchedActions = store.getActions().filter(action => action.type !== A.START_INITIAL_SCAN)
+      expect(dispatchedActions).toEqual([A.dispose()])
     })
   })
 })

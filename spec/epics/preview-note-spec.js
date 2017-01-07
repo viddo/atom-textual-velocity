@@ -3,7 +3,7 @@
 import {createEpicMiddleware} from 'redux-observable'
 import configureMockStore from 'redux-mock-store'
 import previewNoteEpic from '../../lib/epics/preview-note'
-import * as actions from '../../lib/action-creators'
+import * as A from '../../lib/action-creators'
 
 const epicMiddleware = createEpicMiddleware(previewNoteEpic)
 const mockStore = configureMockStore([epicMiddleware])
@@ -79,7 +79,7 @@ describe('epics/preview-note', () => {
           filename: 'alice.txt',
           index: 0
         }
-        store.dispatch(actions.selectNext())
+        store.dispatch(A.selectNext())
 
         expect(atom.workspace.getPaneItems()).toEqual([], 'there should not be any pane items yet')
         waitsFor(() => atom.workspace.getPaneItems().length > 0) // waits for preview
@@ -91,7 +91,7 @@ describe('epics/preview-note', () => {
 
       it('should close preview when deselected note', function () {
         state.selectedNote = null
-        store.dispatch(actions.resetSearch())
+        store.dispatch(A.resetSearch())
         waitsFor(() => atom.workspace.getPaneItems().length === 0)
       })
 
@@ -108,7 +108,7 @@ describe('epics/preview-note', () => {
 
       describe('when dispose action', function () {
         beforeEach(function () {
-          store.dispatch(actions.dispose())
+          store.dispatch(A.dispose())
         })
 
         it('should dispose elements and no longer open any previews', function () {
@@ -116,7 +116,7 @@ describe('epics/preview-note', () => {
             filename: 'alice.txt',
             index: 0
           }
-          store.dispatch(actions.selectNext())
+          store.dispatch(A.selectNext())
           var done = false
           jasmine.useRealClock()
           setTimeout(function () {
@@ -137,7 +137,7 @@ describe('epics/preview-note', () => {
           filename: 'alice.txt',
           index: 0
         }
-        store.dispatch(actions.selectNext())
+        store.dispatch(A.selectNext())
 
         waitsFor(() => atom.workspace.getPaneItems().length === 2)
         runs(() => {
@@ -145,7 +145,7 @@ describe('epics/preview-note', () => {
             filename: 'bob.md',
             index: 1
           }
-          store.dispatch(actions.selectNext())
+          store.dispatch(A.selectNext())
         })
         waitsFor(() => atom.workspace.getPaneItems().length === 1) // should close the preview
       })

@@ -3,7 +3,7 @@
 import {createEpicMiddleware} from 'redux-observable'
 import configureMockStore from 'redux-mock-store'
 import activePaneItemEpic from '../../lib/epics/active-pane-item'
-import * as actions from '../../lib/action-creators'
+import * as A from '../../lib/action-creators'
 
 const epicMiddleware = createEpicMiddleware(activePaneItemEpic)
 const mockStore = configureMockStore([epicMiddleware])
@@ -86,7 +86,7 @@ describe('epics/active-pane-item', () => {
       })
 
       it('should dispatch action to select matching note', function () {
-        expect(store.getActions().slice(-1)[0]).toEqual(actions.changedActivePaneItem('/notes/bob.md'))
+        expect(store.getActions().slice(-1)[0]).toEqual(A.changedActivePaneItem('/notes/bob.md'))
       })
     })
   })

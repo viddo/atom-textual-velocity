@@ -1,6 +1,6 @@
 /* @flow */
 
-import * as actions from '../../lib/action-creators'
+import * as A from '../../lib/action-creators'
 import NotesFields from '../../lib/notes-fields'
 import setupNotesReducer from '../../lib/reducers/notes'
 
@@ -35,7 +35,7 @@ describe('reducers/notes', () => {
           stats: {mtime: new Date()}
         }]
       }
-      state = notesReducer(state, actions.initialScanDone(), nextInitialScan)
+      state = notesReducer(state, A.initialScanDone(), nextInitialScan)
     })
 
     it('should reduce notes from raw notes', function () {
@@ -71,7 +71,7 @@ describe('reducers/notes', () => {
           stats: {mtime: new Date()}
         }]
       }
-      action = actions.fileAdded({
+      action = A.fileAdded({
         filename: 'alice.txt',
         stats: {mtime: new Date()}
       })
@@ -105,7 +105,7 @@ describe('reducers/notes', () => {
 
       describe('when file is removed', function () {
         beforeEach(function () {
-          action = actions.fileDeleted('alice.txt')
+          action = A.fileDeleted('alice.txt')
           state = notesReducer(state, action, nextInitialScan)
         })
 

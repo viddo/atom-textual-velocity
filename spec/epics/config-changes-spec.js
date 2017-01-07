@@ -3,7 +3,7 @@
 import {createEpicMiddleware} from 'redux-observable'
 import configureMockStore from 'redux-mock-store'
 import configChangesEpic from '../../lib/epics/config-changes'
-import * as actions from '../../lib/action-creators'
+import * as A from '../../lib/action-creators'
 
 const epicMiddleware = createEpicMiddleware(configChangesEpic)
 const mockStore = configureMockStore([epicMiddleware])
@@ -25,10 +25,10 @@ describe('epics/config', () => {
 
   it('should yield actions for initial values of config', function () {
     const dispatchedActions = store.getActions()
-    expect(dispatchedActions[0]).toEqual(actions.changeListHeight(0))
-    expect(dispatchedActions[1]).toEqual(actions.changeRowHeight(0))
-    expect(dispatchedActions[2]).toEqual(actions.changeSortDirection('desc'))
-    expect(dispatchedActions[3]).toEqual(actions.changeSortField('name'))
+    expect(dispatchedActions[0]).toEqual(A.changeListHeight(0))
+    expect(dispatchedActions[1]).toEqual(A.changeRowHeight(0))
+    expect(dispatchedActions[2]).toEqual(A.changeSortDirection('desc'))
+    expect(dispatchedActions[3]).toEqual(A.changeSortField('name'))
   })
 
   describe('when resized list action', function () {
@@ -37,7 +37,7 @@ describe('epics/config', () => {
     beforeEach(function () {
       listHeightSpy = jasmine.createSpy('listHeight')
       atom.config.onDidChange('textual-velocity.listHeight', listHeightSpy)
-      store.dispatch(actions.resizeList(123))
+      store.dispatch(A.resizeList(123))
 
       waitsFor(() => listHeightSpy.calls.length > 0)
     })
@@ -48,8 +48,8 @@ describe('epics/config', () => {
 
     it('should have yielded a last action', function () {
       const lastActions = store.getActions().slice(-2)
-      expect(lastActions[0]).toEqual(actions.resizeList(123))
-      expect(lastActions[1]).toEqual(actions.changeListHeight(123))
+      expect(lastActions[0]).toEqual(A.resizeList(123))
+      expect(lastActions[1]).toEqual(A.changeListHeight(123))
     })
   })
 
@@ -59,7 +59,7 @@ describe('epics/config', () => {
     beforeEach(function () {
       rowHeightSpy = jasmine.createSpy('rowHeight')
       atom.config.onDidChange('textual-velocity.rowHeight', rowHeightSpy)
-      store.dispatch(actions.changeRowHeight(26))
+      store.dispatch(A.changeRowHeight(26))
 
       waitsFor(() => rowHeightSpy.calls.length > 0)
     })
@@ -70,7 +70,7 @@ describe('epics/config', () => {
 
     it('should have yielded a last action', function () {
       const lastActions = store.getActions().slice(-1)
-      expect(lastActions[0]).toEqual(actions.changeRowHeight(26))
+      expect(lastActions[0]).toEqual(A.changeRowHeight(26))
     })
   })
 
@@ -80,7 +80,7 @@ describe('epics/config', () => {
     beforeEach(function () {
       sortDirectionSpy = jasmine.createSpy('sortDirection')
       atom.config.onDidChange('textual-velocity.sortDirection', sortDirectionSpy)
-      store.dispatch(actions.changeSortDirection('asc'))
+      store.dispatch(A.changeSortDirection('asc'))
 
       waitsFor(() => sortDirectionSpy.calls.length > 0)
     })
@@ -91,7 +91,7 @@ describe('epics/config', () => {
 
     it('should have yielded a last action', function () {
       const lastActions = store.getActions().slice(-1)
-      expect(lastActions[0]).toEqual(actions.changeSortDirection('asc'))
+      expect(lastActions[0]).toEqual(A.changeSortDirection('asc'))
     })
   })
 
@@ -101,7 +101,7 @@ describe('epics/config', () => {
     beforeEach(function () {
       sortFieldSpy = jasmine.createSpy('sortField')
       atom.config.onDidChange('textual-velocity.sortField', sortFieldSpy)
-      store.dispatch(actions.changeSortField('ext'))
+      store.dispatch(A.changeSortField('ext'))
 
       waitsFor(() => sortFieldSpy.calls.length > 0)
     })
@@ -112,7 +112,7 @@ describe('epics/config', () => {
 
     it('should have yielded a last action', function () {
       const lastActions = store.getActions().slice(-1)
-      expect(lastActions[0]).toEqual(actions.changeSortField('ext'))
+      expect(lastActions[0]).toEqual(A.changeSortField('ext'))
     })
   })
 })
