@@ -198,7 +198,6 @@ type NoteField = {
 }
 type NoteFields = {
   add (field: NoteField): void,
-  propNames (): Array<string>,
   forEach (callback: (noteField: NoteField) => any): any,
   map<T> (mapper: (noteField: NoteField) => T): Array<T>
 }

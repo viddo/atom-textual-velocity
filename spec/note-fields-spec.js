@@ -43,14 +43,4 @@ describe('note-fields', () => {
       expect(noteFields.map(noteField => noteField.notePropName)).toEqual(['test', 'content'])
     })
   })
-
-  describe('.propNames', function () {
-    beforeEach(function () {
-      noteFields.add({notePropName: 'test'})
-      noteFields.add({notePropName: 'content'})
-    })
-    it('should return a list of notes prop names', function () {
-      expect(noteFields.propNames()).toEqual(['test', 'content'])
-    })
-  })
 })
