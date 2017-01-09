@@ -40,6 +40,9 @@ type rxjs$EventListenerOptions = {
 } | boolean;
 
 declare class rxjs$Observable<+T> {
+  static bindNodeCallback<U>(fn: (u: U, callback: (err: ?Object|void, result: any) => void) => void): (u: U) => rxjs$Observable<T>;
+  static bindNodeCallback<U,V>(fn: (u: U, v: V, callback: (err: ?Object|void, result: any) => void) => void): (u: U, v: V) => rxjs$Observable<T>;
+
   static concat(...sources: rxjs$Observable<T>[]): rxjs$Observable<T>;
 
   static create(
@@ -126,6 +129,8 @@ declare class rxjs$Observable<+T> {
   distinctUntilKeyChanged(key: string, compare?: (x: mixed, y: mixed) => boolean): rxjs$Observable<T>;
 
   elementAt(index: number, defaultValue?: T): rxjs$Observable<T>;
+
+  exhaustMap<I>(project: (value: T, index?: number) => rxjs$Observable<I>, resultSelector?: (outerValue: T, innerValue: I, outerIndex: number, innerIndex: number) => any): rxjs$Observable<I>;
 
   filter(predicate: (value: T) => boolean): rxjs$Observable<T>;
 

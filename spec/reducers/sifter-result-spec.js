@@ -1,7 +1,7 @@
 /* @flow */
 
 import * as A from '../../lib/action-creators'
-import NotesFields from '../../lib/notes-fields'
+import NoteFields from '../../lib/note-fields'
 import SifterResultReducer from '../../lib/reducers/sifter-result'
 
 describe('reducers/sifter-result', () => {
@@ -11,34 +11,44 @@ describe('reducers/sifter-result', () => {
 
   describe('when initial-scan-done action', function () {
     beforeEach(function () {
-      const notesFields = new NotesFields()
-      notesFields.add({notePropName: 'name'})
-      notesFields.add({notePropName: 'ext'})
+      const noteFields = new NoteFields()
+      noteFields.add({notePropName: 'name'})
+      noteFields.add({notePropName: 'ext'})
 
       notes = {
         'alice.md': {
+          id: '0',
+          ext: 'md',
           name: 'alice',
-          ext: 'md'
+          stats: {mtime: new Date()}
         },
         'bob.md': {
+          id: '1',
+          ext: 'md',
           name: 'bob',
-          ext: 'md'
+          stats: {mtime: new Date()}
         },
         'cesar.txt': {
+          id: '2',
+          ext: 'txt',
           name: 'cesar',
-          ext: 'txt'
+          stats: {mtime: new Date()}
         },
         'david.txt': {
+          id: '3',
+          ext: 'txt',
           name: 'david',
-          ext: 'txt'
+          stats: {mtime: new Date()}
         },
         'eric.md': {
+          id: '4',
+          ext: 'md',
           name: 'eric',
-          ext: 'md'
+          stats: {mtime: new Date()}
         }
       }
 
-      sifterResultReducer = SifterResultReducer(notesFields)
+      sifterResultReducer = SifterResultReducer(noteFields)
       state = sifterResultReducer(undefined, A.startInitialScan(), notes)
     })
 
@@ -139,6 +149,28 @@ describe('reducers/sifter-result', () => {
       })
     })
 
+    describe('when add file', function () {
+      sharedUpdateSearchFile(A.fileAdded({
+        filename: 'alice.txt',
+        stats: {mtime: new Date()}
+      }))
+    })
+
+    describe('when changed file', function () {
+      sharedUpdateSearchFile(A.fileChanged({
+        filename: 'alice.txt',
+        stats: {mtime: new Date()}
+      }))
+    })
+
+    describe('when read file', function () {
+      sharedUpdateSearchFile(A.fileRead({
+        filename: 'alice.txt',
+        notePropName: 'content',
+        value: 'content for alice.txt'
+      }))
+    })
+
     describe('when any other action', function () {
       let prevState
 
@@ -151,5 +183,20 @@ describe('reducers/sifter-result', () => {
         expect(state).toBe(prevState)
       })
     })
+
+    function sharedUpdateSearchFile (action: Action) {
+      let prevState
+
+      beforeEach(function () {
+        prevState = state
+        state.query = 'abc'
+        state = sifterResultReducer(state, action, notes)
+      })
+
+      it('should update search w/ existing query', function () {
+        expect(state).not.toBe(prevState)
+        expect(state.query).toEqual('abc')
+      })
+    }
   })
 })

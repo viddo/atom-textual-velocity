@@ -26,29 +26,39 @@ describe('reselectors/visible-rows', () => {
       listHeight: 25,
       notes: {
         'alice.txt': {
-          id: 0,
+          id: '0',
+          ext: 'txt',
           name: 'alice',
-          path: '/notes/alice.txt'
+          path: '/notes/alice.txt',
+          stats: {mtime: new Date()}
         },
         'bob.md': {
-          id: 1,
+          id: '1',
+          ext: 'md',
           name: 'bob',
-          path: '/notes/bob.md'
+          path: '/notes/bob.md',
+          stats: {mtime: new Date()}
         },
         'cesar.txt': {
-          id: 2,
+          id: '2',
+          ext: 'txt',
           name: 'cesar',
-          path: '/notes/cesar.txt'
+          path: '/notes/cesar.txt',
+          stats: {mtime: new Date()}
         },
         'david.md': {
-          id: 3,
+          id: '3',
+          ext: 'md',
           name: 'david',
-          path: '/notes/david.md'
+          path: '/notes/david.md',
+          stats: {mtime: new Date()}
         },
         'eric.txt': {
-          id: 4,
+          id: '4',
+          ext: 'txt',
           name: 'eric',
-          path: '/notes/eric.txt'
+          path: '/notes/eric.txt',
+          stats: {mtime: new Date()}
         }
       },
       rowHeight: 25,
@@ -85,7 +95,7 @@ describe('reselectors/visible-rows', () => {
 
     it('should return paginated rows', function () {
       expect(visibleRows).toEqual(jasmine.any(Array))
-      expect(visibleRows.map(x => x.id)).toEqual([0, 1, 2])
+      expect(visibleRows.map(x => x.id)).toEqual(['0', '1', '2'])
       expect(visibleRows.map(x => x.filename)).toEqual(['alice.txt', 'bob.md', 'cesar.txt'])
       expect(visibleRows.map(x => x.cells)).toEqual(jasmine.any(Array))
     })
@@ -104,7 +114,7 @@ describe('reselectors/visible-rows', () => {
 
     it('should return paginated rows', function () {
       expect(visibleRows).toEqual(jasmine.any(Array))
-      expect(visibleRows.map(x => x.id)).toEqual([0, 2, 3])
+      expect(visibleRows.map(x => x.id)).toEqual(['0', '2', '3'])
       expect(visibleRows.map(x => x.filename)).toEqual(['alice.txt', 'cesar.txt', 'david.md'])
       expect(visibleRows.map(x => x.cells)).toEqual(jasmine.any(Array))
     })
@@ -118,7 +128,7 @@ describe('reselectors/visible-rows', () => {
 
     it('should return paginated rows', function () {
       expect(visibleRows).toEqual(jasmine.any(Array))
-      expect(visibleRows.map(x => x.id)).toEqual([1, 2, 3])
+      expect(visibleRows.map(x => x.id)).toEqual(['1', '2', '3'])
       expect(visibleRows.map(x => x.filename)).toEqual(['bob.md', 'cesar.txt', 'david.md'])
       expect(visibleRows.map(x => x.cells)).toEqual(jasmine.any(Array))
     })
@@ -132,7 +142,7 @@ describe('reselectors/visible-rows', () => {
 
     it('should return paginated rows', function () {
       expect(visibleRows).toEqual(jasmine.any(Array))
-      expect(visibleRows.map(x => x.id)).toEqual([0, 1, 2, 3, 4])
+      expect(visibleRows.map(x => x.id)).toEqual(['0', '1', '2', '3', '4'])
       expect(visibleRows.map(x => x.filename)).toEqual(['alice.txt', 'bob.md', 'cesar.txt', 'david.md', 'eric.txt'])
       expect(visibleRows.map(x => x.cells)).toEqual(jasmine.any(Array))
     })
@@ -146,7 +156,7 @@ describe('reselectors/visible-rows', () => {
 
     it('should return paginated rows', function () {
       expect(visibleRows).toEqual(jasmine.any(Array))
-      expect(visibleRows.map(x => x.id)).toEqual([0, 1, 2, 3])
+      expect(visibleRows.map(x => x.id)).toEqual(['0', '1', '2', '3'])
       expect(visibleRows.map(x => x.filename)).toEqual(['alice.txt', 'bob.md', 'cesar.txt', 'david.md'])
       expect(visibleRows.map(x => x.cells)).toEqual(jasmine.any(Array))
     })
@@ -161,7 +171,7 @@ describe('reselectors/visible-rows', () => {
 
     it('should return paginated rows', function () {
       expect(visibleRows).toEqual(jasmine.any(Array))
-      expect(visibleRows.map(x => x.id)).toEqual([4, 3, 2])
+      expect(visibleRows.map(x => x.id)).toEqual(['4', '3', '2'])
       expect(visibleRows.map(x => x.filename)).toEqual(['eric.txt', 'david.md', 'cesar.txt'])
       expect(visibleRows.map(x => x.cells)).toEqual(jasmine.any(Array))
     })
@@ -183,7 +193,7 @@ describe('reselectors/visible-rows', () => {
 
     it('should return paginated rows', function () {
       expect(visibleRows).toEqual(jasmine.any(Array))
-      expect(visibleRows.map(x => x.id)).toEqual([1, 3, 0])
+      expect(visibleRows.map(x => x.id)).toEqual(['1', '3', '0'])
       expect(visibleRows.map(x => x.filename)).toEqual(['bob.md', 'david.md', 'alice.txt'])
       expect(visibleRows.map(x => x.cells)).toEqual(jasmine.any(Array))
     })
