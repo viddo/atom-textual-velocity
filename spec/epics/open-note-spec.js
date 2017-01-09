@@ -23,22 +23,25 @@ describe('epics/open-note', () => {
       listHeight: 75,
       notes: {
         'alice.txt': {
-          id: 0,
+          id: '0',
           name: 'alice',
           ext: 'txt',
-          path: '/notes/alice.txt'
+          path: '/notes/alice.txt',
+          stats: {mtime: new Date()}
         },
         'bob.md': {
-          id: 1,
+          id: '1',
           name: 'bob',
           ext: 'md',
-          path: '/notes/bob.md'
+          path: '/notes/bob.md',
+          stats: {mtime: new Date()}
         },
         'cesar.txt': {
-          id: 2,
+          id: '2',
           name: 'cesar',
           ext: 'txt',
-          path: '/notes/cesar.txt'
+          path: '/notes/cesar.txt',
+          stats: {mtime: new Date()}
         }
       },
       rowHeight: 25,

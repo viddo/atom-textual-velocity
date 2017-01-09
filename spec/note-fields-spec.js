@@ -1,12 +1,12 @@
 /* @flow */
 
-import NotesFields from '../lib/notes-fields'
+import NoteFields from '../lib/note-fields'
 
-describe('notes-fields', () => {
-  let notesFields
+describe('note-fields', () => {
+  let noteFields
 
   beforeEach(function () {
-    notesFields = new NotesFields()
+    noteFields = new NoteFields()
   })
 
   describe('.forEach', function () {
@@ -17,13 +17,13 @@ describe('notes-fields', () => {
         notePropName: 'test',
         value: (note, filename) => filename.split('.').slice(-1)[0]
       }
-      notesFields.add(testNoteField)
-      notesFields.add({notePropName: 'content'}) // fields that only is there to indicate the existance of the field doesn't need a value transformer
+      noteFields.add(testNoteField)
+      noteFields.add({notePropName: 'content'}) // fields that only is there to indicate the existance of the field doesn't need a value transformer
     })
 
     it('should iterate each note field', function () {
       const tmp = []
-      notesFields.forEach(noteField => {
+      noteFields.forEach(noteField => {
         tmp.push(noteField)
       })
       expect(tmp[0]).toEqual(testNoteField)
@@ -32,25 +32,25 @@ describe('notes-fields', () => {
 
   describe('.map', function () {
     beforeEach(function () {
-      notesFields.add({
+      noteFields.add({
         notePropName: 'test',
         value: (note, filename) => filename.split('.').slice(-1)[0]
       })
-      notesFields.add({notePropName: 'content'}) // fields that only is there to indicate the existance of the field doesn't need a value transformer
+      noteFields.add({notePropName: 'content'}) // fields that only is there to indicate the existance of the field doesn't need a value transformer
     })
 
     it('should return map values', function () {
-      expect(notesFields.map(noteField => noteField.notePropName)).toEqual(['test', 'content'])
+      expect(noteFields.map(noteField => noteField.notePropName)).toEqual(['test', 'content'])
     })
   })
 
   describe('.propNames', function () {
     beforeEach(function () {
-      notesFields.add({notePropName: 'test'})
-      notesFields.add({notePropName: 'content'})
+      noteFields.add({notePropName: 'test'})
+      noteFields.add({notePropName: 'content'})
     })
     it('should return a list of notes prop names', function () {
-      expect(notesFields.propNames()).toEqual(['test', 'content'])
+      expect(noteFields.propNames()).toEqual(['test', 'content'])
     })
   })
 })

@@ -1,7 +1,8 @@
 /* @flow */
 
 import * as A from '../../lib/action-creators'
-import NotesFields from '../../lib/notes-fields'
+import FileReaders from '../../lib/file-readers'
+import NoteFields from '../../lib/note-fields'
 import makeNotesReducer from '../../lib/reducers/notes'
 
 describe('reducers/notes', () => {
@@ -10,17 +11,32 @@ describe('reducers/notes', () => {
   let notesReducer
 
   beforeEach(function () {
-    state = undefined
-    const notesFields = new NotesFields()
-    notesFields.add({
+    const fileReaders = new FileReaders()
+    fileReaders.add({
+      notePropName: 'content',
+      read: (path: string, fileStats: FsStats, callback: NodeCallback) => callback(null, `content for ${path}`)
+    })
+
+    const noteFields = new NoteFields()
+    noteFields.add({
       notePropName: 'ext',
       value: (note, filename) => filename.split('.').slice(-1)[0]
     })
 
     // Some fields are set by a file-reader, in those cases the field is only there to indicate that the field exist
-    notesFields.add({notePropName: 'content'})
+    noteFields.add({notePropName: 'content'})
 
-    notesReducer = makeNotesReducer(notesFields)
+    nextInitialScan = {
+      done: false,
+      rawFiles: []
+    }
+
+    notesReducer = makeNotesReducer(fileReaders, noteFields)
+    state = notesReducer(undefined, A.startInitialScan(), nextInitialScan)
+  })
+
+  it('should have an empty object', function () {
+    expect(state).toEqual({})
   })
 
   describe('when initial-scan-done action', function () {
@@ -42,7 +58,7 @@ describe('reducers/notes', () => {
       expect(Object.keys(state).length).toEqual(2)
     })
 
-    it('should apply notesFields on notes', function () {
+    it('should apply noteFields on notes', function () {
       expect(state['a.txt']).toEqual(jasmine.any(Object))
       expect(state['a.txt'].ext).toEqual('txt')
       expect(state['b.md'].ext).toEqual('md')
@@ -72,7 +88,7 @@ describe('reducers/notes', () => {
         }]
       }
       action = A.fileAdded({
-        filename: 'alice.txt',
+        filename: 'cesar.txt',
         stats: {mtime: new Date()}
       })
     })
@@ -88,29 +104,68 @@ describe('reducers/notes', () => {
     })
 
     describe('when initial scan is done', function () {
+      let prevState
+
       beforeEach(function () {
         nextInitialScan.done = true
-        state = notesReducer(state, action, nextInitialScan)
+        prevState = {
+          'alice.txt': {
+            id: '1',
+            stats: {mtime: new Date()},
+            ready: false,
+            ext: 'txt',
+            name: 'alice'
+          },
+          'bob.md': {
+            id: '2',
+            stats: {mtime: new Date()},
+            ready: false,
+            ext: 'md',
+            name: 'bob'
+          }
+        }
+        state = notesReducer(prevState, action, nextInitialScan)
       })
 
-      it('should add new note', function () {
-        expect(state).toEqual({
-          'alice.txt': {
-            id: jasmine.any(String),
-            stats: {mtime: jasmine.any(Date)},
-            ext: 'txt'
-          }
+      it('should add new notes', function () {
+        expect(state['cesar.txt']).toEqual({
+          id: jasmine.any(String),
+          stats: {mtime: jasmine.any(Date)},
+          ready: false,
+          ext: 'txt',
+          name: ''
         })
       })
 
       describe('when file is removed', function () {
         beforeEach(function () {
-          action = A.fileDeleted('alice.txt')
+          action = A.fileDeleted('cesar.txt')
           state = notesReducer(state, action, nextInitialScan)
         })
 
-        it('should remove note', function () {
-          expect(state).toEqual({})
+        it('should remove corresponding note', function () {
+          expect(state).toEqual(prevState)
+        })
+      })
+
+      describe('when a file is read', function () {
+        beforeEach(function () {
+          action = A.fileRead({
+            filename: 'bob.md',
+            notePropName: 'content',
+            value: 'content for bob.md'
+          })
+          state = notesReducer(prevState, action, nextInitialScan)
+        })
+
+        it('should add field to intended note', function () {
+          expect(state['bob.md'].content).toEqual('content for bob.md')
+          expect(state['alice.txt'].content).toEqual()
+        })
+
+        it('should set note with all fields as ready', function () {
+          expect(state['bob.md'].ready).toBe(true)
+          expect(state['alice.txt'].ready).toBe(false)
         })
       })
     })

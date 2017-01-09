@@ -23,19 +23,22 @@ describe('epics/preview-note', () => {
       listHeight: 75,
       notes: {
         'alice.txt': {
-          id: 0,
+          id: '0',
           name: 'alice',
-          ext: 'txt'
+          ext: 'txt',
+          stats: {mtime: new Date()}
         },
         'bob.md': {
-          id: 1,
+          id: '1',
           name: 'bob',
-          ext: 'md'
+          ext: 'md',
+          stats: {mtime: new Date()}
         },
         'cesar.txt': {
-          id: 2,
+          id: '2',
           name: 'cesar',
-          ext: 'txt'
+          ext: 'txt',
+          stats: {mtime: new Date()}
         }
       },
       rowHeight: 25,

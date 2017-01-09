@@ -37,7 +37,7 @@ describe('epics/path-watcher', () => {
     beforeEach(function () {
       store.dispatch(startInitialScan())
 
-      // wait for last expected action (so it's asserted implicitly, too)
+      // wait for initial scan to be done (i.e. the last expected action), implicitly verifies that to work, too
       waitsFor(() => store.getActions().slice(-1)[0].type === INITIAL_SCAN_DONE)
     })
 

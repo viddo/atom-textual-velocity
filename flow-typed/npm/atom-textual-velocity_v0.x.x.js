@@ -9,7 +9,9 @@ type Action =
   | FileAdded
   | FileChanged
   | FileDeleted
+  | FileRead
   | InitialScanDone
+  | InitialScanRawFilesRead
   | OpenNote
   | ResetSearch
   | ResizedList
@@ -78,7 +80,7 @@ type Column = {
 }
 type Columns = {
   add (column: Column): void,
-  map<T> (fn: (column: Column) => T): Array<T>
+  map<T> (mapper: (column: Column) => T): Array<T>
 }
 type ColumnHeader = {
   sortField: string,
@@ -102,6 +104,25 @@ type FileDeleted = {
   type: 'FILE_DELETED',
   filename: string
 }
+type FileRead = {type: 'FILE_READ'} & FileReadResult
+type FileReadResult = {
+  filename: string,
+  notePropName: string,
+  value: any
+}
+
+type FileReader = {
+  notePropName: string,
+  read (path: string, fileStats: FsStats, callback: NodeCallback): void
+}
+type FileReaders = {
+  add (fileReader: FileReader): void,
+  remove (fileReader: FileReader): void,
+  every (predicate: (fileReader: FileReader) => boolean): boolean,
+  filter (predicate: (fileReader: FileReader) => boolean): Array<FileReader>,
+  forEach (callback: (fileReader: FileReader) => any): any,
+  map<T> (mapper: (fileReader: FileReader) => T): Array<T>
+}
 
 type FsStats =
   | (fs.Stats & {
@@ -114,9 +135,11 @@ type InitialScan = {
   done: boolean,
   rawFiles: Array<RawFile>
 }
-
 type InitialScanDone = {
   type: 'INITIAL_SCAN_DONE'
+}
+type InitialScanRawFilesRead = {
+  type: 'INITIAL_SCAN_RAW_FILES_READ'
 }
 
 type KeyPressEvent = {
@@ -124,29 +147,60 @@ type KeyPressEvent = {
   preventDefault: Function
 }
 
+type MainProps = MainPropsActions & MainPropsWithoutActions
+type MainPropsWithoutActions = {
+  columnHeaders: Array<ColumnHeader>,
+  initialScanDone: boolean,
+  initialScanFilesCount: number,
+  itemsCount: number,
+  listHeight: number,
+  paginationStart: number,
+  query: string,
+  readyCount: number,
+  rowHeight: number,
+  scrollTop: number,
+  sortDirection: SortDirection,
+  sortField: string,
+  totalCount: number,
+  visibleRows: Array<VisibleRow>
+}
+type MainPropsActions = {
+  actions: {
+    changeRowHeight: Function,
+    changeSortDirection: Function,
+    changeSortField: Function,
+    clickRow: Function,
+    keyPress: Function,
+    resizeList: Function,
+    scroll: Function,
+    search: Function
+  },
+}
+
+type NodeCallback = (err: ?Object|void, result: any) => void
+
 type Note = {
   id: string,
   name: string,
   ext: string,
-  ready: boolean,
   stats: FsStats,
+  ready?: boolean,
 
   // known fields that will exist, eventually
   content?: string
 }
-
+type Notes = {
+  [filename: string]: Note
+}
 type NoteField = {
   notePropName: string,
   value?: (note: any, filename: string) => any
 }
-
-type Notes = any
-
-type NotesFields = {
+type NoteFields = {
   add (field: NoteField): void,
   propNames (): Array<string>,
-  forEach<T> (fn: (noteField: NoteField) => T): void,
-  map<T> (fn: (noteField: NoteField) => T): Array<T>
+  forEach (callback: (noteField: NoteField) => any): any,
+  map<T> (mapper: (noteField: NoteField) => T): Array<T>
 }
 
 type OpenNote = {
@@ -203,7 +257,7 @@ type SifterResult = {
     fields: Array<string>,
     limit?: number | void,
     sort: Array<{
-      direction: string,
+      direction: SortDirection,
       field: string
     }>
   },
