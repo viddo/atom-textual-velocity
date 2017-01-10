@@ -3,57 +3,57 @@
 import Columns from '../lib/columns'
 
 describe('columns', () => {
-  let columns
+  let columns, schema
 
   beforeEach(function () {
+    atom.config.set('textual-velocity.sortField', 'name')
     atom.config.setSchema('textual-velocity.sortField', {
-      type: 'string'
+      type: 'string',
+      default: 'name'
     })
+
     columns = new Columns()
+    columns.add({
+      cellContent: () => 'some content',
+      description: 'A test column',
+      sortField: 'test-field',
+      title: 'test',
+      width: 25
+    })
+    columns.add({
+      cellContent: () => 'name',
+      description: 'Filename w/o extension',
+      sortField: 'name',
+      title: 'Name',
+      width: 50
+    })
+    columns.add({
+      cellContent: () => 'ext',
+      description: 'extension of filename',
+      sortField: 'ext',
+      title: 'File extension',
+      width: 25
+    })
+    schema = atom.config.getSchema('textual-velocity.sortField')
+  })
+
+  it('should change the schema', function () {
+    expect(schema.type).toEqual('string')
+    expect(schema.default).toEqual('test-field')
+    expect(schema.enum).toEqual([
+      {value: 'test-field', description: 'test'},
+      {value: 'name', description: 'Name'},
+      {value: 'ext', description: 'File extension'}
+    ])
+  })
+
+  it('should maintain config value even after columns are added/schema changed', function () {
+    expect(atom.config.get('textual-velocity.sortField')).toEqual('name')
   })
 
   describe('.map', function () {
-    beforeEach(function () {
-      columns.add({
-        sortField: 'test-field',
-        title: 'test',
-        description: 'A test column',
-        width: 50,
-        cellContent: () => 'some content'
-      })
-    })
-
-    it('should update sortField schema', function () {
-      let schema = atom.config.getSchema('textual-velocity.sortField')
-      expect(schema).toEqual({
-        type: 'string',
-        default: 'test-field',
-        enum: [
-          {value: 'test-field', description: 'test'}
-        ]
-      })
-
-      columns.add({
-        sortField: 'test-field2',
-        title: 'another field',
-        description: 'A second test column',
-        width: 50,
-        cellContent: () => 'some other content'
-      })
-
-      schema = atom.config.getSchema('textual-velocity.sortField')
-      expect(schema).toEqual({
-        type: 'string',
-        default: 'test-field',
-        enum: [
-          {value: 'test-field', description: 'test'},
-          {value: 'test-field2', description: 'another field'}
-        ]
-      })
-    })
-
-    it('should map resuts', function () {
-      expect(columns.map(column => column.title)).toEqual(['test'])
+    it('should map results', function () {
+      expect(columns.map(column => column.sortField)).toEqual(['test-field', 'name', 'ext'])
     })
   })
 })
