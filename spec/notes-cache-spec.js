@@ -4,12 +4,12 @@ import {it, fit} from './_async-spec-helpers' // eslint-disable-line
 import NotesCache from '../lib/notes-cache'
 
 describe('notes-cache', () => {
-  let notesCache
+  let notes, notesCache
 
   beforeEach(function () {
     atom.enablePersistence = true
     atom.stateStore.clear()
-    notesCache = new NotesCache()
+    notesCache = new NotesCache('/notes')
   })
 
   afterEach(function () {
@@ -18,51 +18,32 @@ describe('notes-cache', () => {
     atom.stateStore.clear()
   })
 
-  it('should load cache object if it was saved', async function () {
-    const notes = await notesCache.load()
+  it('should save and load notes', async function () {
+    notes = await notesCache.load()
     expect(notes).toEqual({})
-    notes['some-file'] = {}
 
     try {
-      await notesCache.save()
+      await notesCache.save({'some-file': {foo: 'bar'}})
     } catch (err) {
       this.fail('save should work')
     }
-    const notes2 = await notesCache.load()
-    expect(notes2).toEqual(notes)
+    notes = await notesCache.load()
+    expect(notes).toEqual({'some-file': {foo: 'bar'}})
   })
 
-  it('should discard current notes cache when clear-notes-cache is called', async function () {
-    const notes = await notesCache.load()
-    notes['some-file'] = {}
+  it('should not save notes after clear-notes-cache command is called', async function () {
+    notes = await notesCache.load()
 
     const workspaceView = atom.views.getView(atom.workspace)
     jasmine.attachToDOM(workspaceView)
     atom.commands.dispatch(workspaceView, 'textual-velocity:clear-notes-cache')
 
     try {
-      await notesCache.save()
+      await notesCache.save({'some-file': {foo: 'bar'}})
     } catch (err) {
       this.fail('save should work')
     }
-    const notes2 = await notesCache.load()
-    expect(notes2).not.toEqual(notes)
-    expect(notes2).toEqual({})
-  })
-
-  it('should discard current notes cache when notes path changes', async function () {
-    const notes = await notesCache.load()
-    notes['some-file'] = {}
-
-    atom.config.set('textual-velocity.path', 'new/path')
-
-    try {
-      await notesCache.save()
-    } catch (err) {
-      this.fail('save should work')
-    }
-    const notes2 = await notesCache.load()
-    expect(notes2).not.toEqual(notes)
-    expect(notes2).toEqual({})
+    notes = await notesCache.load()
+    expect(notes).toEqual({})
   })
 })
