@@ -6,6 +6,9 @@ type Action =
   | ChangedSortField
   | ClickRow
   | Dispose
+  | EditCell
+  | EditCellAbort
+  | EditCellSave
   | FileAdded
   | FileChanged
   | FileDeleted
@@ -20,11 +23,6 @@ type Action =
   | SelectNext
   | SelectPrev
   | StartInitialScan
-
-type CellType = {
-  className: string|void,
-  content: CellContent
-}
 
 type CellContent =
   | string
@@ -80,7 +78,8 @@ type Column = {
 }
 type Columns = {
   add (column: Column): void,
-  map<T> (mapper: (column: Column) => T): Array<T>
+  map<T> (mapper: (column: Column) => T): Array<T>,
+  some<T> (predicate: (column: Column) => T): boolean
 }
 type ColumnHeader = {
   sortField: string,
@@ -90,6 +89,20 @@ type ColumnHeader = {
 
 type Dispose = {
   type: 'DISPOSE'
+}
+
+type EditCell = {
+  type: 'EDIT_CELL',
+  name: string
+}
+type EditCellAbort = {
+  type: 'EDIT_CELL_ABORT'
+}
+type EditCellName = ?string
+type EditCellSave = {
+  type: 'EDIT_CELL_SAVE',
+  editCellName: string,
+  value: string
 }
 
 type FileAdded = {
@@ -123,6 +136,14 @@ type FileReaders = {
   forEach (callback: (fileReader: FileReader) => any): any,
   map<T> (mapper: (fileReader: FileReader) => T): Array<T>
 }
+type FileWriter = {
+  editCellName: string,
+  write (path: string, str: string, callback: NodeCallbackType): void
+}
+type FileWriters = {
+  add (fileWriter: FileWriter): void,
+  find (predicate: (fileWriter: FileWriter) => boolean): FileWriter|void
+}
 
 type FsStats =
   | (fs.Stats & {
@@ -150,6 +171,7 @@ type KeyPressEvent = {
 type MainProps = MainPropsActions & MainPropsWithoutActions
 type MainPropsWithoutActions = {
   columnHeaders: Array<ColumnHeader>,
+  editCellName: EditCellName,
   initialScanDone: boolean,
   initialScanFilesCount: number,
   itemsCount: number,
@@ -162,7 +184,7 @@ type MainPropsWithoutActions = {
   sortDirection: SortDirection,
   sortField: string,
   totalCount: number,
-  visibleRows: Array<VisibleRow>
+  visibleRows: Array<Row>
 }
 type MainPropsActions = {
   actions: {
@@ -170,6 +192,9 @@ type MainPropsActions = {
     changeSortDirection: Function,
     changeSortField: Function,
     clickRow: Function,
+    editCell: Function,
+    editCellAbort: Function,
+    editCellSave: Function,
     keyPress: Function,
     resizeList: Function,
     scroll: Function,
@@ -223,6 +248,18 @@ type ResizedList = {
 
 type ResetSearch = {
   type: 'RESET_SEARCH'
+}
+
+type Row = {
+  cells: Array<RowCell>,
+  filename: string,
+  id: string,
+  selected: boolean
+}
+type RowCell = {
+  className: string|void,
+  content: CellContent,
+  editCellName: string|void
 }
 
 type Scrolled = {
@@ -279,6 +316,7 @@ type StartInitialScan = {
 type State = {
   columnHeaders: Array<ColumnHeader>,
   dir: string,
+  editCellName: EditCellName,
   initialScan: InitialScan,
   listHeight: number,
   notes: Notes,
@@ -289,10 +327,3 @@ type State = {
 }
 
 type SortDirection = 'desc' | 'asc'
-
-type VisibleRow = {
-  cells: Array<CellType>,
-  filename: string,
-  id: string,
-  selected: boolean
-}

@@ -10,6 +10,7 @@ describe('reselectors/pagination', () => {
     state = {
       columnHeaders: [],
       dir: '',
+      editCellName: null,
       initialScan: {
         done: false,
         rawFiles: []
