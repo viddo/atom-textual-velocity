@@ -26,6 +26,7 @@ describe('epics/file-reads', () => {
     state = {
       columnHeaders: [],
       dir: '/notes',
+      editCellName: null,
       initialScan: {
         done: false,
         rawFiles: []

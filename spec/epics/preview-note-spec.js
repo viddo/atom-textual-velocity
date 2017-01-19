@@ -16,6 +16,7 @@ describe('epics/preview-note', () => {
     state = {
       columnHeaders: [],
       dir: '/notes',
+      editCellName: null,
       initialScan: {
         done: false,
         rawFiles: []

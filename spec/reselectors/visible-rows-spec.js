@@ -8,7 +8,7 @@ import paginationSelector from '../../lib/reselectors/pagination'
 
 describe('reselectors/visible-rows', () => {
   let state: State
-  let visibleRows: Array<VisibleRow>
+  let visibleRows: Array<Row>
   let visibleRowsSelector
 
   beforeEach(function () {
@@ -19,6 +19,7 @@ describe('reselectors/visible-rows', () => {
     state = {
       columnHeaders: [],
       dir: '/notes',
+      editCellName: null,
       initialScan: {
         done: false,
         rawFiles: []

@@ -16,6 +16,7 @@ describe('epics/active-pane-item', () => {
     state = {
       columnHeaders: [],
       dir: '/notes',
+      editCellName: null,
       initialScan: {
         done: false,
         rawFiles: []

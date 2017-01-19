@@ -3,6 +3,5 @@ declare type ServiceV0Type = {
   registerFields (...items: Array<NoteField>): void,
   registerFileReaders (...items: Array<FileReader>): void,
   deregisterFileReaders (...items: Array<FileReader>): void,
-  registerFileWriters (...items: Array<FileWriterType>): void,
-  editCell (editCellName: string): void
+  registerFileWriters (...items: Array<FileWriterType>): void
 }
