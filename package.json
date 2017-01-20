@@ -36,7 +36,6 @@
     }
   },
   "dependencies": {
-    "baconjs": "0.7.89",
     "chokidar": "1.6.1",
     "classnames": "2.2.5",
     "fs-plus": "2.9.3",
