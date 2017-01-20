@@ -1,3 +1,5 @@
+import type fs from 'fs'
+
 type Action =
   | ChangedActivePaneItem
   | ChangedListHeight
@@ -138,7 +140,7 @@ type FileReaders = {
 }
 type FileWriter = {
   editCellName: string,
-  write (path: string, str: string, callback: NodeCallbackType): void
+  write (path: string, str: string, callback: NodeCallback): void
 }
 type FileWriters = {
   add (fileWriter: FileWriter): void,
@@ -292,7 +294,7 @@ type Service = {
   registerFields (...items: Array<NoteField>): void,
   registerFileReaders (...items: Array<FileReader>): void,
   deregisterFileReaders (...items: Array<FileReader>): void,
-  registerFileWriters (...items: Array<FileWriterType>): void
+  registerFileWriters (...items: Array<FileWriter>): void
 }
 
 type SifterResult = {
