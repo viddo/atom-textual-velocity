@@ -1,1 +1,0 @@
-type SortDirectionType = 'asc' | 'desc'

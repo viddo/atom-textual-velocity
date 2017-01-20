@@ -9,7 +9,6 @@ declare function runs (fn: Function): void
 declare function spyOn (actual: Object): Object
 declare function waitsFor (fn: Function): void
 
-
 declare function JasmineFn (done?: Function): void
 
 declare var jasmine: Object

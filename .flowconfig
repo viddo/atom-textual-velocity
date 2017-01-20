@@ -1,7 +1,3 @@
-[libs]
-decls/
-
 [ignore]
-<PROJECT_ROOT>/decls/.*
 <PROJECT_ROOT>/docs/.*
 .*/node_modules/fbjs/.*

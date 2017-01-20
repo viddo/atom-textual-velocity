@@ -1,5 +1,6 @@
 declare var atom: Object
 declare var emit: Function // only available in Task context https://atom.io/docs/api/latest/Task
+declare type Atom$Panel = Object
 
 declare module 'atom' {
   declare class Disposable {

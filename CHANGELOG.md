@@ -4,6 +4,10 @@ This project adheres to [Semantic Versioning](http://semver.org/) and [keepachan
 
 ## [unreleased]
 
+#### Removed
+- Now unused dependencies (lodash.debounce, baconjs)
+
+
 ## [0.11.4] - 2016-12-31
 #### Changed
 - Updated dependencies, fixed some flowtype complaints due to changes in new version
