@@ -5,7 +5,7 @@ import Path from 'path'
 import renameNote from '../../lib/service-consumers/rename-note'
 
 describe('service-consumers/rename-note', function () {
-  describe('.consumeServiceV0', function () {
+  describe('.consumeService', function () {
     const editCellName = 'bampadam'
     let disposable, service
 
@@ -18,7 +18,7 @@ describe('service-consumers/rename-note', function () {
         registerFileWriters: jasmine.createSpy('registerFileWriters'),
         editCell: jasmine.createSpy('editCell')
       }
-      disposable = renameNote.consumeServiceV0(service, editCellName)
+      disposable = renameNote.consumeService(service, editCellName)
     })
 
     afterEach(function () {

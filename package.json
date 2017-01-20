@@ -24,7 +24,7 @@
     "textual-velocity": {
       "description": "Exposes API to register columns and file read/writers",
       "versions": {
-        "0.1.0": "provideServiceV0"
+        "0.1.0": "provideService"
       }
     }
   },
