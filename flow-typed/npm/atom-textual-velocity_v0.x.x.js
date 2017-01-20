@@ -33,6 +33,8 @@ type CellContent =
       content?: CellContent
     }
   | Array<CellContent>
+  | SearchMatchContent
+  | void
 
 type CellContentParams = {
   note: Note,
@@ -275,8 +277,9 @@ type Search = {
 }
 
 type SearchMatch = {
-  content (str: string): [string, Object, string] | void
+  content (str: string): SearchMatchContent | void
 }
+type SearchMatchContent = [string, Object, string]
 
 type SelectNext = {
   type: 'SELECT_NEXT'
