@@ -44,6 +44,14 @@ describe('reducers/scroll-top', () => {
     sharedAdjustScrollTopSpecs(A.selectPrev())
   })
 
+  describe('when active path changes', function () {
+    beforeEach(function () {
+      nextSelectedNote = {index: 5, filename: 'alice.txt'}
+    })
+
+    sharedAdjustScrollTopSpecs(A.changedActivePaneItem('alice.txt'))
+  })
+
   describe('when any other action', function () {
     beforeEach(function () {
       state = 123
