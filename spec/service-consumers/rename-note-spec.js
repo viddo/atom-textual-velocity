@@ -52,7 +52,7 @@ describe('service-consumers/rename-note', function () {
           fileWriter.write(oldPath, '', callbackSpy)
           expect(fs.renameSync).not.toHaveBeenCalled()
           expect(fs.utimesSync).not.toHaveBeenCalled()
-          expect(callbackSpy).not.toHaveBeenCalled()
+          expect(callbackSpy).toHaveBeenCalledWith(null, null)
         })
 
         it('should not allow path separator', function () {

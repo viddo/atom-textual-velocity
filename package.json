@@ -40,7 +40,6 @@
     "classnames": "2.2.5",
     "fs-plus": "2.9.3",
     "moment": "2.17.1",
-    "ramda": "0.23.0",
     "react-for-atom": "15.3.1-0",
     "react-redux": "5.0.2",
     "redux": "3.6.0",
