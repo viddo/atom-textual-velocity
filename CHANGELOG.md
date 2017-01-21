@@ -3,6 +3,20 @@ All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](http://semver.org/) and [keepachangelog.com](http://keepachangelog.com/).
 
 ## [unreleased]
+#### Added
+- Asynchronous initial scan of files
+  - Number of files found indicated and updated continuously on initial scan, replacing the generic spinner
+  - Fixes the issue of Atom being mostly unresponsive while scanning for files
+  - Also fixed the rare case of a path containing "many files" causing Atom to actually freeze - no other reports of it, though
+
+#### Changed
+- :truck: Internal code overhaul
+  - Migrated away from the ["VIP" architecture](http://clean-swift.com/clean-swift-ios-architecture/)+[BaconJS streams](http://baconjs.github.io/) to a more "contemporary" architecture consisting of [React](https://facebook.github.io/react/)+[Redux](redux.js.org)+[observables](https://redux-observable.js.org)
+  - Code feels much "better" now and easier to maintain, which should make it easier for people to understand the code base and contribute :rocket:
+-  :arrow_up: Updated all dependencies to latest stable verisons
+
+#### Fixed
+- Key down/up on empty list not throwing errors
 
 #### Removed
 - Now unused dependencies (lodash.debounce, baconjs)
