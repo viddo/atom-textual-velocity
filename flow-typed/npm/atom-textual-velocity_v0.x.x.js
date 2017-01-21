@@ -64,6 +64,15 @@ type ChangedSortField = {
   sortField: string
 }
 
+// see https://github.com/paulmillr/chokidar#api
+type ChokidarOptions = {
+  alwaysStat?: boolean,
+  cwd: string,
+  depth?: number,
+  ignored?: string,
+  persistent?: boolean
+}
+
 type ClickRow = {
   type: 'CLICK_ROW',
   filename: string
