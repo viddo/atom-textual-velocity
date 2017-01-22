@@ -8,6 +8,8 @@ import configureMockStore from 'redux-mock-store'
 import pathWatcherEpic from '../../lib/epics/path-watcher'
 import * as A from '../../lib/action-creators'
 
+temp.track()
+
 const epicMiddleware = createEpicMiddleware(pathWatcherEpic)
 const mockStore = configureMockStore([epicMiddleware])
 
@@ -15,6 +17,8 @@ describe('epics/path-watcher', () => {
   let dir, store
 
   beforeEach(() => {
+    jasmine.useRealClock() // required for chokidar timers to work! e.g. atomic unlink events
+
     const tempDirPath = temp.mkdirSync('empty-dir')
     dir = fs.realpathSync(tempDirPath)
 
@@ -48,7 +52,7 @@ describe('epics/path-watcher', () => {
       const [, action] = store.getActions()
       expect(action.type).toEqual(A.FILE_ADDED)
       expect(action.rawFile).toEqual(jasmine.any(Object))
-      expect(action.rawFile.filename).toEqual('note-1.txt')
+      expect(action.rawFile.filename).toMatch(/note-\d\.txt/)
     })
 
     it('should have converted stats strings to date object', function () {
@@ -112,12 +116,20 @@ describe('epics/path-watcher', () => {
       beforeEach(function () {
         store.clearActions()
         fs.unlinkSync(Path.join(dir, 'note-1.txt'))
+
+        let done = false
+        fs.unlink(Path.join(dir, 'note-3.txt'), (err, result) => {
+          if (err) console.error(err) // get more info in case of error
+          done = true
+        })
+        waitsFor(() => done)
+
         waitsFor(() => store.getActions().length >= 1)
       })
 
       it('should yield a unlink action with deleted filename', function () {
         expect(store.getActions()[0].type).toEqual(A.FILE_DELETED)
-        expect(store.getActions()[0].filename).toEqual('note-1.txt')
+        expect(store.getActions()[0].filename).toMatch(/^note/)
       })
     })
   })
