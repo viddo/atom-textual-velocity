@@ -112,12 +112,20 @@ describe('epics/path-watcher', () => {
       beforeEach(function () {
         store.clearActions()
         fs.unlinkSync(Path.join(dir, 'note-1.txt'))
+
+        let done = false
+        fs.unlink(Path.join(dir, 'note-3.txt'), (err, result) => {
+          if (err) console.error(err) // get more info in case of error
+          done = true
+        })
+        waitsFor(() => done)
+
         waitsFor(() => store.getActions().length >= 1)
       })
 
       it('should yield a unlink action with deleted filename', function () {
         expect(store.getActions()[0].type).toEqual(A.FILE_DELETED)
-        expect(store.getActions()[0].filename).toEqual('note-1.txt')
+        expect(store.getActions()[0].filename).toMatch(/^note/)
       })
     })
   })
