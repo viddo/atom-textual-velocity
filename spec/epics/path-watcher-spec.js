@@ -8,6 +8,8 @@ import configureMockStore from 'redux-mock-store'
 import pathWatcherEpic from '../../lib/epics/path-watcher'
 import * as A from '../../lib/action-creators'
 
+temp.track()
+
 const epicMiddleware = createEpicMiddleware(pathWatcherEpic)
 const mockStore = configureMockStore([epicMiddleware])
 
@@ -15,6 +17,8 @@ describe('epics/path-watcher', () => {
   let dir, store
 
   beforeEach(() => {
+    jasmine.useRealClock() // required for chokidar timers to work! e.g. atomic unlink events
+
     const tempDirPath = temp.mkdirSync('empty-dir')
     dir = fs.realpathSync(tempDirPath)
 
