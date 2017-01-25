@@ -52,7 +52,7 @@ describe('epics/path-watcher', () => {
       const [, action] = store.getActions()
       expect(action.type).toEqual(A.FILE_ADDED)
       expect(action.rawFile).toEqual(jasmine.any(Object))
-      expect(action.rawFile.filename).toEqual('note-1.txt')
+      expect(action.rawFile.filename).toMatch(/note-\d\.txt/)
     })
 
     it('should have converted stats strings to date object', function () {
