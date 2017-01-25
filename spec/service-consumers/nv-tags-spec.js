@@ -5,12 +5,12 @@ var nvTags = require('../../lib/service-consumers/nv-tags')
 
 var unsupErr = nvTags.getUnsupportedError()
 
+// tests for platforms where nvtags are unavailable
 describe('service-consumers/nv-tags', function () {
   it('should return a disposable object even if tags will not be loaded', function () {
     var service = new Service()
-    var serviceV0 = service.v0() // integration tested through main-spec.js and CI env
     spyOn(nvTags, 'getUnsupportedError').andReturn('not supported')
-    var disposable = nvTags.consumeServiceV0(serviceV0)
+    var disposable = nvTags.consumeService(service)
     expect(disposable.dispose).toEqual(jasmine.any(Function))
   })
 })
@@ -21,22 +21,22 @@ if (unsupErr) {
   return // skip the rest of the tests if could not load tags
 }
 
+// tests for platforms where nvtags are available
 describe('service-consumers/nv-tags', function () {
-  var disposable, v0
+  var disposable, service
 
   beforeEach(function () {
-    var service = new Service()
-    v0 = service.v0() // integration tested through main-spec.js and CI env
-    spyOn(v0, 'registerColumns')
-    spyOn(v0, 'registerFields')
-    spyOn(v0, 'registerFileReaders')
-    spyOn(v0, 'registerFileWriters')
+    service = new Service() // integration tested through main-spec.js and CI env
+    spyOn(service, 'registerColumns')
+    spyOn(service, 'registerFields')
+    spyOn(service, 'registerFileReaders')
+    spyOn(service, 'registerFileWriters')
 
-    disposable = nvTags.consumeServiceV0(v0)
-    expect(v0.registerColumns).toHaveBeenCalled()
-    expect(v0.registerFields).toHaveBeenCalled()
-    expect(v0.registerFileReaders).toHaveBeenCalled()
-    expect(v0.registerFileWriters).toHaveBeenCalled()
+    disposable = nvTags.consumeService(service)
+    expect(service.registerColumns).toHaveBeenCalled()
+    expect(service.registerFields).toHaveBeenCalled()
+    expect(service.registerFileReaders).toHaveBeenCalled()
+    expect(service.registerFileWriters).toHaveBeenCalled()
   })
 
   afterEach(function () {
@@ -47,7 +47,7 @@ describe('service-consumers/nv-tags', function () {
     var field
 
     beforeEach(function () {
-      field = v0.registerFields.mostRecentCall.args[0]
+      field = service.registerFields.mostRecentCall.args[0]
     })
 
     describe('.value', function () {
@@ -66,7 +66,7 @@ describe('service-consumers/nv-tags', function () {
     var column
 
     beforeEach(function () {
-      column = v0.registerColumns.mostRecentCall.args[0]
+      column = service.registerColumns.mostRecentCall.args[0]
     })
 
     describe('.cellContent', function () {
@@ -93,8 +93,8 @@ describe('service-consumers/nv-tags', function () {
     var fileStats = {}
 
     beforeEach(function () {
-      fileReader = v0.registerFileReaders.mostRecentCall.args[0]
-      fileWriter = v0.registerFileWriters.mostRecentCall.args[0]
+      fileReader = service.registerFileReaders.mostRecentCall.args[0]
+      fileWriter = service.registerFileWriters.mostRecentCall.args[0]
       callback = jasmine.createSpy('callback')
     })
 

@@ -5,6 +5,15 @@
 @import "ui-variables";
 @headerZindex: 2;
 
+.tv-dot {
+  display: inline-block;
+  width: 1px;
+  height: 1px;
+  margin-right: 1px;
+  margin-bottom: 1px;
+  background-color: @text-color-success;
+}
+
 .tv-loader {
   position: absolute;
   width: 100%;
@@ -129,4 +138,8 @@
     border-bottom-color: @pane-item-border-color;
     z-index: @headerZindex + 1;
   }
+}
+
+.tv-info {
+  cursor: pointer;
 }

@@ -2,7 +2,6 @@
 /* global CustomEvent */
 
 import Path from 'path'
-import R from 'ramda'
 
 describe('main', () => {
   beforeEach(function () {
@@ -38,7 +37,7 @@ describe('main', () => {
         return promise
       })
       runs(() => {
-        this.panel = R.last(atom.workspace.getTopPanels())
+        this.panel = atom.workspace.getTopPanels().slice(-1)[0]
       })
     })
 
