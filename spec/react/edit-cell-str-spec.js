@@ -12,12 +12,12 @@ describe('react/edit-cell-str', function () {
     saveSpy = jasmine.createSpy('save')
     abortSpy = jasmine.createSpy('abort')
     component = TestUtils.renderIntoDocument(<EditCellStr initialVal='foo' save={saveSpy} abort={abortSpy} />)
-    input = component.refs.theInput
+    input = component.input
   })
 
   it('renders an input with the initial value', function () {
-    expect(input.type).toEqual('text')
-    expect(input.value).toEqual('foo')
+    expect(component.input.type).toEqual('text')
+    expect(component.input.value).toEqual('foo')
   })
 
   describe('when <enter>', function () {
@@ -33,13 +33,13 @@ describe('react/edit-cell-str', function () {
 
   describe('when input is changed', function () {
     beforeEach(function () {
-      input.value = ' a b c '
+      component.input.value = ' a b c '
       TestUtils.Simulate.change(input)
       dispatchKeyDownEvent(input, { keyCode: 40 }) // <down>
     })
 
     it('gets the changed value', function () {
-      expect(input.value).toEqual(' a b c ')
+      expect(component.input.value).toEqual(' a b c ')
     })
 
     it('does not call save or abort', function () {
