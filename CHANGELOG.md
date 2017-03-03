@@ -4,6 +4,9 @@ This project adheres to [Semantic Versioning](http://semver.org/) and [keepachan
 
 ## [unreleased]
 
+## [0.12.1] - 2017-03-03
+#### Fixed
+- Umlaut characters not matching summary title (filenames) #55
 
 ## [0.12.0] - 2017-02-02
 #### Added
