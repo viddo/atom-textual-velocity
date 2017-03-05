@@ -3,6 +3,8 @@ All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](http://semver.org/) and [keepachangelog.com](http://keepachangelog.com/).
 
 ## [unreleased]
+#### Fixed
+- Select next/prev does not always select the expected note #56
 
 ## [0.12.1] - 2017-03-03
 #### Fixed

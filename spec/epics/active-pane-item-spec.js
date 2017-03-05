@@ -67,27 +67,49 @@ describe('epics/active-pane-item', () => {
       }
     }
 
+    spyOn(Date, 'now').andReturn(0)
+
     store = mockStore(state)
+    store.dispatch(A.resizeList(123)) // dummy action, just to have action$ to have a value to start with
   })
 
   afterEach(function () {
     epicMiddleware.replaceEpic(activePaneItemEpic)
   })
 
-  describe('when active pane item changes', function () {
-    describe('when it is a text editor', function () {
-      beforeEach(function () {
-        let done = false
-        atom.workspace.open('/notes/bob.md').then(() => {
-          advanceClock(1010)
-          done = true
-        })
-        waitsFor(() => done)
-      })
+  describe('when active pane item is changed due to non-package interaction (e.g. open recent file or such)', function () {
+    beforeEach(function () {
+      store.clearActions()
 
-      it('should dispatch action to select matching note', function () {
-        expect(store.getActions().slice(-1)[0]).toEqual(A.changedActivePaneItem('/notes/bob.md'))
+      Date.now.andReturn(500) // for open-file event to not be interpreted as a package interaction
+
+      let done = false
+      atom.workspace.open('/notes/bob.md').then(() => {
+        advanceClock(1010)
+        done = true
       })
+      waitsFor(() => done)
+    })
+
+    it('should dispatch action to select matching note', function () {
+      expect(store.getActions().slice(-1)[0]).toEqual(A.changedActivePaneItem('/notes/bob.md'))
+    })
+  })
+
+  describe('when active pane item is changed due to interaction with plugin, e.g. select note (=> preview)', function () {
+    beforeEach(function () {
+      store.clearActions()
+
+      let done = false
+      atom.workspace.open('/notes/untitled.md').then(() => {
+        advanceClock(1010)
+        done = true
+      })
+      waitsFor(() => done)
+    })
+
+    it('should not dispatch any action', function () {
+      expect(store.getActions()).toEqual([])
     })
   })
 })
