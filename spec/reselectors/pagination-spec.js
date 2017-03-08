@@ -17,6 +17,7 @@ describe('reselectors/pagination', () => {
       },
       listHeight: 1000,
       notes: {},
+      queryOriginal: '',
       rowHeight: 24,
       scrollTop: 0,
       selectedNote: null,

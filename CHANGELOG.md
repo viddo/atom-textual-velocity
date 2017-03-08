@@ -6,6 +6,9 @@ This project adheres to [Semantic Versioning](http://semver.org/) and [keepachan
 #### Changed
 - Updated dependencies to latest versions
 
+#### Fixed
+- Search input always lowercase text #60
+
 ## [0.12.2] - 2017-03-05
 #### Fixed
 - Select next/prev does not always select the expected note #56

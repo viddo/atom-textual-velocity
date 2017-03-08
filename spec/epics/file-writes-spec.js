@@ -45,6 +45,7 @@ describe('epics/file-writes', () => {
       },
       listHeight: 50,
       notes: {},
+      queryOriginal: '',
       rowHeight: 25,
       scrollTop: 0,
       selectedNote: null,
