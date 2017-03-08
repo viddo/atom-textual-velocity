@@ -62,6 +62,7 @@ describe('reselectors/visible-rows', () => {
           stats: {mtime: new Date()}
         }
       },
+      queryOriginal: '',
       rowHeight: 25,
       scrollTop: 0,
       selectedNote: null,
@@ -104,7 +105,8 @@ describe('reselectors/visible-rows', () => {
 
   describe('when have search', function () {
     beforeEach(function () {
-      state.sifterResult.query = 'a' // matches Alice, cesAr, dAvid
+      state.queryOriginal = 'A' // matches Alice, cesAr, dAvid
+      state.sifterResult.query = 'a'
       state.sifterResult.items = [
         {id: 'alice.txt', score: 0.1},
         {id: 'cesar.txt', score: 0.1},

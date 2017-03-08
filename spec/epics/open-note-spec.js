@@ -45,6 +45,7 @@ describe('epics/open-note', () => {
           stats: {mtime: new Date()}
         }
       },
+      queryOriginal: '',
       rowHeight: 25,
       scrollTop: 0,
       selectedNote: null,
