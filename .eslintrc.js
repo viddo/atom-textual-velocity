@@ -23,6 +23,7 @@ module.exports = {
         "Event": false,
         "expect": false,
         "HTMLElement": false,
+        "HTMLInputElement": false,
         "it": false,
         "jasmine": false,
         "spyOn": false,
