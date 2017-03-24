@@ -3,6 +3,9 @@ All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](http://semver.org/) and [keepachangelog.com](http://keepachangelog.com/).
 
 ## [unreleased]
+#### Changed
+- Replaced [react-for-atom](https://github.com/facebooknuclide/react-for-atom) with standard react lib #63
+- Updated other dependencies to latest versions #63
 
 ## [0.12.4] - 2017-03-08
 #### Fixed
