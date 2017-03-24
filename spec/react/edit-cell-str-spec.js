@@ -1,7 +1,8 @@
 'use babel'
 /* global dispatchKeyDownEvent */
 
-import { React, TestUtils } from 'react-for-atom'
+import React from 'react'
+import TestUtils from 'react-addons-test-utils'
 import EditCellStr from '../../lib/react/edit-cell-str'
 
 describe('react/edit-cell-str', function () {
