@@ -27,9 +27,8 @@ describe('epics/path-watcher', () => {
     fs.writeFileSync(Path.join(dir, 'other.zip'), '...')
     fs.writeFileSync(Path.join(dir, 'note-3.txt'), '3')
 
-    atom.config.set('textual-velocity.path', dir)
     atom.config.set('textual-velocity.ignoredNames', ['.DS_Store'])
-    store = mockStore()
+    store = mockStore({dir})
   })
 
   afterEach(function () {

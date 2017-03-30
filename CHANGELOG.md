@@ -3,6 +3,9 @@ All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](http://semver.org/) and [keepachangelog.com](http://keepachangelog.com/).
 
 ## [unreleased]
+#### Fixed
+- Fix #65 _Inability to create notes, use custom folders_, validate path before usage
+
 #### Changed
 - Replaced [react-for-atom](https://github.com/facebooknuclide/react-for-atom) with standard react lib #63
 - Updated other dependencies to latest versions #63
