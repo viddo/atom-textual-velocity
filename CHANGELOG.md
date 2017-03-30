@@ -3,12 +3,14 @@ All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](http://semver.org/) and [keepachangelog.com](http://keepachangelog.com/).
 
 ## [unreleased]
-#### Fixed
-- Fix #65 _Inability to create notes, use custom folders_, validate path before usage
 
+## [0.13.0] - 2017-03-29
 #### Changed
 - Replaced [react-for-atom](https://github.com/facebooknuclide/react-for-atom) with standard react lib #63
 - Updated other dependencies to latest versions #63
+
+#### Fixed
+- Fix #65 _Inability to create notes, use custom folders_, validate path before usage
 
 ## [0.12.4] - 2017-03-08
 #### Fixed
@@ -47,7 +49,6 @@ This project adheres to [Semantic Versioning](http://semver.org/) and [keepachan
 
 #### Removed
 - Now unused dependencies (lodash.debounce, baconjs)
-
 
 ## [0.11.4] - 2016-12-31
 #### Changed
