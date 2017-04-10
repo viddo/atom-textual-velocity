@@ -1,4 +1,6 @@
-'use babel'
+/* @flow */
+
+import defaultConfig from '../lib/default-config'
 
 // Remove the custom equalityTest added by atom:
 // https://github.com/atom/atom/blob/1500381ac9216bd533199f5b59460b5ac596527c/spec/spec-helper.coffee#L45
@@ -11,10 +13,14 @@ global.dispatchKeyDownEvent = (el, opts = {}) => {
 
   // Chrome doesn't play well with keydown events
   // from https://code.google.com/p/chromium/issues/detail?id=327853&q=KeyboardEvent&colspec=ID%20Pri%20M%20Stars%20ReleaseBlock%20Cr%20Status%20Owner%20Summary%20OS%20Modified
-  var e = document.createEvent('Events')
+  var e: any = document.createEvent('Events')
   // KeyboardEvents bubble and are cancelable.
   // https://developer.mozilla.org/en-US/docs/Web/API/event.initEvent
   e.initEvent('keydown', true, true)
   e.keyCode = opts.keyCode
   el.dispatchEvent(e)
 }
+
+beforeEach(() => {
+  atom.config.setSchema('textual-velocity', {type: 'object', properties: JSON.parse(JSON.stringify(defaultConfig))})
+})
