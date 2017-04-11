@@ -1,9 +1,9 @@
-'use babel'
-/* global dispatchKeyDownEvent */
+/* @flow */
 
 import React from 'react'
 import ReactTestUtils from 'react-dom/test-utils'
 import EditCellStr from '../../lib/react/edit-cell-str'
+import dispatchKeyDownEvent from '../dispatch-keydown-event'
 
 describe('react/edit-cell-str', function () {
   let saveSpy, abortSpy
