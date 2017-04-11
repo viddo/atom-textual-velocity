@@ -2,6 +2,7 @@ import type fs from 'fs'
 
 type Action =
   | ChangedActivePaneItem
+  | ChangedHiddenColumns
   | ChangedListHeight
   | ChangedRowHeight
   | ChangedSortDirection
@@ -45,6 +46,11 @@ type CellContentParams = {
 type ChangedActivePaneItem = {
   type: 'CHANGED_ACTIVE_PANE_ITEM',
   path: ?string
+}
+
+type ChangedHiddenColumns = {
+  type: 'CHANGED_HIDDEN_COLUMNS',
+  hiddenColumns: string[]
 }
 
 type ChangedListHeight = {
@@ -91,8 +97,9 @@ type Column = {
 }
 type Columns = {
   add (column: Column): void,
+  filter (predicate: (column: Column) => boolean): Column[],
   map<T> (mapper: (column: Column) => T): Array<T>,
-  some<T> (predicate: (column: Column) => T): boolean
+  some (predicate: (column: Column) => boolean): boolean
 }
 type ColumnHeader = {
   sortField: string,
