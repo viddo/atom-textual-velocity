@@ -1,9 +1,9 @@
-'use babel'
-/* global dispatchKeyDownEvent */
+/* @flow */
 
 import React from 'react'
-import TestUtils from 'react-addons-test-utils'
+import ReactTestUtils from 'react-dom/test-utils'
 import EditCellStr from '../../lib/react/edit-cell-str'
+import dispatchKeyDownEvent from '../dispatch-keydown-event'
 
 describe('react/edit-cell-str', function () {
   let saveSpy, abortSpy
@@ -12,7 +12,7 @@ describe('react/edit-cell-str', function () {
   beforeEach(function () {
     saveSpy = jasmine.createSpy('save')
     abortSpy = jasmine.createSpy('abort')
-    component = TestUtils.renderIntoDocument(<EditCellStr initialVal='foo' save={saveSpy} abort={abortSpy} />)
+    component = ReactTestUtils.renderIntoDocument(<EditCellStr initialVal='foo' save={saveSpy} abort={abortSpy} />)
     input = component.input
   })
 
@@ -35,7 +35,7 @@ describe('react/edit-cell-str', function () {
   describe('when input is changed', function () {
     beforeEach(function () {
       component.input.value = ' a b c '
-      TestUtils.Simulate.change(input)
+      ReactTestUtils.Simulate.change(input)
       dispatchKeyDownEvent(input, { keyCode: 40 }) // <down>
     })
 

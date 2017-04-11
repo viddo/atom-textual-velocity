@@ -6,6 +6,9 @@ This project adheres to [Semantic Versioning](http://semver.org/) and [keepachan
 #### Added
 - Toggling of columns visibility #5
 
+#### Changed
+- Updated dependencies to latest versions
+
 ## [0.13.0] - 2017-03-29
 #### Changed
 - Replaced [react-for-atom](https://github.com/facebooknuclide/react-for-atom) with standard react lib #63
