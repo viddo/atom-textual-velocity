@@ -42,17 +42,17 @@ describe('reselectors/pagination', () => {
     expect(pagination.start).toEqual(0)
     expect(pagination.limit).toEqual(43) // 41 +2 for visible padding
 
-    state.scrollTop = 50
+    state = {...state, scrollTop: 50}
     pagination = paginationSelector(state)
     expect(pagination.start).toEqual(2) // 2,5, rounded down
     expect(pagination.limit).toEqual(43) // 41 +2 for visible padding
 
-    state.listHeight = 100
+    state = {...state, listHeight: 100}
     pagination = paginationSelector(state)
     expect(pagination.start).toEqual(2) // 2,5, rounded down
     expect(pagination.limit).toEqual(6) // 4.1 rounded down +2 for visible padding
 
-    state.rowHeight = 20
+    state = {...state, rowHeight: 20}
     pagination = paginationSelector(state)
     expect(pagination.start).toEqual(2) // 2,5, rounded down
     expect(pagination.limit).toEqual(7) // 5 +2 for visible padding

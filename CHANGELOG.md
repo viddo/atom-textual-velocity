@@ -3,6 +3,8 @@ All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](http://semver.org/) and [keepachangelog.com](http://keepachangelog.com/).
 
 ## [unreleased]
+#### Added
+- Toggling of columns visibility #5
 
 ## [0.13.0] - 2017-03-29
 #### Changed

@@ -6,11 +6,11 @@ describe('columns', () => {
   let columns, schema
 
   beforeEach(function () {
-    atom.config.set('textual-velocity.sortField', 'name')
     atom.config.setSchema('textual-velocity.sortField', {
       type: 'string',
       default: 'name'
     })
+    atom.config.set('textual-velocity.sortField', 'name')
 
     columns = new Columns()
     columns.add({

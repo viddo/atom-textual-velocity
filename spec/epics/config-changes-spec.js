@@ -8,14 +8,10 @@ import * as A from '../../lib/action-creators'
 const epicMiddleware = createEpicMiddleware(configChangesEpic)
 const mockStore = configureMockStore([epicMiddleware])
 
-describe('epics/config', () => {
+describe('epics/config-changes', () => {
   let store
 
   beforeEach(() => {
-    atom.config.set('textual-velocity.listHeight', 0)
-    atom.config.set('textual-velocity.rowHeight', 0)
-    atom.config.set('textual-velocity.sortDirection', 'desc')
-    atom.config.set('textual-velocity.sortField', 'name')
     store = mockStore()
   })
 
@@ -25,8 +21,8 @@ describe('epics/config', () => {
 
   it('should yield actions for initial values of config', function () {
     const dispatchedActions = store.getActions()
-    expect(dispatchedActions[0]).toEqual(A.changeListHeight(0))
-    expect(dispatchedActions[1]).toEqual(A.changeRowHeight(0))
+    expect(dispatchedActions[0]).toEqual(A.changeListHeight(150))
+    expect(dispatchedActions[1]).toEqual(A.changeRowHeight(20))
     expect(dispatchedActions[2]).toEqual(A.changeSortDirection('desc'))
     expect(dispatchedActions[3]).toEqual(A.changeSortField('name'))
   })
