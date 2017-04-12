@@ -3,38 +3,40 @@ All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](http://semver.org/) and [keepachangelog.com](http://keepachangelog.com/).
 
 ## [unreleased]
+
+## [0.14.0] - 2017-04-11
 #### Added
-- Toggling of columns visibility #5
+- Toggling of columns visibility [#5](https://github.com/viddo/atom-textual-velocity/issues/5)
 
 #### Changed
-- Updated dependencies to latest versions
+- Updated dependencies to latest versions [#68](https://github.com/viddo/atom-textual-velocity/issues/68)
 
 ## [0.13.0] - 2017-03-29
 #### Changed
-- Replaced [react-for-atom](https://github.com/facebooknuclide/react-for-atom) with standard react lib #63
-- Updated other dependencies to latest versions #63
+- Replaced [react-for-atom](https://github.com/facebooknuclide/react-for-atom) with standard react lib [#63](https://github.com/viddo/atom-textual-velocity/issues/63)
+- Updated other dependencies to latest versions [#63](https://github.com/viddo/atom-textual-velocity/issues/63)
 
 #### Fixed
 - Fix #65 _Inability to create notes, use custom folders_, validate path before usage
 
 ## [0.12.4] - 2017-03-08
 #### Fixed
-- File icons ellipsed on some window sizes #54
+- File icons ellipsed on some window sizes [#54](https://github.com/viddo/atom-textual-velocity/issues/54)
 
 ## [0.12.3] - 2017-03-08
 #### Changed
 - Updated dependencies to latest versions
 
 #### Fixed
-- Search input always lowercase text #60
+- Search input always lowercase text [#60](https://github.com/viddo/atom-textual-velocity/issues/60)
 
 ## [0.12.2] - 2017-03-05
 #### Fixed
-- Select next/prev does not always select the expected note #56
+- Select next/prev does not always select the expected note [#56](https://github.com/viddo/atom-textual-velocity/issues/56)
 
 ## [0.12.1] - 2017-03-03
 #### Fixed
-- Umlaut characters not matching summary title (filenames) #55
+- Umlaut characters not matching summary title (filenames) [#55](https://github.com/viddo/atom-textual-velocity/issues/55)
 
 ## [0.12.0] - 2017-02-02
 #### Added
