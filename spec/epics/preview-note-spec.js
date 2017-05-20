@@ -5,14 +5,14 @@ import configureMockStore from 'redux-mock-store'
 import previewNoteEpic from '../../lib/epics/preview-note'
 import * as A from '../../lib/action-creators'
 
-const epicMiddleware = createEpicMiddleware(previewNoteEpic)
-const mockStore = configureMockStore([epicMiddleware])
-
 describe('epics/preview-note', () => {
   let state: State
   let store
+  let mockStore
 
   beforeEach(() => {
+    jasmine.useRealClock()
+    jasmine.Clock.useMock()
     state = {
       columnHeaders: [],
       dir: '/notes',
@@ -66,11 +66,25 @@ describe('epics/preview-note', () => {
     }
 
     const getState = () => ({...state}) // make sure state is unique for each action
+
+    const epicMiddleware = createEpicMiddleware(previewNoteEpic)
+    mockStore = configureMockStore([epicMiddleware])
     store = mockStore(getState)
   })
 
   afterEach(function () {
-    epicMiddleware.replaceEpic(previewNoteEpic)
+    store.dispatch(A.dispose())
+    jasmine.Clock.tick(500)
+
+    // clean workspace state
+    let count = 0
+    while (atom.workspace.getPaneItems().length) {
+      atom.workspace.closeActivePaneItemOrEmptyPaneOrWindow()
+      if (count === 50) {
+        throw new Error('infinite loop!')
+      }
+      count++
+    }
   })
 
   describe('when select note', function () {
@@ -81,8 +95,8 @@ describe('epics/preview-note', () => {
           index: 0
         }
         store.dispatch(A.selectNext())
+        jasmine.Clock.tick(500)
 
-        expect(atom.workspace.getPaneItems()).toEqual([], 'there should not be any pane items yet')
         waitsFor(() => atom.workspace.getPaneItems().length > 0) // waits for preview
       })
 
@@ -93,6 +107,8 @@ describe('epics/preview-note', () => {
       it('should close preview when deselected note', function () {
         state.selectedNote = null
         store.dispatch(A.resetSearch())
+        jasmine.Clock.tick(500)
+
         waitsFor(() => atom.workspace.getPaneItems().length === 0)
       })
 
@@ -110,6 +126,7 @@ describe('epics/preview-note', () => {
       describe('when dispose action', function () {
         beforeEach(function () {
           store.dispatch(A.dispose())
+          jasmine.Clock.tick(500)
         })
 
         it('should dispose elements and no longer open any previews', function () {
@@ -118,15 +135,9 @@ describe('epics/preview-note', () => {
             index: 0
           }
           store.dispatch(A.selectNext())
-          var done = false
-          jasmine.useRealClock()
-          setTimeout(function () {
-            done = true
-          }, 50)
-          waitsFor(() => done)
-          runs(() => {
-            expect(atom.workspace.getPaneItems().length).toEqual(0)
-          })
+          jasmine.Clock.tick(500)
+
+          expect(atom.workspace.getPaneItems().length).toEqual(0)
         })
       })
     })
@@ -139,6 +150,7 @@ describe('epics/preview-note', () => {
           index: 0
         }
         store.dispatch(A.selectNext())
+        jasmine.Clock.tick(500)
 
         waitsFor(() => atom.workspace.getPaneItems().length === 2)
         runs(() => {
@@ -147,12 +159,52 @@ describe('epics/preview-note', () => {
             index: 1
           }
           store.dispatch(A.selectNext())
+          jasmine.Clock.tick(500)
         })
         waitsFor(() => atom.workspace.getPaneItems().length === 1) // should close the preview
       })
 
       it('should reuse text editor as preview', function () {
         expect(atom.workspace.getPaneItems()[0].tagName).toBe(undefined) // not a preview
+      })
+    })
+  })
+
+  describe('when open-note action', function () {
+    describe('when there is no selected note', function () {
+      beforeEach(function () {
+        store.dispatch(A.openNote())
+        jasmine.Clock.tick(500)
+
+        atom.config.set('textual-velocity.defaultExt', 'abc')
+        store.dispatch(A.openNote())
+        jasmine.Clock.tick(500)
+
+        waitsFor(() => atom.workspace.getPaneItems().length >= 2)
+      })
+
+      it('should open a new untitled file', function () {
+        expect(atom.workspace.getPaneItems()[0].getPath()).toEqual('/notes/untitled.md')
+      })
+
+      it('should allow override defaut extension', function () {
+        expect(atom.workspace.getPaneItems()[1].getPath()).toEqual('/notes/untitled.abc')
+      })
+    })
+
+    describe('when there is a selected note', function () {
+      beforeEach(function () {
+        state.selectedNote = {
+          index: 0,
+          filename: 'alice.txt'
+        }
+        store = mockStore(state)
+        store.dispatch(A.openNote())
+        waitsFor(() => atom.workspace.getPaneItems().length >= 2)
+      })
+
+      it('should open path of selected note', function () {
+        expect(atom.workspace.getPaneItems()[0].getPath()).toEqual('/notes/alice.txt')
       })
     })
   })
