@@ -4,6 +4,13 @@ This project adheres to [Semantic Versioning](http://semver.org/) and [keepachan
 
 ## [unreleased]
 
+## [0.14.1] - 2017-05-19
+#### Changed
+- Updated dependencies to latest versions
+
+#### Fixed
+- Fix #69 _Previews unwanted note_
+
 ## [0.14.0] - 2017-04-11
 #### Added
 - Toggling of columns visibility [#5](https://github.com/viddo/atom-textual-velocity/issues/5)
