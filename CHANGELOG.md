@@ -3,6 +3,8 @@ All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](http://semver.org/) and [keepachangelog.com](http://keepachangelog.com/).
 
 ## [unreleased]
+#### Fixed
+- key bindings on linux #73
 
 ## [0.14.1] - 2017-05-19
 #### Changed
