@@ -3,15 +3,17 @@ All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](http://semver.org/) and [keepachangelog.com](http://keepachangelog.com/).
 
 ## [unreleased]
+
+## [0.14.2] - 2017-06-07
 #### Fixed
-- key bindings on linux #73
+- key bindings on linux #[#73](https://github.com/viddo/atom-textual-velocity/issues/73)
 
 ## [0.14.1] - 2017-05-19
 #### Changed
 - Updated dependencies to latest versions
 
 #### Fixed
-- Fix #69 _Previews unwanted note_
+- Fix Previews unwanted note [#69](https://github.com/viddo/atom-textual-velocity/issues/69)
 
 ## [0.14.0] - 2017-04-11
 #### Added
@@ -26,7 +28,7 @@ This project adheres to [Semantic Versioning](http://semver.org/) and [keepachan
 - Updated other dependencies to latest versions [#63](https://github.com/viddo/atom-textual-velocity/issues/63)
 
 #### Fixed
-- Fix #65 _Inability to create notes, use custom folders_, validate path before usage
+- Fix Inability to create notes, use custom folders, validate path before usage [#65](https://github.com/viddo/atom-textual-velocity/issues/65)
 
 ## [0.12.4] - 2017-03-08
 #### Fixed
