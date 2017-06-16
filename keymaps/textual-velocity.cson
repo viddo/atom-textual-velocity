@@ -1,16 +1,16 @@
 '.platform-darwin':
   'cmd-shift-c': 'textual-velocity:toggle-panel'
+'.platform-linux':
+  'ctrl-alt-`': 'textual-velocity:toggle-panel'
 
 '.platform-darwin .textual-velocity':
   'cmd-r': 'textual-velocity:rename-note',
   'cmd-shift-t': 'textual-velocity:edit-nv-tags'
-
-'.platform-linux':
-  'ctrl-shift-c': 'textual-velocity:toggle-panel'
-
 '.platform-linux .textual-velocity':
   'ctrl-r': 'textual-velocity:rename-note',
-  'ctrl-shift-t': 'textual-velocity:edit-nv-tags'
+  'ctrl-alt-t': 'textual-velocity:edit-nv-tags'
 
-'atom-workspace':
+'.platform-darwin atom-workspace, .platform-win32 atom-workspace':
   'ctrl-l': 'textual-velocity:focus-on-search'
+'.platform-linux atom-workspace':
+  'ctrl-`': 'textual-velocity:focus-on-search'
