@@ -1,3 +1,4 @@
 [ignore]
+atom/.*
 <PROJECT_ROOT>/docs/.*
 .*/node_modules/fbjs/.*
