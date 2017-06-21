@@ -8,12 +8,13 @@ env:
 
   matrix:
     - ATOM_CHANNEL=stable
-    # Disable automatic beta channel tests until build is fixed: https://github.com/atom/atom/issues/14061
-    # - ATOM_CHANNEL=beta
+    - ATOM_CHANNEL=beta
 
 os:
   - linux
   - osx
+
+dist: trusty
 
 ### Generic setup follows ###
 script:
@@ -21,9 +22,6 @@ script:
   - chmod u+x build-package.sh
   - ./build-package.sh
   - './node_modules/.bin/flow'
-
-# Needed to disable the auto-install step running `npm install`
-install: true
 
 notifications:
   email: false
@@ -39,10 +37,12 @@ sudo: false
 
 addons:
   apt:
+    sources:
+    - ubuntu-toolchain-r-test
     packages:
-    - build-essential
-    - git
-    - libgnome-keyring-dev
+    - g++-6
     - fakeroot
+    - git
+    - libsecret-1-dev
   code_climate:
     repo_token: 87dc83c7f5b2b14f1d4ab2a155bcd69d2c097c4828e811027327705a6b1cd1a6
