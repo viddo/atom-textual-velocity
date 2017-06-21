@@ -5,9 +5,6 @@ import configureMockStore from 'redux-mock-store'
 import activePaneItemEpic from '../../lib/epics/active-pane-item'
 import * as A from '../../lib/action-creators'
 
-const epicMiddleware = createEpicMiddleware(activePaneItemEpic)
-const mockStore = configureMockStore([epicMiddleware])
-
 describe('epics/active-pane-item', () => {
   let state: State
   let store
@@ -68,14 +65,14 @@ describe('epics/active-pane-item', () => {
       }
     }
 
+    jasmine.useRealClock()
+    jasmine.Clock.useMock()
     spyOn(Date, 'now').andReturn(0)
 
+    const epicMiddleware = createEpicMiddleware(activePaneItemEpic)
+    const mockStore = configureMockStore([epicMiddleware])
     store = mockStore(state)
     store.dispatch(A.resizeList(123)) // dummy action, just to have action$ to have a value to start with
-  })
-
-  afterEach(function () {
-    epicMiddleware.replaceEpic(activePaneItemEpic)
   })
 
   describe('when active pane item is changed due to non-package interaction (e.g. open recent file or such)', function () {
@@ -86,7 +83,7 @@ describe('epics/active-pane-item', () => {
 
       let done = false
       atom.workspace.open('/notes/bob.md').then(() => {
-        advanceClock(1010)
+        jasmine.Clock.tick(1000)
         done = true
       })
       waitsFor(() => done)
@@ -103,7 +100,7 @@ describe('epics/active-pane-item', () => {
 
       let done = false
       atom.workspace.open('/notes/untitled.md').then(() => {
-        advanceClock(1010)
+        jasmine.Clock.tick(1000)
         done = true
       })
       waitsFor(() => done)
