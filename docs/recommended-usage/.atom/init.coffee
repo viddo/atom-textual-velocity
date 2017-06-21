@@ -24,13 +24,13 @@ atom.packages.onDidActivatePackage (pkg) ->
 
   # Hide tree-view when package is activated
   try
-    treeView = atom.packages.getActivePackage('tree-view').mainModule.createView()
-    if treeView.isVisible()
-      treeView.toggle() # i.e. hide it
+    treeViewMainModule = atom.packages.getActivePackage('tree-view').mainModule
+    treeViewMainModule.createOrDestroyTreeViewIfNeeded()
+    treeViewMainModule.getTreeViewInstance().hide()
   catch err
     console.error(err)
     atom.notifications.addWarning 'Could not hide tree view', {
-      description: 'See the console for the error'
+      detail: 'See the console for the error'
       dismissable: true
     }
 
