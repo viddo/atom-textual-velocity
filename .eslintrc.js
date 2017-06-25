@@ -1,10 +1,12 @@
 module.exports = {
-    "extends": ["standard", "standard-jsx"],
+    "extends": ["prettier"],
     "parser": "babel-eslint",
     "plugins": [
+        "prettier",
         "flowtype"
     ],
     "rules": {
+        "prettier/prettier": "error",
         "flowtype/define-flow-type": 1,
         "flowtype/use-flow-type": 1
     },

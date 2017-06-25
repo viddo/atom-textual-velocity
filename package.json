@@ -59,21 +59,31 @@
     "babel-plugin-syntax-flow": "6.18.0",
     "babel-plugin-transform-flow-strip-types": "6.22.0",
     "eslint": "3.19.0",
-    "eslint-config-standard": "10.2.1",
-    "eslint-config-standard-jsx": "4.0.1",
+    "eslint-config-prettier": "2.2.0",
     "eslint-plugin-flowtype": "2.33.0",
-    "flow-bin": "0.46.0",
     "eslint-plugin-import": "2.2.0",
     "eslint-plugin-node": "4.2.2",
+    "eslint-plugin-prettier": "2.1.2",
     "eslint-plugin-promise": "3.5.0",
     "eslint-plugin-react": "7.0.1",
-    "eslint-plugin-standard": "3.0.1",
+    "flow-bin": "0.46.0",
+    "husky": "0.14.0",
+    "lint-staged": "4.0.0",
+    "prettier": "1.4.4",
     "redux-mock-store": "1.2.3",
     "temp": "0.8.3"
   },
   "scripts": {
+    "precommit": "lint-staged",
     "flow": "flow; test $? -eq 0 -o $? -eq 2",
-    "lint": "eslint 'lib/**/*.js' && eslint 'spec/**/*.js'",
+    "lint": "eslint \"{lib,spec}/**/*.js\"",
+    "lint-prettier": "prettier --parser flow --list-different \"{lib,spec}/**/*.js\"",
     "test": "apm test && npm run flow && npm run lint"
+  },
+  "lint-staged": {
+    "{lib,spec}/**/*.js": [
+      "prettier --parser flow --write",
+      "git add"
+    ]
   }
 }
