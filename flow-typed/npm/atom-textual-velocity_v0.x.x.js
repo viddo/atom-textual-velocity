@@ -276,8 +276,14 @@ type Row = {
   id: string,
   selected: boolean
 }
-type RowCell = {
-  className: string|void,
+type RowCell = EditRowCell | ReadRowCell
+type EditRowCell = {
+  type: 'edit',
+  editCellStr: string
+}
+type ReadRowCell = {
+  type: 'read',
+  className: string,
   content: CellContent,
   editCellName: string|void
 }

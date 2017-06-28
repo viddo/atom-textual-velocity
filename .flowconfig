@@ -2,3 +2,4 @@
 <PROJECT_ROOT>/docs/.*
 .*/node_modules/fbjs/.*
 .*/node_modules/babel-relay-plugin/.*
+.*/node_modules/graphql/.*
