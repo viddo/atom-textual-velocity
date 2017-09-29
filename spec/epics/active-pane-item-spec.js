@@ -72,21 +72,22 @@ describe("epics/active-pane-item", () => {
     const epicMiddleware = createEpicMiddleware(activePaneItemEpic);
     const mockStore = configureMockStore([epicMiddleware]);
     store = mockStore(state);
-    store.dispatch(A.resizeList(123)); // dummy action, just to have action$ to have a value to start with
+
+    // dummy events, just to have action$ to have a value to start with
+    store.dispatch(A.resizeList(123));
+    atom.workspace.open("/notes/adam.md");
+    store.clearActions();
   });
 
   describe("when active pane item is changed due to non-package interaction (e.g. open recent file or such)", function() {
     beforeEach(function() {
-      store.clearActions();
+      Date.now.andReturn(500); // a non-package interaction should occur after a significant amount of time since last event
 
-      Date.now.andReturn(500); // for open-file event to not be interpreted as a package interaction
-
-      let done = false;
-      atom.workspace.open("/notes/bob.md").then(() => {
-        jasmine.Clock.tick(1000);
-        done = true;
+      waitsForPromise(() => {
+        return atom.workspace.open("/notes/bob.md").then(() => {
+          jasmine.Clock.tick(1000);
+        });
       });
-      waitsFor(() => done);
     });
 
     it("should dispatch action to select matching note", function() {
@@ -98,14 +99,11 @@ describe("epics/active-pane-item", () => {
 
   describe("when active pane item is changed due to interaction with plugin, e.g. select note (=> preview)", function() {
     beforeEach(function() {
-      store.clearActions();
-
-      let done = false;
-      atom.workspace.open("/notes/untitled.md").then(() => {
-        jasmine.Clock.tick(1000);
-        done = true;
+      waitsForPromise(() => {
+        return atom.workspace.open("/notes/untitled.md").then(() => {
+          jasmine.Clock.tick(1000);
+        });
       });
-      waitsFor(() => done);
     });
 
     it("should not dispatch any action", function() {

@@ -5,18 +5,17 @@ import configureMockStore from "redux-mock-store";
 import configChangesEpic from "../../lib/epics/config-changes";
 import * as A from "../../lib/action-creators";
 
-const epicMiddleware = createEpicMiddleware(configChangesEpic);
-const mockStore = configureMockStore([epicMiddleware]);
-
 describe("epics/config-changes", () => {
   let store;
 
   beforeEach(() => {
+    const epicMiddleware = createEpicMiddleware(configChangesEpic);
+    const mockStore = configureMockStore([epicMiddleware]);
     store = mockStore();
   });
 
   afterEach(function() {
-    epicMiddleware.replaceEpic(configChangesEpic);
+    store.clearActions();
   });
 
   it("should yield actions for initial values of config", function() {

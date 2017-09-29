@@ -10,9 +10,6 @@ import * as A from "../../lib/action-creators";
 
 temp.track();
 
-const epicMiddleware = createEpicMiddleware(pathWatcherEpic);
-const mockStore = configureMockStore([epicMiddleware]);
-
 describe("epics/path-watcher", () => {
   let dir, store;
 
@@ -28,12 +25,14 @@ describe("epics/path-watcher", () => {
     fs.writeFileSync(Path.join(dir, "note-3.txt"), "3");
 
     atom.config.set("textual-velocity.ignoredNames", [".DS_Store"]);
+
+    const epicMiddleware = createEpicMiddleware(pathWatcherEpic);
+    const mockStore = configureMockStore([epicMiddleware]);
     store = mockStore({ dir });
   });
 
   afterEach(function() {
     store.dispatch(A.dispose()); // should terminate any running processes
-    epicMiddleware.replaceEpic(pathWatcherEpic);
     temp.cleanupSync();
   });
 
