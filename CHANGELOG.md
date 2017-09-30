@@ -5,7 +5,7 @@ This project adheres to [Semantic Versioning](http://semver.org/) and [keepachan
 ## [unreleased]
 #### Changed
 - Using [prettier](https://github.com/prettier/prettier) for automatic code formatting [#78](https://github.com/viddo/atom-textual-velocity/pull/78)
-- Updated dependencies to latest versions [#79](https://github.com/viddo/atom-textual-velocity/pull/79)
+- Updated dependencies to latest versions [#79](https://github.com/viddo/atom-textual-velocity/pull/79), [#81](https://github.com/viddo/atom-textual-velocity/pull/81)
 
 ## [0.15.0] - 2017-06-20
 #### Fixed
