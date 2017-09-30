@@ -1,5 +1,5 @@
-// flow-typed signature: 6cd2c212efe8f38ffcd607e71c7151bb
-// flow-typed version: 5e08ae257c/redux-mock-store_v1.2.x/flow_>=v0.34.x
+// flow-typed signature: 46cfe61426b707ae9e2e03f873d0eb95
+// flow-typed version: b43dff3e0e/redux-mock-store_v1.2.x/flow_>=v0.25.x
 
 declare module 'redux-mock-store' {
   /*

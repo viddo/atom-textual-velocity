@@ -49,14 +49,14 @@ describe("epics/path-watcher", () => {
     it("should have yielded file-added actions for each file", function() {
       expect(store.getActions().length).toEqual(5);
 
-      const [, action] = store.getActions();
+      const action: any = store.getActions()[1];
       expect(action.type).toEqual(A.FILE_ADDED);
       expect(action.rawFile).toEqual(jasmine.any(Object));
       expect(action.rawFile.filename).toMatch(/note-\d\.txt/);
     });
 
     it("should have converted stats strings to date object", function() {
-      const [, action] = store.getActions();
+      const action: any = store.getActions()[1];
       expect(action.rawFile.stats).toEqual(jasmine.any(Object));
       expect(action.rawFile.stats.atime).toEqual(jasmine.any(Date));
       expect(action.rawFile.stats.birthtime).toEqual(jasmine.any(Date));
@@ -76,7 +76,8 @@ describe("epics/path-watcher", () => {
       });
 
       it("should have a rawFile on action", function() {
-        const rawFile = store.getActions()[0].rawFile;
+        const action: any = store.getActions()[0];
+        const rawFile = action.rawFile;
         expect(rawFile).toEqual(jasmine.any(Object));
         expect(rawFile.filename).toEqual("note-4.txt");
 
@@ -100,7 +101,8 @@ describe("epics/path-watcher", () => {
       });
 
       it("should have a rawFile on action", function() {
-        const rawFile = store.getActions()[0].rawFile;
+        const action: any = store.getActions()[0];
+        const rawFile = action.rawFile;
         expect(rawFile).toEqual(jasmine.any(Object));
         expect(rawFile.filename).toEqual("note-1.txt");
 
@@ -128,8 +130,9 @@ describe("epics/path-watcher", () => {
       });
 
       it("should yield a unlink action with deleted filename", function() {
-        expect(store.getActions()[0].type).toEqual(A.FILE_DELETED);
-        expect(store.getActions()[0].filename).toMatch(/^note/);
+        const action: any = store.getActions()[0];
+        expect(action.type).toEqual(A.FILE_DELETED);
+        expect(action.filename).toMatch(/^note/);
       });
     });
   });
