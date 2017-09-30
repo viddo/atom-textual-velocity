@@ -138,7 +138,7 @@ describe("epics/file-reads", () => {
     it("should not read a file that have not changed", function() {
       const action = store
         .getActions()
-        .find(action => action.filename === "nothing-changed.txt");
+        .find((action: any) => action.filename === "nothing-changed.txt");
       expect(action).toBe(undefined);
     });
 
@@ -146,7 +146,7 @@ describe("epics/file-reads", () => {
       const action = store
         .getActions()
         .find(
-          action =>
+          (action: any) =>
             action.filename === "not-changed-but-missing-file-reader-value.txt"
         );
       expect(action).toBeDefined();
@@ -156,7 +156,7 @@ describe("epics/file-reads", () => {
       const action = store
         .getActions()
         .find(
-          action =>
+          (action: any) =>
             action.filename === "not-changed-but-missing-file-reader-value.txt"
         );
       expect(action).toBeDefined();
@@ -166,9 +166,11 @@ describe("epics/file-reads", () => {
       let action;
       action = store
         .getActions()
-        .find(action => action.filename === "alice.txt");
+        .find((action: any) => action.filename === "alice.txt");
       expect(action).toBeDefined();
-      action = store.getActions().find(action => action.filename === "bob.md");
+      action = store
+        .getActions()
+        .find((action: any) => action.filename === "bob.md");
       expect(action).toBeDefined();
     });
   });

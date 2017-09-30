@@ -8,6 +8,7 @@ declare function it (desc: string, fn: JasmineFn): void
 declare function runs (fn: Function): void
 declare function spyOn (actual: Object, method: string): Object
 declare function waitsFor (fn: Function): void
+declare function waitsForPromise (fn: Function): void
 
 declare function JasmineFn (done?: Function): void
 
