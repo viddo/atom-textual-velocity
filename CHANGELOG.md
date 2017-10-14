@@ -3,9 +3,11 @@ All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](http://semver.org/) and [keepachangelog.com](http://keepachangelog.com/).
 
 ## [unreleased]
+
+## [0.16.0] - 2017-10-14
 #### Changed
 - Using [prettier](https://github.com/prettier/prettier) for automatic code formatting [#78](https://github.com/viddo/atom-textual-velocity/pull/78)
-- Updated dependencies to latest versions [#79](https://github.com/viddo/atom-textual-velocity/pull/79), [#81](https://github.com/viddo/atom-textual-velocity/pull/81)
+- Updated dependencies to latest versions (e.g. React 16) [#79](https://github.com/viddo/atom-textual-velocity/pull/79), [#81](https://github.com/viddo/atom-textual-velocity/pull/81), [#82](https://github.com/viddo/atom-textual-velocity/pull/82)
 
 ## [0.15.0] - 2017-06-20
 #### Fixed
