@@ -3,6 +3,8 @@ All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](http://semver.org/) and [keepachangelog.com](http://keepachangelog.com/).
 
 ## [unreleased]
+#### Changed
+- Updated dependencies to latest versions (e.g. RxJS 5.5)
 
 ## [0.16.0] - 2017-10-14
 #### Changed

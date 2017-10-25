@@ -1,6 +1,6 @@
 /* @flow */
 
-import defaultConfig from "../lib/default-config";
+import { defaultConfig } from "../lib/config";
 
 // Remove the custom equalityTest added by atom:
 // https://github.com/atom/atom/blob/1500381ac9216bd533199f5b59460b5ac596527c/spec/spec-helper.coffee#L45
