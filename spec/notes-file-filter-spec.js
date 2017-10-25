@@ -1,6 +1,6 @@
 "use babel";
 
-import defaultConfig from "../lib/default-config";
+import { defaultConfig } from "../lib/config";
 import Path from "path";
 import NotesFileFilter from "../lib/notes-file-filter";
 
