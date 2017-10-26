@@ -1,5 +1,7 @@
 # Textual Velocity [![Travis Build Status](http://travis-ci.org/viddo/atom-textual-velocity.png?branch=master)](http://travis-ci.org/viddo/atom-textual-velocity) [![CircleCI Build status](https://circleci.com/gh/viddo/atom-textual-velocity/tree/master.png?style=shield&circle-token=:circle-token)](https://circleci.com/gh/viddo/atom-textual-velocity) [![David dependency management](https://david-dm.org/viddo/atom-textual-velocity.svg)](https://david-dm.org/viddo/atom-textual-velocity) [![Code Climate](https://codeclimate.com/github/viddo/atom-textual-velocity/badges/gpa.svg)](https://codeclimate.com/github/viddo/atom-textual-velocity)
 
+[![Greenkeeper badge](https://badges.greenkeeper.io/viddo/atom-textual-velocity.svg)](https://greenkeeper.io/)
+
 Your mental notes at your fingertips!
 
 For those of you who used [Notational Velocity](http://notational.net/) or [nvAlt](http://brettterpstra.com/projects/nvAlt/) should feel right at home: it's intended to be an alternative to those applications but with the benefits of the [Atom](https://atom.io/) ecosystem.
