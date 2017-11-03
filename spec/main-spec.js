@@ -6,7 +6,7 @@ import Path from "path";
 fdescribe("main", () => {
   let workspaceElement;
 
-  beforeEach(function() {
+  beforeEach(() => {
     jasmine.useRealClock();
     workspaceElement = atom.views.getView(atom.workspace);
     jasmine.attachToDOM(workspaceElement);
@@ -26,15 +26,15 @@ fdescribe("main", () => {
     atom.configDirPath = Path.join(__dirname, "fixtures");
   });
 
-  it("package is lazy-loaded", function() {
+  it("package is lazy-loaded", () => {
     expect(atom.packages.isPackageLoaded("textual-velocity")).toBe(false);
     expect(atom.packages.isPackageActive("textual-velocity")).toBe(false);
   });
 
-  describe("when start-session command is triggered", function() {
+  describe("when start-session command is triggered", () => {
     let panel;
 
-    beforeEach(function() {
+    beforeEach(() => {
       const promise = atom.packages.activatePackage("textual-velocity");
       workspaceElement.dispatchEvent(
         new CustomEvent("textual-velocity:start-session", { bubbles: true })
@@ -47,36 +47,36 @@ fdescribe("main", () => {
       });
     });
 
-    afterEach(function() {
+    afterEach(() => {
       atom.packages.deactivatePackage("textual-velocity");
       panel = null;
     });
 
-    it("creates a top panel for the session", function() {
+    it("creates a top panel for the session", () => {
       expect(panel.getItem().querySelector(".textual-velocity")).toEqual(
         jasmine.any(HTMLElement)
       );
     });
 
-    it("should replaced start-session command with a stop-session command", function() {
+    it("should replaced start-session command with a stop-session command", () => {
       const commands = atom.commands.getSnapshot();
       expect(commands["textual-velocity:start-session"]).toBeUndefined();
       expect(commands["textual-velocity:stop-session"]).toBeDefined();
     });
 
-    describe("when files are loaded", function() {
-      beforeEach(function() {
+    describe("when files are loaded", () => {
+      beforeEach(() => {
         waitsFor(() => {
           return panel.getItem().innerHTML.match("<input"); // implicitly asserts search input too
         });
       });
 
-      it("should render rows", function() {
+      it("should render rows", () => {
         expect(panel.getItem().innerHTML).toContain("tv-items");
       });
 
-      describe("when stop-session command is triggered", function() {
-        beforeEach(function() {
+      describe("when stop-session command is triggered", () => {
+        beforeEach(() => {
           const promise = atom.packages.activatePackage("textual-velocity");
           workspaceElement.dispatchEvent(
             new CustomEvent("textual-velocity:stop-session", { bubbles: true })
@@ -86,11 +86,11 @@ fdescribe("main", () => {
           });
         });
 
-        it("should not render rows anymore", function() {
+        it("should not render rows anymore", () => {
           expect(atom.workspace.getTopPanels()).toEqual([]);
         });
 
-        it("should replaced stop-session command with a start-session command", function() {
+        it("should replaced stop-session command with a start-session command", () => {
           const commands = atom.commands.getSnapshot();
           expect(commands["textual-velocity:start-session"]).toBeDefined();
           expect(commands["textual-velocity:stop-session"]).toBeUndefined();
