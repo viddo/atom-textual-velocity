@@ -3,11 +3,13 @@
 
 import Path from "path";
 
-describe("main", () => {
+fdescribe("main", () => {
+  let workspaceElement;
+
   beforeEach(function() {
     jasmine.useRealClock();
-    this.workspaceElement = atom.views.getView(atom.workspace);
-    jasmine.attachToDOM(this.workspaceElement);
+    workspaceElement = atom.views.getView(atom.workspace);
+    jasmine.attachToDOM(workspaceElement);
 
     atom.config.set("textual-velocity.path", __dirname); // ./spec
 
@@ -30,26 +32,28 @@ describe("main", () => {
   });
 
   describe("when start-session command is triggered", function() {
+    let panel;
+
     beforeEach(function() {
       const promise = atom.packages.activatePackage("textual-velocity");
-      this.workspaceElement.dispatchEvent(
+      workspaceElement.dispatchEvent(
         new CustomEvent("textual-velocity:start-session", { bubbles: true })
       );
       waitsForPromise(() => {
         return promise;
       });
       runs(() => {
-        this.panel = atom.workspace.getTopPanels().slice(-1)[0];
+        panel = atom.workspace.getTopPanels().slice(-1)[0];
       });
     });
 
     afterEach(function() {
       atom.packages.deactivatePackage("textual-velocity");
-      this.panel = null;
+      panel = null;
     });
 
     it("creates a top panel for the session", function() {
-      expect(this.panel.getItem().querySelector(".textual-velocity")).toEqual(
+      expect(panel.getItem().querySelector(".textual-velocity")).toEqual(
         jasmine.any(HTMLElement)
       );
     });
@@ -63,18 +67,18 @@ describe("main", () => {
     describe("when files are loaded", function() {
       beforeEach(function() {
         waitsFor(() => {
-          return this.panel.getItem().innerHTML.match("<input"); // implicitly asserts search input too
+          return panel.getItem().innerHTML.match("<input"); // implicitly asserts search input too
         });
       });
 
       it("should render rows", function() {
-        expect(this.panel.getItem().innerHTML).toContain("tv-items");
+        expect(panel.getItem().innerHTML).toContain("tv-items");
       });
 
       describe("when stop-session command is triggered", function() {
         beforeEach(function() {
           const promise = atom.packages.activatePackage("textual-velocity");
-          this.workspaceElement.dispatchEvent(
+          workspaceElement.dispatchEvent(
             new CustomEvent("textual-velocity:stop-session", { bubbles: true })
           );
           waitsForPromise(() => {
