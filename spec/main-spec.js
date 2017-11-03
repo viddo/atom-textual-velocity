@@ -3,7 +3,7 @@
 
 import Path from "path";
 
-fdescribe("main", () => {
+describe("main", () => {
   let workspaceElement;
 
   beforeEach(() => {
