@@ -3,15 +3,13 @@
 import { Task } from "atom";
 import fs from "fs";
 import Path from "path";
-import temp from "temp";
-
-temp.track();
+import tempy from "tempy";
 
 describe("initial-scan-task", () => {
   let task, dir, addSpy, changeSpy, unlinkSpy;
 
   beforeEach(function() {
-    const tempDirPath = temp.mkdirSync("empty-dir");
+    const tempDirPath = tempy.directory();
     dir = fs.realpathSync(tempDirPath);
 
     fs.writeFileSync(Path.join(dir, "note-1.txt"), "1");
@@ -41,7 +39,6 @@ describe("initial-scan-task", () => {
   });
 
   afterEach(function() {
-    temp.cleanupSync();
     task.send("dispose");
     task.terminate();
   });

@@ -4,10 +4,12 @@
 import Path from "path";
 
 describe("main", () => {
-  beforeEach(function() {
+  let workspaceElement;
+
+  beforeEach(() => {
     jasmine.useRealClock();
-    this.workspaceElement = atom.views.getView(atom.workspace);
-    jasmine.attachToDOM(this.workspaceElement);
+    workspaceElement = atom.views.getView(atom.workspace);
+    jasmine.attachToDOM(workspaceElement);
 
     atom.config.set("textual-velocity.path", __dirname); // ./spec
 
@@ -24,57 +26,59 @@ describe("main", () => {
     atom.configDirPath = Path.join(__dirname, "fixtures");
   });
 
-  it("package is lazy-loaded", function() {
+  it("package is lazy-loaded", () => {
     expect(atom.packages.isPackageLoaded("textual-velocity")).toBe(false);
     expect(atom.packages.isPackageActive("textual-velocity")).toBe(false);
   });
 
-  describe("when start-session command is triggered", function() {
-    beforeEach(function() {
+  describe("when start-session command is triggered", () => {
+    let panel;
+
+    beforeEach(() => {
       const promise = atom.packages.activatePackage("textual-velocity");
-      this.workspaceElement.dispatchEvent(
+      workspaceElement.dispatchEvent(
         new CustomEvent("textual-velocity:start-session", { bubbles: true })
       );
       waitsForPromise(() => {
         return promise;
       });
       runs(() => {
-        this.panel = atom.workspace.getTopPanels().slice(-1)[0];
+        panel = atom.workspace.getTopPanels().slice(-1)[0];
       });
     });
 
-    afterEach(function() {
-      atom.packages.deactivatePackage("textual-velocity");
-      this.panel = null;
+    afterEach(async () => {
+      await atom.packages.deactivatePackage("textual-velocity");
+      panel = null;
     });
 
-    it("creates a top panel for the session", function() {
-      expect(this.panel.getItem().querySelector(".textual-velocity")).toEqual(
+    it("creates a top panel for the session", () => {
+      expect(panel.getItem().querySelector(".textual-velocity")).toEqual(
         jasmine.any(HTMLElement)
       );
     });
 
-    it("should replaced start-session command with a stop-session command", function() {
+    it("should replaced start-session command with a stop-session command", () => {
       const commands = atom.commands.getSnapshot();
       expect(commands["textual-velocity:start-session"]).toBeUndefined();
       expect(commands["textual-velocity:stop-session"]).toBeDefined();
     });
 
-    describe("when files are loaded", function() {
-      beforeEach(function() {
+    describe("when files are loaded", () => {
+      beforeEach(() => {
         waitsFor(() => {
-          return this.panel.getItem().innerHTML.match("<input"); // implicitly asserts search input too
+          return panel.getItem().innerHTML.match("<input"); // implicitly asserts search input too
         });
       });
 
-      it("should render rows", function() {
-        expect(this.panel.getItem().innerHTML).toContain("tv-items");
+      it("should render rows", () => {
+        expect(panel.getItem().innerHTML).toContain("tv-items");
       });
 
-      describe("when stop-session command is triggered", function() {
-        beforeEach(function() {
+      describe("when stop-session command is triggered", () => {
+        beforeEach(() => {
           const promise = atom.packages.activatePackage("textual-velocity");
-          this.workspaceElement.dispatchEvent(
+          workspaceElement.dispatchEvent(
             new CustomEvent("textual-velocity:stop-session", { bubbles: true })
           );
           waitsForPromise(() => {
@@ -82,11 +86,11 @@ describe("main", () => {
           });
         });
 
-        it("should not render rows anymore", function() {
+        it("should not render rows anymore", () => {
           expect(atom.workspace.getTopPanels()).toEqual([]);
         });
 
-        it("should replaced stop-session command with a start-session command", function() {
+        it("should replaced stop-session command with a start-session command", () => {
           const commands = atom.commands.getSnapshot();
           expect(commands["textual-velocity:start-session"]).toBeDefined();
           expect(commands["textual-velocity:stop-session"]).toBeUndefined();

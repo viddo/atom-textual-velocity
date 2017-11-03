@@ -2,13 +2,11 @@
 
 import fs from "fs";
 import Path from "path";
-import temp from "temp";
+import tempy from "tempy";
 import { createEpicMiddleware } from "redux-observable";
 import configureMockStore from "redux-mock-store";
 import pathWatcherEpic from "../../lib/epics/path-watcher";
 import * as A from "../../lib/action-creators";
-
-temp.track();
 
 describe("epics/path-watcher", () => {
   let dir, store;
@@ -16,7 +14,7 @@ describe("epics/path-watcher", () => {
   beforeEach(() => {
     jasmine.useRealClock(); // required for chokidar timers to work! e.g. atomic unlink events
 
-    const tempDirPath = temp.mkdirSync("empty-dir");
+    const tempDirPath = tempy.directory();
     dir = fs.realpathSync(tempDirPath);
 
     fs.writeFileSync(Path.join(dir, "note-1.txt"), "1");
@@ -31,13 +29,12 @@ describe("epics/path-watcher", () => {
     store = mockStore({ dir });
   });
 
-  afterEach(function() {
+  afterEach(() => {
     store.dispatch(A.dispose()); // should terminate any running processes
-    temp.cleanupSync();
   });
 
-  describe("when start-initial-scan action is triggered", function() {
-    beforeEach(function() {
+  describe("when start-initial-scan action is triggered", () => {
+    beforeEach(() => {
       store.dispatch(A.startInitialScan());
 
       // wait for initial scan to be done (i.e. the last expected action), implicitly verifies that to work, too
@@ -46,7 +43,7 @@ describe("epics/path-watcher", () => {
       );
     });
 
-    it("should have yielded file-added actions for each file", function() {
+    it("should have yielded file-added actions for each file", () => {
       expect(store.getActions().length).toEqual(5);
 
       const action: any = store.getActions()[1];
@@ -55,7 +52,7 @@ describe("epics/path-watcher", () => {
       expect(action.rawFile.filename).toMatch(/note-\d\.txt/);
     });
 
-    it("should have converted stats strings to date object", function() {
+    it("should have converted stats strings to date object", () => {
       const action: any = store.getActions()[1];
       expect(action.rawFile.stats).toEqual(jasmine.any(Object));
       expect(action.rawFile.stats.atime).toEqual(jasmine.any(Date));
@@ -64,18 +61,18 @@ describe("epics/path-watcher", () => {
       expect(action.rawFile.stats.mtime).toEqual(jasmine.any(Date));
     });
 
-    describe("when a new file is created", function() {
-      beforeEach(function() {
+    describe("when a new file is created", () => {
+      beforeEach(() => {
         store.clearActions();
         fs.writeFileSync(Path.join(dir, "note-4.txt"), "4");
         waitsFor(() => store.getActions().length >= 1);
       });
 
-      it("should yield a file-added action", function() {
+      it("should yield a file-added action", () => {
         expect(store.getActions()[0].type).toEqual(A.FILE_ADDED);
       });
 
-      it("should have a rawFile on action", function() {
+      it("should have a rawFile on action", () => {
         const action: any = store.getActions()[0];
         const rawFile = action.rawFile;
         expect(rawFile).toEqual(jasmine.any(Object));
@@ -89,18 +86,18 @@ describe("epics/path-watcher", () => {
       });
     });
 
-    describe("when change file", function() {
-      beforeEach(function() {
+    describe("when change file", () => {
+      beforeEach(() => {
         store.clearActions();
         fs.writeFileSync(Path.join(dir, "note-1.txt"), "111");
         waitsFor(() => store.getActions().length >= 1);
       });
 
-      it("should yield a file-changed action", function() {
+      it("should yield a file-changed action", () => {
         expect(store.getActions()[0].type).toEqual(A.FILE_CHANGED);
       });
 
-      it("should have a rawFile on action", function() {
+      it("should have a rawFile on action", () => {
         const action: any = store.getActions()[0];
         const rawFile = action.rawFile;
         expect(rawFile).toEqual(jasmine.any(Object));
@@ -114,8 +111,8 @@ describe("epics/path-watcher", () => {
       });
     });
 
-    describe("when delete file", function() {
-      beforeEach(function() {
+    describe("when delete file", () => {
+      beforeEach(() => {
         store.clearActions();
         fs.unlinkSync(Path.join(dir, "note-1.txt"));
 
@@ -129,7 +126,7 @@ describe("epics/path-watcher", () => {
         waitsFor(() => store.getActions().length >= 1);
       });
 
-      it("should yield a unlink action with deleted filename", function() {
+      it("should yield a unlink action with deleted filename", () => {
         const action: any = store.getActions()[0];
         expect(action.type).toEqual(A.FILE_DELETED);
         expect(action.filename).toMatch(/^note/);
