@@ -47,8 +47,8 @@ fdescribe("main", () => {
       });
     });
 
-    afterEach(() => {
-      atom.packages.deactivatePackage("textual-velocity");
+    afterEach(async () => {
+      await atom.packages.deactivatePackage("textual-velocity");
       panel = null;
     });
 
