@@ -70,7 +70,7 @@
     "flow-typed": "2.2.3",
     "husky": "0.14.3",
     "lint-staged": "4.3.0",
-    "prettier": "1.7.4",
+    "prettier": "1.8.0",
     "redux-mock-store": "1.3.0",
     "tempy": "0.2.1"
   },
@@ -78,14 +78,15 @@
     "precommit": "lint-staged",
     "flow": "flow; test $? -eq 0 -o $? -eq 2",
     "lint": "eslint \"{lib,spec}/**/*.js\"",
-    "lint-prettier":
-      "prettier --parser flow --list-different \"{lib,spec}/**/*.js\"",
-    "lint-prettier-write":
-      "prettier --parser flow --write \"{lib,spec}/**/*.js\"",
+    "lint-prettier": "prettier --parser flow --list-different \"{lib,spec}/**/*.js\"",
+    "lint-prettier-write": "prettier --parser flow --write \"{lib,spec}/**/*.js\"",
     "test": "npm run flow && npm run lint && apm test",
     "update-flow-typed": "flow-typed install --overwrite"
   },
   "lint-staged": {
-    "{lib,spec}/**/*.js": ["prettier --parser flow --write", "git add"]
+    "{lib,spec}/**/*.js": [
+      "prettier --parser flow --write",
+      "git add"
+    ]
   }
 }
