@@ -7,7 +7,7 @@ describe("reducers/list-height", () => {
   let state;
 
   beforeEach(function() {
-    state = listHeightReducer(undefined, A.initialScanDone());
+    state = listHeightReducer(undefined, A.initialScanDone([]));
   });
 
   it("should have a default height", function() {
@@ -16,7 +16,7 @@ describe("reducers/list-height", () => {
 
   it("should return state unless defaults are missing", function() {
     const prevState = state;
-    state = listHeightReducer(state, A.initialScanDone());
+    state = listHeightReducer(state, A.initialScanDone([]));
     expect(state).toBe(prevState);
   });
 
@@ -43,7 +43,7 @@ describe("reducers/list-height", () => {
   describe("when other random action", function() {
     it("should update list height", function() {
       const prevState = state;
-      state = listHeightReducer(state, A.initialScanDone());
+      state = listHeightReducer(state, A.initialScanDone([]));
       expect(state).toBe(prevState);
     });
   });

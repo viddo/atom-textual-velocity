@@ -19,7 +19,7 @@ describe("reducers/column-headers", () => {
   });
 
   it("should return defaults when state is missing", function() {
-    state = columnHeadersReducer(state, A.initialScanDone());
+    state = columnHeadersReducer(state, A.initialScanDone([]));
     expect(state).toEqual(jasmine.any(Array));
     expect(state.length).toEqual(2);
 

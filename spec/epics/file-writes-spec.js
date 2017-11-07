@@ -39,11 +39,10 @@ describe("epics/file-writes", () => {
       columnHeaders: [],
       dir: "/notes",
       editCellName: null,
-      initialScan: {
-        done: true,
-        rawFiles: []
-      },
       listHeight: 50,
+      loading: {
+        status: "done"
+      },
       notes: {},
       queryOriginal: "",
       rowHeight: 25,

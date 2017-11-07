@@ -17,8 +17,8 @@ type Action =
   | FileDeleted
   | FileRead
   | InitialScanDone
-  | InitialScanRawFilesRead
   | OpenNote
+  | ReadFilesDone
   | ResetSearch
   | ResizedList
   | Scrolled
@@ -171,16 +171,9 @@ type FsStats =
     birthtime?: Date
   })
 
-
-type InitialScan = {
-  done: boolean,
-  rawFiles: Array<RawFile>
-}
 type InitialScanDone = {
-  type: 'INITIAL_SCAN_DONE'
-}
-type InitialScanRawFilesRead = {
-  type: 'INITIAL_SCAN_RAW_FILES_READ'
+  type: 'INITIAL_SCAN_DONE',
+  rawFiles: RawFile[]
 }
 
 type KeyPressEvent = {
@@ -188,22 +181,45 @@ type KeyPressEvent = {
   preventDefault: Function
 }
 
+type LoadingState =
+  | InitialScanLoadingState
+  | ReadingFilesLoadingState
+  | DoneLoadingState
+type InitialScanLoadingState = {
+  status: 'initialScan',
+  rawFiles: RawFile[]
+}
+type ReadingFilesLoadingState = {
+  status: 'readingFiles',
+  readyCount: number,
+  totalCount: number
+}
+type DoneLoadingState = {
+  status: 'done'
+}
+
+type LoadingProps =
+  | InitialScanLoadingProps
+  | ReadingFilesLoadingState
+  | DoneLoadingState
+type InitialScanLoadingProps = {
+  status: 'initialScan',
+  filesCount: number
+}
+
 type MainProps = MainPropsActions & MainPropsWithoutActions
 type MainPropsWithoutActions = {
   columnHeaders: Array<ColumnHeader>,
   editCellName: EditCellName,
-  initialScanDone: boolean,
-  initialScanFilesCount: number,
   itemsCount: number,
   listHeight: number,
+  loading: LoadingProps,
   paginationStart: number,
   queryOriginal: string,
-  readyCount: number,
   rowHeight: number,
   scrollTop: number,
   sortDirection: SortDirection,
   sortField: string,
-  totalCount: number,
   visibleRows: Array<Row>
 }
 type MainPropsActions = {
@@ -259,6 +275,15 @@ type Pagination = {
 type RawFile = {
   filename: string,
   stats: FsStats
+}
+
+type ReadFilesCount = {
+  type: 'READ_FILES_COUNTS',
+  readyCount: number,
+  totalCount: number
+}
+type ReadFilesDone = {
+  type: 'READ_FILES_DONE'
 }
 
 type ResizedList = {
@@ -352,8 +377,8 @@ type State = {
   columnHeaders: Array<ColumnHeader>,
   dir: string,
   editCellName: EditCellName,
-  initialScan: InitialScan,
   listHeight: number,
+  loading: LoadingState,
   notes: Notes,
   queryOriginal: string,
   rowHeight: number,

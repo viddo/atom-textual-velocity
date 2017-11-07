@@ -28,11 +28,11 @@ describe("epics/file-reads", () => {
       columnHeaders: [],
       dir: "/notes",
       editCellName: null,
-      initialScan: {
-        done: false,
+      listHeight: 50,
+      loading: {
+        status: "initialScan",
         rawFiles: []
       },
-      listHeight: 50,
       notes: {},
       queryOriginal: "",
       rowHeight: 25,
@@ -59,7 +59,7 @@ describe("epics/file-reads", () => {
     store.dispatch(A.dispose()); // tests dispose logic working
 
     store.clearActions();
-    const finalAction = A.initialScanDone();
+    const finalAction = A.initialScanDone([]);
     store.dispatch(finalAction);
     expect(store.getActions()).toEqual(
       [finalAction],
@@ -98,8 +98,8 @@ describe("epics/file-reads", () => {
           stats: { mtime: new Date(0) }
         }
       };
-      state.initialScan = {
-        done: true,
+      state.loading = {
+        status: "initialScan",
         rawFiles: [
           {
             filename: "nothing-changed.txt",
@@ -123,16 +123,8 @@ describe("epics/file-reads", () => {
           }
         ]
       };
-      store.dispatch(A.initialScanDone());
+      store.dispatch(A.initialScanDone(state.loading.rawFiles));
       waitsFor(() => store.getActions().length >= 5);
-    });
-
-    it("should dispatch a initialScanRawFilesRead action", function() {
-      const expectedAction = A.initialScanRawFilesRead();
-      const action = store
-        .getActions()
-        .find(action => action.type === expectedAction.type);
-      expect(action).toEqual(expectedAction);
     });
 
     it("should not read a file that have not changed", function() {
@@ -193,7 +185,11 @@ describe("epics/file-reads", () => {
 
       describe("when initial scan is done", function() {
         beforeEach(function() {
-          state.initialScan.done = true;
+          state.loading = {
+            status: "readingFiles",
+            readyCount: 0,
+            totalCount: 0
+          };
           store.clearActions();
           store.dispatch(action);
           waitsFor(() => store.getActions().length >= 1); // should have at least one more action apart from file-action

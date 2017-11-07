@@ -20,11 +20,11 @@ describe("reselectors/visible-rows", () => {
       columnHeaders: [],
       dir: "/notes",
       editCellName: null,
-      initialScan: {
-        done: false,
+      listHeight: 25,
+      loading: {
+        status: "initialScan",
         rawFiles: []
       },
-      listHeight: 25,
       notes: {
         "alice.txt": {
           id: "0",

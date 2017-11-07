@@ -26,7 +26,35 @@ describe("epics/path-watcher", () => {
 
     const epicMiddleware = createEpicMiddleware(pathWatcherEpic);
     const mockStore = configureMockStore([epicMiddleware]);
-    store = mockStore({ dir });
+    const state: State = {
+      columnHeaders: [],
+      dir,
+      editCellName: null,
+      listHeight: 50,
+      loading: {
+        status: "initialScan",
+        rawFiles: []
+      },
+      notes: {},
+      queryOriginal: "",
+      rowHeight: 25,
+      scrollTop: 0,
+      selectedNote: null,
+      sifterResult: {
+        items: [],
+        options: {
+          fields: ["name", "ext"],
+          sort: [
+            { field: "name", direction: "asc" },
+            { field: "$score", direction: "desc" }
+          ]
+        },
+        query: "",
+        tokens: [],
+        total: 0
+      }
+    };
+    store = mockStore(state);
   });
 
   afterEach(() => {
