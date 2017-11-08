@@ -7,6 +7,8 @@ import { defaultConfig } from "../lib/config";
 // so assertions such as `expect(foo).toEqual(jasmine.any(Object))` works
 global.jasmine.getEnv().equalityTesters_ = [];
 
+process.env.TEST = "true";
+
 beforeEach(() => {
   atom.config.setSchema("textual-velocity", {
     type: "object",

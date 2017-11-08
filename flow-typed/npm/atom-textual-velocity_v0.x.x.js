@@ -71,9 +71,12 @@ type ChangedSortField = {
 }
 
 // see https://github.com/paulmillr/chokidar#api
-type ChokidarOptions = {
+type ChokidarOptions = CompulsoryChokidarOptions & OptionalChokidarOptions;
+type CompulsoryChokidarOptions = {
+  cwd: string
+}
+type OptionalChokidarOptions = {
   alwaysStat?: boolean,
-  cwd: string,
   depth?: number,
   ignored?: string,
   persistent?: boolean
