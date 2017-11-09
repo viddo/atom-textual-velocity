@@ -5,7 +5,8 @@ import Path from "path";
 import tempy from "tempy";
 import { createEpicMiddleware } from "redux-observable";
 import configureMockStore from "redux-mock-store";
-import pathWatcherEpic from "../../lib/epics/path-watcher";
+import NotesFileFilter from "../../lib/notes-file-filter";
+import makePathWatcherEpic from "../../lib/epics/path-watcher";
 import * as A from "../../lib/action-creators";
 
 describe("epics/path-watcher", () => {
@@ -19,8 +20,11 @@ describe("epics/path-watcher", () => {
     fs.writeFileSync(Path.join(dir, "note-1.txt"), "1");
     fs.writeFileSync(Path.join(dir, "note-3.txt"), "3");
 
-    atom.config.set("textual-velocity.ignoredNames", [".DS_Store"]);
-
+    const notesFileFilter = new NotesFileFilter(dir, {
+      exclusions: [".DS_Store"],
+      excludeVcsIgnoredPaths: true
+    });
+    const pathWatcherEpic = makePathWatcherEpic(notesFileFilter);
     const epicMiddleware = createEpicMiddleware(pathWatcherEpic);
     const mockStore = configureMockStore([epicMiddleware]);
     const state: State = {
@@ -80,7 +84,7 @@ describe("epics/path-watcher", () => {
       const action: any = store.getActions()[0];
       const rawFile = action.rawFile;
       expect(rawFile).toEqual(jasmine.any(Object));
-      expect(rawFile.filename).toEqual("note-4.txt");
+      expect(rawFile.filename).toMatch(/note-\d.txt/);
 
       expect(rawFile.stats).toEqual(jasmine.any(Object));
       expect(rawFile.stats.atime).toEqual(jasmine.any(Date));

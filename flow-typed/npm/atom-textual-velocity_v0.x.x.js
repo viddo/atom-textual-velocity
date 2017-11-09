@@ -265,6 +265,9 @@ type NoteFields = {
   forEach (callback: (noteField: NoteField) => any): any,
   map<T> (mapper: (noteField: NoteField) => T): Array<T>
 }
+class NotesFileFilter {
+  isAccepted: (rawFile: RawFile) => bool
+}
 
 type OpenNote = {
   type: 'OPEN_NOTE'

@@ -5,7 +5,8 @@ import Path from "path";
 import tempy from "tempy";
 import { createEpicMiddleware } from "redux-observable";
 import configureMockStore from "redux-mock-store";
-import initialScanEpic from "../../lib/epics/initial-scan";
+import NotesFileFilter from "../../lib/notes-file-filter";
+import makeInitialScanEpic from "../../lib/epics/initial-scan";
 import * as A from "../../lib/action-creators";
 
 describe("epics/initial-scan", () => {
@@ -23,8 +24,11 @@ describe("epics/initial-scan", () => {
     fs.writeFileSync(Path.join(dir, "other.zip"), "...");
     fs.writeFileSync(Path.join(dir, "note-3.txt"), "3");
 
-    atom.config.set("textual-velocity.ignoredNames", [".DS_Store"]);
-
+    const notesFileFilter = new NotesFileFilter(dir, {
+      exclusions: [".DS_Store"],
+      excludeVcsIgnoredPaths: true
+    });
+    const initialScanEpic = makeInitialScanEpic(notesFileFilter);
     const epicMiddleware = createEpicMiddleware(initialScanEpic);
     const mockStore = configureMockStore([epicMiddleware]);
     const state: State = {
