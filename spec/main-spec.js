@@ -2,6 +2,7 @@
 /* global CustomEvent */
 
 import Path from "path";
+import { beforeEach, afterEach } from "./_async-spec-helpers";
 
 describe("main", () => {
   let workspaceElement;
@@ -34,22 +35,18 @@ describe("main", () => {
   describe("when start-session command is triggered", () => {
     let panel;
 
-    beforeEach(() => {
+    beforeEach(async () => {
       const promise = atom.packages.activatePackage("textual-velocity");
       workspaceElement.dispatchEvent(
         new CustomEvent("textual-velocity:start-session", { bubbles: true })
       );
-      waitsForPromise(() => {
-        return promise;
-      });
-      runs(() => {
-        panel = atom.workspace.getTopPanels().slice(-1)[0];
-      });
+      await promise;
+      panel = atom.workspace.getTopPanels().slice(-1)[0];
     });
 
     afterEach(async () => {
-      await atom.packages.deactivatePackage("textual-velocity");
       panel = null;
+      await atom.packages.deactivatePackage("textual-velocity");
     });
 
     it("creates a top panel for the session", () => {
@@ -65,10 +62,8 @@ describe("main", () => {
     });
 
     describe("when files are loaded", () => {
-      beforeEach(() => {
-        waitsFor(() => {
-          return panel.getItem().innerHTML.match("<input"); // implicitly asserts search input too
-        });
+      beforeEach(async () => {
+        await loadingDone();
       });
 
       it("should render rows", () => {
@@ -76,14 +71,12 @@ describe("main", () => {
       });
 
       describe("when stop-session command is triggered", () => {
-        beforeEach(() => {
+        beforeEach(async () => {
           const promise = atom.packages.activatePackage("textual-velocity");
           workspaceElement.dispatchEvent(
             new CustomEvent("textual-velocity:stop-session", { bubbles: true })
           );
-          waitsForPromise(() => {
-            return promise;
-          });
+          await promise;
         });
 
         it("should not render rows anymore", () => {
@@ -99,3 +92,20 @@ describe("main", () => {
     });
   });
 });
+
+function loadingDone() {
+  return new Promise((resolve, reject) => {
+    const { store } = global.getProcessInTesting(process);
+    if (store) {
+      const unsubscribe = store.subscribe(() => {
+        const state: State = store.getState();
+        if (state.loading.status === "done") {
+          unsubscribe();
+          resolve();
+        }
+      });
+    } else {
+      reject("expected to get store for testing env");
+    }
+  });
+}

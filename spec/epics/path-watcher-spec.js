@@ -8,12 +8,13 @@ import configureMockStore from "redux-mock-store";
 import NotesFileFilter from "../../lib/notes-file-filter";
 import makePathWatcherEpic from "../../lib/epics/path-watcher";
 import * as A from "../../lib/action-creators";
+import { beforeEach } from "../_async-spec-helpers";
 
 describe("epics/path-watcher", () => {
   let dir, store;
 
-  beforeEach(() => {
-    jasmine.useRealClock(); // required for chokidar timers to work! e.g. atomic unlink events
+  beforeEach(async () => {
+    jasmine.useRealClock(); // required for chokidar timers to work, e.g. atomic unlink events
 
     const tempDirPath = tempy.directory();
     dir = fs.realpathSync(tempDirPath);
@@ -56,13 +57,8 @@ describe("epics/path-watcher", () => {
       }
     };
     store = mockStore(state);
-    // store.dispatch(A.startInitialScan()); // do random action, seems required for observable to pick up subsequent ones
 
-    let ready = false;
-    (process: any).chokidarWatch.on("ready", () => {
-      ready = true;
-    });
-    waitsFor(() => ready);
+    await pathWatcherWatchReady();
   });
 
   afterEach(() => {
@@ -141,3 +137,14 @@ describe("epics/path-watcher", () => {
     });
   });
 });
+
+function pathWatcherWatchReady() {
+  return new Promise((resolve, reject) => {
+    const { chokidarWatch } = global.getProcessInTesting(process);
+    if (chokidarWatch) {
+      chokidarWatch.on("ready", resolve);
+    } else {
+      reject(new Error("chokidarWatch is required"));
+    }
+  });
+}

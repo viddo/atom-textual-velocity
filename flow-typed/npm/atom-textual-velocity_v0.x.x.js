@@ -71,6 +71,10 @@ type ChangedSortField = {
 }
 
 // see https://github.com/paulmillr/chokidar#api
+type ChokidarEventName = 'ready' | 'add' | 'change' | 'unlink'
+class Chokidar {
+  on: (eventName: ChokidarEventName, Function) => void
+}
 type ChokidarOptions = CompulsoryChokidarOptions & OptionalChokidarOptions;
 type CompulsoryChokidarOptions = {
   cwd: string
@@ -276,6 +280,11 @@ type OpenNote = {
 type Pagination = {
   start: number,
   limit: number
+}
+
+type ProcessInTesting = {
+  chokidarWatch?: Chokidar,
+  store?: Store
 }
 
 type RawFile = {
