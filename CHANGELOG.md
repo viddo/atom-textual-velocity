@@ -2,7 +2,11 @@
 All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](http://semver.org/) and [keepachangelog.com](http://keepachangelog.com/).
 
+
 ## [unreleased]
+
+
+## [0.17.0] - 2017-11-11
 #### Added
 - Focus on search when closing a text editor [#47](https://github.com/viddo/atom-textual-velocity/issues/47)
 
@@ -12,10 +16,12 @@ This project adheres to [Semantic Versioning](http://semver.org/) and [keepachan
 - Make flaky tests deterministic [#92](https://github.com/viddo/atom-textual-velocity/pull/92)
 - Simplified internals [#101](https://github.com/viddo/atom-textual-velocity/pull/101)
 
+
 ## [0.16.0] - 2017-10-14
 #### Changed
 - Using [prettier](https://github.com/prettier/prettier) for automatic code formatting [#78](https://github.com/viddo/atom-textual-velocity/pull/78)
 - Updated dependencies to latest versions (e.g. React 16) [#79](https://github.com/viddo/atom-textual-velocity/pull/79), [#81](https://github.com/viddo/atom-textual-velocity/pull/81), [#82](https://github.com/viddo/atom-textual-velocity/pull/82)
+
 
 ## [0.15.0] - 2017-06-20
 #### Fixed
@@ -24,9 +30,11 @@ This project adheres to [Semantic Versioning](http://semver.org/) and [keepachan
 #### Added
 - Implement @copy syntax for quickly getting a string onto the clipboard [#74](https://github.com/viddo/atom-textual-velocity/pull/74)
 
+
 ## [0.14.2] - 2017-06-07
 #### Fixed
 - key bindings on linux #[#73](https://github.com/viddo/atom-textual-velocity/issues/73)
+
 
 ## [0.14.1] - 2017-05-19
 #### Changed
@@ -35,12 +43,14 @@ This project adheres to [Semantic Versioning](http://semver.org/) and [keepachan
 #### Fixed
 - Fix Previews unwanted note [#69](https://github.com/viddo/atom-textual-velocity/issues/69)
 
+
 ## [0.14.0] - 2017-04-11
 #### Added
 - Toggling of columns visibility [#5](https://github.com/viddo/atom-textual-velocity/issues/5)
 
 #### Changed
 - Updated dependencies to latest versions [#68](https://github.com/viddo/atom-textual-velocity/issues/68)
+
 
 ## [0.13.0] - 2017-03-29
 #### Changed
@@ -50,9 +60,11 @@ This project adheres to [Semantic Versioning](http://semver.org/) and [keepachan
 #### Fixed
 - Fix Inability to create notes, use custom folders, validate path before usage [#65](https://github.com/viddo/atom-textual-velocity/issues/65)
 
+
 ## [0.12.4] - 2017-03-08
 #### Fixed
 - File icons ellipsed on some window sizes [#54](https://github.com/viddo/atom-textual-velocity/issues/54)
+
 
 ## [0.12.3] - 2017-03-08
 #### Changed
@@ -61,13 +73,16 @@ This project adheres to [Semantic Versioning](http://semver.org/) and [keepachan
 #### Fixed
 - Search input always lowercase text [#60](https://github.com/viddo/atom-textual-velocity/issues/60)
 
+
 ## [0.12.2] - 2017-03-05
 #### Fixed
 - Select next/prev does not always select the expected note [#56](https://github.com/viddo/atom-textual-velocity/issues/56)
 
+
 ## [0.12.1] - 2017-03-03
 #### Fixed
 - Umlaut characters not matching summary title (filenames) [#55](https://github.com/viddo/atom-textual-velocity/issues/55)
+
 
 ## [0.12.0] - 2017-02-02
 #### Added
@@ -88,6 +103,7 @@ This project adheres to [Semantic Versioning](http://semver.org/) and [keepachan
 #### Removed
 - Now unused dependencies (lodash.debounce, baconjs)
 
+
 ## [0.11.4] - 2016-12-31
 #### Changed
 - Updated dependencies, fixed some flowtype complaints due to changes in new version
@@ -96,26 +112,32 @@ This project adheres to [Semantic Versioning](http://semver.org/) and [keepachan
 - File icons not working since file-icons v2 release [#49](https://github.com/viddo/atom-textual-velocity/issues/49)
 - Rows not having consistent height
 
+
 ## [0.11.2] - 2016-12-05
 #### Fixed
 - Regression from previous fix #45, preventing new note from being created on <kbd>enter</kbd>
+
 
 ## [0.11.1] - 2016-12-04
 #### Fixed
 - Replace preview with text editor when clicked (related to previous change [#43](https://github.com/viddo/atom-textual-velocity/issues/43))
 
+
 ## [0.11.0] - 2016-11-19
 #### Changed
 - Improve preview behavior on selection and open action [#43](https://github.com/viddo/atom-textual-velocity/issues/43)
+
 
 ## [0.10.2] - 2016-10-20
 #### Fixed
 - Fix saving a new note causes the preview of last selected item to open [#41](https://github.com/viddo/atom-textual-velocity/issues/41)
 
+
 ## [0.10.1] - 2016-10-14
 #### Fixed
 - Fix note rename throwing error _Uncaught TypeError: Cannot read property 'replace' of undefined_ [#37](https://github.com/viddo/atom-textual-velocity/issues/37)
 - Register rename-note command for atom-workspace scope
+
 
 ## [0.10.0] - 2016-10-14
 ### Added
@@ -128,12 +150,14 @@ This project adheres to [Semantic Versioning](http://semver.org/) and [keepachan
 ### Fixed
 - Notes cache not saved properly [#32](https://github.com/viddo/atom-textual-velocity/pull/32)
 
+
 ## [0.9.0] - 2016-10-07
 ### Added
 - Allow to change default/new file extension [#22](https://github.com/viddo/atom-textual-velocity/pull/22)
 
 ### Fixed
 - Note stats not being updated on file changes like before [1e55e10](https://github.com/viddo/atom-textual-velocity/commit/1e55e108c5ffcecab99a4c91867bdb2bdd994198)
+
 
 ## [0.8.0] - 2016-10-04
 [Happy Cinnamon Bun Day! :tada:](http://kanelbullensdag.se/en/)
@@ -152,6 +176,7 @@ This project adheres to [Semantic Versioning](http://semver.org/) and [keepachan
 - Do not load nvTags if the platform doesn't support the necessary dependencies [#20](https://github.com/viddo/atom-textual-velocity/issues/20)
 - Performance improvements; The first initial load is incremental, which makes the notes scan somewhat slower but on the other hand the UI is no longer unresponsive during this phase. However, after this initial load is almost instant. [#8](https://github.com/viddo/atom-textual-velocity/issues/8)
 
+
 ## [0.7.0] - 2016-03-29
 ### Added
 - Add ability to change sorting and direction [#2](https://github.com/viddo/atom-textual-velocity/issues/2)
@@ -163,9 +188,11 @@ This project adheres to [Semantic Versioning](http://semver.org/) and [keepachan
 ### Fixed
 - Fix click on tags component doesn't open edit input
 
+
 ## [0.5.1] - 2016-03-06
 ### Fixed
 - Custom file extension only works if <= 3 characters
+
 
 ## [0.5.0] - 2016-02-28
 ### Added
@@ -174,6 +201,7 @@ This project adheres to [Semantic Versioning](http://semver.org/) and [keepachan
 ### Changed
 - Internal structure
 
+
 ## [0.4.0] - 2016-02-18
 ### Added
 - Read/write of tags, using notational.net compatible metadata (stored in xattrs)
@@ -181,6 +209,7 @@ This project adheres to [Semantic Versioning](http://semver.org/) and [keepachan
 ### Fixed
 - Confirm-save dialog appears even if there are no changes
 - `.md` is always added when new files are created [#12](https://github.com/viddo/atom-textual-velocity/issues/12)
+
 
 ## [0.3.0] - 2016-02-10
 ### Changed
@@ -195,13 +224,16 @@ This project adheres to [Semantic Versioning](http://semver.org/) and [keepachan
 - Use correct config key paths
 - Create a new untitled file on enter when there's no search string
 
+
 ## [0.2.4] - 2016-02-08
 ### Added
 - Better project description and reference to v1 roadmap milestone
 
+
 ## [0.2.3] - 2016-02-07
 ### Added
 - Some minimal documentation on how it's intended to be used
+
 
 ## [0.2.2] - 2016-02-06
 ### Added
@@ -214,12 +246,14 @@ This project adheres to [Semantic Versioning](http://semver.org/) and [keepachan
 - Reset search on <kbd>ESC</kbd>
 - Do not open new file on enter unless there is at least one char in the search input
 
+
 ## [0.1.2] - 2016-02-05
 ### Changed
 - Command name `textual-velocity` => `textual-velocity`
 
 ### Fixed
 - <kbd>ENTER</kbd> with selected file focus on selected file instead of opening new buffer
+
 
 ## [0.1.0] - 2016-02-04
 - [M{D,L}P](https://twitter.com/jopas/status/515301088660959233)
