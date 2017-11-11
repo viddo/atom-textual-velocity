@@ -7,7 +7,7 @@ This project adheres to [Semantic Versioning](http://semver.org/) and [keepachan
 - Updated dependencies to latest versions (e.g. RxJS 5.5)
 - Add Greenkeeper to automate dependencies updates [#85](https://github.com/viddo/atom-textual-velocity/pull/85)
 - Make flaky tests deterministic [#92](https://github.com/viddo/atom-textual-velocity/pull/92)
-- Simplified internals
+- Simplified internals [#101](https://github.com/viddo/atom-textual-velocity/pull/101)
 
 ## [0.16.0] - 2017-10-14
 #### Changed
