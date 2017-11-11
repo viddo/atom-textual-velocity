@@ -31,10 +31,7 @@ describe("initial-scan-task", () => {
     task.on("ready", () => {
       done = true;
     });
-    const chokidarOptions: ChokidarOptions = {
-      cwd: dir
-    };
-    task.start(chokidarOptions);
+    task.start(dir);
     waitsFor(() => done); // implicitly test INITIAL_SCAN_DONE
   });
 

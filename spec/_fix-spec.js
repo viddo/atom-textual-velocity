@@ -7,9 +7,36 @@ import { defaultConfig } from "../lib/config";
 // so assertions such as `expect(foo).toEqual(jasmine.any(Object))` works
 global.jasmine.getEnv().equalityTesters_ = [];
 
+const TESTING_VARS = "textual-velocity-testing-vars";
+global.setProcessInTesting = function setProcessInTesting(
+  _process: any,
+  options?: ProcessInTesting
+) {
+  if (_process[TESTING_VARS]) {
+    _process[TESTING_VARS] = {
+      ..._process[TESTING_VARS],
+      ...options
+    };
+  } else if (process) {
+    _process[TESTING_VARS] = options;
+  } else {
+    delete _process[TESTING_VARS];
+  }
+};
+
+global.getProcessInTesting = function getProcessInTesting(
+  _process: any
+): ProcessInTesting {
+  return _process[TESTING_VARS];
+};
+
 beforeEach(() => {
   atom.config.setSchema("textual-velocity", {
     type: "object",
     properties: JSON.parse(JSON.stringify(defaultConfig))
   });
+});
+
+afterEach(() => {
+  global.setProcessInTesting(process, null);
 });

@@ -14,11 +14,11 @@ describe("epics/active-pane-item", () => {
       columnHeaders: [],
       dir: "/notes",
       editCellName: null,
-      initialScan: {
-        done: false,
+      listHeight: 75,
+      loading: {
+        status: "initialScan",
         rawFiles: []
       },
-      listHeight: 75,
       notes: {
         "alice.txt": {
           id: "0",

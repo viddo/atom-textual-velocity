@@ -20,14 +20,6 @@
   "engines": {
     "atom": ">=1.10.0 <2.0.0"
   },
-  "providedServices": {
-    "textual-velocity": {
-      "description": "Exposes API to register columns and file read/writers",
-      "versions": {
-        "0.1.0": "provideService"
-      }
-    }
-  },
   "consumedServices": {
     "atom.file-icons": {
       "versions": {

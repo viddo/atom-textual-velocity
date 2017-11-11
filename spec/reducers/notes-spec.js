@@ -7,7 +7,7 @@ import makeNotesReducer from "../../lib/reducers/notes";
 
 describe("reducers/notes", () => {
   let state: Notes;
-  let nextInitialScan: InitialScan;
+  let nextLoading: LoadingState;
   let notesReducer;
 
   beforeEach(function() {
@@ -27,13 +27,13 @@ describe("reducers/notes", () => {
     // Some fields are set by a file-reader, in those cases the field is only there to indicate that the field exist
     noteFields.add({ notePropName: "content" });
 
-    nextInitialScan = {
-      done: false,
+    nextLoading = {
+      status: "initialScan",
       rawFiles: []
     };
 
     notesReducer = makeNotesReducer(fileReaders, noteFields);
-    state = notesReducer(undefined, A.startInitialScan(), nextInitialScan);
+    state = notesReducer(undefined, A.startInitialScan(), nextLoading);
   });
 
   it("should have an empty object", function() {
@@ -42,8 +42,8 @@ describe("reducers/notes", () => {
 
   describe("when initial-scan-done action", function() {
     beforeEach(function() {
-      nextInitialScan = {
-        done: true,
+      nextLoading = {
+        status: "initialScan",
         rawFiles: [
           {
             filename: "a.txt",
@@ -55,7 +55,11 @@ describe("reducers/notes", () => {
           }
         ]
       };
-      state = notesReducer(state, A.initialScanDone(), nextInitialScan);
+      state = notesReducer(
+        state,
+        A.initialScanDone(nextLoading.rawFiles),
+        nextLoading
+      );
     });
 
     it("should reduce notes from raw notes", function() {
@@ -81,8 +85,8 @@ describe("reducers/notes", () => {
     let action;
 
     beforeEach(function() {
-      nextInitialScan = {
-        done: false,
+      nextLoading = {
+        status: "initialScan",
         rawFiles: [
           {
             filename: "a.txt",
@@ -102,7 +106,7 @@ describe("reducers/notes", () => {
 
     describe("when initial scan is not yet done", function() {
       beforeEach(function() {
-        state = notesReducer(state, action, nextInitialScan);
+        state = notesReducer(state, action, nextLoading);
       });
 
       it("should not do anything", function() {
@@ -114,7 +118,9 @@ describe("reducers/notes", () => {
       let prevState;
 
       beforeEach(function() {
-        nextInitialScan.done = true;
+        nextLoading = {
+          status: "done"
+        };
         prevState = {
           "alice.txt": {
             id: "1",
@@ -131,7 +137,7 @@ describe("reducers/notes", () => {
             name: "bob"
           }
         };
-        state = notesReducer(prevState, action, nextInitialScan);
+        state = notesReducer(prevState, action, nextLoading);
       });
 
       it("should add new notes", function() {
@@ -147,7 +153,7 @@ describe("reducers/notes", () => {
       describe("when file is removed", function() {
         beforeEach(function() {
           action = A.fileDeleted("cesar.txt");
-          state = notesReducer(state, action, nextInitialScan);
+          state = notesReducer(state, action, nextLoading);
         });
 
         it("should remove corresponding note", function() {
@@ -162,7 +168,7 @@ describe("reducers/notes", () => {
             notePropName: "content",
             value: "content for bob.md"
           });
-          state = notesReducer(prevState, action, nextInitialScan);
+          state = notesReducer(prevState, action, nextLoading);
         });
 
         it("should add field to intended note", function() {

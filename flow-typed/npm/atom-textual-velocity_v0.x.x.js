@@ -17,8 +17,8 @@ type Action =
   | FileDeleted
   | FileRead
   | InitialScanDone
-  | InitialScanRawFilesRead
   | OpenNote
+  | ReadFilesDone
   | ResetSearch
   | ResizedList
   | Scrolled
@@ -71,9 +71,16 @@ type ChangedSortField = {
 }
 
 // see https://github.com/paulmillr/chokidar#api
-type ChokidarOptions = {
+type ChokidarEventName = 'ready' | 'add' | 'change' | 'unlink'
+class Chokidar {
+  on: (eventName: ChokidarEventName, Function) => void
+}
+type ChokidarOptions = CompulsoryChokidarOptions & OptionalChokidarOptions;
+type CompulsoryChokidarOptions = {
+  cwd: string
+}
+type OptionalChokidarOptions = {
   alwaysStat?: boolean,
-  cwd: string,
   depth?: number,
   ignored?: string,
   persistent?: boolean
@@ -171,16 +178,9 @@ type FsStats =
     birthtime?: Date
   })
 
-
-type InitialScan = {
-  done: boolean,
-  rawFiles: Array<RawFile>
-}
 type InitialScanDone = {
-  type: 'INITIAL_SCAN_DONE'
-}
-type InitialScanRawFilesRead = {
-  type: 'INITIAL_SCAN_RAW_FILES_READ'
+  type: 'INITIAL_SCAN_DONE',
+  rawFiles: RawFile[]
 }
 
 type KeyPressEvent = {
@@ -188,22 +188,45 @@ type KeyPressEvent = {
   preventDefault: Function
 }
 
+type LoadingState =
+  | InitialScanLoadingState
+  | ReadingFilesLoadingState
+  | DoneLoadingState
+type InitialScanLoadingState = {
+  status: 'initialScan',
+  rawFiles: RawFile[]
+}
+type ReadingFilesLoadingState = {
+  status: 'readingFiles',
+  readyCount: number,
+  totalCount: number
+}
+type DoneLoadingState = {
+  status: 'done'
+}
+
+type LoadingProps =
+  | InitialScanLoadingProps
+  | ReadingFilesLoadingState
+  | DoneLoadingState
+type InitialScanLoadingProps = {
+  status: 'initialScan',
+  filesCount: number
+}
+
 type MainProps = MainPropsActions & MainPropsWithoutActions
 type MainPropsWithoutActions = {
   columnHeaders: Array<ColumnHeader>,
   editCellName: EditCellName,
-  initialScanDone: boolean,
-  initialScanFilesCount: number,
   itemsCount: number,
   listHeight: number,
+  loading: LoadingProps,
   paginationStart: number,
   queryOriginal: string,
-  readyCount: number,
   rowHeight: number,
   scrollTop: number,
   sortDirection: SortDirection,
   sortField: string,
-  totalCount: number,
   visibleRows: Array<Row>
 }
 type MainPropsActions = {
@@ -246,6 +269,9 @@ type NoteFields = {
   forEach (callback: (noteField: NoteField) => any): any,
   map<T> (mapper: (noteField: NoteField) => T): Array<T>
 }
+class NotesFileFilter {
+  isAccepted: (rawFile: RawFile) => bool
+}
 
 type OpenNote = {
   type: 'OPEN_NOTE'
@@ -256,9 +282,23 @@ type Pagination = {
   limit: number
 }
 
+type ProcessInTesting = {
+  chokidarWatch?: Chokidar,
+  store?: Store
+}
+
 type RawFile = {
   filename: string,
   stats: FsStats
+}
+
+type ReadFilesCount = {
+  type: 'READ_FILES_COUNTS',
+  readyCount: number,
+  totalCount: number
+}
+type ReadFilesDone = {
+  type: 'READ_FILES_DONE'
 }
 
 type ResizedList = {
@@ -352,8 +392,8 @@ type State = {
   columnHeaders: Array<ColumnHeader>,
   dir: string,
   editCellName: EditCellName,
-  initialScan: InitialScan,
   listHeight: number,
+  loading: LoadingState,
   notes: Notes,
   queryOriginal: string,
   rowHeight: number,
