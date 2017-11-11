@@ -3,6 +3,9 @@ All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](http://semver.org/) and [keepachangelog.com](http://keepachangelog.com/).
 
 ## [unreleased]
+#### Added
+- Focus on search when closing a text editor [#47](https://github.com/viddo/atom-textual-velocity/issues/47)
+
 #### Changed
 - Updated dependencies to latest versions (e.g. RxJS 5.5)
 - Add Greenkeeper to automate dependencies updates [#85](https://github.com/viddo/atom-textual-velocity/pull/85)
