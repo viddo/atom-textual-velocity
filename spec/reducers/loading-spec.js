@@ -22,37 +22,32 @@ describe("reducers/loading", () => {
     });
   });
 
-  describe("when file-added action", () => {
+  describe("when file-found action", () => {
     beforeEach(() => {
-      state = loadingReducer(
-        state,
-        A.fileAdded({
-          filename: "a",
-          stats: { mtime: new Date() }
-        }),
-        notes
-      );
-      state = loadingReducer(
-        state,
-        A.fileAdded({
-          filename: "b",
-          stats: { mtime: new Date() }
-        }),
-        notes
-      );
+      state = loadingReducer(state, A.fileFound(), notes);
+      state = loadingReducer(state, A.fileFound(), notes);
     });
 
     it("should append raw files", () => {
       expect(state.status).toEqual("initialScan");
       if (state.status === "initialScan") {
-        expect(state.rawFiles.length).toEqual(2);
-        expect(state.rawFiles[0].filename).toEqual("a");
+        expect(state.filesCount).toEqual(2);
       }
     });
 
     describe("when initial-scan-done action", () => {
       beforeEach(() => {
         if (state.status === "initialScan") {
+          const initialScanDoneAction = A.initialScanDone([
+            {
+              filename: "a",
+              stats: { mtime: new Date() }
+            },
+            {
+              filename: "b",
+              stats: { mtime: new Date() }
+            }
+          ]);
           const now = new Date();
           notes = {
             "a.txt": {
@@ -78,11 +73,7 @@ describe("reducers/loading", () => {
               stats: { mtime: now }
             }
           };
-          state = loadingReducer(
-            state,
-            A.initialScanDone(state.rawFiles),
-            notes
-          );
+          state = loadingReducer(state, initialScanDoneAction, notes);
         } else {
           throw new Error(
             `status is expected to be initialScan, was ${state.status}`

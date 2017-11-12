@@ -15,6 +15,7 @@ type Action =
   | FileAdded
   | FileChanged
   | FileDeleted
+  | FileFound
   | FileRead
   | InitialScanDone
   | OpenNote
@@ -144,6 +145,9 @@ type FileDeleted = {
   type: 'FILE_DELETED',
   filename: string
 }
+type FileFound = {
+  type: 'FILE_FOUND'
+}
 type FileRead = {type: 'FILE_READ'} & FileReadResult
 type FileReadResult = {
   filename: string,
@@ -153,7 +157,7 @@ type FileReadResult = {
 
 type FileReader = {
   notePropName: string,
-  read (path: string, fileStats: FsStats, callback: NodeCallback): void
+  read (path: string, fileStats: fs.Stats, callback: NodeCallback): void
 }
 type FileReaders = {
   add (fileReader: FileReader): void,
@@ -172,12 +176,6 @@ type FileWriters = {
   find (predicate: (fileWriter: FileWriter) => boolean): FileWriter|void
 }
 
-type FsStats =
-  | (fs.Stats & {
-    mtime: Date,
-    birthtime?: Date
-  })
-
 type InitialScanDone = {
   type: 'INITIAL_SCAN_DONE',
   rawFiles: RawFile[]
@@ -194,7 +192,7 @@ type LoadingState =
   | DoneLoadingState
 type InitialScanLoadingState = {
   status: 'initialScan',
-  rawFiles: RawFile[]
+  filesCount: number
 }
 type ReadingFilesLoadingState = {
   status: 'readingFiles',
@@ -205,22 +203,13 @@ type DoneLoadingState = {
   status: 'done'
 }
 
-type LoadingProps =
-  | InitialScanLoadingProps
-  | ReadingFilesLoadingState
-  | DoneLoadingState
-type InitialScanLoadingProps = {
-  status: 'initialScan',
-  filesCount: number
-}
-
 type MainProps = MainPropsActions & MainPropsWithoutActions
 type MainPropsWithoutActions = {
   columnHeaders: Array<ColumnHeader>,
   editCellName: EditCellName,
   itemsCount: number,
   listHeight: number,
-  loading: LoadingProps,
+  loading: LoadingState,
   paginationStart: number,
   queryOriginal: string,
   rowHeight: number,
@@ -251,7 +240,7 @@ type Note = {
   id: string,
   name: string,
   ext: string,
-  stats: FsStats,
+  stats: fs.Stats,
   ready?: boolean,
 
   // known fields that will exist, eventually
@@ -270,7 +259,7 @@ type NoteFields = {
   map<T> (mapper: (noteField: NoteField) => T): Array<T>
 }
 class NotesFileFilter {
-  isAccepted: (rawFile: RawFile) => bool
+  isAccepted: (rawFile: RawFile | string) => bool
 }
 
 type OpenNote = {
@@ -289,7 +278,7 @@ type ProcessInTesting = {
 
 type RawFile = {
   filename: string,
-  stats: FsStats
+  stats: fs.Stats
 }
 
 type ReadFilesCount = {

@@ -17,7 +17,7 @@ describe("epics/active-pane-item", () => {
       listHeight: 75,
       loading: {
         status: "initialScan",
-        rawFiles: []
+        filesCount: 0
       },
       notes: {
         "alice.txt": {

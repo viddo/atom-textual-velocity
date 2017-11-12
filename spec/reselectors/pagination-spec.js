@@ -14,7 +14,7 @@ describe("reselectors/pagination", () => {
       listHeight: 1000,
       loading: {
         status: "initialScan",
-        rawFiles: []
+        filesCount: 0
       },
       notes: {},
       queryOriginal: "",

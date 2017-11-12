@@ -23,7 +23,7 @@ describe("reselectors/visible-rows", () => {
       listHeight: 25,
       loading: {
         status: "initialScan",
-        rawFiles: []
+        filesCount: 0
       },
       notes: {
         "alice.txt": {
