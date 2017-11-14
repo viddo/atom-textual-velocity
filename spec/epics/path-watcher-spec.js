@@ -172,24 +172,35 @@ describe("epics/path-watcher", () => {
 
     it("should yield both a deleted file and added file action", () => {
       const actions: any[] = store.getActions();
-      // NOTE: we're not getting the renamed events as documented,
-      // so have to continue handling the separate deleted-created events for now
-      expect(actions).toEqual([
-        {
-          type: A.FILE_DELETED,
-          filename: "note-1.txt"
-        },
-        {
-          type: A.FILE_ADDED,
-          rawFile: {
-            filename: "note-42.md",
-            stats: jasmine.objectContaining({
-              birthtime: jasmine.any(Date),
-              mtime: jasmine.any(Date)
-            })
+      if (actions[0].type === A.FILE_RENAMED) {
+        expect(actions).toEqual([
+          {
+            type: A.FILE_RENAMED,
+            filename: "note-42.txt",
+            oldFilename: "note-1.txt"
           }
-        }
-      ]);
+        ]);
+      } else {
+        // NOTE: for some reason not not getting the renamed events as documented on MacOSX,
+        // so have to continue handling the separate deleted-created events for now
+        // in practice it do yield a rename event though :/
+        expect(actions).toEqual([
+          {
+            type: A.FILE_DELETED,
+            filename: "note-1.txt"
+          },
+          {
+            type: A.FILE_ADDED,
+            rawFile: {
+              filename: "note-42.md",
+              stats: jasmine.objectContaining({
+                birthtime: jasmine.any(Date),
+                mtime: jasmine.any(Date)
+              })
+            }
+          }
+        ]);
+      }
     });
   });
 });

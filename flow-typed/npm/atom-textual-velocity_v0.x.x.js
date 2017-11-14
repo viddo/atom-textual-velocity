@@ -17,6 +17,7 @@ type Action =
   | FileDeleted
   | FileFound
   | FileRead
+  | FileRenamed
   | InitialScanDone
   | OpenNote
   | ReadFilesDone
@@ -147,6 +148,11 @@ type FileDeleted = {
 }
 type FileFound = {
   type: 'FILE_FOUND'
+}
+type FileRenamed = {
+  type: 'FILE_RENAMED',
+  filename: string,
+  oldFilename: string
 }
 type FileRead = {type: 'FILE_READ'} & FileReadResult
 type FileReadResult = {
@@ -279,6 +285,10 @@ type ProcessInTesting = {
 type RawFile = {
   filename: string,
   stats: fs.Stats
+}
+type RenamedFile = {
+  filename: string,
+  oldFilename? :string
 }
 
 type ReadFilesCount = {

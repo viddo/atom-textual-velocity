@@ -190,6 +190,19 @@ describe("reducers/sifter-result", () => {
       );
     });
 
+    describe("when renamed file", function() {
+      sharedUpdateSearchFile(
+        A.fileRenamed({
+          filename: "alice.txt",
+          oldFilename: "alice cooper.txt"
+        })
+      );
+    });
+
+    describe("when deleted file", function() {
+      sharedUpdateSearchFile(A.fileDeleted("alice.txt"));
+    });
+
     describe("when any other action", function() {
       let prevState;
 

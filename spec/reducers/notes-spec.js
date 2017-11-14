@@ -20,6 +20,10 @@ describe("reducers/notes", () => {
 
     const noteFields = new NoteFields();
     noteFields.add({
+      notePropName: "name",
+      value: (note, filename) => filename.split(".")[0]
+    });
+    noteFields.add({
       notePropName: "ext",
       value: (note, filename) => filename.split(".").slice(-1)[0]
     });
@@ -65,7 +69,9 @@ describe("reducers/notes", () => {
 
     it("should apply noteFields on notes", function() {
       expect(state["a.txt"]).toEqual(jasmine.any(Object));
+      expect(state["a.txt"].name).toEqual("a");
       expect(state["a.txt"].ext).toEqual("txt");
+      expect(state["b.md"].name).toEqual("b");
       expect(state["b.md"].ext).toEqual("md");
     });
 
@@ -116,7 +122,31 @@ describe("reducers/notes", () => {
         stats: { mtime: jasmine.any(Date) },
         ready: false,
         ext: "txt",
-        name: ""
+        name: "cesar"
+      });
+    });
+
+    describe("when file is renamed", function() {
+      beforeEach(function() {
+        action = A.fileRenamed({
+          filename: "Julius Caesar.md",
+          oldFilename: "cesar.txt"
+        });
+        state = notesReducer(state, action, nextLoading);
+      });
+
+      it("should rename the notes key for renamed file", function() {
+        expect(Object.keys(state)).toEqual([
+          "alice.txt",
+          "bob.md",
+          "Julius Caesar.md"
+        ]);
+        expect(state["Julius Caesar.md"]).toEqual(
+          jasmine.objectContaining({
+            name: "Julius Caesar",
+            ext: "md"
+          })
+        );
       });
     });
 
