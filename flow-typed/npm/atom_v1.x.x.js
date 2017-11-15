@@ -6,7 +6,7 @@ declare interface atom$IDisposable {
 }
 declare type atom$PathWatcher = {
   getStartPromise (): Promise<void>;
-  onDidError (err: Error): atom$IDisposable;
+  onDidError (fn: (error: Error) => void): atom$IDisposable;
   dispose (): void;
 }
 
@@ -47,5 +47,5 @@ declare module 'atom' {
   }
   declare var Directory: Class<Object>;
   declare var Task: any;
-  declare var watchPath: (dir: string, options: {}, handler: (events: atom$PathWatcherEvent[]) => void) => Promise<atom$PathWatcher> | atom$PathWatcher
+  declare var watchPath: (rootPath: string, options: {}, eventCallback: (events: atom$PathWatcherEvent[]) => void) => Promise<atom$PathWatcher>
 }
