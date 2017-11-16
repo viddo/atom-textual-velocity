@@ -28,7 +28,6 @@
     }
   },
   "dependencies": {
-    "chokidar": "1.7.0",
     "classnames": "2.2.5",
     "fs-plus": "3.0.1",
     "moment": "2.19.2",

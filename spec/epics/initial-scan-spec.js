@@ -13,7 +13,7 @@ describe("epics/initial-scan", () => {
   let dir, store;
 
   beforeEach(() => {
-    jasmine.useRealClock(); // required for chokidar timers to work! e.g. atomic unlink events
+    jasmine.useRealClock();
 
     const tempDirPath = tempy.directory();
     dir = fs.realpathSync(tempDirPath);

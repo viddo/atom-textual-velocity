@@ -73,22 +73,6 @@ type ChangedSortField = {
   sortField: string
 }
 
-// see https://github.com/paulmillr/chokidar#api
-type ChokidarEventName = 'ready' | 'add' | 'change' | 'unlink'
-class Chokidar {
-  on: (eventName: ChokidarEventName, Function) => void
-}
-type ChokidarOptions = CompulsoryChokidarOptions & OptionalChokidarOptions;
-type CompulsoryChokidarOptions = {
-  cwd: string
-}
-type OptionalChokidarOptions = {
-  alwaysStat?: boolean,
-  depth?: number,
-  ignored?: string,
-  persistent?: boolean
-}
-
 type ClickRow = {
   type: 'CLICK_ROW',
   filename: string
@@ -285,7 +269,7 @@ type Pagination = {
 }
 
 type ProcessInTesting = {
-  chokidarWatch?: Chokidar,
+  watcher?: atom$PathWatcher,
   store?: Store
 }
 

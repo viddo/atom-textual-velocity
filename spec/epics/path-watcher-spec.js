@@ -16,7 +16,7 @@ describe("epics/path-watcher", () => {
   let dir, store, fullpath, note1Path, note2Path;
 
   beforeEach(async () => {
-    jasmine.useRealClock(); // required for chokidar timers to work, e.g. atomic unlink events
+    jasmine.useRealClock();
 
     const tempDirPath = tempy.directory();
     dir = fs.realpathSync(tempDirPath);
