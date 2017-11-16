@@ -49,7 +49,7 @@ describe("reducers/sifter-result", () => {
       };
 
       sifterResultReducer = SifterResultReducer(noteFields);
-      state = sifterResultReducer(undefined, A.startInitialScan(), notes);
+      state = sifterResultReducer(undefined, A.clickRow(""), notes);
     });
 
     describe("when initialScan is done", function() {

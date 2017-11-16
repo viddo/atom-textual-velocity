@@ -11,12 +11,7 @@ describe("reducers/loading", () => {
   beforeEach(() => {
     notes = {};
     fileReadFails = {};
-    state = loadingReducer(
-      undefined,
-      A.startInitialScan(),
-      notes,
-      fileReadFails
-    );
+    state = loadingReducer(undefined, A.search(""), notes, fileReadFails);
   });
 
   describe("when initial-scan-done action without any new files found", () => {

@@ -28,7 +28,6 @@ type Action =
   | Search
   | SelectNext
   | SelectPrev
-  | StartInitialScan
 
 type CellContent =
   | string
@@ -372,10 +371,6 @@ type SifterResult = {
 type SifterResultItem = {
   id: string,
   score: number
-}
-
-type StartInitialScan = {
-  type: 'START_INITIAL_SCAN'
 }
 
 type State = {

@@ -37,7 +37,7 @@ describe("reducers/notes", () => {
     };
 
     notesReducer = makeNotesReducer(fileReaders, noteFields);
-    state = notesReducer(undefined, A.startInitialScan(), nextLoading);
+    state = notesReducer(undefined, A.search(""), nextLoading);
   });
 
   it("should have an empty object", function() {
