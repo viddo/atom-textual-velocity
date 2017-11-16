@@ -83,7 +83,7 @@ describe("epics/file-writes", () => {
 
   describe("when saving edited cell", function() {
     beforeEach(function() {
-      spyOn(atom.notifications, "addError").andCallThrough();
+      spyOn(atom.notifications, "addWarning").andCallThrough();
       state.selectedNote = {
         filename: "foobar.txt",
         index: 1
@@ -103,7 +103,7 @@ describe("epics/file-writes", () => {
       });
 
       it("should not add any error", function() {
-        expect(atom.notifications.addError).not.toHaveBeenCalled();
+        expect(atom.notifications.addWarning).not.toHaveBeenCalled();
       });
     });
 
@@ -116,7 +116,7 @@ describe("epics/file-writes", () => {
       });
 
       it("should add an error explaining the situation", function() {
-        expect(atom.notifications.addError).toHaveBeenCalled();
+        expect(atom.notifications.addWarning).toHaveBeenCalled();
       });
     });
   });
