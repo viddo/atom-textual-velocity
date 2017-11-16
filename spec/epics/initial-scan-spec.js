@@ -36,6 +36,7 @@ describe("epics/initial-scan", () => {
       columnHeaders: [],
       dir,
       editCellName: null,
+      fileReadFails: {},
       listHeight: 50,
       loading: {
         status: "initialScan",

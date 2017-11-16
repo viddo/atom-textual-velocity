@@ -14,6 +14,7 @@ describe("epics/active-pane-item", () => {
       columnHeaders: [],
       dir: "/notes",
       editCellName: null,
+      fileReadFails: {},
       listHeight: 75,
       loading: {
         status: "initialScan",

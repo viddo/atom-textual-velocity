@@ -5,16 +5,28 @@ import loadingReducer from "../../lib/reducers/loading";
 
 describe("reducers/loading", () => {
   let state: LoadingState;
+  let fileReadFails: FileReadFails;
   let notes: Notes;
 
   beforeEach(() => {
     notes = {};
-    state = loadingReducer(undefined, A.startInitialScan(), notes);
+    fileReadFails = {};
+    state = loadingReducer(
+      undefined,
+      A.startInitialScan(),
+      notes,
+      fileReadFails
+    );
   });
 
   describe("when initial-scan-done action without any new files found", () => {
     beforeEach(() => {
-      state = loadingReducer(state, A.initialScanDone([]), notes);
+      state = loadingReducer(
+        state,
+        A.initialScanDone([]),
+        notes,
+        fileReadFails
+      );
     });
 
     it("should set status to done straight away", () => {
@@ -24,8 +36,8 @@ describe("reducers/loading", () => {
 
   describe("when file-found action", () => {
     beforeEach(() => {
-      state = loadingReducer(state, A.fileFound(), notes);
-      state = loadingReducer(state, A.fileFound(), notes);
+      state = loadingReducer(state, A.fileFound(), notes, fileReadFails);
+      state = loadingReducer(state, A.fileFound(), notes, fileReadFails);
     });
 
     it("should append raw files", () => {
@@ -73,7 +85,12 @@ describe("reducers/loading", () => {
               stats: { mtime: now }
             }
           };
-          state = loadingReducer(state, initialScanDoneAction, notes);
+          state = loadingReducer(
+            state,
+            initialScanDoneAction,
+            notes,
+            fileReadFails
+          );
         } else {
           throw new Error(
             `status is expected to be initialScan, was ${state.status}`
@@ -98,7 +115,12 @@ describe("reducers/loading", () => {
           };
           notes["b.txt"].content = "read content of this file";
           notes["b.txt"].ready = true;
-          state = loadingReducer(state, A.fileRead(result), notes);
+          state = loadingReducer(
+            state,
+            A.fileRead(result),
+            notes,
+            fileReadFails
+          );
         });
 
         it("should have updated ready count", () => {
@@ -111,7 +133,12 @@ describe("reducers/loading", () => {
 
         describe("when all files are read", () => {
           beforeEach(function() {
-            state = loadingReducer(state, A.readFilesDone(), notes);
+            state = loadingReducer(
+              state,
+              A.readFilesDone(),
+              notes,
+              fileReadFails
+            );
           });
 
           it("should change status", function() {

@@ -17,6 +17,7 @@ type Action =
   | FileDeleted
   | FileFound
   | FileRead
+  | FileReadFailed
   | FileRenamed
   | InitialScanDone
   | OpenNote
@@ -160,6 +161,12 @@ type FileReadResult = {
   notePropName: string,
   value: any
 }
+type FileReadFailed = {type: 'FILE_READ_FAILED'} & FileReadFailedParams
+type FileReadFailedParams = {
+  filename: string,
+  notePropName: string
+}
+type FileReadFails = {[filename: string]: string[]}
 
 type FileReader = {
   notePropName: string,
@@ -391,6 +398,7 @@ type State = {
   columnHeaders: Array<ColumnHeader>,
   dir: string,
   editCellName: EditCellName,
+  fileReadFails: FileReadFails,
   listHeight: number,
   loading: LoadingState,
   notes: Notes,

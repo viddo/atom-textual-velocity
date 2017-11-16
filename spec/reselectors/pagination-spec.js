@@ -11,6 +11,7 @@ describe("reselectors/pagination", () => {
       columnHeaders: [],
       dir: "",
       editCellName: null,
+      fileReadFails: {},
       listHeight: 1000,
       loading: {
         status: "initialScan",

@@ -20,6 +20,7 @@ describe("reselectors/visible-rows", () => {
       columnHeaders: [],
       dir: "/notes",
       editCellName: null,
+      fileReadFails: {},
       listHeight: 25,
       loading: {
         status: "initialScan",

@@ -28,6 +28,7 @@ describe("epics/file-reads", () => {
       columnHeaders: [],
       dir: "/notes",
       editCellName: null,
+      fileReadFails: {},
       listHeight: 50,
       loading: {
         status: "initialScan",

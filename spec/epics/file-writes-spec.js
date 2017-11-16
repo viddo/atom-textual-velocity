@@ -39,6 +39,7 @@ describe("epics/file-writes", () => {
       columnHeaders: [],
       dir: "/notes",
       editCellName: null,
+      fileReadFails: {},
       listHeight: 50,
       loading: {
         status: "done"

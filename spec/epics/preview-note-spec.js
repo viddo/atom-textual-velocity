@@ -17,6 +17,7 @@ describe("epics/preview-note", () => {
       columnHeaders: [],
       dir: "/notes",
       editCellName: null,
+      fileReadFails: {},
       listHeight: 75,
       loading: {
         status: "initialScan",
