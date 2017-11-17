@@ -18,7 +18,7 @@
     "atom-workspace": "textual-velocity:start-session"
   },
   "engines": {
-    "atom": ">=1.10.0 <2.0.0"
+    "atom": ">=1.22.0 <2.0.0"
   },
   "consumedServices": {
     "atom.file-icons": {
