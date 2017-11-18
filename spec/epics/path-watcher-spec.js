@@ -171,7 +171,7 @@ describe("epics/path-watcher", () => {
       store.clearActions();
       renamedPath = fullpath("note-42.md");
       fs.renameSync(note1Path, renamedPath);
-      waitsFor(() => store.getActions().length >= 2);
+      waitsFor(() => store.getActions().length >= 1);
     });
 
     it("should yield both a deleted file and added file action", () => {
@@ -185,25 +185,28 @@ describe("epics/path-watcher", () => {
           }
         ]);
       } else {
-        // NOTE: for some reason not not getting the renamed events as documented on MacOSX,
+        // NOTE: on MacOSX not getting the renamed events as documented for some reason,
         // so have to continue handling the separate deleted-created events for now
-        // in practice it do yield a rename event though :/
-        expect(actions).toEqual([
-          {
-            type: A.FILE_DELETED,
-            filename: "note-1.txt"
-          },
-          {
-            type: A.FILE_ADDED,
-            rawFile: {
-              filename: "note-42.md",
-              stats: jasmine.objectContaining({
-                birthtime: jasmine.any(Date),
-                mtime: jasmine.any(Date)
-              })
+        // only seems to happen in this test env though, in real Atom env the rename event is yielded
+        waitsFor(() => store.getActions().length >= 2);
+        runs(() => {
+          expect(actions).toEqual([
+            {
+              type: A.FILE_DELETED,
+              filename: "note-1.txt"
+            },
+            {
+              type: A.FILE_ADDED,
+              rawFile: {
+                filename: "note-42.md",
+                stats: jasmine.objectContaining({
+                  birthtime: jasmine.any(Date),
+                  mtime: jasmine.any(Date)
+                })
+              }
             }
-          }
-        ]);
+          ]);
+        });
       }
     });
   });
