@@ -180,7 +180,7 @@ describe("epics/path-watcher", () => {
         expect(actions).toEqual([
           {
             type: A.FILE_RENAMED,
-            filename: "note-42.txt",
+            filename: "note-42.md",
             oldFilename: "note-1.txt"
           }
         ]);
