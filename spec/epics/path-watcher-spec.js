@@ -10,16 +10,23 @@ import makePathWatcherEpic from "../../lib/epics/path-watcher";
 import * as A from "../../lib/action-creators";
 import { beforeEach } from "../_async-spec-helpers";
 
+let watcherTimeout;
+
 describe("epics/path-watcher", () => {
-  let dir, store;
+  let dir, store, fullpath, note1Path, note2Path;
 
   beforeEach(async () => {
-    jasmine.useRealClock(); // required for chokidar timers to work, e.g. atomic unlink events
+    jasmine.useRealClock();
 
     const tempDirPath = tempy.directory();
     dir = fs.realpathSync(tempDirPath);
-    fs.writeFileSync(Path.join(dir, "note-1.txt"), "1");
-    fs.writeFileSync(Path.join(dir, "note-3.txt"), "3");
+
+    fullpath = (path, root = dir) => Path.join(root, path);
+
+    note1Path = fullpath("note-1.txt");
+    note2Path = fullpath("note-2.txt");
+    fs.writeFileSync(note1Path, "1");
+    fs.writeFileSync(note2Path, "2");
 
     const notesFileFilter = new NotesFileFilter(dir, {
       exclusions: [".DS_Store"],
@@ -32,10 +39,11 @@ describe("epics/path-watcher", () => {
       columnHeaders: [],
       dir,
       editCellName: null,
+      fileReadFails: {},
       listHeight: 50,
       loading: {
         status: "initialScan",
-        rawFiles: []
+        filesCount: 0
       },
       notes: {},
       queryOriginal: "",
@@ -58,93 +66,163 @@ describe("epics/path-watcher", () => {
     };
     store = mockStore(state);
 
-    await pathWatcherWatchReady();
+    await Promise.all([
+      pathWatcherReady(),
+      new Promise((resolve, reject) => {
+        // enforce spec to wait, to make sure underlying watcher doesn't interpet too rapid changes as initial event
+        // e.g. created+modifed file in a short period of time will only yield a created event
+        setTimeout(resolve, 1200);
+      })
+    ]);
   });
 
   afterEach(() => {
     store.dispatch(A.dispose()); // should terminate any running processes
+    clearTimeout(watcherTimeout);
   });
 
   describe("when a new file is created", () => {
     beforeEach(() => {
       store.clearActions();
-      fs.writeFileSync(Path.join(dir, "note-4.txt"), "4");
-      waitsFor(() => store.getActions().length >= 1);
+
+      // should not be accepted
+      const aDir = fullpath("a-dir");
+      fs.mkdirSync(aDir);
+      fs.writeFileSync(fullpath("test", aDir), "should not be accepted");
+
+      fs.writeFileSync(fullpath("note-NEW.md"), "my new file!");
+      fs.writeFileSync(fullpath(".DS_Store"), "should not be accepted");
+      fs.writeFileSync(fullpath("note-ALSO-NEW"), "another new file!");
+
+      waitsFor(() => store.getActions().length >= 2);
     });
 
-    it("should yield a file-added action", () => {
-      expect(store.getActions()[0].type).toEqual(A.FILE_ADDED);
-    });
+    it("should yield file added actions for all new files", () => {
+      // linux system yields more than the created events, so keep tests a bit more laxed
+      const actions: any[] = store
+        .getActions()
+        .filter(action => action.type === A.FILE_ADDED);
 
-    it("should have a rawFile on action", () => {
-      const action: any = store.getActions()[0];
-      const rawFile = action.rawFile;
-      expect(rawFile).toEqual(jasmine.any(Object));
-      expect(rawFile.filename).toMatch(/note-\d.txt/);
-
-      expect(rawFile.stats).toEqual(jasmine.any(Object));
-      expect(rawFile.stats.atime).toEqual(jasmine.any(Date));
-      expect(rawFile.stats.birthtime).toEqual(jasmine.any(Date));
-      expect(rawFile.stats.ctime).toEqual(jasmine.any(Date));
-      expect(rawFile.stats.mtime).toEqual(jasmine.any(Date));
-    });
-  });
-
-  describe("when change file", () => {
-    beforeEach(() => {
-      store.clearActions();
-      fs.writeFileSync(Path.join(dir, "note-1.txt"), "111");
-      waitsFor(() => store.getActions().length >= 1);
-    });
-
-    it("should yield a file-changed action", () => {
-      expect(store.getActions()[0].type).toEqual(A.FILE_CHANGED);
-    });
-
-    it("should have a rawFile on action", () => {
-      const action: any = store.getActions()[0];
-      const rawFile = action.rawFile;
-      expect(rawFile).toEqual(jasmine.any(Object));
-      expect(rawFile.filename).toEqual("note-1.txt");
-
-      expect(rawFile.stats).toEqual(jasmine.any(Object));
-      expect(rawFile.stats.atime).toEqual(jasmine.any(Date));
-      expect(rawFile.stats.birthtime).toEqual(jasmine.any(Date));
-      expect(rawFile.stats.ctime).toEqual(jasmine.any(Date));
-      expect(rawFile.stats.mtime).toEqual(jasmine.any(Date));
-    });
-  });
-
-  describe("when delete file", () => {
-    beforeEach(() => {
-      store.clearActions();
-      fs.unlinkSync(Path.join(dir, "note-1.txt"));
-
-      let done = false;
-      fs.unlink(Path.join(dir, "note-3.txt"), (err, result) => {
-        if (err) console.error(err); // get more info in case of error
-        done = true;
+      expect(actions[0]).toEqual({
+        type: A.FILE_ADDED,
+        rawFile: {
+          filename: "note-NEW.md",
+          stats: jasmine.objectContaining({
+            birthtime: jasmine.any(Date),
+            mtime: jasmine.any(Date)
+          })
+        }
       });
-      waitsFor(() => done);
+      expect(actions[1]).toEqual({
+        type: A.FILE_ADDED,
+        rawFile: {
+          filename: "note-ALSO-NEW",
+          stats: jasmine.objectContaining({
+            birthtime: jasmine.any(Date),
+            mtime: jasmine.any(Date)
+          })
+        }
+      });
+    });
+  });
 
+  describe("when a file is modified", () => {
+    beforeEach(() => {
+      store.clearActions();
+      fs.writeFileSync(note1Path, "update this one");
       waitsFor(() => store.getActions().length >= 1);
     });
 
-    it("should yield a unlink action with deleted filename", () => {
+    it("should yield a file changed action", () => {
       const action: any = store.getActions()[0];
-      expect(action.type).toEqual(A.FILE_DELETED);
-      expect(action.filename).toMatch(/^note/);
+      expect(action).toEqual({
+        type: A.FILE_CHANGED,
+        rawFile: {
+          filename: "note-1.txt",
+          stats: jasmine.objectContaining({
+            birthtime: jasmine.any(Date),
+            mtime: jasmine.any(Date)
+          })
+        }
+      });
+    });
+  });
+
+  describe("when a file is deleted", () => {
+    beforeEach(() => {
+      store.clearActions();
+      fs.unlinkSync(note1Path);
+      waitsFor(() => store.getActions().length >= 1);
+    });
+
+    it("should yield a deleted file action", () => {
+      const action: any = store.getActions()[0];
+      expect(action).toEqual({
+        type: A.FILE_DELETED,
+        filename: "note-1.txt"
+      });
+    });
+  });
+
+  describe("when file is renamed", () => {
+    let renamedPath;
+
+    beforeEach(() => {
+      store.clearActions();
+      renamedPath = fullpath("note-42.md");
+      fs.renameSync(note1Path, renamedPath);
+      waitsFor(() => store.getActions().length >= 1);
+    });
+
+    it("should yield both a deleted file and added file action", () => {
+      const actions: any[] = store.getActions();
+      if (actions[0].type === A.FILE_RENAMED) {
+        expect(actions).toEqual([
+          {
+            type: A.FILE_RENAMED,
+            filename: "note-42.md",
+            oldFilename: "note-1.txt"
+          }
+        ]);
+      } else {
+        // NOTE: on MacOSX not getting the renamed events as documented for some reason,
+        // so have to continue handling the separate deleted-created events for now
+        // only seems to happen in this test env though, in real Atom env the rename event is yielded
+        waitsFor(() => store.getActions().length >= 2);
+        runs(() => {
+          expect(actions).toEqual([
+            {
+              type: A.FILE_DELETED,
+              filename: "note-1.txt"
+            },
+            {
+              type: A.FILE_ADDED,
+              rawFile: {
+                filename: "note-42.md",
+                stats: jasmine.objectContaining({
+                  birthtime: jasmine.any(Date),
+                  mtime: jasmine.any(Date)
+                })
+              }
+            }
+          ]);
+        });
+      }
     });
   });
 });
 
-function pathWatcherWatchReady() {
+function pathWatcherReady() {
   return new Promise((resolve, reject) => {
-    const { chokidarWatch } = global.getProcessInTesting(process);
-    if (chokidarWatch) {
-      chokidarWatch.on("ready", resolve);
-    } else {
-      reject(new Error("chokidarWatch is required"));
-    }
+    const tryWatcher = async () => {
+      const { watcher } = global.getProcessInTesting(process);
+      if (watcher) {
+        await watcher.getStartPromise();
+        resolve("ready!");
+      } else {
+        watcherTimeout = setTimeout(tryWatcher, 50);
+      }
+    };
+    tryWatcher();
   });
 }

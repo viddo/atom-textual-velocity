@@ -24,7 +24,7 @@ describe("reducers/selected-note", () => {
     };
     state = selectedNoteReducer(
       undefined,
-      actions.startInitialScan(),
+      actions.search(""),
       dir,
       nextSifterResult
     );

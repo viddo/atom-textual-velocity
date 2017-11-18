@@ -5,16 +5,23 @@ import loadingReducer from "../../lib/reducers/loading";
 
 describe("reducers/loading", () => {
   let state: LoadingState;
+  let fileReadFails: FileReadFails;
   let notes: Notes;
 
   beforeEach(() => {
     notes = {};
-    state = loadingReducer(undefined, A.startInitialScan(), notes);
+    fileReadFails = {};
+    state = loadingReducer(undefined, A.search(""), notes, fileReadFails);
   });
 
   describe("when initial-scan-done action without any new files found", () => {
     beforeEach(() => {
-      state = loadingReducer(state, A.initialScanDone([]), notes);
+      state = loadingReducer(
+        state,
+        A.initialScanDone([]),
+        notes,
+        fileReadFails
+      );
     });
 
     it("should set status to done straight away", () => {
@@ -22,37 +29,32 @@ describe("reducers/loading", () => {
     });
   });
 
-  describe("when file-added action", () => {
+  describe("when file-found action", () => {
     beforeEach(() => {
-      state = loadingReducer(
-        state,
-        A.fileAdded({
-          filename: "a",
-          stats: { mtime: new Date() }
-        }),
-        notes
-      );
-      state = loadingReducer(
-        state,
-        A.fileAdded({
-          filename: "b",
-          stats: { mtime: new Date() }
-        }),
-        notes
-      );
+      state = loadingReducer(state, A.fileFound(), notes, fileReadFails);
+      state = loadingReducer(state, A.fileFound(), notes, fileReadFails);
     });
 
     it("should append raw files", () => {
       expect(state.status).toEqual("initialScan");
       if (state.status === "initialScan") {
-        expect(state.rawFiles.length).toEqual(2);
-        expect(state.rawFiles[0].filename).toEqual("a");
+        expect(state.filesCount).toEqual(2);
       }
     });
 
     describe("when initial-scan-done action", () => {
       beforeEach(() => {
         if (state.status === "initialScan") {
+          const initialScanDoneAction = A.initialScanDone([
+            {
+              filename: "a",
+              stats: { mtime: new Date() }
+            },
+            {
+              filename: "b",
+              stats: { mtime: new Date() }
+            }
+          ]);
           const now = new Date();
           notes = {
             "a.txt": {
@@ -80,8 +82,9 @@ describe("reducers/loading", () => {
           };
           state = loadingReducer(
             state,
-            A.initialScanDone(state.rawFiles),
-            notes
+            initialScanDoneAction,
+            notes,
+            fileReadFails
           );
         } else {
           throw new Error(
@@ -107,7 +110,12 @@ describe("reducers/loading", () => {
           };
           notes["b.txt"].content = "read content of this file";
           notes["b.txt"].ready = true;
-          state = loadingReducer(state, A.fileRead(result), notes);
+          state = loadingReducer(
+            state,
+            A.fileRead(result),
+            notes,
+            fileReadFails
+          );
         });
 
         it("should have updated ready count", () => {
@@ -120,7 +128,12 @@ describe("reducers/loading", () => {
 
         describe("when all files are read", () => {
           beforeEach(function() {
-            state = loadingReducer(state, A.readFilesDone(), notes);
+            state = loadingReducer(
+              state,
+              A.readFilesDone(),
+              notes,
+              fileReadFails
+            );
           });
 
           it("should change status", function() {

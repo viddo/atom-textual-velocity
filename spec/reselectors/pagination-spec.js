@@ -11,10 +11,11 @@ describe("reselectors/pagination", () => {
       columnHeaders: [],
       dir: "",
       editCellName: null,
+      fileReadFails: {},
       listHeight: 1000,
       loading: {
         status: "initialScan",
-        rawFiles: []
+        filesCount: 0
       },
       notes: {},
       queryOriginal: "",

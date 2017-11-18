@@ -15,7 +15,10 @@ type Action =
   | FileAdded
   | FileChanged
   | FileDeleted
+  | FileFound
   | FileRead
+  | FileReadFailed
+  | FileRenamed
   | InitialScanDone
   | OpenNote
   | ReadFilesDone
@@ -25,7 +28,6 @@ type Action =
   | Search
   | SelectNext
   | SelectPrev
-  | StartInitialScan
 
 type CellContent =
   | string
@@ -68,22 +70,6 @@ type ChangedSortDirection = {
 type ChangedSortField = {
   type: 'CHANGED_SORT_FIELD',
   sortField: string
-}
-
-// see https://github.com/paulmillr/chokidar#api
-type ChokidarEventName = 'ready' | 'add' | 'change' | 'unlink'
-class Chokidar {
-  on: (eventName: ChokidarEventName, Function) => void
-}
-type ChokidarOptions = CompulsoryChokidarOptions & OptionalChokidarOptions;
-type CompulsoryChokidarOptions = {
-  cwd: string
-}
-type OptionalChokidarOptions = {
-  alwaysStat?: boolean,
-  depth?: number,
-  ignored?: string,
-  persistent?: boolean
 }
 
 type ClickRow = {
@@ -144,16 +130,30 @@ type FileDeleted = {
   type: 'FILE_DELETED',
   filename: string
 }
+type FileFound = {
+  type: 'FILE_FOUND'
+}
+type FileRenamed = {
+  type: 'FILE_RENAMED',
+  filename: string,
+  oldFilename: string
+}
 type FileRead = {type: 'FILE_READ'} & FileReadResult
 type FileReadResult = {
   filename: string,
   notePropName: string,
   value: any
 }
+type FileReadFailed = {type: 'FILE_READ_FAILED'} & FileReadFailedParams
+type FileReadFailedParams = {
+  filename: string,
+  notePropName: string
+}
+type FileReadFails = {[filename: string]: string[]}
 
 type FileReader = {
   notePropName: string,
-  read (path: string, fileStats: FsStats, callback: NodeCallback): void
+  read (path: string, fileStats: fs.Stats, callback: NodeCallback): void
 }
 type FileReaders = {
   add (fileReader: FileReader): void,
@@ -172,12 +172,6 @@ type FileWriters = {
   find (predicate: (fileWriter: FileWriter) => boolean): FileWriter|void
 }
 
-type FsStats =
-  | (fs.Stats & {
-    mtime: Date,
-    birthtime?: Date
-  })
-
 type InitialScanDone = {
   type: 'INITIAL_SCAN_DONE',
   rawFiles: RawFile[]
@@ -194,7 +188,7 @@ type LoadingState =
   | DoneLoadingState
 type InitialScanLoadingState = {
   status: 'initialScan',
-  rawFiles: RawFile[]
+  filesCount: number
 }
 type ReadingFilesLoadingState = {
   status: 'readingFiles',
@@ -205,22 +199,13 @@ type DoneLoadingState = {
   status: 'done'
 }
 
-type LoadingProps =
-  | InitialScanLoadingProps
-  | ReadingFilesLoadingState
-  | DoneLoadingState
-type InitialScanLoadingProps = {
-  status: 'initialScan',
-  filesCount: number
-}
-
 type MainProps = MainPropsActions & MainPropsWithoutActions
 type MainPropsWithoutActions = {
   columnHeaders: Array<ColumnHeader>,
   editCellName: EditCellName,
   itemsCount: number,
   listHeight: number,
-  loading: LoadingProps,
+  loading: LoadingState,
   paginationStart: number,
   queryOriginal: string,
   rowHeight: number,
@@ -251,7 +236,7 @@ type Note = {
   id: string,
   name: string,
   ext: string,
-  stats: FsStats,
+  stats: fs.Stats,
   ready?: boolean,
 
   // known fields that will exist, eventually
@@ -270,7 +255,7 @@ type NoteFields = {
   map<T> (mapper: (noteField: NoteField) => T): Array<T>
 }
 class NotesFileFilter {
-  isAccepted: (rawFile: RawFile) => bool
+  isAccepted: (rawFile: RawFile | string) => bool
 }
 
 type OpenNote = {
@@ -283,13 +268,17 @@ type Pagination = {
 }
 
 type ProcessInTesting = {
-  chokidarWatch?: Chokidar,
+  watcher?: atom$PathWatcher,
   store?: Store
 }
 
 type RawFile = {
   filename: string,
-  stats: FsStats
+  stats: fs.Stats
+}
+type RenamedFile = {
+  filename: string,
+  oldFilename? :string
 }
 
 type ReadFilesCount = {
@@ -384,14 +373,11 @@ type SifterResultItem = {
   score: number
 }
 
-type StartInitialScan = {
-  type: 'START_INITIAL_SCAN'
-}
-
 type State = {
   columnHeaders: Array<ColumnHeader>,
   dir: string,
   editCellName: EditCellName,
+  fileReadFails: FileReadFails,
   listHeight: number,
   loading: LoadingState,
   notes: Notes,

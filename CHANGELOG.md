@@ -4,7 +4,8 @@ This project adheres to [Semantic Versioning](http://semver.org/) and [keepachan
 
 
 ## [unreleased]
-
+#### Changed
+- Replaced [chokidar](https://github.com/paulmillr/chokidar) with Atom's own [filesystem watcher API](http://blog.atom.io/2017/10/03/atom-1-21.html)
 
 ## [0.17.0] - 2017-11-11
 #### Added

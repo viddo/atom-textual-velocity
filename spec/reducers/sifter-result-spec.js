@@ -49,7 +49,7 @@ describe("reducers/sifter-result", () => {
       };
 
       sifterResultReducer = SifterResultReducer(noteFields);
-      state = sifterResultReducer(undefined, A.startInitialScan(), notes);
+      state = sifterResultReducer(undefined, A.clickRow(""), notes);
     });
 
     describe("when initialScan is done", function() {
@@ -188,6 +188,19 @@ describe("reducers/sifter-result", () => {
           value: "content for alice.txt"
         })
       );
+    });
+
+    describe("when renamed file", function() {
+      sharedUpdateSearchFile(
+        A.fileRenamed({
+          filename: "alice.txt",
+          oldFilename: "alice cooper.txt"
+        })
+      );
+    });
+
+    describe("when deleted file", function() {
+      sharedUpdateSearchFile(A.fileDeleted("alice.txt"));
     });
 
     describe("when any other action", function() {

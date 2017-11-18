@@ -51,7 +51,6 @@ describe("service-consumers/rename-note", function() {
         it("should do nothing if given empty value", function() {
           fileWriter.write(oldPath, "", callbackSpy);
           expect(fs.renameSync).not.toHaveBeenCalled();
-          expect(fs.utimesSync).not.toHaveBeenCalled();
           expect(callbackSpy).toHaveBeenCalledWith(null, null);
         });
 
@@ -62,7 +61,6 @@ describe("service-consumers/rename-note", function() {
             oldPath,
             "/path/to/notes/this-last-piece.txt"
           );
-          expect(fs.utimesSync).toHaveBeenCalled();
           expect(callbackSpy).toHaveBeenCalledWith(null, null);
         });
 
@@ -72,7 +70,6 @@ describe("service-consumers/rename-note", function() {
             oldPath,
             "/path/to/notes/test.txt"
           );
-          expect(fs.utimesSync).toHaveBeenCalled();
           expect(callbackSpy).toHaveBeenCalledWith(null, null);
         });
       });

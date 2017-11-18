@@ -13,7 +13,7 @@ describe("epics/initial-scan", () => {
   let dir, store;
 
   beforeEach(() => {
-    jasmine.useRealClock(); // required for chokidar timers to work! e.g. atomic unlink events
+    jasmine.useRealClock();
 
     const tempDirPath = tempy.directory();
     dir = fs.realpathSync(tempDirPath);
@@ -22,6 +22,7 @@ describe("epics/initial-scan", () => {
     fs.writeFileSync(Path.join(dir, "note-1.txt"), "1");
     fs.writeFileSync(Path.join(dir, "note-2.md"), "2");
     fs.writeFileSync(Path.join(dir, "other.zip"), "...");
+    fs.mkdirSync(Path.join(dir, "maybe a directory"));
     fs.writeFileSync(Path.join(dir, "note-3.txt"), "3");
 
     const notesFileFilter = new NotesFileFilter(dir, {
@@ -35,10 +36,11 @@ describe("epics/initial-scan", () => {
       columnHeaders: [],
       dir,
       editCellName: null,
+      fileReadFails: {},
       listHeight: 50,
       loading: {
         status: "initialScan",
-        rawFiles: []
+        filesCount: 0
       },
       notes: {},
       queryOriginal: "",
@@ -60,48 +62,32 @@ describe("epics/initial-scan", () => {
       }
     };
     store = mockStore(state);
+
+    waitsFor(() => store.getActions().length >= 4);
   });
 
-  afterEach(() => {
-    store.dispatch(A.dispose()); // should terminate any running processes
+  afterEach(function() {
+    store.dispatch(A.dispose());
   });
 
-  describe("when start-initial-scan action is triggered", () => {
-    beforeEach(() => {
-      store.dispatch(A.startInitialScan());
+  it("should trigger an initialScanDone action with all filtered paths", function() {
+    const actions = store.getActions();
+    expect(actions.slice(0, -1)).toEqual([
+      { type: A.FILE_FOUND },
+      { type: A.FILE_FOUND },
+      { type: A.FILE_FOUND }
+    ]);
 
-      // wait for initial scan to be done (i.e. the last expected action), implicitly verifies that to work, too
-      waitsFor(
-        () => store.getActions().slice(-1)[0].type === A.INITIAL_SCAN_DONE
-      );
-    });
-
-    it("should have yielded file-added actions for each file", () => {
-      expect(store.getActions().length).toEqual(5);
-
-      const action: any = store.getActions()[1];
-      expect(action.type).toEqual(A.FILE_ADDED);
-      expect(action.rawFile).toEqual(jasmine.any(Object));
-      expect(action.rawFile.filename).toMatch(/note-\d\.txt/);
-
-      const actions = store.getActions().slice(1, -1);
-      const filenames = actions.map(action => {
-        if (action.type === A.FILE_ADDED) {
-          return action.rawFile.filename;
-        } else {
-          return action.type;
-        }
-      });
-      expect(filenames).toEqual(["note-1.txt", "note-2.md", "note-3.txt"]);
-    });
-
-    it("should have converted stats strings to date object", () => {
-      const action: any = store.getActions()[1];
-      expect(action.rawFile.stats).toEqual(jasmine.any(Object));
-      expect(action.rawFile.stats.atime).toEqual(jasmine.any(Date));
-      expect(action.rawFile.stats.birthtime).toEqual(jasmine.any(Date));
-      expect(action.rawFile.stats.ctime).toEqual(jasmine.any(Date));
-      expect(action.rawFile.stats.mtime).toEqual(jasmine.any(Date));
+    const tmp: any = actions.slice(-1);
+    const lastAction: InitialScanDone = tmp[0];
+    expect(lastAction.type).toEqual(A.INITIAL_SCAN_DONE);
+    expect(lastAction.rawFiles.length).toEqual(3);
+    expect(lastAction.rawFiles[0]).toEqual({
+      filename: jasmine.any(String),
+      stats: jasmine.objectContaining({
+        birthtime: jasmine.any(Date),
+        mtime: jasmine.any(Date)
+      })
     });
   });
 });

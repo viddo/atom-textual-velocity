@@ -14,11 +14,15 @@ describe("reducers/notes", () => {
     const fileReaders = new FileReaders();
     fileReaders.add({
       notePropName: "content",
-      read: (path: string, fileStats: FsStats, callback: NodeCallback) =>
+      read: (path: string, fileStats: fs.Stats, callback: NodeCallback) =>
         callback(null, `content for ${path}`)
     });
 
     const noteFields = new NoteFields();
+    noteFields.add({
+      notePropName: "name",
+      value: (note, filename) => filename.split(".")[0]
+    });
     noteFields.add({
       notePropName: "ext",
       value: (note, filename) => filename.split(".").slice(-1)[0]
@@ -29,11 +33,11 @@ describe("reducers/notes", () => {
 
     nextLoading = {
       status: "initialScan",
-      rawFiles: []
+      filesCount: 0
     };
 
     notesReducer = makeNotesReducer(fileReaders, noteFields);
-    state = notesReducer(undefined, A.startInitialScan(), nextLoading);
+    state = notesReducer(undefined, A.search(""), nextLoading);
   });
 
   it("should have an empty object", function() {
@@ -42,24 +46,21 @@ describe("reducers/notes", () => {
 
   describe("when initial-scan-done action", function() {
     beforeEach(function() {
+      const rawFiles = [
+        {
+          filename: "a.txt",
+          stats: { mtime: new Date() }
+        },
+        {
+          filename: "b.md",
+          stats: { mtime: new Date() }
+        }
+      ];
       nextLoading = {
         status: "initialScan",
-        rawFiles: [
-          {
-            filename: "a.txt",
-            stats: { mtime: new Date() }
-          },
-          {
-            filename: "b.md",
-            stats: { mtime: new Date() }
-          }
-        ]
+        filesCount: rawFiles.length
       };
-      state = notesReducer(
-        state,
-        A.initialScanDone(nextLoading.rawFiles),
-        nextLoading
-      );
+      state = notesReducer(state, A.initialScanDone(rawFiles), nextLoading);
     });
 
     it("should reduce notes from raw notes", function() {
@@ -68,7 +69,9 @@ describe("reducers/notes", () => {
 
     it("should apply noteFields on notes", function() {
       expect(state["a.txt"]).toEqual(jasmine.any(Object));
+      expect(state["a.txt"].name).toEqual("a");
       expect(state["a.txt"].ext).toEqual("txt");
+      expect(state["b.md"].name).toEqual("b");
       expect(state["b.md"].ext).toEqual("md");
     });
 
@@ -83,103 +86,99 @@ describe("reducers/notes", () => {
 
   describe("when file is added", function() {
     let action;
+    let prevState;
 
     beforeEach(function() {
-      nextLoading = {
-        status: "initialScan",
-        rawFiles: [
-          {
-            filename: "a.txt",
-            stats: { mtime: new Date() }
-          },
-          {
-            filename: "b.md",
-            stats: { mtime: new Date() }
-          }
-        ]
+      prevState = {
+        "alice.txt": {
+          id: "1",
+          stats: { mtime: new Date() },
+          ready: false,
+          ext: "txt",
+          name: "alice"
+        },
+        "bob.md": {
+          id: "2",
+          stats: { mtime: new Date() },
+          ready: false,
+          ext: "md",
+          name: "bob"
+        }
       };
       action = A.fileAdded({
         filename: "cesar.txt",
         stats: { mtime: new Date() }
       });
+      nextLoading = {
+        status: "done"
+      };
+
+      state = notesReducer(prevState, action, nextLoading);
     });
 
-    describe("when initial scan is not yet done", function() {
+    it("should add new notes", function() {
+      expect(state["cesar.txt"]).toEqual({
+        id: jasmine.any(String),
+        stats: { mtime: jasmine.any(Date) },
+        ready: false,
+        ext: "txt",
+        name: "cesar"
+      });
+    });
+
+    describe("when file is renamed", function() {
       beforeEach(function() {
+        action = A.fileRenamed({
+          filename: "Julius Caesar.md",
+          oldFilename: "cesar.txt"
+        });
         state = notesReducer(state, action, nextLoading);
       });
 
-      it("should not do anything", function() {
-        expect(state).toEqual({});
+      it("should rename the notes key for renamed file", function() {
+        expect(Object.keys(state)).toEqual([
+          "alice.txt",
+          "bob.md",
+          "Julius Caesar.md"
+        ]);
+        expect(state["Julius Caesar.md"]).toEqual(
+          jasmine.objectContaining({
+            name: "Julius Caesar",
+            ext: "md"
+          })
+        );
       });
     });
 
-    describe("when initial scan is done", function() {
-      let prevState;
-
+    describe("when file is removed", function() {
       beforeEach(function() {
-        nextLoading = {
-          status: "done"
-        };
-        prevState = {
-          "alice.txt": {
-            id: "1",
-            stats: { mtime: new Date() },
-            ready: false,
-            ext: "txt",
-            name: "alice"
-          },
-          "bob.md": {
-            id: "2",
-            stats: { mtime: new Date() },
-            ready: false,
-            ext: "md",
-            name: "bob"
-          }
-        };
+        action = A.fileDeleted("cesar.txt");
+        state = notesReducer(state, action, nextLoading);
+      });
+
+      it("should remove corresponding note", function() {
+        expect(state).toEqual(prevState);
+      });
+    });
+
+    describe("when a file is read", function() {
+      beforeEach(function() {
+        action = A.fileRead({
+          filename: "bob.md",
+          notePropName: "content",
+          value: "content for bob.md"
+        });
         state = notesReducer(prevState, action, nextLoading);
       });
 
-      it("should add new notes", function() {
-        expect(state["cesar.txt"]).toEqual({
-          id: jasmine.any(String),
-          stats: { mtime: jasmine.any(Date) },
-          ready: false,
-          ext: "txt",
-          name: ""
-        });
+      it("should add field to intended note", function() {
+        expect(state["bob.md"].content).toEqual("content for bob.md");
+        expect(state["alice.txt"].content).toEqual();
       });
 
-      describe("when file is removed", function() {
-        beforeEach(function() {
-          action = A.fileDeleted("cesar.txt");
-          state = notesReducer(state, action, nextLoading);
-        });
-
-        it("should remove corresponding note", function() {
-          expect(state).toEqual(prevState);
-        });
-      });
-
-      describe("when a file is read", function() {
-        beforeEach(function() {
-          action = A.fileRead({
-            filename: "bob.md",
-            notePropName: "content",
-            value: "content for bob.md"
-          });
-          state = notesReducer(prevState, action, nextLoading);
-        });
-
-        it("should add field to intended note", function() {
-          expect(state["bob.md"].content).toEqual("content for bob.md");
-          expect(state["alice.txt"].content).toEqual();
-        });
-
-        it("should set note with all fields as ready", function() {
-          expect(state["bob.md"].ready).toBe(true);
-          expect(state["alice.txt"].ready).toBe(false);
-        });
+      it("should set note with all fields as ready", function() {
+        expect(state["bob.md"].ready).toBe(true);
+        expect(state["alice.txt"].ready).toBe(false);
       });
     });
   });

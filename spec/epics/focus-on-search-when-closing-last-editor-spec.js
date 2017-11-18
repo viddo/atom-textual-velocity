@@ -22,7 +22,7 @@ describe("epics/focus-on-search-when-closing-last-editor", () => {
 
     // dummy events, just to have action$ to have a value to start with
     store.clearActions();
-    store.dispatch(A.startInitialScan());
+    store.dispatch(A.search(""));
 
     cmdSpy = jasmine.createSpy("focus-on-search");
     atom.commands.add(
