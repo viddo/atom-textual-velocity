@@ -8,6 +8,7 @@ import configureMockStore from "redux-mock-store";
 import NotesFileFilter from "../../lib/notes-file-filter";
 import pathWatcherEpic from "../../lib/epics/path-watcher";
 import * as A from "../../lib/action-creators";
+import * as C from "../../lib/action-constants";
 import { beforeEach } from "../_async-spec-helpers";
 
 let watcherTimeout;
@@ -104,10 +105,10 @@ describe("epics/path-watcher", () => {
       // linux system yields more than the created events, so keep tests a bit more laxed
       const actions: any[] = store
         .getActions()
-        .filter(action => action.type === A.FILE_ADDED);
+        .filter(action => action.type === C.FILE_ADDED);
 
       expect(actions[0]).toEqual({
-        type: A.FILE_ADDED,
+        type: C.FILE_ADDED,
         rawFile: {
           filename: "note-NEW.md",
           stats: jasmine.objectContaining({
@@ -117,7 +118,7 @@ describe("epics/path-watcher", () => {
         }
       });
       expect(actions[1]).toEqual({
-        type: A.FILE_ADDED,
+        type: C.FILE_ADDED,
         rawFile: {
           filename: "note-ALSO-NEW",
           stats: jasmine.objectContaining({
@@ -139,7 +140,7 @@ describe("epics/path-watcher", () => {
     it("should yield a file changed action", () => {
       const action: any = store.getActions()[0];
       expect(action).toEqual({
-        type: A.FILE_CHANGED,
+        type: C.FILE_CHANGED,
         rawFile: {
           filename: "note-1.txt",
           stats: jasmine.objectContaining({
@@ -161,7 +162,7 @@ describe("epics/path-watcher", () => {
     it("should yield a deleted file action", () => {
       const action: any = store.getActions()[0];
       expect(action).toEqual({
-        type: A.FILE_DELETED,
+        type: C.FILE_DELETED,
         filename: "note-1.txt"
       });
     });
@@ -179,10 +180,10 @@ describe("epics/path-watcher", () => {
 
     it("should yield both a deleted file and added file action", () => {
       const actions: any[] = store.getActions();
-      if (actions[0].type === A.FILE_RENAMED) {
+      if (actions[0].type === C.FILE_RENAMED) {
         expect(actions).toEqual([
           {
-            type: A.FILE_RENAMED,
+            type: C.FILE_RENAMED,
             filename: "note-42.md",
             oldFilename: "note-1.txt"
           }
@@ -195,11 +196,11 @@ describe("epics/path-watcher", () => {
         runs(() => {
           expect(actions).toEqual([
             {
-              type: A.FILE_DELETED,
+              type: C.FILE_DELETED,
               filename: "note-1.txt"
             },
             {
-              type: A.FILE_ADDED,
+              type: C.FILE_ADDED,
               rawFile: {
                 filename: "note-42.md",
                 stats: jasmine.objectContaining({

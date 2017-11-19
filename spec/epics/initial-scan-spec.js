@@ -8,6 +8,7 @@ import configureMockStore from "redux-mock-store";
 import NotesFileFilter from "../../lib/notes-file-filter";
 import initialScanEpic from "../../lib/epics/initial-scan";
 import * as A from "../../lib/action-creators";
+import * as C from "../../lib/action-constants";
 
 describe("epics/initial-scan", () => {
   let dir, store;
@@ -76,14 +77,14 @@ describe("epics/initial-scan", () => {
   it("should trigger an initialScanDone action with all filtered paths", function() {
     const actions = store.getActions();
     expect(actions.slice(0, -1)).toEqual([
-      { type: A.FILE_FOUND },
-      { type: A.FILE_FOUND },
-      { type: A.FILE_FOUND }
+      { type: C.FILE_FOUND },
+      { type: C.FILE_FOUND },
+      { type: C.FILE_FOUND }
     ]);
 
     const tmp: any = actions.slice(-1);
     const lastAction: InitialScanDone = tmp[0];
-    expect(lastAction.type).toEqual(A.INITIAL_SCAN_DONE);
+    expect(lastAction.type).toEqual(C.INITIAL_SCAN_DONE);
     expect(lastAction.rawFiles.length).toEqual(3);
     expect(lastAction.rawFiles[0]).toEqual({
       filename: jasmine.any(String),
