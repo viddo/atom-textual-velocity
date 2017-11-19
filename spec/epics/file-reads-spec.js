@@ -34,7 +34,7 @@ describe("epics/file-reads", () => {
       fileReadFails: {},
       listHeight: 50,
       loading: {
-        status: "initialScan",
+        status: "readDir",
         filesCount: 0
       },
       notes: {},
@@ -63,7 +63,7 @@ describe("epics/file-reads", () => {
     store.dispatch(A.dispose()); // tests dispose logic working
 
     store.clearActions();
-    const finalAction = A.initialScanDone([]);
+    const finalAction = A.readDirDone([]);
     store.dispatch(finalAction);
     expect(store.getActions()).toEqual(
       [finalAction],
@@ -71,7 +71,7 @@ describe("epics/file-reads", () => {
     );
   });
 
-  describe("when initialScanDone action is dispatched", function() {
+  describe("when readDirDone action is dispatched", function() {
     beforeEach(function() {
       const now = new Date();
 
@@ -134,7 +134,7 @@ describe("epics/file-reads", () => {
       };
       state.notes = notes;
 
-      store.dispatch(A.initialScanDone(rawFiles));
+      store.dispatch(A.readDirDone(rawFiles));
       waitsFor(() => store.getActions().length >= 5);
     });
 

@@ -16,12 +16,7 @@ describe("reducers/loading", () => {
 
   describe("when initial-scan-done action without any new files found", () => {
     beforeEach(() => {
-      state = loadingReducer(
-        state,
-        A.initialScanDone([]),
-        notes,
-        fileReadFails
-      );
+      state = loadingReducer(state, A.readDirDone([]), notes, fileReadFails);
     });
 
     it("should set status to done straight away", () => {
@@ -36,16 +31,16 @@ describe("reducers/loading", () => {
     });
 
     it("should append raw files", () => {
-      expect(state.status).toEqual("initialScan");
-      if (state.status === "initialScan") {
+      expect(state.status).toEqual("readDir");
+      if (state.status === "readDir") {
         expect(state.filesCount).toEqual(2);
       }
     });
 
     describe("when initial-scan-done action", () => {
       beforeEach(() => {
-        if (state.status === "initialScan") {
-          const initialScanDoneAction = A.initialScanDone([
+        if (state.status === "readDir") {
+          const readDirDoneAction = A.readDirDone([
             {
               filename: "a",
               stats: { mtime: new Date() }
@@ -82,13 +77,13 @@ describe("reducers/loading", () => {
           };
           state = loadingReducer(
             state,
-            initialScanDoneAction,
+            readDirDoneAction,
             notes,
             fileReadFails
           );
         } else {
           throw new Error(
-            `status is expected to be initialScan, was ${state.status}`
+            `status is expected to be readDir, was ${state.status}`
           );
         }
       });

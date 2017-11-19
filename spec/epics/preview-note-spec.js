@@ -20,7 +20,7 @@ describe("epics/preview-note", () => {
       fileReadFails: {},
       listHeight: 75,
       loading: {
-        status: "initialScan",
+        status: "readDir",
         filesCount: 0
       },
       notes: {

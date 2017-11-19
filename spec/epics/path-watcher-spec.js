@@ -46,7 +46,7 @@ describe("epics/path-watcher", () => {
       fileReadFails: {},
       listHeight: 50,
       loading: {
-        status: "initialScan",
+        status: "readDir",
         filesCount: 0
       },
       notes: {},

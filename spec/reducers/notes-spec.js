@@ -32,7 +32,7 @@ describe("reducers/notes", () => {
     noteFields.add({ notePropName: "content" });
 
     nextLoading = {
-      status: "initialScan",
+      status: "readDir",
       filesCount: 0
     };
 
@@ -57,10 +57,10 @@ describe("reducers/notes", () => {
         }
       ];
       nextLoading = {
-        status: "initialScan",
+        status: "readDir",
         filesCount: rawFiles.length
       };
-      state = notesReducer(state, A.initialScanDone(rawFiles), nextLoading);
+      state = notesReducer(state, A.readDirDone(rawFiles), nextLoading);
     });
 
     it("should reduce notes from raw notes", function() {

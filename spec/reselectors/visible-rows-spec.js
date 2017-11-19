@@ -23,7 +23,7 @@ describe("reselectors/visible-rows", () => {
       fileReadFails: {},
       listHeight: 25,
       loading: {
-        status: "initialScan",
+        status: "readDir",
         filesCount: 0
       },
       notes: {
