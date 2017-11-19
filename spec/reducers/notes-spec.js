@@ -3,7 +3,7 @@
 import * as A from "../../lib/action-creators";
 import FileReaders from "../../lib/file-readers";
 import NoteFields from "../../lib/note-fields";
-import makeNotesReducer from "../../lib/reducers/notes";
+import newNotesReducer from "../../lib/reducers/notes";
 
 describe("reducers/notes", () => {
   let state: Notes;
@@ -36,7 +36,7 @@ describe("reducers/notes", () => {
       filesCount: 0
     };
 
-    notesReducer = makeNotesReducer(fileReaders, noteFields);
+    notesReducer = newNotesReducer(fileReaders, noteFields);
     state = notesReducer(undefined, A.search(""), nextLoading);
   });
 

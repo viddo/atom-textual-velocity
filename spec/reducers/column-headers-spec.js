@@ -4,7 +4,7 @@ import * as A from "../../lib/action-creators";
 import Columns from "../../lib/columns";
 import FileIconColumn from "../../lib/columns/file-icon-column";
 import SummaryColumn from "../../lib/columns/summary-column";
-import makeColumnHeadersReducer from "../../lib/reducers/column-headers";
+import newColumnHeadersReducer from "../../lib/reducers/column-headers";
 
 describe("reducers/column-headers", () => {
   let state;
@@ -15,7 +15,7 @@ describe("reducers/column-headers", () => {
     columns.add(new SummaryColumn({ sortField: "name", editCellName: "" }));
     columns.add(new FileIconColumn({ sortField: "ext" }));
 
-    columnHeadersReducer = makeColumnHeadersReducer(columns);
+    columnHeadersReducer = newColumnHeadersReducer(columns);
   });
 
   it("should return defaults when state is missing", function() {
