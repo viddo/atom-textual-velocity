@@ -9,7 +9,7 @@ describe("reducers/file-read-fails", () => {
   let notesReducer;
 
   beforeEach(() => {
-    state = fileReadFailsReducer(undefined, A.initialScanDone([]));
+    state = fileReadFailsReducer(undefined, A.readDirDone([]));
   });
 
   it("should have an empty list initially", () => {

@@ -6,8 +6,9 @@ import tempy from "tempy";
 import { createEpicMiddleware } from "redux-observable";
 import configureMockStore from "redux-mock-store";
 import NotesFileFilter from "../../lib/notes-file-filter";
-import makeInitialScanEpic from "../../lib/epics/initial-scan";
+import readDirEpic from "../../lib/epics/read-dir";
 import * as A from "../../lib/action-creators";
+import * as C from "../../lib/action-constants";
 
 describe("epics/initial-scan", () => {
   let dir, store;
@@ -29,8 +30,11 @@ describe("epics/initial-scan", () => {
       exclusions: [".DS_Store"],
       excludeVcsIgnoredPaths: true
     });
-    const initialScanEpic = makeInitialScanEpic(notesFileFilter);
-    const epicMiddleware = createEpicMiddleware(initialScanEpic);
+    const epicMiddleware = createEpicMiddleware(readDirEpic, {
+      dependencies: {
+        notesFileFilter
+      }
+    });
     const mockStore = configureMockStore([epicMiddleware]);
     const state: State = {
       columnHeaders: [],
@@ -39,7 +43,7 @@ describe("epics/initial-scan", () => {
       fileReadFails: {},
       listHeight: 50,
       loading: {
-        status: "initialScan",
+        status: "readDir",
         filesCount: 0
       },
       notes: {},
@@ -70,17 +74,17 @@ describe("epics/initial-scan", () => {
     store.dispatch(A.dispose());
   });
 
-  it("should trigger an initialScanDone action with all filtered paths", function() {
+  it("should trigger an readDirDone action with all filtered paths", function() {
     const actions = store.getActions();
     expect(actions.slice(0, -1)).toEqual([
-      { type: A.FILE_FOUND },
-      { type: A.FILE_FOUND },
-      { type: A.FILE_FOUND }
+      { type: C.FILE_FOUND },
+      { type: C.FILE_FOUND },
+      { type: C.FILE_FOUND }
     ]);
 
     const tmp: any = actions.slice(-1);
-    const lastAction: InitialScanDone = tmp[0];
-    expect(lastAction.type).toEqual(A.INITIAL_SCAN_DONE);
+    const lastAction: ReadDirDone = tmp[0];
+    expect(lastAction.type).toEqual(C.READ_DIR_DONE);
     expect(lastAction.rawFiles.length).toEqual(3);
     expect(lastAction.rawFiles[0]).toEqual({
       filename: jasmine.any(String),

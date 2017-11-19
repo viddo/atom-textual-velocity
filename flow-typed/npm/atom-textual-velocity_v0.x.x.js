@@ -19,7 +19,7 @@ type Action =
   | FileRead
   | FileReadFailed
   | FileRenamed
-  | InitialScanDone
+  | ReadDirDone
   | OpenNote
   | ReadFilesDone
   | ResetSearch
@@ -172,8 +172,8 @@ type FileWriters = {
   find (predicate: (fileWriter: FileWriter) => boolean): FileWriter|void
 }
 
-type InitialScanDone = {
-  type: 'INITIAL_SCAN_DONE',
+type ReadDirDone = {
+  type: 'READ_DIR_DONE',
   rawFiles: RawFile[]
 }
 
@@ -183,11 +183,11 @@ type KeyPressEvent = {
 }
 
 type LoadingState =
-  | InitialScanLoadingState
+  | ReadDirLoadingState
   | ReadingFilesLoadingState
   | DoneLoadingState
-type InitialScanLoadingState = {
-  status: 'initialScan',
+type ReadDirLoadingState = {
+  status: 'readDir',
   filesCount: number
 }
 type ReadingFilesLoadingState = {

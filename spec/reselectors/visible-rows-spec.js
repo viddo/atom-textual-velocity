@@ -3,7 +3,7 @@
 import Columns from "../../lib/columns";
 import FileIconColumn from "../../lib/columns/file-icon-column";
 import SummaryColumn from "../../lib/columns/summary-column";
-import makeVisibleRowsSelector from "../../lib/reselectors/visible-rows";
+import newVisibleRowsSelector from "../../lib/reselectors/visible-rows";
 import paginationSelector from "../../lib/reselectors/pagination";
 
 describe("reselectors/visible-rows", () => {
@@ -23,7 +23,7 @@ describe("reselectors/visible-rows", () => {
       fileReadFails: {},
       listHeight: 25,
       loading: {
-        status: "initialScan",
+        status: "readDir",
         filesCount: 0
       },
       notes: {
@@ -88,7 +88,7 @@ describe("reselectors/visible-rows", () => {
       }
     };
 
-    visibleRowsSelector = makeVisibleRowsSelector(columns, paginationSelector);
+    visibleRowsSelector = newVisibleRowsSelector(columns, paginationSelector);
   });
 
   describe("when initial scan is done", function() {

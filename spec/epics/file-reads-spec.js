@@ -3,7 +3,7 @@
 import { createEpicMiddleware } from "redux-observable";
 import configureMockStore from "redux-mock-store";
 import FileReaders from "../../lib/file-readers";
-import makeFileReadsEpic from "../../lib/epics/file-reads";
+import fileReadsEpic from "../../lib/epics/file-reads";
 import * as A from "../../lib/action-creators";
 
 describe("epics/file-reads", () => {
@@ -20,8 +20,11 @@ describe("epics/file-reads", () => {
     };
     fileReaders.add(contentFileReader);
 
-    const fileReadsEpic = makeFileReadsEpic(fileReaders);
-    const epicMiddleware = createEpicMiddleware(fileReadsEpic);
+    const epicMiddleware = createEpicMiddleware(fileReadsEpic, {
+      dependencies: {
+        fileReaders
+      }
+    });
     const mockStore = configureMockStore([epicMiddleware]);
 
     state = {
@@ -31,7 +34,7 @@ describe("epics/file-reads", () => {
       fileReadFails: {},
       listHeight: 50,
       loading: {
-        status: "initialScan",
+        status: "readDir",
         filesCount: 0
       },
       notes: {},
@@ -60,7 +63,7 @@ describe("epics/file-reads", () => {
     store.dispatch(A.dispose()); // tests dispose logic working
 
     store.clearActions();
-    const finalAction = A.initialScanDone([]);
+    const finalAction = A.readDirDone([]);
     store.dispatch(finalAction);
     expect(store.getActions()).toEqual(
       [finalAction],
@@ -68,7 +71,7 @@ describe("epics/file-reads", () => {
     );
   });
 
-  describe("when initialScanDone action is dispatched", function() {
+  describe("when readDirDone action is dispatched", function() {
     beforeEach(function() {
       const now = new Date();
 
@@ -131,7 +134,7 @@ describe("epics/file-reads", () => {
       };
       state.notes = notes;
 
-      store.dispatch(A.initialScanDone(rawFiles));
+      store.dispatch(A.readDirDone(rawFiles));
       waitsFor(() => store.getActions().length >= 5);
     });
 

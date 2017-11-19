@@ -14,7 +14,7 @@ describe("reselectors/pagination", () => {
       fileReadFails: {},
       listHeight: 1000,
       loading: {
-        status: "initialScan",
+        status: "readDir",
         filesCount: 0
       },
       notes: {},

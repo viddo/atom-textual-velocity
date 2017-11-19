@@ -52,9 +52,9 @@ describe("reducers/sifter-result", () => {
       state = sifterResultReducer(undefined, A.clickRow(""), notes);
     });
 
-    describe("when initialScan is done", function() {
+    describe("when readDir is done", function() {
       beforeEach(function() {
-        state = sifterResultReducer(state, A.initialScanDone([]), notes);
+        state = sifterResultReducer(state, A.readDirDone([]), notes);
       });
 
       it("should return results for empty query", function() {

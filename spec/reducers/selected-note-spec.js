@@ -305,7 +305,7 @@ describe("reducers/selected-note", () => {
         nextSifterResult.items = [{ id: "foo", score: 1 }];
         state = selectedNoteReducer(
           selectedNote,
-          actions.initialScanDone([]),
+          actions.readDirDone([]),
           dir,
           nextSifterResult
         );
@@ -320,7 +320,7 @@ describe("reducers/selected-note", () => {
       beforeEach(function() {
         state = selectedNoteReducer(
           selectedNote,
-          actions.initialScanDone([]),
+          actions.readDirDone([]),
           dir,
           nextSifterResult
         );
