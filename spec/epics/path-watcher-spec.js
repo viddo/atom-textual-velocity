@@ -6,7 +6,7 @@ import tempy from "tempy";
 import { createEpicMiddleware } from "redux-observable";
 import configureMockStore from "redux-mock-store";
 import NotesFileFilter from "../../lib/notes-file-filter";
-import makePathWatcherEpic from "../../lib/epics/path-watcher";
+import pathWatcherEpic from "../../lib/epics/path-watcher";
 import * as A from "../../lib/action-creators";
 import { beforeEach } from "../_async-spec-helpers";
 
@@ -32,8 +32,11 @@ describe("epics/path-watcher", () => {
       exclusions: [".DS_Store"],
       excludeVcsIgnoredPaths: true
     });
-    const pathWatcherEpic = makePathWatcherEpic(notesFileFilter);
-    const epicMiddleware = createEpicMiddleware(pathWatcherEpic);
+    const epicMiddleware = createEpicMiddleware(pathWatcherEpic, {
+      dependencies: {
+        notesFileFilter
+      }
+    });
     const mockStore = configureMockStore([epicMiddleware]);
     const state: State = {
       columnHeaders: [],

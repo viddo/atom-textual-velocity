@@ -6,7 +6,7 @@ import tempy from "tempy";
 import { createEpicMiddleware } from "redux-observable";
 import configureMockStore from "redux-mock-store";
 import NotesFileFilter from "../../lib/notes-file-filter";
-import makeInitialScanEpic from "../../lib/epics/initial-scan";
+import initialScanEpic from "../../lib/epics/initial-scan";
 import * as A from "../../lib/action-creators";
 
 describe("epics/initial-scan", () => {
@@ -29,8 +29,11 @@ describe("epics/initial-scan", () => {
       exclusions: [".DS_Store"],
       excludeVcsIgnoredPaths: true
     });
-    const initialScanEpic = makeInitialScanEpic(notesFileFilter);
-    const epicMiddleware = createEpicMiddleware(initialScanEpic);
+    const epicMiddleware = createEpicMiddleware(initialScanEpic, {
+      dependencies: {
+        notesFileFilter
+      }
+    });
     const mockStore = configureMockStore([epicMiddleware]);
     const state: State = {
       columnHeaders: [],

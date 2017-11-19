@@ -3,7 +3,7 @@
 import { createEpicMiddleware } from "redux-observable";
 import configureMockStore from "redux-mock-store";
 import FileWriters from "../../lib/file-writers";
-import makeFileWritesEpic from "../../lib/epics/file-writes";
+import fileWritesEpic from "../../lib/epics/file-writes";
 import * as A from "../../lib/action-creators";
 
 describe("epics/file-writes", () => {
@@ -31,8 +31,11 @@ describe("epics/file-writes", () => {
     };
     fileWriters.add(filenameFileWriter);
 
-    const fileWritesEpic = makeFileWritesEpic(fileWriters);
-    const epicMiddleware = createEpicMiddleware(fileWritesEpic);
+    const epicMiddleware = createEpicMiddleware(fileWritesEpic, {
+      dependencies: {
+        fileWriters
+      }
+    });
     const mockStore = configureMockStore([epicMiddleware]);
 
     state = {

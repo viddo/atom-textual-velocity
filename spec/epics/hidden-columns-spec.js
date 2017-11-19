@@ -2,7 +2,7 @@
 
 import { createEpicMiddleware } from "redux-observable";
 import configureMockStore from "redux-mock-store";
-import makeHiddenColumnsEpic from "../../lib/epics/hidden-columns";
+import hiddenColumnsEpic from "../../lib/epics/hidden-columns";
 import Columns from "../../lib/columns";
 import SummaryColumn from "../../lib/columns/summary-column";
 import FileIconColumn from "../../lib/columns/file-icon-column";
@@ -24,8 +24,11 @@ describe("epics/hidden-columns", () => {
 
     spyOn(atom.contextMenu, "add").andCallThrough();
 
-    const hiddenColumnsEpic = makeHiddenColumnsEpic(columns);
-    const epicMiddleware = createEpicMiddleware(hiddenColumnsEpic);
+    const epicMiddleware = createEpicMiddleware(hiddenColumnsEpic, {
+      dependencies: {
+        columns
+      }
+    });
     const mockStore = configureMockStore([epicMiddleware]);
 
     contextMenuItems = () =>

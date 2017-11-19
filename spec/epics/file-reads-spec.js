@@ -3,7 +3,7 @@
 import { createEpicMiddleware } from "redux-observable";
 import configureMockStore from "redux-mock-store";
 import FileReaders from "../../lib/file-readers";
-import makeFileReadsEpic from "../../lib/epics/file-reads";
+import fileReadsEpic from "../../lib/epics/file-reads";
 import * as A from "../../lib/action-creators";
 
 describe("epics/file-reads", () => {
@@ -20,8 +20,11 @@ describe("epics/file-reads", () => {
     };
     fileReaders.add(contentFileReader);
 
-    const fileReadsEpic = makeFileReadsEpic(fileReaders);
-    const epicMiddleware = createEpicMiddleware(fileReadsEpic);
+    const epicMiddleware = createEpicMiddleware(fileReadsEpic, {
+      dependencies: {
+        fileReaders
+      }
+    });
     const mockStore = configureMockStore([epicMiddleware]);
 
     state = {
