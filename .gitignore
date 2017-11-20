@@ -4,5 +4,6 @@ elm-stuff
 npm-debug.log
 node_modules
 spec/fixtures/notes
+spec/.textual-velocity-cache
 TODOs.md
 wip
