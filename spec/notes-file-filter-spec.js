@@ -3,6 +3,7 @@
 import Path from "path";
 import { defaultConfig } from "../lib/config";
 import NotesFileFilter from "../lib/notes-file-filter";
+import { CACHE_FILENAME } from "../lib/notes-cache";
 
 describe("notes-file-filter", () => {
   let notesFileFilter;
@@ -72,6 +73,10 @@ describe("notes-file-filter", () => {
 
     it("returns false for nv/nvalt settings file", function() {
       expect(notesFileFilter.isAccepted("Notes & Settings")).toBe(false);
+    });
+
+    it("returns false for cache file", function() {
+      expect(notesFileFilter.isAccepted(CACHE_FILENAME)).toBe(false);
     });
   });
 });
