@@ -4,8 +4,13 @@ This project adheres to [Semantic Versioning](http://semver.org/) and [keepachan
 
 
 ## [unreleased]
+
+## [0.18.0] - 2017-11-20
 #### Changed
 - Replaced [chokidar](https://github.com/paulmillr/chokidar) with Atom's own [filesystem watcher API](http://blog.atom.io/2017/10/03/atom-1-21.html)
+- Cache notes as metadata file in dir [#112](https://github.com/viddo/atom-textual-velocity/pull/112)
+- Some minor internal updates
+
 
 ## [0.17.0] - 2017-11-11
 #### Added
