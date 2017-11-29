@@ -31,7 +31,7 @@
     "bson": "^1.0.4",
     "classnames": "2.2.5",
     "fs-plus": "3.0.1",
-    "moment": "2.19.2",
+    "moment": "2.19.3",
     "react": "16.1.1",
     "react-dom": "16.1.1",
     "react-redux": "5.0.6",
