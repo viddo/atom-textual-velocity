@@ -39,7 +39,7 @@
     "redux-observable": "0.17.0",
     "redux-thunk": "2.2.0",
     "reselect": "3.0.1",
-    "rxjs": "5.5.1",
+    "rxjs": "5.5.4",
     "sifter": "0.5.3"
   },
   "optionalDependencies": {
@@ -58,7 +58,7 @@
     "eslint-plugin-prettier": "2.3.1",
     "eslint-plugin-promise": "3.6.0",
     "eslint-plugin-react": "7.5.1",
-    "flow-bin": "0.59.0",
+    "flow-bin": "0.60.1",
     "flow-typed": "2.2.3",
     "husky": "0.14.3",
     "lint-staged": "6.0.0",
