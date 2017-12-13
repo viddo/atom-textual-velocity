@@ -8,4 +8,5 @@ ratings:
    - "**.js"
 
 exclude_paths:
+- flow-typed/**/*
 - spec/**/*
