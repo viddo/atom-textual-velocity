@@ -199,37 +199,6 @@ type DoneLoadingState = {
   status: 'done'
 }
 
-type MainProps = MainPropsActions & MainPropsWithoutActions
-type MainPropsWithoutActions = {
-  columnHeaders: Array<ColumnHeader>,
-  editCellName: EditCellName,
-  itemsCount: number,
-  listHeight: number,
-  loading: LoadingState,
-  paginationStart: number,
-  queryOriginal: string,
-  rowHeight: number,
-  scrollTop: number,
-  sortDirection: SortDirection,
-  sortField: string,
-  visibleRows: Array<Row>
-}
-type MainPropsActions = {
-  actions: {
-    changeRowHeight: Function,
-    changeSortDirection: Function,
-    changeSortField: Function,
-    clickRow: Function,
-    editCell: Function,
-    editCellAbort: Function,
-    editCellSave: Function,
-    keyPress: Function,
-    resizeList: Function,
-    scroll: Function,
-    search: Function
-  },
-}
-
 type NodeCallback = (err: ?Object|void, result: any) => void
 
 type Note = {
