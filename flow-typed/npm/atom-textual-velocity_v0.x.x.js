@@ -267,7 +267,7 @@ type ResetSearch = {
   type: 'RESET_SEARCH'
 }
 
-type Row = {
+type NoteRow = {
   cells: Array<RowCell>,
   filename: string,
   id: string,
