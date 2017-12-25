@@ -1,8 +1,22 @@
 module.exports = {
-  extends: ["prettier"],
+  env: {
+    atomtest: true,
+    browser: true,
+    es6: true,
+    jasmine: true,
+    node: true
+  },
+  extends: ["eslint:recommended", "prettier", "plugin:react/recommended"],
   parser: "babel-eslint",
-  plugins: ["prettier", "flowtype"],
+  parserOptions: {
+    ecmaFeatures: {
+      jsx: true
+    }
+  },
+  plugins: ["prettier", "flowtype", "react"],
   rules: {
+    "no-console": "off",
+    "react/no-find-dom-node": "off",
     "prettier/prettier": "error",
     "flowtype/define-flow-type": 1,
     "flowtype/use-flow-type": 1
@@ -13,21 +27,10 @@ module.exports = {
     }
   },
   globals: {
-    advanceClock: false,
-    afterEach: false,
     atom: false,
-    beforeAll: false,
-    beforeEach: false,
-    describe: false,
     Event: false,
-    expect: false,
     HTMLElement: false,
     HTMLInputElement: false,
-    it: false,
-    jasmine: false,
-    spyOn: false,
-    runs: false,
-    xdescribe: false,
     setupBuses: false,
     waitsFor: false,
     waitsForPromise: false

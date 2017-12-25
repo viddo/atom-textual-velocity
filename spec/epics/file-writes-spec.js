@@ -25,7 +25,7 @@ describe("epics/file-writes", () => {
     fileWriters.add(tagsFileWriter);
     filenameFileWriter = {
       editCellName: "filename",
-      write: function(path: string, str: string, callback: NodeCallback) {
+      write: function() {
         writeSpy(...arguments);
       }
     };

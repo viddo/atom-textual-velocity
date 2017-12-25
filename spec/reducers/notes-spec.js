@@ -7,7 +7,6 @@ import newNotesReducer from "../../lib/reducers/notes";
 
 describe("reducers/notes", () => {
   let state: Notes;
-  let nextLoading: LoadingState;
   let notesReducer;
 
   beforeEach(function() {
@@ -31,13 +30,8 @@ describe("reducers/notes", () => {
     // Some fields are set by a file-reader, in those cases the field is only there to indicate that the field exist
     noteFields.add({ notePropName: "content" });
 
-    nextLoading = {
-      status: "readDir",
-      filesCount: 0
-    };
-
     notesReducer = newNotesReducer(fileReaders, noteFields);
-    state = notesReducer(undefined, A.search(""), nextLoading);
+    state = notesReducer(undefined, A.search(""));
   });
 
   it("should have an empty object", function() {
@@ -56,11 +50,7 @@ describe("reducers/notes", () => {
           stats: { mtime: new Date() }
         }
       ];
-      nextLoading = {
-        status: "readDir",
-        filesCount: rawFiles.length
-      };
-      state = notesReducer(state, A.readDirDone(rawFiles), nextLoading);
+      state = notesReducer(state, A.readDirDone(rawFiles));
     });
 
     it("should reduce notes from raw notes", function() {
@@ -109,11 +99,8 @@ describe("reducers/notes", () => {
         filename: "cesar.txt",
         stats: { mtime: new Date() }
       });
-      nextLoading = {
-        status: "done"
-      };
 
-      state = notesReducer(prevState, action, nextLoading);
+      state = notesReducer(prevState, action);
     });
 
     it("should add new notes", function() {
@@ -132,7 +119,7 @@ describe("reducers/notes", () => {
           filename: "Julius Caesar.md",
           oldFilename: "cesar.txt"
         });
-        state = notesReducer(state, action, nextLoading);
+        state = notesReducer(state, action);
       });
 
       it("should rename the notes key for renamed file", function() {
@@ -153,7 +140,7 @@ describe("reducers/notes", () => {
     describe("when file is removed", function() {
       beforeEach(function() {
         action = A.fileDeleted("cesar.txt");
-        state = notesReducer(state, action, nextLoading);
+        state = notesReducer(state, action);
       });
 
       it("should remove corresponding note", function() {
@@ -168,7 +155,7 @@ describe("reducers/notes", () => {
           notePropName: "content",
           value: "content for bob.md"
         });
-        state = notesReducer(prevState, action, nextLoading);
+        state = notesReducer(prevState, action);
       });
 
       it("should add field to intended note", function() {

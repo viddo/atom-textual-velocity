@@ -72,7 +72,7 @@ describe("epics/path-watcher", () => {
 
     await Promise.all([
       pathWatcherReady(),
-      new Promise((resolve, reject) => {
+      new Promise(resolve => {
         // enforce spec to wait, to make sure underlying watcher doesn't interpet too rapid changes as initial event
         // e.g. created+modifed file in a short period of time will only yield a created event
         setTimeout(resolve, 1200);
@@ -217,7 +217,7 @@ describe("epics/path-watcher", () => {
 });
 
 function pathWatcherReady() {
-  return new Promise((resolve, reject) => {
+  return new Promise(resolve => {
     const tryWatcher = async () => {
       const { watcher } = global.getProcessInTesting(process);
       if (watcher) {

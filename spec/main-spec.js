@@ -98,7 +98,7 @@ function loadingDone() {
     const { store } = global.getProcessInTesting(process);
     if (store) {
       const unsubscribe = store.subscribe(() => {
-        const state: State = store.getState();
+        const state = store.getState();
         if (state.loading.status === "done") {
           unsubscribe();
           resolve();

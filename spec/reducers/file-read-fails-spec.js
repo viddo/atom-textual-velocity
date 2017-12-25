@@ -5,8 +5,6 @@ import fileReadFailsReducer from "../../lib/reducers/file-read-fails";
 
 describe("reducers/file-read-fails", () => {
   let state: FileReadFails;
-  let nextLoading: LoadingState;
-  let notesReducer;
 
   beforeEach(() => {
     state = fileReadFailsReducer(undefined, A.readDirDone([]));
