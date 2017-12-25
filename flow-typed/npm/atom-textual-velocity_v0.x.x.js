@@ -7,7 +7,6 @@ type Action =
   | ChangedRowHeight
   | ChangedSortDirection
   | ChangedSortField
-  | ClickRow
   | Dispose
   | EditCell
   | EditCellAbort
@@ -27,6 +26,7 @@ type Action =
   | Scrolled
   | Search
   | SelectNext
+  | SelectNote
   | SelectPrev
 
 type CellContent =
@@ -72,8 +72,8 @@ type ChangedSortField = {
   sortField: string
 }
 
-type ClickRow = {
-  type: 'CLICK_ROW',
+type SelectNote = {
+  type: 'SELECT_NOTE',
   filename: string
 }
 

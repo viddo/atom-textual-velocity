@@ -49,7 +49,7 @@ describe("reducers/sifter-result", () => {
       };
 
       sifterResultReducer = SifterResultReducer(noteFields);
-      state = sifterResultReducer(undefined, A.clickRow(""), notes);
+      state = sifterResultReducer(undefined, A.selectNote(""), notes);
     });
 
     describe("when readDir is done", function() {

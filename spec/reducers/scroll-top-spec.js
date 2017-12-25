@@ -20,7 +20,7 @@ describe("reducers/scroll-top", () => {
     beforeEach(function() {
       state = scrollTopReducer(
         state,
-        A.clickRow(""),
+        A.selectNote(""),
         nextListHeight,
         nextRowHeight,
         nextSelectedNote
@@ -69,7 +69,7 @@ describe("reducers/scroll-top", () => {
       state = 123;
       state = scrollTopReducer(
         state,
-        A.clickRow(""),
+        A.selectNote(""),
         nextListHeight,
         nextRowHeight,
         nextSelectedNote
