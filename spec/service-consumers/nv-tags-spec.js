@@ -1,7 +1,7 @@
 var fs = require("fs");
 var Path = require("path");
 var tempy = require("tempy");
-var Service = require("../../lib/service");
+var Service = require("../../lib/service").default;
 var nvTags = require("../../lib/service-consumers/nv-tags");
 
 var unsupErr = nvTags.getUnsupportedError();

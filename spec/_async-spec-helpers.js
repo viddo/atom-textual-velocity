@@ -1,4 +1,3 @@
-/** @babel */
 // from https://github.com/atom/atom/blob/efae2e08c3f902149431732cbd550aea09748acc/spec/async-spec-helpers.js
 
 export function beforeEach(fn) {

@@ -13,6 +13,18 @@
     "wiki"
   ],
   "license": "MIT",
+  "atomTranspilers": [
+    {
+      "transpiler": "atom-babel6-transpiler",
+      "glob": "{lib,spec}/**/*.js",
+      "options": {
+        "cacheKeyFiles": [
+          ".babelrc",
+          "package.json"
+        ]
+      }
+    }
+  ],
   "main": "./lib/main.js",
   "activationCommands": {
     "atom-workspace": "textual-velocity:start-session"
@@ -28,6 +40,14 @@
     }
   },
   "dependencies": {
+    "atom-babel6-transpiler": "^1.1.2",
+    "babel-plugin-transform-class-properties": "^6.24.1",
+    "babel-plugin-transform-object-rest-spread": "^6.26.0",
+    "babel-plugin-transform-regenerator": "^6.26.0",
+    "babel-plugin-transform-runtime": "^6.23.0",
+    "babel-preset-env": "^1.6.1",
+    "babel-preset-react": "^6.24.1",
+    "babel-runtime": "^6.26.0",
     "bson": "^1.0.4",
     "classnames": "2.2.5",
     "fs-plus": "3.0.1",
@@ -48,8 +68,6 @@
   },
   "devDependencies": {
     "babel-eslint": "8.1.2",
-    "babel-plugin-syntax-flow": "6.18.0",
-    "babel-plugin-transform-flow-strip-types": "6.22.0",
     "eslint": "4.14.0",
     "eslint-config-prettier": "2.9.0",
     "eslint-plugin-flowtype": "2.40.0",
