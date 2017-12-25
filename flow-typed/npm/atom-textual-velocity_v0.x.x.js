@@ -114,7 +114,6 @@ type EditCellAbort = {
 type EditCellName = ?string
 type EditCellSave = {
   type: 'EDIT_CELL_SAVE',
-  editCellName: string,
   value: string
 }
 
