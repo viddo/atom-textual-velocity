@@ -67,7 +67,7 @@ describe("main", () => {
       });
 
       it("should render rows", () => {
-        expect(panel.getItem().innerHTML).toContain("tv-items");
+        expect(panel.getItem().innerHTML).toContain("<input");
       });
 
       describe("when stop-session command is triggered", () => {
