@@ -1,6 +1,6 @@
 /* @flow */
 
-import React from "react";
+import * as React from "react";
 import ReactTestUtils from "react-dom/test-utils";
 import CellEditor from "../../lib/react/presentationals/cell-editor";
 import dispatchKeyDownEvent from "../dispatch-keydown-event";
