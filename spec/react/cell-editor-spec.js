@@ -2,7 +2,7 @@
 
 import React from "react";
 import ReactTestUtils from "react-dom/test-utils";
-import CellEditor from "../../lib/react/cell-editor";
+import CellEditor from "../../lib/react/presentationals/cell-editor";
 import dispatchKeyDownEvent from "../dispatch-keydown-event";
 
 describe("react/cell-editor", function() {
