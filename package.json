@@ -27,7 +27,10 @@
   ],
   "main": "./lib/main.js",
   "activationCommands": {
-    "atom-workspace": "textual-velocity:start-session"
+    "atom-workspace": [
+      "textual-velocity:start-session",
+      "textual-velocity:ui-dev"
+    ]
   },
   "engines": {
     "atom": ">=1.22.0 <2.0.0"
