@@ -16,7 +16,6 @@ module.exports = {
   plugins: ["prettier", "flowtype", "react"],
   rules: {
     "no-console": "off",
-    "react/no-find-dom-node": "off",
     "prettier/prettier": "error",
     "flowtype/define-flow-type": 1,
     "flowtype/use-flow-type": 1
