@@ -90,14 +90,14 @@
     "precommit": "lint-staged",
     "flow": "flow; test $? -eq 0 -o $? -eq 2",
     "lint": "eslint \"{lib,spec}/**/*.js\"",
-    "lint-prettier": "prettier --parser flow --list-different \"{lib,spec}/**/*.js\"",
-    "lint-prettier-write": "prettier --parser flow --write \"{lib,spec}/**/*.js\"",
+    "lint-prettier": "prettier --list-different \"{lib,spec}/**/*.js\"",
+    "lint-prettier-write": "prettier --write \"{lib,spec}/**/*.js\"",
     "test": "npm run flow && npm run lint && apm test",
     "update-flow-typed": "flow-typed install --overwrite"
   },
   "lint-staged": {
     "{lib,spec}/**/*.js": [
-      "prettier --parser flow --write",
+      "prettier --write",
       "git add"
     ]
   }
