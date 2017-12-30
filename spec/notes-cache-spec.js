@@ -1,13 +1,14 @@
-"use babel";
+/* @flow */
 
 import tempy from "tempy";
 import NotesCache from "../lib/notes-cache";
 
 describe("notes-cache", () => {
-  let notes, notesCache;
+  let actual, notesCache, expected: any;
 
   beforeEach(function() {
     const tempDirPath = tempy.directory();
+    expected = { "some-file": { foo: "bar" } };
     notesCache = new NotesCache(tempDirPath);
     spyOn(console, "warn");
   });
@@ -17,27 +18,27 @@ describe("notes-cache", () => {
   });
 
   it("should save and load notes", function() {
-    notes = notesCache.load();
-    expect(notes).toEqual({});
+    actual = notesCache.load();
+    expect(actual).toEqual({});
 
-    notesCache.save({ "some-file": { foo: "bar" } });
-    notes = notesCache.load();
-    expect(notes).toEqual({ "some-file": { foo: "bar" } });
+    notesCache.save(expected);
+    actual = notesCache.load();
+    expect(actual).toEqual(expected);
   });
 
   it("should not save notes after clear-notes-cache command is called", function() {
-    notes = notesCache.load();
+    actual = notesCache.load();
 
     const workspaceView = atom.views.getView(atom.workspace);
     jasmine.attachToDOM(workspaceView);
     atom.commands.dispatch(workspaceView, "textual-velocity:clear-notes-cache");
 
     try {
-      notesCache.save({ "some-file": { foo: "bar" } });
+      notesCache.save(expected);
     } catch (err) {
       throw err;
     }
-    notes = notesCache.load();
-    expect(notes).toEqual({});
+    actual = notesCache.load();
+    expect(actual).toEqual({});
   });
 });

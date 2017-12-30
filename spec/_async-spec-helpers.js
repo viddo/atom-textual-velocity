@@ -1,6 +1,7 @@
+/* @flow */
 // from https://github.com/atom/atom/blob/efae2e08c3f902149431732cbd550aea09748acc/spec/async-spec-helpers.js
 
-export function beforeEach(fn) {
+export function beforeEach(fn: Function) {
   global.beforeEach(function() {
     const result = fn();
     if (result instanceof Promise) {
@@ -9,7 +10,7 @@ export function beforeEach(fn) {
   });
 }
 
-export function afterEach(fn) {
+export function afterEach(fn: Function) {
   global.afterEach(function() {
     const result = fn();
     if (result instanceof Promise) {
@@ -29,7 +30,7 @@ export function afterEach(fn) {
   };
 });
 
-export async function conditionPromise(condition) {
+export async function conditionPromise(condition: Function) {
   const startTime = Date.now();
 
   while (true) {
@@ -45,7 +46,7 @@ export async function conditionPromise(condition) {
   }
 }
 
-export function timeoutPromise(timeout) {
+export function timeoutPromise(timeout: number): Promise<*> {
   return new Promise(function(resolve) {
     global.setTimeout(resolve, timeout);
   });

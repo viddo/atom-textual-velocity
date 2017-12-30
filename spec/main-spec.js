@@ -1,4 +1,4 @@
-"use babel";
+/* @flow */
 /* global CustomEvent */
 
 import Path from "path";
@@ -33,7 +33,7 @@ describe("main", () => {
   });
 
   describe("when start-session command is triggered", () => {
-    let panel;
+    let panel: atom$Panel;
 
     beforeEach(async () => {
       const promise = atom.packages.activatePackage("textual-velocity");
@@ -45,7 +45,6 @@ describe("main", () => {
     });
 
     afterEach(async () => {
-      panel = null;
       await atom.packages.deactivatePackage("textual-velocity");
     });
 

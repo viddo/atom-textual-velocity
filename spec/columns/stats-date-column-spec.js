@@ -1,4 +1,4 @@
-"use babel";
+/* @flow */
 
 import StatsDateColumn from "../../lib/columns/stats-date-column";
 
@@ -7,6 +7,7 @@ describe("columns/stats-date-column", function() {
 
   beforeEach(function() {
     column = new StatsDateColumn({
+      description: "",
       sortField: "created-date",
       title: "Created date",
       notePropName: "birthtime"
@@ -33,12 +34,13 @@ describe("columns/stats-date-column", function() {
       note = {
         id: "",
         name: "markdown",
-        ext: ".md"
+        ext: ".md",
+        stats: {}
       };
     });
 
     it("should return an empty string if there is no date for given prop", function() {
-      expect(column.cellContent({ note: note, path: path })).toEqual("");
+      expect(column.cellContent({ note, path })).toEqual("");
     });
 
     it("should return diffing time from now", function() {
