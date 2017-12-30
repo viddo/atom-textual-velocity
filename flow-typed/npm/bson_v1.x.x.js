@@ -237,32 +237,15 @@ declare module "bson" {
   declare export type BsonSymbol = bson$Symbol;
   declare export type BsonTimestamp = bson$Timestamp;
 
-  declare module.exports: {
-    Binary: Class<bson$Binary>,
-    Code: Class<bson$Code>,
-    DBRef: Class<bson$DBRef>,
-    Decimal128: Class<bson$Decimal128>,
-    Double: Class<bson$Double>,
-    Int32: Class<bson$Int32>,
-    Long: Class<bson$Long>,
-    Map: bson$Map,
-    MaxKey: Class<bson$MaxKey>,
-    MinKey: Class<bson$MinKey>,
-    ObjectId: Class<bson$ObjectId>,
-    ObjectID: Class<bson$ObjectId>,
-    BSONRegExp: Class<bson$BSONRegExp>,
-    Symbol: Class<bson$Symbol>,
-    Timestamp: Class<bson$Timestamp>,
-
-    // methods
-    serialize(object: Object, options?: Object): Buffer,
+  declare export default class bson$BSON {
+    serialize(object: Object, options?: Object): Buffer;
     serializeWithBufferAndIndex(
       object: Object,
       finalBuffer: Buffer,
       options?: Object
-    ): number,
-    deserialize(buffer: Buffer, options?: Object): Object,
-    calculateObjectSize(object: Object, options?: Object): number,
+    ): number;
+    deserialize(buffer: Buffer, options?: Object): Object;
+    calculateObjectSize(object: Object, options?: Object): number;
     deserializeStream(
       data: Buffer,
       startIndex: number,
@@ -270,39 +253,54 @@ declare module "bson" {
       documents: Array<Object>,
       docStartIndex: number,
       options?: Object
-    ): number,
+    ): number;
 
-    // constants
-    BSON_INT32_MAX: 0x7fffffff,
-    BSON_INT32_MIN: -0x80000000,
-    BSON_INT64_MAX: number,
-    BSON_INT64_MIN: number,
-    JS_INT_MAX: 0x20000000000000,
-    JS_INT_MIN: -0x20000000000000,
+    static Binary: Class<bson$Binary>;
+    static Code: Class<bson$Code>;
+    static DBRef: Class<bson$DBRef>;
+    static Decimal128: Class<bson$Decimal128>;
+    static Double: Class<bson$Double>;
+    static Int32: Class<bson$Int32>;
+    static Long: Class<bson$Long>;
+    static Map: bson$Map;
+    static MaxKey: Class<bson$MaxKey>;
+    static MinKey: Class<bson$MinKey>;
+    static ObjectId: Class<bson$ObjectId>;
+    static ObjectID: Class<bson$ObjectId>;
+    static BSONRegExp: Class<bson$BSONRegExp>;
+    static Symbol: Class<bson$Symbol>;
+    static Timestamp: Class<bson$Timestamp>;
 
-    BSON_DATA_NUMBER: 1,
-    BSON_DATA_STRING: 2,
-    BSON_DATA_OBJECT: 3,
-    BSON_DATA_ARRAY: 4,
-    BSON_DATA_BINARY: 5,
-    BSON_DATA_OID: 7,
-    BSON_DATA_BOOLEAN: 8,
-    BSON_DATA_DATE: 9,
-    BSON_DATA_NULL: 10,
-    BSON_DATA_REGEXP: 11,
-    BSON_DATA_CODE: 13,
-    BSON_DATA_SYMBOL: 14,
-    BSON_DATA_CODE_W_SCOPE: 15,
-    BSON_DATA_INT: 16,
-    BSON_DATA_TIMESTAMP: 17,
-    BSON_DATA_LONG: 18,
-    BSON_DATA_MIN_KEY: 0xff,
-    BSON_DATA_MAX_KEY: 0x7f,
-    BSON_BINARY_SUBTYPE_DEFAULT: 0,
-    BSON_BINARY_SUBTYPE_FUNCTION: 1,
-    BSON_BINARY_SUBTYPE_BYTE_ARRAY: 2,
-    BSON_BINARY_SUBTYPE_UUID: 3,
-    BSON_BINARY_SUBTYPE_MD5: 4,
-    BSON_BINARY_SUBTYPE_USER_DEFINED: 128
-  };
+    static BSON_INT32_MAX: 0x7fffffff;
+    static BSON_INT32_MIN: -0x80000000;
+    static BSON_INT64_MAX: number;
+    static BSON_INT64_MIN: number;
+    static JS_INT_MAX: 0x20000000000000;
+    static JS_INT_MIN: -0x20000000000000;
+
+    static BSON_DATA_NUMBER: 1;
+    static BSON_DATA_STRING: 2;
+    static BSON_DATA_OBJECT: 3;
+    static BSON_DATA_ARRAY: 4;
+    static BSON_DATA_BINARY: 5;
+    static BSON_DATA_OID: 7;
+    static BSON_DATA_BOOLEAN: 8;
+    static BSON_DATA_DATE: 9;
+    static BSON_DATA_NULL: 10;
+    static BSON_DATA_REGEXP: 11;
+    static BSON_DATA_CODE: 13;
+    static BSON_DATA_SYMBOL: 14;
+    static BSON_DATA_CODE_W_SCOPE: 15;
+    static BSON_DATA_INT: 16;
+    static BSON_DATA_TIMESTAMP: 17;
+    static BSON_DATA_LONG: 18;
+    static BSON_DATA_MIN_KEY: 0xff;
+    static BSON_DATA_MAX_KEY: 0x7f;
+    static BSON_BINARY_SUBTYPE_DEFAULT: 0;
+    static BSON_BINARY_SUBTYPE_FUNCTION: 1;
+    static BSON_BINARY_SUBTYPE_BYTE_ARRAY: 2;
+    static BSON_BINARY_SUBTYPE_UUID: 3;
+    static BSON_BINARY_SUBTYPE_MD5: 4;
+    static BSON_BINARY_SUBTYPE_USER_DEFINED: 12;
+  }
 }
