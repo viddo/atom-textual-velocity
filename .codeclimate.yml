@@ -5,12 +5,12 @@ plugins:
 checks:
   complex-logic:
     enabled: true
-     config:
-     	threshold: 8
+    config:
+      threshold: 8
   method-lines:
     enabled: true
-      config:
-        threshold: 40
+    config:
+      threshold: 40
   similar-code:
     enabled: false
 exclude_patterns:
