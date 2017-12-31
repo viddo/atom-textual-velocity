@@ -1,12 +1,22 @@
-engines:
+version: "2"
+plugins:
   eslint:
     enabled: false
-
-ratings:
-   paths:
-   - "lib/**/*"
-   - "**.js"
-
-exclude_paths:
-- flow-typed/**/*
-- spec/**/*
+checks:
+  complex-logic:
+    enabled: true
+     config:
+     	threshold: 8
+  method-lines:
+    enabled: true
+      config:
+        threshold: 40
+  similar-code:
+    enabled: false
+exclude_patterns:
+- "*"
+- "flow-typed/"
+- "keymaps/"
+- "node_modules/"
+- "spec/"
+- "styles/"
