@@ -4,6 +4,12 @@ This project adheres to [Semantic Versioning](http://semver.org/) and [keepachan
 
 
 ## [unreleased]
+#### Changed
+Internal refactoring:
+- Separate React code into presentational and container components
+- Use default recommended ESlint rules + fix offending code
+- Update flowtyped definitions
+- Flowtype all code
 
 ## [0.18.0] - 2017-11-20
 #### Changed

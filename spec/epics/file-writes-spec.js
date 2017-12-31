@@ -25,7 +25,7 @@ describe("epics/file-writes", () => {
     fileWriters.add(tagsFileWriter);
     filenameFileWriter = {
       editCellName: "filename",
-      write: function(path: string, str: string, callback: NodeCallback) {
+      write: function() {
         writeSpy(...arguments);
       }
     };
@@ -41,7 +41,7 @@ describe("epics/file-writes", () => {
     state = {
       columnHeaders: [],
       dir: "/notes",
-      editCellName: null,
+      editCellName: "filename",
       fileReadFails: {},
       listHeight: 50,
       loading: {
@@ -73,10 +73,7 @@ describe("epics/file-writes", () => {
     store.dispatch(A.dispose()); // tests dispose logic working
 
     store.clearActions();
-    const finalAction = A.editCellSave(
-      "filename",
-      "should not be picked up anymore"
-    );
+    const finalAction = A.editCellSave("should not be picked up anymore");
     store.dispatch(finalAction);
     expect(store.getActions()).toEqual(
       [finalAction],
@@ -91,7 +88,7 @@ describe("epics/file-writes", () => {
         filename: "foobar.txt",
         index: 1
       };
-      store.dispatch(A.editCellSave("filename", "value to save"));
+      store.dispatch(A.editCellSave("value to save"));
     });
 
     it("should try to write value to selected note", function() {

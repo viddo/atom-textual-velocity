@@ -1,4 +1,4 @@
-"use babel";
+/* @flow */
 
 import ParsedPathField from "../../lib/fields/parsed-path-field";
 
@@ -19,14 +19,20 @@ describe("fields/parsed-path-field", function() {
   });
 
   describe(".value", function() {
-    let note: any;
+    let note: any, actual: any;
 
     it("should return the normalized parsed path piece", function() {
-      expect(field.value(note, "snowflake.md")).toEqual("snowflake");
+      if (field.value) {
+        actual = field.value(note, "snowflake.md");
+      }
+      expect(actual).toEqual("snowflake");
     });
 
     it("should normalize unicode codepoints to match keyboard input", function() {
-      expect(field.value(note, "\u0061\u0308lg.md")).toEqual("älg");
+      if (field.value) {
+        actual = field.value(note, "\u0061\u0308lg.md");
+      }
+      expect(actual).toEqual("älg");
     });
   });
 });

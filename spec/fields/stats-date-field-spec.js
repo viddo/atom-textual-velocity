@@ -1,4 +1,4 @@
-"use babel";
+/* @flow */
 
 import StatsDateField from "../../lib/fields/stats-date-field";
 
@@ -16,21 +16,45 @@ describe("fields/stats-date-field", function() {
   });
 
   describe(".value", function() {
+    let actual: any;
+
     it("should return the value of the given prop path", function() {
       field = new StatsDateField({
         notePropName: "a-name",
         statsPropName: "birthtime"
       });
-      expect(field.value({ stats: { birthtime: new Date() } })).toEqual(
-        jasmine.any(Number)
-      );
-      expect(field.value({ stats: { other: new Date() } })).toBeUndefined();
+      const note = {
+        id: "",
+        name: "",
+        ext: "",
+        stats: {
+          birthtime: new Date()
+        }
+      };
+      if (field.value) {
+        actual = field.value(note, "filename");
+      }
+      expect(actual).toEqual(jasmine.any(Number));
+
+      if (field.value) {
+        note.stats = {
+          birthtime: undefined
+        };
+        actual = field.value(note, "filename");
+      }
+      expect(actual).toBeUndefined();
 
       field = new StatsDateField({
         notePropName: "a-name",
         statsPropName: "other"
       });
-      expect(field.value({ stats: { birthtime: new Date() } })).toBeUndefined();
+      if (field.value) {
+        note.stats = {
+          birthtime: new Date()
+        };
+        actual = field.value(note, "filename");
+      }
+      expect(actual).toBeUndefined();
     });
   });
 });

@@ -1,4 +1,4 @@
-"use babel";
+/* @flow */
 
 import FileIconColumn from "../../lib/columns/file-icon-column";
 
@@ -16,17 +16,18 @@ describe("columns/file-icon-column", function() {
   });
 
   describe(".cellContent", function() {
-    let note, path, cellContent;
+    let note, path, cellContent: any;
 
     beforeEach(function() {
       path = "/notes/markdown.md";
       note = {
         id: "",
         name: "markdown",
-        fileIcons: null,
-        ext: ".md"
+        fileIcons: "",
+        ext: ".md",
+        stats: {}
       };
-      cellContent = column.cellContent({ note: note, path: path });
+      cellContent = column.cellContent({ note, path });
     });
 
     it("should return a kind of AST from which a DOM can be created", function() {
@@ -40,7 +41,7 @@ describe("columns/file-icon-column", function() {
     describe("when note.fileIcons are available", function() {
       beforeEach(function() {
         note.fileIcons = "icon-file-text medium-blue";
-        cellContent = column.cellContent({ note: note, path: path });
+        cellContent = column.cellContent({ note, path });
       });
 
       it("should utilize file icons instead", function() {

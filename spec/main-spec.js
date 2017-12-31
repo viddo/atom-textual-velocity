@@ -1,4 +1,4 @@
-"use babel";
+/* @flow */
 /* global CustomEvent */
 
 import Path from "path";
@@ -33,7 +33,7 @@ describe("main", () => {
   });
 
   describe("when start-session command is triggered", () => {
-    let panel;
+    let panel: atom$Panel;
 
     beforeEach(async () => {
       const promise = atom.packages.activatePackage("textual-velocity");
@@ -45,7 +45,6 @@ describe("main", () => {
     });
 
     afterEach(async () => {
-      panel = null;
       await atom.packages.deactivatePackage("textual-velocity");
     });
 
@@ -67,7 +66,7 @@ describe("main", () => {
       });
 
       it("should render rows", () => {
-        expect(panel.getItem().innerHTML).toContain("tv-items");
+        expect(panel.getItem().innerHTML).toContain("<input");
       });
 
       describe("when stop-session command is triggered", () => {
@@ -98,7 +97,7 @@ function loadingDone() {
     const { store } = global.getProcessInTesting(process);
     if (store) {
       const unsubscribe = store.subscribe(() => {
-        const state: State = store.getState();
+        const state = store.getState();
         if (state.loading.status === "done") {
           unsubscribe();
           resolve();

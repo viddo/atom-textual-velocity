@@ -1,4 +1,4 @@
-"use babel";
+/* @flow */
 
 import Path from "path";
 import { defaultConfig } from "../lib/config";

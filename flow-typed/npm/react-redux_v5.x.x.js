@@ -14,14 +14,15 @@ declare module "react-redux" {
 
   */
 
+  // return SP to avoid flowtype confusion
   declare type MapStateToProps<S, OP: Object, SP: Object> = (
     state: S,
     ownProps: OP
-  ) => ((state: S, ownProps: OP) => SP) | SP;
+  ) => SP;
 
+  // return DP to avoid flowtype confusion
   declare type MapDispatchToProps<A, OP: Object, DP: Object> =
-    | ((dispatch: Dispatch<A>, ownProps: OP) => DP)
-    | DP;
+    (dispatch: Dispatch<A>, ownProps: OP) => DP;
 
   declare type MergeProps<SP, DP: Object, OP: Object, P: Object> = (
     stateProps: SP,

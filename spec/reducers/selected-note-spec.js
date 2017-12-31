@@ -113,7 +113,7 @@ describe("reducers/selected-note", () => {
       ];
       state = selectedNoteReducer(
         selectedNote,
-        actions.clickRow("bob.md"),
+        actions.selectNote("bob.md"),
         dir,
         nextSifterResult
       );

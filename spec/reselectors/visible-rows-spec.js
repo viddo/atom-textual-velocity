@@ -8,7 +8,7 @@ import paginationSelector from "../../lib/reselectors/pagination";
 
 describe("reselectors/visible-rows", () => {
   let state: State;
-  let visibleRows: Array<Row>;
+  let visibleRows: NoteRow[];
   let visibleRowsSelector;
 
   beforeEach(function() {

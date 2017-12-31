@@ -36,7 +36,12 @@ global.getProcessInTesting = function getProcessInTesting(
   return _process[TESTING_VARS] || {};
 };
 
+let errDisposable;
+
 beforeEach(() => {
+  errDisposable = atom.onDidThrowError(event => {
+    jasmine.getEnv().currentSpec.fail(event.originalError);
+  });
   atom.config.setSchema("textual-velocity", {
     type: "object",
     properties: JSON.parse(JSON.stringify(defaultConfig))
@@ -44,5 +49,6 @@ beforeEach(() => {
 });
 
 afterEach(() => {
+  errDisposable.dispose();
   global.setProcessInTesting(process, TESTING_VARS);
 });

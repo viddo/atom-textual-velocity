@@ -7,7 +7,6 @@ type Action =
   | ChangedRowHeight
   | ChangedSortDirection
   | ChangedSortField
-  | ClickRow
   | Dispose
   | EditCell
   | EditCellAbort
@@ -27,6 +26,7 @@ type Action =
   | Scrolled
   | Search
   | SelectNext
+  | SelectNote
   | SelectPrev
 
 type CellContent =
@@ -72,8 +72,8 @@ type ChangedSortField = {
   sortField: string
 }
 
-type ClickRow = {
-  type: 'CLICK_ROW',
+type SelectNote = {
+  type: 'SELECT_NOTE',
   filename: string
 }
 
@@ -114,7 +114,6 @@ type EditCellAbort = {
 type EditCellName = ?string
 type EditCellSave = {
   type: 'EDIT_CELL_SAVE',
-  editCellName: string,
   value: string
 }
 
@@ -199,37 +198,6 @@ type DoneLoadingState = {
   status: 'done'
 }
 
-type MainProps = MainPropsActions & MainPropsWithoutActions
-type MainPropsWithoutActions = {
-  columnHeaders: Array<ColumnHeader>,
-  editCellName: EditCellName,
-  itemsCount: number,
-  listHeight: number,
-  loading: LoadingState,
-  paginationStart: number,
-  queryOriginal: string,
-  rowHeight: number,
-  scrollTop: number,
-  sortDirection: SortDirection,
-  sortField: string,
-  visibleRows: Array<Row>
-}
-type MainPropsActions = {
-  actions: {
-    changeRowHeight: Function,
-    changeSortDirection: Function,
-    changeSortField: Function,
-    clickRow: Function,
-    editCell: Function,
-    editCellAbort: Function,
-    editCellSave: Function,
-    keyPress: Function,
-    resizeList: Function,
-    scroll: Function,
-    search: Function
-  },
-}
-
 type NodeCallback = (err: ?Object|void, result: any) => void
 
 type Note = {
@@ -299,7 +267,7 @@ type ResetSearch = {
   type: 'RESET_SEARCH'
 }
 
-type Row = {
+type NoteRow = {
   cells: Array<RowCell>,
   filename: string,
   id: string,

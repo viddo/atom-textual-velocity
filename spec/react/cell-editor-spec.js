@@ -1,19 +1,19 @@
 /* @flow */
 
-import React from "react";
+import * as React from "react";
 import ReactTestUtils from "react-dom/test-utils";
-import EditCellStr from "../../lib/react/edit-cell-str";
+import CellEditor from "../../lib/react/presentationals/cell-editor";
 import dispatchKeyDownEvent from "../dispatch-keydown-event";
 
-describe("react/edit-cell-str", function() {
-  let saveSpy, abortSpy;
+describe("react/cell-editor", function() {
+  let onSaveSpy, onAbortSpy;
   let component, input;
 
   beforeEach(function() {
-    saveSpy = jasmine.createSpy("save");
-    abortSpy = jasmine.createSpy("abort");
+    onSaveSpy = jasmine.createSpy("save");
+    onAbortSpy = jasmine.createSpy("abort");
     component = ReactTestUtils.renderIntoDocument(
-      <EditCellStr initialVal="foo" save={saveSpy} abort={abortSpy} />
+      <CellEditor initialVal="foo" onSave={onSaveSpy} onAbort={onAbortSpy} />
     );
     input = component.input;
   });
@@ -29,8 +29,8 @@ describe("react/edit-cell-str", function() {
     });
 
     it("aborts since value has not changed", function() {
-      expect(abortSpy).toHaveBeenCalled();
-      expect(saveSpy).not.toHaveBeenCalled();
+      expect(onAbortSpy).toHaveBeenCalled();
+      expect(onSaveSpy).not.toHaveBeenCalled();
     });
   });
 
@@ -46,8 +46,8 @@ describe("react/edit-cell-str", function() {
     });
 
     it("does not call save or abort", function() {
-      expect(saveSpy).not.toHaveBeenCalled();
-      expect(abortSpy).not.toHaveBeenCalled();
+      expect(onSaveSpy).not.toHaveBeenCalled();
+      expect(onAbortSpy).not.toHaveBeenCalled();
     });
 
     describe("when <enter>", function() {
@@ -56,9 +56,9 @@ describe("react/edit-cell-str", function() {
       });
 
       it("saves the changed value", function() {
-        expect(saveSpy).toHaveBeenCalled();
-        expect(saveSpy).toHaveBeenCalledWith("a b c");
-        expect(abortSpy).not.toHaveBeenCalled();
+        expect(onSaveSpy).toHaveBeenCalled();
+        expect(onSaveSpy).toHaveBeenCalledWith("a b c");
+        expect(onAbortSpy).not.toHaveBeenCalled();
       });
     });
 
@@ -68,8 +68,8 @@ describe("react/edit-cell-str", function() {
       });
 
       it("aborts", function() {
-        expect(abortSpy).toHaveBeenCalled();
-        expect(saveSpy).not.toHaveBeenCalled();
+        expect(onAbortSpy).toHaveBeenCalled();
+        expect(onSaveSpy).not.toHaveBeenCalled();
       });
     });
   });
