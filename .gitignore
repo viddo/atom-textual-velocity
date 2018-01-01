@@ -1,9 +1,9 @@
 .DS_Store
 .tern-project
-elm-stuff
-npm-debug.log
-node_modules
-spec/fixtures/notes
-spec/.textual-velocity-cache
+.textual-velocity-cache
 TODOs.md
+elm-stuff
+lib/fixtures/notes
+node_modules
+npm-debug.log
 wip
