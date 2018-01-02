@@ -1,4 +1,5 @@
-import type fs from 'fs'
+import type fs from 'fs';
+import type { SearchResult, SortDirection } from 'sifter';
 
 type Action =
   | ChangedActivePaneItem
@@ -319,28 +320,6 @@ type Service = {
   registerFileWriters (...items: Array<FileWriter>): void
 }
 
-type SifterResult = {
-  items: Array<SifterResultItem>,
-  options: {
-    fields: Array<string>,
-    limit?: number | void,
-    sort: Array<{
-      direction: SortDirection,
-      field: string
-    }>
-  },
-  query: string,
-  tokens: Array<{
-    string: string,
-    regex: RegExp
-  }>,
-  total: number
-}
-type SifterResultItem = {
-  id: string,
-  score: number
-}
-
 type State = {
   columnHeaders: Array<ColumnHeader>,
   dir: string,
@@ -353,7 +332,5 @@ type State = {
   rowHeight: number,
   scrollTop: number,
   selectedNote: ?SelectedNote,
-  sifterResult: SifterResult
+  sifterResult: SearchResult<$Keys<Notes>>
 }
-
-type SortDirection = 'desc' | 'asc'

@@ -13,41 +13,50 @@
  * https://github.com/flowtype/flow-typed
  */
 
+type sifter$SortDirectionSearchOption = 'asc' | 'desc'
+
+type sifter$SortSearchOption = {
+  direction?: sifter$SortDirectionSearchOption;
+  field: string;
+}
+
+type sifter$SearchOptions = {
+  fields: string[];
+  limit?: number | void;
+  sort?: sifter$SortSearchOption[];
+  sort_empty?: sifter$SortSearchOption[];
+  filter?: boolean;
+  conjunction?: 'and' | 'or';
+  nesting?: boolean;
+  respect_word_boundaries?: boolean;
+}
+
+type sifter$SearchResult<T> = {
+  options: sifter$SearchOptions,
+  query: string,
+  tokens: Array<{
+    string: string,
+    regex: RegExp
+  }>,
+  total: number,
+  items: Array<{
+    id: T,
+    score: number
+  }>
+}
+
 declare module 'sifter' {
-  declare module.exports: any;
-}
 
-/**
- * We include stubs for each file inside this npm package in case you need to
- * require those files directly. Feel free to delete any files that aren't
- * needed.
- */
-declare module 'sifter/bin/sifter' {
-  declare module.exports: any;
-}
+  declare export type SortSearchOption = sifter$SortSearchOption;
+  declare export type SearchOptions = sifter$SearchOptions;
+  declare export type SearchResult<T> = sifter$SearchResult<T>;
+  declare export type SortDirection = sifter$SortDirectionSearchOption;
 
-declare module 'sifter/lib/sifter' {
-  declare module.exports: any;
-}
+  declare class Sifter<T> {
+    items: T;
+    constructor (items?: T): this;
+    search(query: string, options: sifter$SearchOptions): sifter$SearchResult<$Keys<T>>
+  }
 
-declare module 'sifter/sifter' {
-  declare module.exports: any;
-}
-
-declare module 'sifter/sifter.min' {
-  declare module.exports: any;
-}
-
-// Filename aliases
-declare module 'sifter/bin/sifter.js' {
-  declare module.exports: $Exports<'sifter/bin/sifter'>;
-}
-declare module 'sifter/lib/sifter.js' {
-  declare module.exports: $Exports<'sifter/lib/sifter'>;
-}
-declare module 'sifter/sifter.js' {
-  declare module.exports: $Exports<'sifter/sifter'>;
-}
-declare module 'sifter/sifter.min.js' {
-  declare module.exports: $Exports<'sifter/sifter.min'>;
+  declare module.exports: typeof Sifter;
 }
