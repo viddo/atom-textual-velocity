@@ -10,6 +10,8 @@ Internal refactoring:
 - Use default recommended ESlint rules + fix offending code
 - Update flowtyped definitions
 - Flowtype all code
+- Change filename convention, to match content
+- Move specs next to source files
 
 ## [0.18.0] - 2017-11-20
 #### Changed
