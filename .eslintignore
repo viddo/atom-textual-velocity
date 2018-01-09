@@ -1,4 +1,5 @@
 decls/
 flow-typed/
+lib/flow-types/
 node_modules/
 spec/
