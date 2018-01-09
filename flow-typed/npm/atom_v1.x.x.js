@@ -37,6 +37,8 @@ type atom$PathWatcherRenamedEvent = {
 
 // https://atom.io/docs/api/v1.22.0/PathWatcher
 declare module 'atom' {
+  declare export type Panel = atom$Panel;
+
   declare class Disposable {
     constructor (...values: Array<atom$IDisposable | Function>): void,
     dispose (): void,
