@@ -1,3 +1,4 @@
 decls/
 flow-typed/
-spec/_async-spec-helpers.js
+node_modules/
+spec/

@@ -89,7 +89,7 @@
   "scripts": {
     "precommit": "lint-staged",
     "flow": "flow; test $? -eq 0 -o $? -eq 2",
-    "lint": "eslint \"lib/**/*.js\"",
+    "lint": "eslint lib",
     "lint-prettier": "prettier --list-different \"lib/**/*.js\"",
     "lint-prettier-write": "prettier --write \"lib/**/*.js\"",
     "test": "npm run flow && npm run lint && apm test",
