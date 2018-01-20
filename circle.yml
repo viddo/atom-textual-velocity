@@ -1,8 +1,7 @@
 test:
   override:
-    - curl -s -O https://raw.githubusercontent.com/atom/ci/master/build-package.sh
-    - chmod u+x build-package.sh
     - ./build-package.sh
+    - './node_modules/.bin/eslint lib'
     - './node_modules/.bin/flow'
 
 dependencies:

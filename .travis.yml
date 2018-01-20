@@ -11,9 +11,8 @@ os:
 - linux
 - osx
 script:
-- curl -s -O https://raw.githubusercontent.com/viddo/atom-textual-velocity/fix-killed-eslint/build-package.sh
-- chmod u+x build-package.sh
 - "./build-package.sh"
+- "./node_modules/.bin/eslint lib"
 - "./node_modules/.bin/flow"
 notifications:
   email: false

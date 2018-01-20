@@ -93,7 +93,8 @@
     "lint-prettier": "prettier --list-different \"lib/**/*.js\"",
     "lint-prettier-write": "prettier --write \"lib/**/*.js\"",
     "test": "npm run flow && npm run lint && apm test",
-    "update-flow-typed": "flow-typed install --overwrite"
+    "update-flow-typed": "flow-typed install --overwrite",
+    "update-build-package": "curl -s -O https://raw.githubusercontent.com/atom/ci/master/build-package.sh"
   },
   "lint-staged": {
     "lib/**/*.js": [
