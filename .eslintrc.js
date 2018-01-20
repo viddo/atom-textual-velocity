@@ -6,7 +6,12 @@ module.exports = {
     jasmine: true,
     node: true
   },
-  extends: ["eslint:recommended", "prettier", "plugin:react/recommended"],
+  extends: [
+    "eslint:recommended",
+    "prettier",
+    "plugin:react/recommended",
+    "plugin:flowtype/recommended"
+  ],
   parser: "babel-eslint",
   parserOptions: {
     ecmaFeatures: {
@@ -16,9 +21,7 @@ module.exports = {
   plugins: ["prettier", "flowtype", "react"],
   rules: {
     "no-console": "off",
-    "prettier/prettier": "error",
-    "flowtype/define-flow-type": 1,
-    "flowtype/use-flow-type": 1
+    "prettier/prettier": "error"
   },
   settings: {
     flowtype: {
