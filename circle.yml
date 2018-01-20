@@ -1,8 +1,8 @@
 test:
   override:
-    - ./build-package.sh
-    - './node_modules/.bin/eslint lib'
-    - './node_modules/.bin/flow'
+    - "./build-package.sh"
+    - "./eslint.sh"
+    - "./node_modules/.bin/flow"
 
 dependencies:
   override:

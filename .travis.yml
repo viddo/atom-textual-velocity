@@ -12,7 +12,7 @@ os:
 - osx
 script:
 - "./build-package.sh"
-- "./node_modules/.bin/eslint lib"
+- "./eslint.sh"
 - "./node_modules/.bin/flow"
 notifications:
   email: false
