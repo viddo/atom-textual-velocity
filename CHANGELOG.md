@@ -178,7 +178,7 @@ Internal refactoring:
 
 ### Added
 - Rename note, by double-clicking a note or keyboard shortcut (`cmd+r` when focused on search)
-- Service API draft for easier integration, see [nvTags](lib/service-consumers/nv-tags.js) for example usage
+- Service API draft for easier integration
 
 ### Changed
 - Internals completely refactored, mainly to make changes and new features easier to implement+test
