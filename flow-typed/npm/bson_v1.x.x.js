@@ -1,5 +1,5 @@
-// flow-typed signature: 9e747cfe66859d9ef21a71d73145d46d
-// flow-typed version: 1b19a61617/bson_v1.x.x/flow_>=v0.50.x
+// flow-typed signature: c662307f0e49241686786f54952cf278
+// flow-typed version: 613e51121a/bson_v1.x.x/flow_>=v0.50.x
 
 declare class bson$ObjectId {
   /**
@@ -237,7 +237,7 @@ declare module "bson" {
   declare export type BsonSymbol = bson$Symbol;
   declare export type BsonTimestamp = bson$Timestamp;
 
-  declare export default class bson$BSON {
+  declare class bson$BSON {
     serialize(object: Object, options?: Object): Buffer;
     serializeWithBufferAndIndex(
       object: Object,
@@ -254,53 +254,55 @@ declare module "bson" {
       docStartIndex: number,
       options?: Object
     ): number;
-
-    static Binary: Class<bson$Binary>;
-    static Code: Class<bson$Code>;
-    static DBRef: Class<bson$DBRef>;
-    static Decimal128: Class<bson$Decimal128>;
-    static Double: Class<bson$Double>;
-    static Int32: Class<bson$Int32>;
-    static Long: Class<bson$Long>;
-    static Map: bson$Map;
-    static MaxKey: Class<bson$MaxKey>;
-    static MinKey: Class<bson$MinKey>;
-    static ObjectId: Class<bson$ObjectId>;
-    static ObjectID: Class<bson$ObjectId>;
-    static BSONRegExp: Class<bson$BSONRegExp>;
-    static Symbol: Class<bson$Symbol>;
-    static Timestamp: Class<bson$Timestamp>;
-
-    static BSON_INT32_MAX: 0x7fffffff;
-    static BSON_INT32_MIN: -0x80000000;
-    static BSON_INT64_MAX: number;
-    static BSON_INT64_MIN: number;
-    static JS_INT_MAX: 0x20000000000000;
-    static JS_INT_MIN: -0x20000000000000;
-
-    static BSON_DATA_NUMBER: 1;
-    static BSON_DATA_STRING: 2;
-    static BSON_DATA_OBJECT: 3;
-    static BSON_DATA_ARRAY: 4;
-    static BSON_DATA_BINARY: 5;
-    static BSON_DATA_OID: 7;
-    static BSON_DATA_BOOLEAN: 8;
-    static BSON_DATA_DATE: 9;
-    static BSON_DATA_NULL: 10;
-    static BSON_DATA_REGEXP: 11;
-    static BSON_DATA_CODE: 13;
-    static BSON_DATA_SYMBOL: 14;
-    static BSON_DATA_CODE_W_SCOPE: 15;
-    static BSON_DATA_INT: 16;
-    static BSON_DATA_TIMESTAMP: 17;
-    static BSON_DATA_LONG: 18;
-    static BSON_DATA_MIN_KEY: 0xff;
-    static BSON_DATA_MAX_KEY: 0x7f;
-    static BSON_BINARY_SUBTYPE_DEFAULT: 0;
-    static BSON_BINARY_SUBTYPE_FUNCTION: 1;
-    static BSON_BINARY_SUBTYPE_BYTE_ARRAY: 2;
-    static BSON_BINARY_SUBTYPE_UUID: 3;
-    static BSON_BINARY_SUBTYPE_MD5: 4;
-    static BSON_BINARY_SUBTYPE_USER_DEFINED: 12;
   }
+
+  declare export default typeof bson$BSON
+
+  declare export var Binary: Class<bson$Binary>;
+  declare export var Code: Class<bson$Code>;
+  declare export var DBRef: Class<bson$DBRef>;
+  declare export var Decimal128: Class<bson$Decimal128>;
+  declare export var Double: Class<bson$Double>;
+  declare export var Int32: Class<bson$Int32>;
+  declare export var Long: Class<bson$Long>;
+  declare export var Map: bson$Map;
+  declare export var MaxKey: Class<bson$MaxKey>;
+  declare export var MinKey: Class<bson$MinKey>;
+  declare export var ObjectId: Class<bson$ObjectId>;
+  declare export var ObjectID: Class<bson$ObjectId>;
+  declare export var BSONRegExp: Class<bson$BSONRegExp>;
+  declare export var Symbol: Class<bson$Symbol>;
+  declare export var Timestamp: Class<bson$Timestamp>;
+
+  declare export var BSON_INT32_MAX: 0x7fffffff;
+  declare export var BSON_INT32_MIN: -0x80000000;
+  declare export var BSON_INT64_MAX: number;
+  declare export var BSON_INT64_MIN: number;
+  declare export var JS_INT_MAX: 0x20000000000000;
+  declare export var JS_INT_MIN: -0x200000000000;
+
+  declare export var BSON_DATA_NUMBER: 1;
+  declare export var BSON_DATA_STRING: 2;
+  declare export var BSON_DATA_OBJECT: 3;
+  declare export var BSON_DATA_ARRAY: 4;
+  declare export var BSON_DATA_BINARY: 5;
+  declare export var BSON_DATA_OID: 7;
+  declare export var BSON_DATA_BOOLEAN: 8;
+  declare export var BSON_DATA_DATE: 9;
+  declare export var BSON_DATA_NULL: 10;
+  declare export var BSON_DATA_REGEXP: 11;
+  declare export var BSON_DATA_CODE: 13;
+  declare export var BSON_DATA_SYMBOL: 14;
+  declare export var BSON_DATA_CODE_W_SCOPE: 15;
+  declare export var BSON_DATA_INT: 16;
+  declare export var BSON_DATA_TIMESTAMP: 17;
+  declare export var BSON_DATA_LONG: 18;
+  declare export var BSON_DATA_MIN_KEY: 0xff;
+  declare export var BSON_DATA_MAX_KEY: 0x7f;
+  declare export var BSON_BINARY_SUBTYPE_DEFAULT: 0;
+  declare export var BSON_BINARY_SUBTYPE_FUNCTION: 1;
+  declare export var BSON_BINARY_SUBTYPE_BYTE_ARRAY: 2;
+  declare export var BSON_BINARY_SUBTYPE_UUID: 3;
+  declare export var BSON_BINARY_SUBTYPE_MD5: 4;
+  declare export var BSON_BINARY_SUBTYPE_USER_DEFINED: 128;
 }
