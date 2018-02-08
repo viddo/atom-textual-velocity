@@ -78,7 +78,7 @@
     "eslint-plugin-prettier": "2.6.0",
     "eslint-plugin-promise": "3.6.0",
     "eslint-plugin-react": "7.6.1",
-    "flow-bin": "0.64.0",
+    "flow-bin": "0.65.0",
     "flow-typed": "2.3.0",
     "husky": "0.14.3",
     "lint-staged": "6.1.0",
@@ -92,7 +92,7 @@
     "lint": "./eslint.sh",
     "lint-prettier": "prettier --list-different \"lib/**/*.js\"",
     "lint-prettier-write": "prettier --write \"lib/**/*.js\"",
-    "test": "npm run flow && npm run lint && apm test",
+    "test": "npm run flow && npm run lint && atom --dev --test lib",
     "update-flow-typed": "flow-typed install --overwrite",
     "update-build-package": "curl -s -O https://raw.githubusercontent.com/atom/ci/master/build-package.sh"
   },
