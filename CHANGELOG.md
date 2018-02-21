@@ -12,6 +12,7 @@ Internal refactoring:
 - Flowtype all code
 - Change filename convention, to match content
 - Move specs next to source files
+- Remove unused service implementation
 
 ## [0.18.0] - 2017-11-20
 #### Changed
