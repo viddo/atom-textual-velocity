@@ -5,10 +5,10 @@ env:
   - ATOM_LINT_WITH_BUNDLED_NODE="true"
   - secure: kBMAVWhmH9tpxnCQkXWqi+IiS2sqgvXxeqqkSTfsjSgbbHqh+g55bXuHydFmLb4Gk+dwtIbwVdhyVa+VMiFyprrn5aEU8rFfNffMgvfKBtDEm/jZJ+Fs2aL1+uFoPs4lgfmmfSlqZGFJi3PsZBJrGER+3dBjGmlWMwoy5kN/DIsdtK4YT6RHrcB4sGrGmP709iJgZ70XSeymeOmhaggKnPZnATq0iCvcb5XYpTBQNlLBeKTKPrM8vE0ZVI0Vua8LBgUsl+jA4NLtqXF1mszsFo5Q1id4M4Nq+i2AsoCkCXho/Z5OldCX4clB0aqzUCl+oVsaYr+ckf6TwfokjtC9DjRaEmnEL1XQimc0MpriwLJTyy6rVcALuE9wiVwqYk4WIPayBDPxb1iOQ89D+WF2dVGDG44pizPV6Qo/4LHvpDoJ9o0D8DIiuvIItmygNw8TPMK2y+PQPpKVVtt5wIqU7ktWlquUzOSjPdffJDU6I3uyNWYZy+lTRlz66SbaKmpTzy+DI95Hfaj33E16fMqMRFO16LlJlpwrCvMSO3R6tIZQg6ZLo55D1yNg3z3F1N9yJAKdEWBiwtAFHLJCwGv8wuMiaDsXlXSYUioym9qIddTFxNdPKkR35uIwNmpDPo+TCH1VqLww40/5FfrDR+T07Dd6MqPk85xo4tVhlwJfcXs=
   matrix:
-  - ATOM_CHANNEL=stable
+  # - ATOM_CHANNEL=stable
   - ATOM_CHANNEL=beta
 os:
-- linux
+# - linux
 - osx
 script:
 - "./build-package.sh"
