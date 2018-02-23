@@ -183,14 +183,17 @@ if has_linter "standard"; then
   fi
 fi
 
-if [ -d ./spec ]; then
-  echo "Running specs..."
-  "${ATOM_SCRIPT_PATH}" --test spec
-elif [ -d ./test ]; then
-  echo "Running specs..."
-  "${ATOM_SCRIPT_PATH}" --test test
-else
-  echo "Missing spec folder! Please consider adding a test suite in './spec' or in './test'"
-  exit 0
-fi
+# if [ -d ./spec ]; then
+#   echo "Running specs..."
+#   "${ATOM_SCRIPT_PATH}" --test spec
+# elif [ -d ./test ]; then
+#   echo "Running specs..."
+#   "${ATOM_SCRIPT_PATH}" --test test
+# else
+#   echo "Missing spec folder! Please consider adding a test suite in './spec' or in './test'"
+#   exit 0
+# fi
+echo "Running specs..."
+"${ATOM_SCRIPT_PATH}" --test lib/_fix-spec.js lib
+
 exit
