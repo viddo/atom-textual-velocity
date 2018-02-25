@@ -194,6 +194,6 @@ fi
 #   exit 0
 # fi
 echo "Running specs..."
-"${ATOM_SCRIPT_PATH}" --test lib/_fix-spec.js lib
+"${ATOM_SCRIPT_PATH}" --enable-electron-logging --test lib/_fix-spec.js lib
 
 exit
