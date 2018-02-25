@@ -1,6 +1,6 @@
 version: 2
 jobs:
-  test-stable:
+  build-and-test-stable:
     macos:
       xcode: "9.2"
 
@@ -15,7 +15,7 @@ jobs:
       - run: ./eslint.sh
       - run: ./node_modules/.bin/flow
 
-  test-beta:
+  build-and-test-beta:
     macos:
       xcode: "9.2"
 
