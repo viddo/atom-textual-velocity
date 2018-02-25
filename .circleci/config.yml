@@ -1,0 +1,31 @@
+version: 2
+jobs:
+  test-stable:
+    macos:
+      xcode: "9.2"
+
+    environment:
+      - ATOM_CHANNEL: "stable"
+      - ATOM_LINT_WITH_BUNDLED_NODE: "true"
+      - APM_TEST_PACKAGES: ""
+
+    steps:
+      - checkout
+      - run: ./build-package.sh
+      - run: ./eslint.sh
+      - run: ./node_modules/.bin/flow
+
+  test-beta:
+    macos:
+      xcode: "9.2"
+
+    environment:
+      - ATOM_CHANNEL: "beta"
+      - ATOM_LINT_WITH_BUNDLED_NODE: "true"
+      - APM_TEST_PACKAGES: ""
+
+    steps:
+      - checkout
+      - run: ./build-package.sh
+      - run: ./eslint.sh
+      - run: ./node_modules/.bin/flow
