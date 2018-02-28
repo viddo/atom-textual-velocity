@@ -194,25 +194,18 @@ fi
 #   exit 0
 # fi
 
-retry() {
-    local max_attempts="$1"; shift
-    local cmd="$@"
-    local attempt_num=1
-
-    until $cmd
-    do
-        if (( attempt_num == max_attempts ))
-        then
-            echo "Tests failed after $max_attempts attempts"
-            return 1
-        else
-            echo "Tests attempt $attempt_num failed! Trying again in $attempt_num seconds..."
-            sleep $(( attempt_num++ ))
-        fi
-    done
-}
-
-echo "Running specs..."
-retry 3 "${ATOM_SCRIPT_PATH}" --test lib/_fix-spec.js lib
+n=1
+while true
+do
+   echo "Running specs..."
+   "${ATOM_SCRIPT_PATH}" --test lib && break
+   if [ $n -lt 3 ]; then
+     echo "Tests attempt $n failed! Trying again in $n seconds"
+     n=$[$n+1]
+     sleep $n
+   else
+     break
+   fi
+done
 
 exit
