@@ -193,7 +193,19 @@ fi
 #   echo "Missing spec folder! Please consider adding a test suite in './spec' or in './test'"
 #   exit 0
 # fi
-echo "Running specs..."
-"${ATOM_SCRIPT_PATH}" --test lib/_fix-spec.js lib
+
+n=1
+while true
+do
+   echo "Running specs..."
+   "${ATOM_SCRIPT_PATH}" --test lib && break
+   if [ $n -lt 3 ]; then
+     echo "Tests attempt $n failed! Trying again in $n seconds"
+     n=$[$n+1]
+     sleep $n
+   else
+     break
+   fi
+done
 
 exit
