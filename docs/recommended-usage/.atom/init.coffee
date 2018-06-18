@@ -3,12 +3,10 @@ atom.packages.onDidActivatePackage (pkg) ->
   return if pkg.name isnt 'textual-velocity'
 
   # Try register the global shortcut
-  remote = require 'remote'
-  globalShortcut = remote.require 'global-shortcut'
   # note that key combo syntax is _not_ the same as for keymaps!
   # see https://github.com/atom/electron/blob/master/docs/api/global-shortcut.md for details
   keyCombo = 'cmd+shift+space'
-  ret = globalShortcut.register keyCombo, ->
+  ret = require('remote').globalShortcut.register keyCombo, ->
     target = document.body.querySelector('atom-workspace')
     atom.commands.dispatch(target, 'textual-velocity:toggle-atom-window')
   if ret
