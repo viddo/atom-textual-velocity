@@ -2,13 +2,20 @@ declare var emit: Function; // only available in Task context https://atom.io/do
 declare interface atom$IDisposable {
   dispose(): void;
 }
-declare type atom$Point = {
+declare type atom$PointIsch = atom$Point | [number, number];
+declare class atom$Point {
+  static ZERO: atom$PointIsch,
+  static INFINITY: atom$PointIsch,
+  constructor(row: number, column: number): void,
   row: number,
-  column: number,
+  column: number
+}
+declare class atom$Range {
+  constructor(pointA: atom$PointIsch, pointB: atom$PointIsch): void,
 }
 declare type atom$ChangeCursorPositionEvent = {
   newBufferPosition: atom$Point,
-  textChanged: boolean,
+  textChanged: boolean
 }
 declare type atom$PathWatcher = {
   getStartPromise(): Promise<void>,
@@ -49,24 +56,55 @@ type TextEditorParams = {
   readOnly?: boolean
 };
 
+declare class atom$DisplayMarker {
+  destroy(): void
+}
+
+declare class atom$DisplayMarkerLayer {
+  clear(): void,
+  destroy(): void,
+  markBufferRange(range: atom$Range, ?{
+    invalidate?: "never" | "surround" | "overlap" | "inside" | "touch",
+    reversed?: boolean,
+    exclusive?: boolean
+  }): atom$DisplayMarker
+}
+
+declare class atom$ResultsLayerDecoration {
+  destroy(): void
+}
+
 declare class atom$TextEditor {
-  onDidDestroy(callback: () => mixed): atom$IDisposable,
   onDidChangeCursorPosition(callback: (event: atom$ChangeCursorPositionEvent) => mixed): atom$IDisposable,
+  onDidDestroy(callback: () => mixed): atom$IDisposable,
   onWillInsertText(callback: (cancel: Function) => mixed): atom$IDisposable,
 
-  isAlive(): boolean,
+  addMarkerLayer(options: {maintainHistory: boolean}): atom$DisplayMarkerLayer,
   cursorMoved(event: atom$ChangeCursorPositionEvent): void,
+  decorateMarkerLayer(resultsMarkerLayer: atom$DisplayMarkerLayer, options: { type: 'highlight', class: string}): atom$ResultsLayerDecoration,
   destroy(): void,
   getFileName(): string,
-  setText(text: string, options?: SetTextOptions): void,
   getText(): void,
+  isAlive(): boolean,
+  scanInBufferRange(
+   regex: RegExp,
+   range: atom$Range,
+   iterator: (foundMatch: {
+     match: mixed,
+     matchText: string,
+     range: atom$Range,
+     stop: () => mixed,
+     replace: (replaceWith: string) => mixed,
+   }) => mixed
+ ): void,
+  setText(text: string, options?: SetTextOptions): void,
 
   // define as invariants so we can override them in preview
-  isModified: () => boolean,
   getLongTitle:() => string,
   getPath:() => ?string,
   getTitle: () => string,
   getURI: () => ?string,
+  isModified: () => boolean,
   setPath: (filePath: string) => void
 }
 
@@ -102,7 +140,9 @@ declare var atom: {
 
 // https://atom.io/docs/api/v1.22.0/PathWatcher
 declare module "atom" {
-  declare export type Panel = atom$Panel;
+  declare var Panel: typeof atom$Panel;
+  declare var Point: typeof atom$Point;
+  declare var Range: typeof atom$Range;
 
   declare class Disposable {
     constructor(...values: Array<atom$IDisposable | Function>): void;
