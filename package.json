@@ -58,10 +58,10 @@
     "react": "16.4.1",
     "react-dom": "16.4.1",
     "react-redux": "5.0.7",
-    "redux": "3.7.2",
+    "redux": "4.0.0",
     "redux-observable": "1.0.0",
     "reselect": "3.0.1",
-    "rxjs": "5.5.6",
+    "rxjs": "6.2.1",
     "sifter": "0.5.3"
   },
   "optionalDependencies": {
@@ -82,7 +82,7 @@
     "flow-typed": "2.4.0",
     "npm-run-all": "^4.1.2",
     "prettier": "1.13.5",
-    "redux-mock-store": "1.5.1",
+    "redux-mock-store": "1.5.3",
     "tempy": "0.2.1"
   },
   "scripts": {
