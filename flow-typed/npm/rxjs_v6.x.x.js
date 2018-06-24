@@ -82,6 +82,15 @@ declare class rxjs$Observable<+T> {
     op5: rxjs$OperatorFunctionLast<D, E>
   ): E;
 
+  pipe<A, B, C, D, E, F>(
+    op1: rxjs$OperatorFunction<T, A>,
+    op2: rxjs$OperatorFunction<A, B>,
+    op3: rxjs$OperatorFunction<B, C>,
+    op4: rxjs$OperatorFunction<C, D>,
+    op5: rxjs$OperatorFunction<D, E>,
+    op6: rxjs$OperatorFunctionLast<E, F>
+  ): F;
+
   toArray(): rxjs$Observable<T[]>;
 
   toPromise(): Promise<T>;
@@ -1628,6 +1637,119 @@ declare class rxjs$UnsubscriptionError extends Error {}
 
 declare module "rxjs" {
   declare module.exports: {
+    bindNodeCallback<U>(
+      callbackFunc: (callback: (err: any, result: U) => any) => any,
+      selector?: void,
+      scheduler?: rxjs$SchedulerClass
+    ): () => rxjs$Observable<U>;
+    bindNodeCallback<T, U>(
+      callbackFunc: (v1: T, callback: (err: any, result: U) => any) => any,
+      selector?: void,
+      scheduler?: rxjs$SchedulerClass
+    ): (v1: T) => rxjs$Observable<U>;
+    bindNodeCallback<T, T2, U>(
+      callbackFunc: (
+        v1: T,
+        v2: T2,
+        callback: (err: any, result: U) => any
+      ) => any,
+      selector?: void,
+      scheduler?: rxjs$SchedulerClass
+    ): (v1: T, v2: T2) => rxjs$Observable<U>;
+    bindNodeCallback<T, T2, T3, U>(
+      callbackFunc: (
+        v1: T,
+        v2: T2,
+        v3: T3,
+        callback: (err: any, result: U) => any
+      ) => any,
+      selector?: void,
+      scheduler?: rxjs$SchedulerClass
+    ): (v1: T, v2: T2, v3: T3) => rxjs$Observable<U>;
+    bindNodeCallback<T, T2, T3, T4, U>(
+      callbackFunc: (
+        v1: T,
+        v2: T2,
+        v3: T3,
+        v4: T4,
+        callback: (err: any, result: U) => any
+      ) => any,
+      selector?: void,
+      scheduler?: rxjs$SchedulerClass
+    ): (v1: T, v2: T2, v3: T3, v4: T4) => rxjs$Observable<U>;
+    bindNodeCallback<T, T2, T3, T4, T5, U>(
+      callbackFunc: (
+        v1: T,
+        v2: T2,
+        v3: T3,
+        v4: T4,
+        v5: T5,
+        callback: (err: any, result: U) => any
+      ) => any,
+      selector?: void,
+      scheduler?: rxjs$SchedulerClass
+    ): (v1: T, v2: T2, v3: T3, v4: T4, v5: T5) => rxjs$Observable<U>;
+    bindNodeCallback<T, T2, T3, T4, T5, T6, U>(
+      callbackFunc: (
+        v1: T,
+        v2: T2,
+        v3: T3,
+        v4: T4,
+        v5: T5,
+        v6: T6,
+        callback: (err: any, result: U) => any
+      ) => any,
+      selector?: void,
+      scheduler?: rxjs$SchedulerClass
+    ): (v1: T, v2: T2, v3: T3, v4: T4, v5: T5, v6: T6) => rxjs$Observable<U>;
+    bindNodeCallback<T>(
+      callbackFunc: Function,
+      selector?: void,
+      scheduler?: rxjs$SchedulerClass
+    ): (...args: Array<any>) => rxjs$Observable<T>;
+    bindNodeCallback<T>(
+      callbackFunc: Function,
+      selector?: (...args: Array<any>) => T,
+      scheduler?: rxjs$SchedulerClass
+    ): (...args: Array<any>) => rxjs$Observable<T>;
+    empty<+T>(
+      scheduler?: rxjs$SchedulerClass
+    ): rxjs$Observable<T>;
+    from<+T>(
+      input: rxjs$ObservableInput<T>,
+      scheduler?: rxjs$SchedulerClass
+    ): rxjs$Observable<T>;
+    fromEvent: (<+T>(
+      element: any,
+      eventName: string,
+      ...none: Array<void>
+    ) => rxjs$Observable<T>) & (<+T>(
+      element: any,
+      eventName: string,
+      options: rxjs$EventListenerOptions,
+      ...none: Array<void>
+    ) => rxjs$Observable<T>) & (<+T>(
+      element: any,
+      eventName: string,
+      selector: () => T,
+      ...none: Array<void>
+    ) => rxjs$Observable<T>) & (<+T>(
+      element: any,
+      eventName: string,
+      options: rxjs$EventListenerOptions,
+      selector: () => T
+    ) => rxjs$Observable<T>);
+    fromEventPattern<+T>(
+      addHandler: (handler: (item: T) => void) => void,
+      removeHandler: (handler: (item: T) => void) => void,
+      selector?: () => T
+    ): rxjs$Observable<T>;
+    merge<+T>(
+      ...observables: (rxjs$Observable<T> | rxjs$SchedulerClass | number)[]
+    ): rxjs$Observable<T> => rxjs$Observable<T>;
+    never<U>(): rxjs$Observable<U>;
+    of<+T>(...values: T[]): rxjs$Observable<T>;
+
     Observable: typeof rxjs$Observable,
     Observer: typeof rxjs$Observer,
     ConnectableObservable: typeof rxjs$ConnectableObservable,
