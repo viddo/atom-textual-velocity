@@ -12,24 +12,32 @@
  * community by sending a pull request to:
  * https://github.com/flowtype/flow-typed
  */
+import { Dispatch, MiddlewareAPI } from 'redux';
 
-declare class reduxRxjs$StateObservable<T> extends rxjs$Observable<T> {
+declare class reduxRxjs$StateObservable<+T> extends rxjs$Observable<T> {
   value: T;
 }
-declare type reduxRxjs$Epic<T> = (
+declare type reduxRxjs$Epic<T, U> = (
   action$: rxjs$Observable<T>,
-  state$: reduxRxjs$StateObservable<T>
+  state$: reduxRxjs$StateObservable<T>,
+  dependencies: U
 ) => rxjs$Observable<T>;
 
-declare type reduxRxjs$EpicMiddleware<T> = {
-  run <T>(rootEpic: reduxRxjs$Epic<T>): void
-}
+declare type reduxRxjs$EpicMiddleware<T, U, S, A, D = Dispatch<A>> =
+  {
+    run <T>(rootEpic: reduxRxjs$Epic<T, U>): void
+  }
+  & MiddlewareAPI<S, A, D>
 
 declare module 'redux-observable' {
   declare module.exports: {
     StateObservable: typeof reduxRxjs$StateObservable;
-    createEpicMiddleware<+T>(options?: {dependencies: any}): reduxRxjs$EpicMiddleware<T> => reduxRxjs$EpicMiddleware<T>;
-    combineEpics<+T>(...epics: reduxRxjs$Epic<T>[]): reduxRxjs$Epic<T> => reduxRxjs$Epic<T>;
+    createEpicMiddleware<+T, +U, S, A, D>(
+      options?: {dependencies: U}
+    ): reduxRxjs$EpicMiddleware<T, U, S, A, D>;
+    combineEpics<+T,+D>(
+      ...epics: Array<reduxRxjs$Epic<T,D>>
+    ): reduxRxjs$Epic<T,D>;
     ofType<+T>(actionType: string): rxjs$Observable<T> => rxjs$Observable<T>;
   }
 }
