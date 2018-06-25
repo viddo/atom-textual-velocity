@@ -4,15 +4,23 @@ This project adheres to [Semantic Versioning](http://semver.org/) and [keepachan
 
 
 ## [unreleased]
+#### Fixed
+- _Last updated_ column not display last change
+- Create notes dir if it doesn't exist
+- Handle edge-case of empty notes dir
+
 #### Changed
-Internal refactoring:
-- Separate React code into presentational and container components
-- Use default recommended ESlint rules + fix offending code
-- Update flowtyped definitions
-- Flowtype all code
-- Change filename convention, to match content
-- Move specs next to source files
-- Remove unused service implementation
+- Disabled xattrs support by default, can be enabled by package setting
+  - Appears to crash Atom as of v1.28+
+- Internal refactorings:
+  - Separate React code into presentational and container components
+  - Use default recommended ESlint rules + fix offending code
+  - Update flowtyped definitions
+  - Flowtype all code
+  - Change filename convention, to match content
+  - Move specs next to source files
+  - Remove unused service implementation
+  - Updated all internal deps to latest versions
 
 ## [0.18.0] - 2017-11-20
 #### Changed
