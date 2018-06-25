@@ -6,6 +6,8 @@ This project adheres to [Semantic Versioning](http://semver.org/) and [keepachan
 ## [unreleased]
 #### Fixed
 - _Last updated_ column not display last change
+- Create notes dir if it doesn't exist
+- Handle edge-case of empty notes dir
 
 #### Changed
 - Disabled xattrs support by default, can be enabled by package setting
