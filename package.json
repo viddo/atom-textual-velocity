@@ -16,7 +16,7 @@
   "atomTranspilers": [
     {
       "transpiler": "atom-babel6-transpiler",
-      "glob": "lib/**/*.js",
+      "glob": "{flow-types,lib,spec}/**/*.js",
       "options": {
         "cacheKeyFiles": [
           ".babelrc",
@@ -92,7 +92,7 @@
     "lint-prettier": "prettier --list-different \"lib/**/*.js\"",
     "lint-prettier-write": "prettier --write \"lib/**/*.js\"",
     "test": "npm-run-all flow lint test:specs",
-    "test:specs": "atom --dev --test lib/_fix-spec.js lib",
+    "test:specs": "atom --dev --test",
     "update-flow-typed": "flow-typed install --overwrite",
     "update-build-package": "curl -s -O https://raw.githubusercontent.com/atom/ci/master/build-package.sh"
   }
