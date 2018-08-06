@@ -4,12 +4,8 @@ This project adheres to [Semantic Versioning](http://semver.org/) and [keepachan
 
 
 ## [unreleased]
-#### Fixed
-- _Last updated_ column not display last change
-- Create notes dir if it doesn't exist
-- Handle edge-case of empty notes dir
-
 #### Changed
+- Use read-only editor for previews [#267](https://github.com/viddo/atom-textual-velocity/pull/267/)
 - Disabled xattrs support by default, can be enabled by package setting
   - Appears to crash Atom as of v1.28+
 - Internal refactorings:
@@ -21,6 +17,12 @@ This project adheres to [Semantic Versioning](http://semver.org/) and [keepachan
   - Move specs next to source files
   - Remove unused service implementation
   - Updated all internal deps to latest versions
+
+#### Fixed
+- _Last updated_ column not display last change
+- Create notes dir if it doesn't exist
+- Handle edge-case of empty notes dir
+
 
 ## [0.18.0] - 2017-11-20
 #### Changed
@@ -47,11 +49,11 @@ This project adheres to [Semantic Versioning](http://semver.org/) and [keepachan
 
 
 ## [0.15.0] - 2017-06-20
-#### Fixed
-- error in init.coffee file in recommended usage [#76](https://github.com/viddo/atom-textual-velocity/issues/76)
-
 #### Added
 - Implement @copy syntax for quickly getting a string onto the clipboard [#74](https://github.com/viddo/atom-textual-velocity/pull/74)
+
+#### Fixed
+- error in init.coffee file in recommended usage [#76](https://github.com/viddo/atom-textual-velocity/issues/76)
 
 
 ## [0.14.2] - 2017-06-07
