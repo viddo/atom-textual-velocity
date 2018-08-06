@@ -83,6 +83,7 @@ declare class atom$TextEditor {
   cursorMoved(event: atom$ChangeCursorPositionEvent): void,
   decorateMarkerLayer(resultsMarkerLayer: atom$DisplayMarkerLayer, options: { type: 'highlight', class: string}): atom$ResultsLayerDecoration,
   destroy(): void,
+  getCursorBufferPosition(): atom$Point,
   getFileName(): string,
   getText(): void,
   isAlive(): boolean,
@@ -105,7 +106,8 @@ declare class atom$TextEditor {
   getTitle: () => string,
   getURI: () => ?string,
   isModified: () => boolean,
-  setPath: (filePath: string) => void
+  setPath: (filePath: string) => void,
+  shouldPromptToSave: () => boolean
 }
 
 type WorkspaceOpenParams = {
