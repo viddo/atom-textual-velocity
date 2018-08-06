@@ -14,7 +14,6 @@ This project adheres to [Semantic Versioning](http://semver.org/) and [keepachan
   - Update flowtyped definitions
   - Flowtype all code
   - Change filename convention, to match content
-  - Move specs next to source files
   - Remove unused service implementation
   - Updated all internal deps to latest versions
 
