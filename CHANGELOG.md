@@ -4,6 +4,8 @@ This project adheres to [Semantic Versioning](http://semver.org/) and [keepachan
 
 
 ## [unreleased]
+
+## [0.19.0] - 2018-08-06
 #### Changed
 - Use read-only editor for previews [#267](https://github.com/viddo/atom-textual-velocity/pull/267/)
 - Disabled xattrs support by default, can be enabled by package setting
