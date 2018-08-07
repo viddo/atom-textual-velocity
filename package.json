@@ -87,11 +87,13 @@
   },
   "scripts": {
     "precommit": "lint-staged",
-    "flow": "flow; test $? -eq 0 -o $? -eq 2",
-    "lint": "./eslint.sh",
-    "lint-prettier": "prettier --list-different \"lib/**/*.js\"",
-    "lint-prettier-write": "prettier --write \"lib/**/*.js\"",
-    "test": "npm-run-all flow lint && apm test",
+    "lint:flow": "flow; test $? -eq 0 -o $? -eq 2",
+    "lint:eslint": "eslint \"{lib,spec}/**/*.js\"",
+    "lint:prettier": "prettier --list-different \"{lib,spec}/**/*.js\"",
+    "prettier-write": "prettier --write \"{lib,spec}/**/*.js\"",
+    "spec": "apm test",
+    "test": "npm-run-all --silent lint:flow lint:eslint lint:prettier spec",
+    "test:ci": "npm-run-all --silent lint:flow lint:prettier",
     "update-flow-typed": "flow-typed install --overwrite",
     "update-build-package": "curl -s -O https://raw.githubusercontent.com/atom/ci/master/build-package.sh"
   }
