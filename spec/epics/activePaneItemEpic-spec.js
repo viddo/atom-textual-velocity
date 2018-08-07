@@ -5,7 +5,7 @@ import configureMockStore from "redux-mock-store";
 import activePaneItemEpic from "../../lib/epics/activePaneItemEpic";
 import * as A from "../../lib/actions";
 import statsMock from "../statsMock";
-import {PREVIEW_EDITOR_TITLE} from '../../lib/previewEditor';
+import { PREVIEW_EDITOR_TITLE } from "../../lib/previewEditor";
 
 import type { State } from "../../flow-types/State";
 
@@ -121,7 +121,8 @@ describe("epics/activePaneItemEpic", () => {
     beforeEach(function() {
       waitsForPromise(() => {
         return atom.workspace.open("/notes/bob.md").then(() => {
-          atom.workspace.getActiveTextEditor().getTitle = () => PREVIEW_EDITOR_TITLE;
+          atom.workspace.getActiveTextEditor().getTitle = () =>
+            PREVIEW_EDITOR_TITLE;
           jasmine.Clock.tick(1000);
         });
       });
