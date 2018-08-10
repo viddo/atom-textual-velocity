@@ -4,6 +4,9 @@ This project adheres to [Semantic Versioning](http://semver.org/) and [keepachan
 
 
 ## [unreleased]
+#### Changed
+- Updated all internal deps to latest versions
+
 
 ## [0.19.0] - 2018-08-06
 #### Changed
