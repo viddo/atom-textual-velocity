@@ -6,5 +6,8 @@
     "transform-runtime"
   ],
   "presets": ["react", ["env", {}]],
+  "ignore": [
+    "lib/Disposables.js"
+  ],
   "sourceMaps": "inline"
 }
