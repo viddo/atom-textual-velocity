@@ -60,7 +60,7 @@
     "react-redux": "5.0.7",
     "redux": "4.0.0",
     "redux-observable": "1.0.0",
-    "reselect": "3.0.1",
+    "reselect": "4.0.0",
     "rxjs": "6.2.1",
     "sifter": "0.5.3",
     "tempy": "0.2.1"
