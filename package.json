@@ -55,7 +55,7 @@
     "classnames": "2.2.6",
     "fs-plus": "3.0.2",
     "moment": "2.22.2",
-    "react": "16.6.0",
+    "react": "16.6.1",
     "react-dom": "16.6.0",
     "react-redux": "5.1.0",
     "redux": "4.0.0",
