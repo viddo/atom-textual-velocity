@@ -51,7 +51,7 @@
     "babel-preset-env": "1.6.1",
     "babel-preset-react": "6.24.1",
     "babel-runtime": "6.26.0",
-    "bson": "3.0.2",
+    "bson": "4.0.0",
     "classnames": "2.2.6",
     "fs-plus": "3.0.2",
     "moment": "2.22.2",
@@ -86,7 +86,6 @@
     "redux-mock-store": "1.5.3"
   },
   "scripts": {
-    "precommit": "lint-staged",
     "lint:flow": "flow; test $? -eq 0 -o $? -eq 2",
     "lint:eslint": "eslint \"{lib,spec}/**/*.js\"",
     "lint:prettier": "prettier --list-different \"{lib,spec}/**/*.js\"",
@@ -94,7 +93,9 @@
     "spec": "apm test",
     "test": "npm-run-all --silent lint:flow lint:eslint lint:prettier spec",
     "test:ci": "npm-run-all --silent lint:flow lint:prettier",
-    "update-flow-typed": "flow-typed install --overwrite",
+    "flow-typed": "npm-run-all -s flow-typed:install flow-typed:rm_devdeps",
+    "flow-typed:install": "flow-typed install --overwrite",
+    "flow-typed:rm_devdeps": "(rm flow-typed/npm/babel*; rm flow-typed/npm/eslint*; ) || true",
     "update-build-package": "curl -s -O https://raw.githubusercontent.com/atom/ci/master/build-package.sh"
   }
 }
