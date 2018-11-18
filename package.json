@@ -86,7 +86,7 @@
     "redux-mock-store": "1.5.3"
   },
   "scripts": {
-    "lint:flow": "flow; test $? -eq 0 -o $? -eq 2",
+    "lint:flow": "flow",
     "lint:eslint": "eslint \"{lib,spec}/**/*.js\"",
     "lint:prettier": "prettier --list-different \"{lib,spec}/**/*.js\"",
     "prettier-write": "prettier --write \"{lib,spec}/**/*.js\"",
