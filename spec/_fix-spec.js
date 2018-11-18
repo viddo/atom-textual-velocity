@@ -2,9 +2,13 @@
 
 import { defaultConfig } from "../lib/config";
 
+import type { Action } from "../lib/actions";
+import type { State } from "../flow-types/State";
+import type { Store } from "redux";
+
 type ProcessInTesting = {
   watcher?: atom$PathWatcher,
-  store?: Store
+  store?: Store<State, Action>
 };
 
 // Remove the custom equalityTest added by atom:

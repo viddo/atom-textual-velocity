@@ -6,7 +6,7 @@ describe("atom-rxjs/observeConfig", function() {
   describe("given valid input", function() {
     let observation$;
     let nextSpy, errorSpy;
-    let subscription: rxjs$ISubscription;
+    let subscription: rxjs$Subscription;
 
     beforeEach(function() {
       atom.config.set("textual-velocity.path", "/notes");
