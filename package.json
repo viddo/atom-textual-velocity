@@ -63,7 +63,7 @@
     "reselect": "4.0.0",
     "rxjs": "6.2.1",
     "sifter": "0.5.3",
-    "tempy": "0.2.1"
+    "tempy": "0.3.0"
   },
   "optionalDependencies": {
     "bplist": "0.0.4",
