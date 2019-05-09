@@ -67,7 +67,7 @@
   },
   "optionalDependencies": {
     "bplist": "0.0.4",
-    "fs-xattr": "0.2.1"
+    "fs-xattr": "0.3.0"
   },
   "devDependencies": {
     "babel-eslint": "10.0.1",
