@@ -87,7 +87,8 @@
   },
   "greenkeeper": {
     "ignore": [
-      "flow-bin"
+      "flow-bin",
+      "flow-plugin-flowtype"
     ]
   },
   "scripts": {
