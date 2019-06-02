@@ -85,6 +85,11 @@
     "prettier": "1.17.0",
     "redux-mock-store": "1.5.3"
   },
+  "greenkeeper": {
+    "ignore": [
+      "flow-bin"
+    ]
+  },
   "scripts": {
     "lint:flow": "flow",
     "lint:eslint": "eslint \"{lib,spec}/**/*.js\"",
