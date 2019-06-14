@@ -87,6 +87,7 @@
   },
   "greenkeeper": {
     "ignore": [
+      "eslint-plugin-flowtype",
       "flow-bin",
       "flow-plugin-flowtype"
     ]
