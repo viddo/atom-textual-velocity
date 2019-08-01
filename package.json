@@ -89,7 +89,8 @@
     "ignore": [
       "eslint-plugin-flowtype",
       "flow-bin",
-      "flow-plugin-flowtype"
+      "flow-plugin-flowtype",
+      "flow-typed"
     ]
   },
   "scripts": {
