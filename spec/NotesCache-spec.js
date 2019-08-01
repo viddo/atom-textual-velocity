@@ -33,11 +33,7 @@ describe("NotesCache", () => {
     jasmine.attachToDOM(workspaceView);
     atom.commands.dispatch(workspaceView, "textual-velocity:clear-notes-cache");
 
-    try {
-      notesCache.save(expected);
-    } catch (err) {
-      throw err;
-    }
+    notesCache.save(expected);
     actual = notesCache.load();
     expect(actual).toEqual({});
   });
