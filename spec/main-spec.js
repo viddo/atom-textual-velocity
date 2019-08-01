@@ -1,5 +1,4 @@
 /* @flow */
-/* global CustomEvent */
 
 import path from "path";
 import { beforeEach, afterEach } from "./async-spec-helpers";
