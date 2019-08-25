@@ -71,7 +71,7 @@
   },
   "devDependencies": {
     "babel-eslint": "10.0.2",
-    "eslint": "6.1.0",
+    "eslint": "6.2.2",
     "eslint-config-prettier": "6.1.0",
     "eslint-plugin-flowtype": "3.10.3",
     "eslint-plugin-import": "2.18.2",
@@ -95,7 +95,7 @@
   },
   "scripts": {
     "lint:flow": "flow",
-    "lint:eslint": "eslint \"{lib,spec}/**/*.js\"",
+    "lint:eslint": "eslint \"{lib,spec}/**/*.js\" && echo 'All good!'",
     "lint:prettier": "prettier --list-different \"{lib,spec}/**/*.js\"",
     "prettier-write": "prettier --write \"{lib,spec}/**/*.js\"",
     "spec": "apm test",
