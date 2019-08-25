@@ -22,11 +22,15 @@ module.exports = {
   rules: {
     "no-console": "off",
     "prettier/prettier": "error",
-    "react/prop-types": "off", // using flowtype instead
+    "react/prop-types": "off" // using flowtype instead
   },
   settings: {
     flowtype: {
       onlyFilesWithFlowAnnotation: true
+    },
+    react: {
+      version: "detect",
+      flowVersion: "0.84"
     }
   },
   globals: {
