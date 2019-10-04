@@ -33,7 +33,7 @@
     ]
   },
   "engines": {
-    "atom": ">=1.30.0 <2.0.0"
+    "atom": ">=1.40.1 <2.0.0"
   },
   "consumedServices": {
     "atom.file-icons": {
