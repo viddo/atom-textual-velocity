@@ -9,6 +9,7 @@ This project adheres to [Semantic Versioning](http://semver.org/) and [keepachan
 ## [0.21.0] - 2019-10-03
 #### Changed
 - About a year of updates to 3rd-party deps essentially
+- Indicate that latest Atom version is required to install/update (v1.40.1)
 
 #### Fixed
 - _"Invalid UTF-8 string in BSON document"_ upon de-serialization cache, causing re-read of all notes on every startup
