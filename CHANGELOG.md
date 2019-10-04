@@ -4,8 +4,14 @@ This project adheres to [Semantic Versioning](http://semver.org/) and [keepachan
 
 
 ## [unreleased]
+
+
+## [0.21.0] - 2019-10-03
 #### Changed
-- Updated all internal deps to latest versions
+- About a year of updates to 3rd-party deps essentially
+
+#### Fixed
+- _"Invalid UTF-8 string in BSON document"_ upon de-serialization cache, causing re-read of all notes on every startup
 
 
 ## [0.20.0] - 2018-10-04
