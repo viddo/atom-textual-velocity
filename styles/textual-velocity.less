@@ -116,6 +116,11 @@
     &.is-selected {
       color: @text-color;
     }
+    & .icon.is-hidden:before {
+      // hack to make the height remain the same even if the sort icon is not visible
+      width: 0;
+      overflow: hidden;
+    }
   }
   td {
     cursor: pointer;
