@@ -27,7 +27,7 @@ describe("epics/configChangesEpic", () => {
     expect(dispatchedActions[0]).toEqual(A.changeListHeight(150));
     expect(dispatchedActions[1]).toEqual(A.changeRowHeight(20));
     expect(dispatchedActions[2]).toEqual(A.changeSortDirection("desc"));
-    expect(dispatchedActions[3]).toEqual(A.changeSortField("name"));
+    expect(dispatchedActions[3]).toEqual(A.changeSortField("$score"));
   });
 
   describe("when resized list action", function() {
@@ -40,7 +40,7 @@ describe("epics/configChangesEpic", () => {
       jasmine.Clock.tick(1000);
     });
 
-    it("should have updated list Height", function() {
+    it("should have updated listHeight", function() {
       expect(atom.config.get("textual-velocity.listHeight")).toEqual(123);
     });
 
@@ -61,56 +61,13 @@ describe("epics/configChangesEpic", () => {
       jasmine.Clock.tick(1000);
     });
 
-    it("should have updated list Height", function() {
+    it("should have updated rowHeight", function() {
       expect(atom.config.get("textual-velocity.rowHeight")).toEqual(26);
     });
 
     it("should have yielded a last action", function() {
       const lastActions = store.getActions().slice(-1);
       expect(lastActions[0]).toEqual(A.changeRowHeight(26));
-    });
-  });
-
-  describe("when changed sort direction", function() {
-    let sortDirectionSpy;
-
-    beforeEach(function() {
-      sortDirectionSpy = jasmine.createSpy("sortDirection");
-      atom.config.onDidChange(
-        "textual-velocity.sortDirection",
-        sortDirectionSpy
-      );
-      store.dispatch(A.changeSortDirection("asc"));
-      jasmine.Clock.tick(1000);
-    });
-
-    it("should have updated list Height", function() {
-      expect(atom.config.get("textual-velocity.sortDirection")).toEqual("asc");
-    });
-
-    it("should have yielded a last action", function() {
-      const lastActions = store.getActions().slice(-1);
-      expect(lastActions[0]).toEqual(A.changeSortDirection("asc"));
-    });
-  });
-
-  describe("when changed sort field", function() {
-    let sortFieldSpy;
-
-    beforeEach(function() {
-      sortFieldSpy = jasmine.createSpy("sortField");
-      atom.config.onDidChange("textual-velocity.sortField", sortFieldSpy);
-      store.dispatch(A.changeSortField("ext"));
-      jasmine.Clock.tick(1000);
-    });
-
-    it("should have updated list Height", function() {
-      expect(atom.config.get("textual-velocity.sortField")).toEqual("ext");
-    });
-
-    it("should have yielded a last action", function() {
-      const lastActions = store.getActions().slice(-1);
-      expect(lastActions[0]).toEqual(A.changeSortField("ext"));
     });
   });
 });

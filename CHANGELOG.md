@@ -4,6 +4,8 @@ This project adheres to [Semantic Versioning](http://semver.org/) and [keepachan
 
 
 ## [unreleased]
+#### Changed
+- Clicking column cycles desc -> asc -> unselect column for sorting. When no column is selected the results are sorted by the default search match score in descending order, i.e. closest match appears first.
 
 
 ## [0.21.0] - 2019-10-03

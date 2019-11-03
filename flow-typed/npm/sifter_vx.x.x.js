@@ -13,18 +13,16 @@
  * https://github.com/flowtype/flow-typed
  */
 
-type sifter$SortDirectionSearchOption = 'asc' | 'desc'
-
-type sifter$SortSearchOption = {
-  direction?: sifter$SortDirectionSearchOption;
+type sifter$SortSearchOptions = {
+  direction?: 'asc' | 'desc';
   field: string;
 }
 
 type sifter$SearchOptions = {
   fields: string[];
   limit?: number | void;
-  sort?: sifter$SortSearchOption[];
-  sort_empty?: sifter$SortSearchOption[];
+  sort?: sifter$SortSearchOptions[];
+  sort_empty?: sifter$SortSearchOptions[];
   filter?: boolean;
   conjunction?: 'and' | 'or';
   nesting?: boolean;
@@ -47,10 +45,9 @@ type sifter$SearchResult<T> = {
 
 declare module 'sifter' {
 
-  declare export type SortSearchOption = sifter$SortSearchOption;
+  declare export type SortSearchOptions = sifter$SortSearchOptions;
   declare export type SearchOptions = sifter$SearchOptions;
   declare export type SearchResult<T> = sifter$SearchResult<T>;
-  declare export type SortDirection = sifter$SortDirectionSearchOption;
 
   declare class Sifter<T> {
     items: T;
