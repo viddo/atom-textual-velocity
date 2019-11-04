@@ -91,6 +91,46 @@ describe("columns/SummaryColumn", function() {
           "own\nshould be **Zzz** by now tho"
         ]);
       });
+
+      it("should provide suffix part when 1st match is deep into the content", () => {
+        note.content =
+          Array(5000).join("x") +
+          [
+            "Need to some kind of comparison matrix to explain pros/cons of each solution.",
+            "In addition to the random string above part of this longer text should also be included in the preview",
+            "In addition to the random string above part of this longer text should also be included in the preview",
+            "In addition to the random string above part of this longer text should also be included in the preview",
+            "In addition to the random string above part of this longer text should also be included in the preview"
+          ].join(" \n");
+
+        const searchMatch: any = new SearchMatch(
+          // eslint-disable-next-line no-misleading-character-class
+          /expl/i
+        );
+        const cellContent: any = column.cellContent({
+          note,
+          path,
+          searchMatch
+        });
+        expect(cellContent).toEqual(jasmine.any(Array));
+        expect(cellContent[0]).toEqual("markdown");
+        expect(cellContent[1]).toEqual({
+          attrs: { className: "text-subtle" },
+          content: ".md"
+        });
+        expect(cellContent[2]).toEqual(" - ");
+        expect(cellContent[3].content).toEqual([
+          "…omparison matrix to ",
+          { attrs: { className: "text-highlight" }, content: "expl" },
+          [
+            "ain pros/cons of each solution.",
+            "In addition to the random string above part of this longer text should also be included in the preview",
+            "In addition to the random string above part of this longer text should also be included in the preview",
+            "In addition to the random string above part of this longer text should also be included in the preview",
+            "In addition to the random stri"
+          ].join(" \n")
+        ]);
+      });
     });
 
     describe("when search match in the beginning of string", function() {
