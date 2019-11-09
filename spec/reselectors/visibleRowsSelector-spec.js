@@ -13,7 +13,10 @@ describe("reselectors/visibleRowsSelector", () => {
   let state: State;
   let visibleRows: NoteRow[];
 
-  patchColumnsForTest(() => new SummaryColumn(), () => new FileIconColumn());
+  patchColumnsForTest(
+    () => new SummaryColumn(),
+    () => new FileIconColumn()
+  );
 
   beforeEach(function() {
     state = {

@@ -17,7 +17,10 @@ describe("epics/hiddenColumnsEpic", () => {
   let store;
   let workspaceElement;
 
-  patchColumnsForTest(() => new SummaryColumn(), () => new FileIconColumn());
+  patchColumnsForTest(
+    () => new SummaryColumn(),
+    () => new FileIconColumn()
+  );
 
   beforeEach(() => {
     workspaceElement = atom.views.getView(atom.workspace);
