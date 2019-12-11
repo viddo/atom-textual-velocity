@@ -83,7 +83,7 @@
     "flow-typed": "2.5.2",
     "npm-run-all": "^4.1.2",
     "prettier": "1.19.0",
-    "redux-mock-store": "1.5.3"
+    "redux-mock-store": "1.5.4"
   },
   "greenkeeper": {
     "ignore": [
