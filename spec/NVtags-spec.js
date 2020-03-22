@@ -9,18 +9,18 @@ if (NVtags.unsupportedError) {
   describe("NVtags (unsupported)", () => {
     let callback;
 
-    beforeEach(function() {
+    beforeEach(function () {
       callback = jasmine.createSpy("callback");
     });
 
-    describe(".write", function() {
+    describe(".write", function () {
       it("calls callback with error", () => {
         NVtags.write("foo", [], callback);
         expect(callback).toHaveBeenCalledWith(jasmine.any(Error));
       });
     });
 
-    describe(".read", function() {
+    describe(".read", function () {
       it("calls callback with error", () => {
         NVtags.read("foo", callback);
         expect(callback).toHaveBeenCalledWith(jasmine.any(Error));

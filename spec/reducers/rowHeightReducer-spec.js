@@ -6,32 +6,32 @@ import rowHeightReducer from "../../lib/reducers/rowHeightReducer";
 describe("reducers/rowHeightReducer", () => {
   let state;
 
-  beforeEach(function() {
+  beforeEach(function () {
     state = rowHeightReducer(undefined, A.readDirDone([]));
   });
 
-  it("should return default", function() {
+  it("should return default", function () {
     expect(state).toEqual(jasmine.any(Number));
   });
 
-  it("should return state unless defaults are missing", function() {
+  it("should return state unless defaults are missing", function () {
     const prevState = state;
     state = rowHeightReducer(state, A.readDirDone([]));
     expect(state).toBe(prevState);
   });
 
-  describe("when change row height", function() {
-    beforeEach(function() {
+  describe("when change row height", function () {
+    beforeEach(function () {
       state = rowHeightReducer(state, A.changeRowHeight(20));
     });
 
-    it("should only update row height", function() {
+    it("should only update row height", function () {
       expect(state).toEqual(20);
     });
   });
 
-  describe("when other random action", function() {
-    it("should update list height", function() {
+  describe("when other random action", function () {
+    it("should update list height", function () {
       const prevState = state;
       state = rowHeightReducer(state, A.readDirDone([]));
       expect(state).toBe(prevState);

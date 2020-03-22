@@ -4,8 +4,8 @@ import { Point } from "atom";
 import { it } from "./async-spec-helpers";
 import previewEditor from "../lib/previewEditor";
 
-describe("previewEditor", function() {
-  it("should behave as expected", async function() {
+describe("previewEditor", function () {
+  it("should behave as expected", async function () {
     let preview = previewEditor();
 
     await preview.openPreview("/notes/foo.md", "bar", []);
@@ -39,14 +39,14 @@ describe("previewEditor", function() {
     });
     preview.cursorMoved({
       textChanged: true,
-      newBufferPosition: new Point(0, 0)
+      newBufferPosition: new Point(0, 0),
     });
     expect(atom.workspace.open).not.toHaveBeenCalled();
 
     // cursor moves => should destroy preview and open normal editor in its place
     preview.cursorMoved({
       textChanged: false,
-      newBufferPosition: new Point(1, 1)
+      newBufferPosition: new Point(1, 1),
     });
     await openResult;
     expect(atom.workspace.open).toHaveBeenCalled();

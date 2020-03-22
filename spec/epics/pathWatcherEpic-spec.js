@@ -32,12 +32,12 @@ describe("epics/pathWatcherEpic", () => {
 
     const notesFileFilter = new NotesFileFilter(dir, {
       exclusions: [".DS_Store"],
-      excludeVcsIgnoredPaths: true
+      excludeVcsIgnoredPaths: true,
     });
     const epicMiddleware = createEpicMiddleware({
       dependencies: {
-        notesFileFilter
-      }
+        notesFileFilter,
+      },
     });
     const mockStore = configureMockStore([epicMiddleware]);
     const state: State = {
@@ -48,7 +48,7 @@ describe("epics/pathWatcherEpic", () => {
       listHeight: 50,
       loading: {
         status: "readDir",
-        filesCount: 0
+        filesCount: 0,
       },
       notes: {},
       queryOriginal: "",
@@ -61,24 +61,24 @@ describe("epics/pathWatcherEpic", () => {
           fields: ["name", "ext"],
           sort: [
             { field: "name", direction: "asc" },
-            { field: "$score", direction: "desc" }
-          ]
+            { field: "$score", direction: "desc" },
+          ],
         },
         query: "",
         tokens: [],
-        total: 0
-      }
+        total: 0,
+      },
     };
     store = mockStore(state);
     epicMiddleware.run(pathWatcherEpic);
 
     await Promise.all([
       pathWatcherReady(),
-      new Promise(resolve => {
+      new Promise((resolve) => {
         // enforce spec to wait, to make sure underlying watcher doesn't interpet too rapid changes as initial event
         // e.g. created+modifed file in a short period of time will only yield a created event
         setTimeout(resolve, 1200);
-      })
+      }),
     ]);
   });
 
@@ -107,7 +107,7 @@ describe("epics/pathWatcherEpic", () => {
       // linux system yields more than the created events, so keep tests a bit more laxed
       const actions: any[] = store
         .getActions()
-        .filter(action => action.type === A.FILE_ADDED);
+        .filter((action) => action.type === A.FILE_ADDED);
 
       expect(actions[0]).toEqual({
         type: A.FILE_ADDED,
@@ -115,9 +115,9 @@ describe("epics/pathWatcherEpic", () => {
           filename: "note-NEW.md",
           stats: jasmine.objectContaining({
             birthtime: jasmine.any(Date),
-            mtime: jasmine.any(Date)
-          })
-        }
+            mtime: jasmine.any(Date),
+          }),
+        },
       });
       expect(actions[1]).toEqual({
         type: A.FILE_ADDED,
@@ -125,9 +125,9 @@ describe("epics/pathWatcherEpic", () => {
           filename: "note-ALSO-NEW",
           stats: jasmine.objectContaining({
             birthtime: jasmine.any(Date),
-            mtime: jasmine.any(Date)
-          })
-        }
+            mtime: jasmine.any(Date),
+          }),
+        },
       });
     });
   });
@@ -147,9 +147,9 @@ describe("epics/pathWatcherEpic", () => {
           filename: "note-1.txt",
           stats: jasmine.objectContaining({
             birthtime: jasmine.any(Date),
-            mtime: jasmine.any(Date)
-          })
-        }
+            mtime: jasmine.any(Date),
+          }),
+        },
       });
     });
   });
@@ -165,7 +165,7 @@ describe("epics/pathWatcherEpic", () => {
       const action: any = store.getActions()[0];
       expect(action).toEqual({
         type: A.FILE_DELETED,
-        filename: "note-1.txt"
+        filename: "note-1.txt",
       });
     });
   });
@@ -187,8 +187,8 @@ describe("epics/pathWatcherEpic", () => {
           {
             type: A.FILE_RENAMED,
             filename: "note-42.md",
-            oldFilename: "note-1.txt"
-          }
+            oldFilename: "note-1.txt",
+          },
         ]);
       } else {
         // NOTE: on MacOSX not getting the renamed events as documented for some reason,
@@ -199,7 +199,7 @@ describe("epics/pathWatcherEpic", () => {
           expect(actions).toEqual([
             {
               type: A.FILE_DELETED,
-              filename: "note-1.txt"
+              filename: "note-1.txt",
             },
             {
               type: A.FILE_ADDED,
@@ -207,10 +207,10 @@ describe("epics/pathWatcherEpic", () => {
                 filename: "note-42.md",
                 stats: jasmine.objectContaining({
                   birthtime: jasmine.any(Date),
-                  mtime: jasmine.any(Date)
-                })
-              }
-            }
+                  mtime: jasmine.any(Date),
+                }),
+              },
+            },
           ]);
         });
       }
@@ -219,7 +219,7 @@ describe("epics/pathWatcherEpic", () => {
 });
 
 function pathWatcherReady() {
-  return new Promise(resolve => {
+  return new Promise((resolve) => {
     const tryWatcher = async () => {
       const { watcher } = global.getProcessInTesting(process);
       if (watcher) {

@@ -24,27 +24,27 @@ describe("epics/previewNoteEpic", () => {
       listHeight: 75,
       loading: {
         status: "readDir",
-        filesCount: 0
+        filesCount: 0,
       },
       notes: {
         "alice.txt": {
           id: "0",
           name: "alice",
           ext: "txt",
-          stats: statsMock({ mtime: new Date() })
+          stats: statsMock({ mtime: new Date() }),
         },
         "bob.md": {
           id: "1",
           name: "bob",
           ext: "md",
-          stats: statsMock({ mtime: new Date() })
+          stats: statsMock({ mtime: new Date() }),
         },
         "cesar.txt": {
           id: "2",
           name: "cesar",
           ext: "txt",
-          stats: statsMock({ mtime: new Date() })
-        }
+          stats: statsMock({ mtime: new Date() }),
+        },
       },
       queryOriginal: "",
       rowHeight: 25,
@@ -54,19 +54,19 @@ describe("epics/previewNoteEpic", () => {
         items: [
           { id: "alice.txt", score: 1.0 },
           { id: "bob.md", score: 0.9 },
-          { id: "cesar.txt", score: 0.8 }
+          { id: "cesar.txt", score: 0.8 },
         ],
         options: {
           fields: ["name", "ext"],
           sort: [
             { field: "name", direction: "asc" },
-            { field: "$score", direction: "desc" }
-          ]
+            { field: "$score", direction: "desc" },
+          ],
         },
         query: "",
         tokens: [],
-        total: 3
-      }
+        total: 3,
+      },
     };
     const epicMiddleware = createEpicMiddleware();
     mockStore = configureMockStore([epicMiddleware]);
@@ -74,7 +74,7 @@ describe("epics/previewNoteEpic", () => {
     epicMiddleware.run(previewNoteEpic);
   });
 
-  afterEach(function() {
+  afterEach(function () {
     store.dispatch(A.dispose());
     jasmine.Clock.tick(500);
 
@@ -89,15 +89,15 @@ describe("epics/previewNoteEpic", () => {
     }
   });
 
-  describe("when select note", function() {
-    describe("when there is no editor for path", function() {
-      beforeEach(function() {
+  describe("when select note", function () {
+    describe("when there is no editor for path", function () {
+      beforeEach(function () {
         state = {
           ...state,
           selectedNote: {
             filename: "alice.txt",
-            index: 0
-          }
+            index: 0,
+          },
         };
         store.dispatch(A.selectNext());
         jasmine.Clock.tick(500);
@@ -105,16 +105,13 @@ describe("epics/previewNoteEpic", () => {
         waitsFor(() => atom.workspace.getTextEditors().length > 0); // waits for preview
       });
 
-      it("should open preview", function() {
+      it("should open preview", function () {
         expect(
-          atom.workspace
-            .getTextEditors()[0]
-            .getTitle()
-            .toLowerCase()
+          atom.workspace.getTextEditors()[0].getTitle().toLowerCase()
         ).toContain("preview");
       });
 
-      it("should close preview when deselected note", function() {
+      it("should close preview when deselected note", function () {
         state = { ...state, selectedNote: null };
         store.dispatch(A.resetSearch());
         jasmine.Clock.tick(500);
@@ -122,19 +119,19 @@ describe("epics/previewNoteEpic", () => {
         waitsFor(() => atom.workspace.getPaneItems().length === 0);
       });
 
-      describe("when dispose action", function() {
-        beforeEach(function() {
+      describe("when dispose action", function () {
+        beforeEach(function () {
           store.dispatch(A.dispose());
           jasmine.Clock.tick(500);
         });
 
-        it("should dispose elements and no longer open any previews", function() {
+        it("should dispose elements and no longer open any previews", function () {
           state = {
             ...state,
             selectedNote: {
               filename: "alice.txt",
-              index: 0
-            }
+              index: 0,
+            },
           };
           store.dispatch(A.selectNext());
           jasmine.Clock.tick(500);
@@ -144,15 +141,15 @@ describe("epics/previewNoteEpic", () => {
       });
     });
 
-    describe("when a text editor for matching path is already open", function() {
-      beforeEach(function() {
+    describe("when a text editor for matching path is already open", function () {
+      beforeEach(function () {
         atom.workspace.open("/notes/bob.md");
         state = {
           ...state,
           selectedNote: {
             filename: "alice.txt",
-            index: 0
-          }
+            index: 0,
+          },
         };
         store.dispatch(A.selectNext());
         jasmine.Clock.tick(500);
@@ -163,8 +160,8 @@ describe("epics/previewNoteEpic", () => {
             ...state,
             selectedNote: {
               filename: "bob.md",
-              index: 1
-            }
+              index: 1,
+            },
           };
           store.dispatch(A.selectNext());
           jasmine.Clock.tick(500);
@@ -172,15 +169,15 @@ describe("epics/previewNoteEpic", () => {
         waitsFor(() => atom.workspace.getPaneItems().length === 1); // should close the preview
       });
 
-      it("should reuse text editor as preview", function() {
+      it("should reuse text editor as preview", function () {
         expect(atom.workspace.getPaneItems()[0].tagName).toBe(undefined); // not a preview
       });
     });
   });
 
-  describe("when open-note action", function() {
-    describe("when there is no selected note", function() {
-      beforeEach(function() {
+  describe("when open-note action", function () {
+    describe("when there is no selected note", function () {
+      beforeEach(function () {
         state = { ...state, selectedNote: null };
         store.dispatch(A.openNote());
         jasmine.Clock.tick(500);
@@ -192,29 +189,29 @@ describe("epics/previewNoteEpic", () => {
         waitsFor(() => atom.workspace.getTextEditors().length >= 2);
       });
 
-      it("should open a new untitled file", function() {
+      it("should open a new untitled file", function () {
         expect(atom.workspace.getTextEditors()[0].getPath()).toEqual(
           "/notes/untitled.md"
         );
       });
 
-      it("should allow override defaut extension", function() {
+      it("should allow override defaut extension", function () {
         expect(atom.workspace.getTextEditors()[1].getPath()).toEqual(
           "/notes/untitled.abc"
         );
       });
     });
 
-    describe("when there is a selected note", function() {
-      beforeEach(function() {
+    describe("when there is a selected note", function () {
+      beforeEach(function () {
         const epicMiddleware = createEpicMiddleware();
         mockStore = configureMockStore([epicMiddleware]);
         state = {
           ...state,
           selectedNote: {
             index: 0,
-            filename: "alice.txt"
-          }
+            filename: "alice.txt",
+          },
         };
         store = mockStore(() => ({ ...state })); // make sure state is unique for each action
         expect(atom.workspace.getTextEditors()).toEqual([]);
@@ -223,7 +220,7 @@ describe("epics/previewNoteEpic", () => {
         waitsFor(() => atom.workspace.getTextEditors().length >= 1);
       });
 
-      it("should open path of selected note", function() {
+      it("should open path of selected note", function () {
         expect(atom.workspace.getTextEditors()[0].getPath()).toEqual(
           "/notes/alice.txt"
         );

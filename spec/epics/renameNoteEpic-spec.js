@@ -24,7 +24,7 @@ describe("epics/renameNoteEpic", () => {
       listHeight: 75,
       loading: {
         status: "readDir",
-        filesCount: 0
+        filesCount: 0,
       },
       notes: {
         "alice.txt": {
@@ -32,8 +32,8 @@ describe("epics/renameNoteEpic", () => {
           name: "alice",
           ext: "txt",
           path: "/notes/alice.txt",
-          stats: statsMock({ mtime: new Date() })
-        }
+          stats: statsMock({ mtime: new Date() }),
+        },
       },
       queryOriginal: "",
       rowHeight: 25,
@@ -45,13 +45,13 @@ describe("epics/renameNoteEpic", () => {
           fields: ["name", "ext"],
           sort: [
             { field: "name", direction: "asc" },
-            { field: "$score", direction: "desc" }
-          ]
+            { field: "$score", direction: "desc" },
+          ],
         },
         query: "",
         tokens: [],
-        total: 3
-      }
+        total: 3,
+      },
     };
 
     store = mockStore(state);
@@ -59,13 +59,13 @@ describe("epics/renameNoteEpic", () => {
     spyOn(fs, "rename");
   });
 
-  afterEach(function() {
+  afterEach(function () {
     store.clearActions();
     store.dispatch(A.dispose()); // tests dispose logic working
   });
 
-  describe("when save edited cell value", function() {
-    it("renames current selected file", function() {
+  describe("when save edited cell value", function () {
+    it("renames current selected file", function () {
       store.dispatch(A.editCellSave("new.md"));
       expect(fs.rename).toHaveBeenCalledWith(
         "/notes/alice.txt",
@@ -75,7 +75,7 @@ describe("epics/renameNoteEpic", () => {
       expect(store.getActions().slice(-1)[0]).toEqual(A.editCellDone());
     });
 
-    it("does nothing for some cases", function() {
+    it("does nothing for some cases", function () {
       store.dispatch(A.editCellSave("   "));
       expect(fs.rename).not.toHaveBeenCalled();
 
@@ -83,7 +83,7 @@ describe("epics/renameNoteEpic", () => {
       expect(fs.rename).not.toHaveBeenCalled();
     });
 
-    it("normalize the path for some common cases", function() {
+    it("normalize the path for some common cases", function () {
       store.dispatch(A.editCellSave("  nope/last.md  "));
       waitsFor(() => fs.rename.calls.length > 0);
       expect(fs.rename).toHaveBeenCalledWith(
@@ -93,13 +93,13 @@ describe("epics/renameNoteEpic", () => {
       );
     });
 
-    describe("when rename fails", function() {
-      beforeEach(function() {
+    describe("when rename fails", function () {
+      beforeEach(function () {
         store.dispatch(A.editCellSave("new.md"));
         spyOn(showWarningNotificationImport, "showWarningNotification");
       });
 
-      it("should show warning notification", function() {
+      it("should show warning notification", function () {
         fs.rename.calls[0].args[2](null);
         expect(
           showWarningNotificationImport.showWarningNotification

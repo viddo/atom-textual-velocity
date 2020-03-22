@@ -6,7 +6,7 @@ const newFakeDisposable = () => {
   const spy = jasmine.createSpy("dispose");
   return {
     dispose: spy,
-    disposed: () => true
+    disposed: () => true,
   };
 };
 

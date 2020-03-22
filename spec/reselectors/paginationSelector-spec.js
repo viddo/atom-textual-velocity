@@ -9,7 +9,7 @@ describe("reselectors/paginationSelector", () => {
   let state: State;
   let pagination: Pagination;
 
-  beforeEach(function() {
+  beforeEach(function () {
     state = {
       columnHeaders: [],
       dir: "",
@@ -18,7 +18,7 @@ describe("reselectors/paginationSelector", () => {
       listHeight: 1000,
       loading: {
         status: "readDir",
-        filesCount: 0
+        filesCount: 0,
       },
       notes: {},
       queryOriginal: "",
@@ -31,17 +31,17 @@ describe("reselectors/paginationSelector", () => {
           fields: [],
           sort: [
             { field: "name", direction: "asc" },
-            { field: "$score", direction: "desc" }
-          ]
+            { field: "$score", direction: "desc" },
+          ],
         },
         query: "",
         tokens: [],
-        total: 0
-      }
+        total: 0,
+      },
     };
   });
 
-  it("should update pagination according to state", function() {
+  it("should update pagination according to state", function () {
     pagination = paginationSelector(state);
     expect(pagination.start).toEqual(0);
     expect(pagination.limit).toEqual(43); // 41 +2 for visible padding

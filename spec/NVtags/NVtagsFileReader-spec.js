@@ -13,7 +13,7 @@ if (!NVtags.unsupportedError) {
       fileReader = new NVtagsFileReader();
     });
 
-    it("has note prop name", function() {
+    it("has note prop name", function () {
       expect(fileReader.notePropName).toMatch(/\w{1,}/);
     });
 

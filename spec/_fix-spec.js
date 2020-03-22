@@ -8,7 +8,7 @@ import type { Store } from "redux";
 
 type ProcessInTesting = {
   watcher?: atom$PathWatcher,
-  store?: Store<State, Action>
+  store?: Store<State, Action>,
 };
 
 // Remove the custom equalityTest added by atom:
@@ -32,7 +32,7 @@ global.setProcessInTesting = function setProcessInTesting(
   } else if (_process[TESTING_VARS]) {
     _process[TESTING_VARS] = {
       ..._process[TESTING_VARS],
-      ...options
+      ...options,
     };
   } else {
     _process[TESTING_VARS] = options;
@@ -48,12 +48,12 @@ global.getProcessInTesting = function getProcessInTesting(
 let errDisposable;
 
 beforeEach(() => {
-  errDisposable = atom.onDidThrowError(event => {
+  errDisposable = atom.onDidThrowError((event) => {
     jasmine.getEnv().currentSpec.fail(event.originalError);
   });
   atom.config.setSchema("textual-velocity", {
     type: "object",
-    properties: JSON.parse(JSON.stringify(defaultConfig))
+    properties: JSON.parse(JSON.stringify(defaultConfig)),
   });
 });
 

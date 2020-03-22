@@ -48,12 +48,12 @@ describe("reducers/loadingReducer", () => {
           const readDirDoneAction = A.readDirDone([
             {
               filename: "a",
-              stats: statsMock({ mtime: new Date() })
+              stats: statsMock({ mtime: new Date() }),
             },
             {
               filename: "b",
-              stats: statsMock({ mtime: new Date() })
-            }
+              stats: statsMock({ mtime: new Date() }),
+            },
           ]);
           const now = new Date();
           notes = {
@@ -63,22 +63,22 @@ describe("reducers/loadingReducer", () => {
               ext: ".txt",
               id: "1",
               name: "cached-from-prior-session",
-              stats: statsMock({ mtime: now })
+              stats: statsMock({ mtime: now }),
             },
             "b.txt": {
               content: undefined,
               ext: ".txt",
               id: "1",
               name: "",
-              stats: statsMock({ mtime: now })
+              stats: statsMock({ mtime: now }),
             },
             "c.txt": {
               content: undefined,
               ext: ".txt",
               id: "1",
               name: "last",
-              stats: statsMock({ mtime: now })
-            }
+              stats: statsMock({ mtime: now }),
+            },
           };
           state = loadingReducer(
             state,
@@ -106,7 +106,7 @@ describe("reducers/loadingReducer", () => {
           const result = {
             filename: "b.txt",
             notePropName: "content",
-            value: "read content of this file"
+            value: "read content of this file",
           };
           notes["b.txt"].content = "read content of this file";
           notes["b.txt"].ready = true;
@@ -127,7 +127,7 @@ describe("reducers/loadingReducer", () => {
         });
 
         describe("when all files are read", () => {
-          beforeEach(function() {
+          beforeEach(function () {
             state = loadingReducer(
               state,
               A.readFilesDone(),
@@ -136,7 +136,7 @@ describe("reducers/loadingReducer", () => {
             );
           });
 
-          it("should change status", function() {
+          it("should change status", function () {
             expect(state.status === "done").toBe(true);
           });
         });

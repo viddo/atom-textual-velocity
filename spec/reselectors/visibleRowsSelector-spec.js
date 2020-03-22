@@ -18,7 +18,7 @@ describe("reselectors/visibleRowsSelector", () => {
     () => new FileIconColumn()
   );
 
-  beforeEach(function() {
+  beforeEach(function () {
     state = {
       columnHeaders: [],
       dir: "/notes",
@@ -27,7 +27,7 @@ describe("reselectors/visibleRowsSelector", () => {
       listHeight: 25,
       loading: {
         status: "readDir",
-        filesCount: 0
+        filesCount: 0,
       },
       notes: {
         "alice.txt": {
@@ -35,36 +35,36 @@ describe("reselectors/visibleRowsSelector", () => {
           ext: "txt",
           name: "alice",
           path: "/notes/alice.txt",
-          stats: statsMock({ mtime: new Date() })
+          stats: statsMock({ mtime: new Date() }),
         },
         "bob.md": {
           id: "1",
           ext: "md",
           name: "bob",
           path: "/notes/bob.md",
-          stats: statsMock({ mtime: new Date() })
+          stats: statsMock({ mtime: new Date() }),
         },
         "cesar.txt": {
           id: "2",
           ext: "txt",
           name: "cesar",
           path: "/notes/cesar.txt",
-          stats: statsMock({ mtime: new Date() })
+          stats: statsMock({ mtime: new Date() }),
         },
         "david.md": {
           id: "3",
           ext: "md",
           name: "david",
           path: "/notes/david.md",
-          stats: statsMock({ mtime: new Date() })
+          stats: statsMock({ mtime: new Date() }),
         },
         "eric.txt": {
           id: "4",
           ext: "txt",
           name: "eric",
           path: "/notes/eric.txt",
-          stats: statsMock({ mtime: new Date() })
-        }
+          stats: statsMock({ mtime: new Date() }),
+        },
       },
       queryOriginal: "",
       rowHeight: 25,
@@ -76,41 +76,41 @@ describe("reselectors/visibleRowsSelector", () => {
           { id: "bob.md", score: 0.9 },
           { id: "cesar.txt", score: 0.9 },
           { id: "david.md", score: 0.8 },
-          { id: "eric.txt", score: 0.7 }
+          { id: "eric.txt", score: 0.7 },
         ],
         options: {
           fields: ["name", "ext"],
           sort: [
             { field: "name", direction: "asc" },
-            { field: "$score", direction: "desc" }
-          ]
+            { field: "$score", direction: "desc" },
+          ],
         },
         query: "",
         tokens: [],
-        total: 5
-      }
+        total: 5,
+      },
     };
   });
 
-  describe("when initial scan is done", function() {
-    beforeEach(function() {
+  describe("when initial scan is done", function () {
+    beforeEach(function () {
       visibleRows = visibleRowsSelector(state);
     });
 
-    it("should return paginated rows", function() {
+    it("should return paginated rows", function () {
       expect(visibleRows).toEqual(jasmine.any(Array));
-      expect(visibleRows.map(x => x.id)).toEqual(["0", "1", "2"]);
-      expect(visibleRows.map(x => x.filename)).toEqual([
+      expect(visibleRows.map((x) => x.id)).toEqual(["0", "1", "2"]);
+      expect(visibleRows.map((x) => x.filename)).toEqual([
         "alice.txt",
         "bob.md",
-        "cesar.txt"
+        "cesar.txt",
       ]);
-      expect(visibleRows.map(x => x.cells)).toEqual(jasmine.any(Array));
+      expect(visibleRows.map((x) => x.cells)).toEqual(jasmine.any(Array));
     });
   });
 
-  describe("when have search", function() {
-    beforeEach(function() {
+  describe("when have search", function () {
+    beforeEach(function () {
       state = {
         ...state,
         queryOriginal: "A", // matches Alice, cesAr, dAvid
@@ -120,93 +120,93 @@ describe("reselectors/visibleRowsSelector", () => {
           items: [
             { id: "alice.txt", score: 0.1 },
             { id: "cesar.txt", score: 0.1 },
-            { id: "david.md", score: 0.1 }
-          ]
-        }
+            { id: "david.md", score: 0.1 },
+          ],
+        },
       };
       visibleRows = visibleRowsSelector(state);
     });
 
-    it("should return paginated rows", function() {
+    it("should return paginated rows", function () {
       expect(visibleRows).toEqual(jasmine.any(Array));
-      expect(visibleRows.map(x => x.id)).toEqual(["0", "2", "3"]);
-      expect(visibleRows.map(x => x.filename)).toEqual([
+      expect(visibleRows.map((x) => x.id)).toEqual(["0", "2", "3"]);
+      expect(visibleRows.map((x) => x.filename)).toEqual([
         "alice.txt",
         "cesar.txt",
-        "david.md"
+        "david.md",
       ]);
-      expect(visibleRows.map(x => x.cells)).toEqual(jasmine.any(Array));
+      expect(visibleRows.map((x) => x.cells)).toEqual(jasmine.any(Array));
     });
   });
 
-  describe("when scrolled", function() {
-    beforeEach(function() {
+  describe("when scrolled", function () {
+    beforeEach(function () {
       state = {
         ...state,
-        scrollTop: 25
+        scrollTop: 25,
       };
       visibleRows = visibleRowsSelector(state);
     });
 
-    it("should return paginated rows", function() {
+    it("should return paginated rows", function () {
       expect(visibleRows).toEqual(jasmine.any(Array));
-      expect(visibleRows.map(x => x.id)).toEqual(["1", "2", "3"]);
-      expect(visibleRows.map(x => x.filename)).toEqual([
+      expect(visibleRows.map((x) => x.id)).toEqual(["1", "2", "3"]);
+      expect(visibleRows.map((x) => x.filename)).toEqual([
         "bob.md",
         "cesar.txt",
-        "david.md"
+        "david.md",
       ]);
-      expect(visibleRows.map(x => x.cells)).toEqual(jasmine.any(Array));
+      expect(visibleRows.map((x) => x.cells)).toEqual(jasmine.any(Array));
     });
   });
 
-  describe("when changed list height", function() {
-    beforeEach(function() {
+  describe("when changed list height", function () {
+    beforeEach(function () {
       state = {
         ...state,
-        listHeight: 1001
+        listHeight: 1001,
       };
       visibleRows = visibleRowsSelector(state);
     });
 
-    it("should return paginated rows", function() {
+    it("should return paginated rows", function () {
       expect(visibleRows).toEqual(jasmine.any(Array));
-      expect(visibleRows.map(x => x.id)).toEqual(["0", "1", "2", "3", "4"]);
-      expect(visibleRows.map(x => x.filename)).toEqual([
+      expect(visibleRows.map((x) => x.id)).toEqual(["0", "1", "2", "3", "4"]);
+      expect(visibleRows.map((x) => x.filename)).toEqual([
         "alice.txt",
         "bob.md",
         "cesar.txt",
         "david.md",
-        "eric.txt"
+        "eric.txt",
       ]);
-      expect(visibleRows.map(x => x.cells)).toEqual(jasmine.any(Array));
+      expect(visibleRows.map((x) => x.cells)).toEqual(jasmine.any(Array));
     });
   });
 
-  describe("when changed row height", function() {
-    beforeEach(function() {
+  describe("when changed row height", function () {
+    beforeEach(function () {
       state = {
         ...state,
-        rowHeight: 12
+        rowHeight: 12,
       };
       visibleRows = visibleRowsSelector(state);
     });
 
-    it("should return paginated rows", function() {
+    it("should return paginated rows", function () {
       expect(visibleRows).toEqual(jasmine.any(Array));
-      expect(visibleRows.map(x => x.id)).toEqual(["0", "1", "2", "3"]);
-      expect(visibleRows.map(x => x.filename)).toEqual([
+      expect(visibleRows.map((x) => x.id)).toEqual(["0", "1", "2", "3"]);
+      expect(visibleRows.map((x) => x.filename)).toEqual([
         "alice.txt",
         "bob.md",
         "cesar.txt",
-        "david.md"
+        "david.md",
       ]);
-      expect(visibleRows.map(x => x.cells)).toEqual(jasmine.any(Array));
+      expect(visibleRows.map((x) => x.cells)).toEqual(jasmine.any(Array));
     });
   });
 
-  describe("when changed sort direction", function() {
-    beforeEach(function() {
+  describe("when changed sort direction", function () {
+    beforeEach(function () {
       const sort = state.sifterResult.options.sort;
       if (sort && sort[0]) {
         sort[0].direction = "desc";
@@ -215,20 +215,20 @@ describe("reselectors/visibleRowsSelector", () => {
       visibleRows = visibleRowsSelector(state);
     });
 
-    it("should return paginated rows", function() {
+    it("should return paginated rows", function () {
       expect(visibleRows).toEqual(jasmine.any(Array));
-      expect(visibleRows.map(x => x.id)).toEqual(["4", "3", "2"]);
-      expect(visibleRows.map(x => x.filename)).toEqual([
+      expect(visibleRows.map((x) => x.id)).toEqual(["4", "3", "2"]);
+      expect(visibleRows.map((x) => x.filename)).toEqual([
         "eric.txt",
         "david.md",
-        "cesar.txt"
+        "cesar.txt",
       ]);
-      expect(visibleRows.map(x => x.cells)).toEqual(jasmine.any(Array));
+      expect(visibleRows.map((x) => x.cells)).toEqual(jasmine.any(Array));
     });
   });
 
-  describe("when changed sort field", function() {
-    beforeEach(function() {
+  describe("when changed sort field", function () {
+    beforeEach(function () {
       const sort = state.sifterResult.options.sort;
       if (sort && sort[0]) {
         sort[0].field = "ext";
@@ -245,15 +245,15 @@ describe("reselectors/visibleRowsSelector", () => {
       visibleRows = visibleRowsSelector(state);
     });
 
-    it("should return paginated rows", function() {
+    it("should return paginated rows", function () {
       expect(visibleRows).toEqual(jasmine.any(Array));
-      expect(visibleRows.map(x => x.id)).toEqual(["1", "3", "0"]);
-      expect(visibleRows.map(x => x.filename)).toEqual([
+      expect(visibleRows.map((x) => x.id)).toEqual(["1", "3", "0"]);
+      expect(visibleRows.map((x) => x.filename)).toEqual([
         "bob.md",
         "david.md",
-        "alice.txt"
+        "alice.txt",
       ]);
-      expect(visibleRows.map(x => x.cells)).toEqual(jasmine.any(Array));
+      expect(visibleRows.map((x) => x.cells)).toEqual(jasmine.any(Array));
     });
   });
 });

@@ -3,32 +3,32 @@
 import statsMock from "../statsMock";
 import StatsDateNoteField from "../../lib/note-fields/StatsDateNoteField";
 
-describe("fields/StatsDateNoteField", function() {
+describe("fields/StatsDateNoteField", function () {
   let field;
 
-  describe(".notePropName", function() {
-    it("should return given name", function() {
+  describe(".notePropName", function () {
+    it("should return given name", function () {
       field = new StatsDateNoteField({
         notePropName: "name",
-        statsPropName: "birthtime"
+        statsPropName: "birthtime",
       });
       expect(field.notePropName).toEqual("name");
     });
   });
 
-  describe(".value", function() {
+  describe(".value", function () {
     let actual: any;
 
-    it("should return the value of the given prop path", function() {
+    it("should return the value of the given prop path", function () {
       field = new StatsDateNoteField({
         notePropName: "name",
-        statsPropName: "birthtime"
+        statsPropName: "birthtime",
       });
       const note = {
         id: "",
         name: "",
         ext: "",
-        stats: statsMock({ birthtime: new Date() })
+        stats: statsMock({ birthtime: new Date() }),
       };
       actual = undefined;
       if (field.value) {
@@ -47,7 +47,7 @@ describe("fields/StatsDateNoteField", function() {
 
       field = new StatsDateNoteField({
         notePropName: "name",
-        statsPropName: "mtime"
+        statsPropName: "mtime",
       });
       note.stats = statsMock({ birthtime: new Date() });
       actual = undefined;

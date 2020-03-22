@@ -3,20 +3,20 @@
 import fs from "fs-plus";
 import getValidDirFromPath from "../lib/getValidDirFromPath";
 
-const assertCommons = dir => {
+const assertCommons = (dir) => {
   expect(dir).toEqual(jasmine.any(String));
   expect(dir).not.toEqual("");
 };
 
-describe("getValidDirFromPath", function() {
+describe("getValidDirFromPath", function () {
   let dir;
 
-  beforeEach(function() {
+  beforeEach(function () {
     spyOn(fs, "existsSync").andReturn(true);
     spyOn(fs, "mkdirSync");
   });
 
-  it("should return default path if no path is set", function() {
+  it("should return default path if no path is set", function () {
     dir = getValidDirFromPath("");
     assertCommons(dir);
     expect(dir).toMatch(/.+notes$/);
@@ -28,27 +28,27 @@ describe("getValidDirFromPath", function() {
     expect(fs.mkdirSync).not.toHaveBeenCalled();
   });
 
-  it("should expand any relative path dir to absoute dir in user's home dir", function() {
+  it("should expand any relative path dir to absoute dir in user's home dir", function () {
     const dir = getValidDirFromPath("  custom-path/  ");
     assertCommons(dir);
     expect(dir).toMatch(/.+custom-path$/);
     expect(dir).not.toEqual("custom-path");
   });
 
-  it("should return absolute path as is", function() {
+  it("should return absolute path as is", function () {
     const dir = getValidDirFromPath("  /Users/alice/notes/  ");
     assertCommons(dir);
     expect(dir).toEqual("/Users/alice/notes");
   });
 
-  it("should expand home shortcut to absolute path", function() {
+  it("should expand home shortcut to absolute path", function () {
     const dir = getValidDirFromPath("  ~/home-notes/  ");
     assertCommons(dir);
     expect(dir).toMatch(/.+home-notes$/);
     expect(dir).not.toEqual("~/home-notes");
   });
 
-  it("should create directory if it does not exist", function() {
+  it("should create directory if it does not exist", function () {
     const dir = "/tmp/notes";
     fs.existsSync.andReturn(false);
     getValidDirFromPath(dir);

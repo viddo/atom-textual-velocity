@@ -30,12 +30,12 @@ describe("epics/initial-scan", () => {
 
     const notesFileFilter = new NotesFileFilter(dir, {
       exclusions: [".DS_Store"],
-      excludeVcsIgnoredPaths: true
+      excludeVcsIgnoredPaths: true,
     });
     const epicMiddleware = createEpicMiddleware({
       dependencies: {
-        notesFileFilter
-      }
+        notesFileFilter,
+      },
     });
     const mockStore = configureMockStore([epicMiddleware]);
     const state: State = {
@@ -46,7 +46,7 @@ describe("epics/initial-scan", () => {
       listHeight: 50,
       loading: {
         status: "readDir",
-        filesCount: 0
+        filesCount: 0,
       },
       notes: {},
       queryOriginal: "",
@@ -59,13 +59,13 @@ describe("epics/initial-scan", () => {
           fields: ["name", "ext"],
           sort: [
             { field: "name", direction: "asc" },
-            { field: "$score", direction: "desc" }
-          ]
+            { field: "$score", direction: "desc" },
+          ],
         },
         query: "",
         tokens: [],
-        total: 0
-      }
+        total: 0,
+      },
     };
     store = mockStore(state);
     epicMiddleware.run(readDirEpic);
@@ -73,16 +73,16 @@ describe("epics/initial-scan", () => {
     waitsFor(() => store.getActions().length >= 4);
   });
 
-  afterEach(function() {
+  afterEach(function () {
     store.dispatch(A.dispose());
   });
 
-  it("should trigger an readDirDone action with all filtered paths", function() {
+  it("should trigger an readDirDone action with all filtered paths", function () {
     const actions = store.getActions();
     expect(actions.slice(0, -1)).toEqual([
       { type: A.FILE_FOUND },
       { type: A.FILE_FOUND },
-      { type: A.FILE_FOUND }
+      { type: A.FILE_FOUND },
     ]);
 
     const tmp: any = actions.slice(-1);
@@ -93,8 +93,8 @@ describe("epics/initial-scan", () => {
       filename: jasmine.any(String),
       stats: jasmine.objectContaining({
         birthtime: jasmine.any(Date),
-        mtime: jasmine.any(Date)
-      })
+        mtime: jasmine.any(Date),
+      }),
     });
   });
 });

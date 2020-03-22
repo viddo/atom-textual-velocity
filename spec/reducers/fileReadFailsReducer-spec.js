@@ -23,7 +23,7 @@ describe("reducers/fileReadFailsReducer", () => {
       A.fileRead({
         filename: "a",
         notePropName: "content",
-        value: "foo"
+        value: "foo",
       })
     );
     expect(state).toEqual({});
@@ -33,11 +33,11 @@ describe("reducers/fileReadFailsReducer", () => {
       state,
       A.fileReadFailed({
         filename: "b.md",
-        notePropName: "content"
+        notePropName: "content",
       })
     );
     expect(state).toEqual({
-      "b.md": ["content"]
+      "b.md": ["content"],
     });
 
     // fail another notePropName
@@ -45,11 +45,11 @@ describe("reducers/fileReadFailsReducer", () => {
       state,
       A.fileReadFailed({
         filename: "b.md",
-        notePropName: "nvtags"
+        notePropName: "nvtags",
       })
     );
     expect(state).toEqual({
-      "b.md": ["nvtags", "content"]
+      "b.md": ["nvtags", "content"],
     });
 
     // subsequent fails for already tracked reads are just maintained
@@ -57,23 +57,23 @@ describe("reducers/fileReadFailsReducer", () => {
       state,
       A.fileReadFailed({
         filename: "b.md",
-        notePropName: "content"
+        notePropName: "content",
       })
     );
     expect(state).toEqual({
-      "b.md": ["content", "nvtags"]
+      "b.md": ["content", "nvtags"],
     });
     // fail for a new file
     state = fileReadFailsReducer(
       state,
       A.fileReadFailed({
         filename: "c.md",
-        notePropName: "content"
+        notePropName: "content",
       })
     );
     expect(state).toEqual({
       "b.md": ["content", "nvtags"],
-      "c.md": ["content"]
+      "c.md": ["content"],
     });
 
     // don't change anything for a read unrelated to existing fails
@@ -82,12 +82,12 @@ describe("reducers/fileReadFailsReducer", () => {
       A.fileRead({
         filename: "a",
         notePropName: "content",
-        value: "new value"
+        value: "new value",
       })
     );
     expect(state).toEqual({
       "b.md": ["content", "nvtags"],
-      "c.md": ["content"]
+      "c.md": ["content"],
     });
 
     // when reads works again
@@ -96,12 +96,12 @@ describe("reducers/fileReadFailsReducer", () => {
       A.fileRead({
         filename: "b.md",
         notePropName: "content",
-        value: "fixed!"
+        value: "fixed!",
       })
     );
     expect(state).toEqual({
       "b.md": ["nvtags"],
-      "c.md": ["content"]
+      "c.md": ["content"],
     });
 
     // remove filename when last failed read is fixed
@@ -110,11 +110,11 @@ describe("reducers/fileReadFailsReducer", () => {
       A.fileRead({
         filename: "b.md",
         notePropName: "nvtags",
-        value: "also fixed"
+        value: "also fixed",
       })
     );
     expect(state).toEqual({
-      "c.md": ["content"]
+      "c.md": ["content"],
     });
   });
 });

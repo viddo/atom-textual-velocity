@@ -31,15 +31,15 @@ describe("epics/focusOnSearchWhenClosingLastEditorEpic", () => {
     );
     await Promise.all([
       atom.workspace.open("test1"),
-      atom.workspace.open("test2")
+      atom.workspace.open("test2"),
     ]);
   });
 
-  afterEach(function() {
+  afterEach(function () {
     store.dispatch(A.dispose());
   });
 
-  describe("when closing last active editor", function() {
+  describe("when closing last active editor", function () {
     beforeEach(() => {});
     it("should focus on search", () => {
       closeActiveEditor();

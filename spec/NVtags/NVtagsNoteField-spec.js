@@ -9,7 +9,7 @@ describe("NVtagsNoteField", () => {
     noteField = new NVtagsNoteField();
   });
 
-  it("has note prop name", function() {
+  it("has note prop name", function () {
     expect(noteField.notePropName).toMatch(/\w{1,}/);
   });
 

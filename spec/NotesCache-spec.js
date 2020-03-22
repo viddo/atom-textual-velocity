@@ -6,18 +6,18 @@ import NotesCache from "../lib/NotesCache";
 describe("NotesCache", () => {
   let actual, notesCache, expected: any;
 
-  beforeEach(function() {
+  beforeEach(function () {
     const tempDirPath = tempy.directory();
     expected = { "some-file": { foo: "bar" } };
     notesCache = new NotesCache(tempDirPath);
     spyOn(console, "warn");
   });
 
-  afterEach(function() {
+  afterEach(function () {
     notesCache.dispose();
   });
 
-  it("should save and load notes", function() {
+  it("should save and load notes", function () {
     actual = notesCache.load();
     expect(actual).toEqual({});
 
@@ -26,7 +26,7 @@ describe("NotesCache", () => {
     expect(actual).toEqual(expected);
   });
 
-  it("should not save notes after clear-notes-cache command is called", function() {
+  it("should not save notes after clear-notes-cache command is called", function () {
     actual = notesCache.load();
 
     const workspaceView = atom.views.getView(atom.workspace);

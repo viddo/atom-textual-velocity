@@ -22,7 +22,7 @@ describe("epics/fileReadsEpic", () => {
         .createSpy("read")
         .andCallFake((path: string, stats: any, callback: Function) => {
           callback(null, `content for ${path}`);
-        })
+        }),
     };
     return fakeFileReader;
   });
@@ -39,7 +39,7 @@ describe("epics/fileReadsEpic", () => {
       listHeight: 50,
       loading: {
         status: "readDir",
-        filesCount: 0
+        filesCount: 0,
       },
       notes: {},
       queryOriginal: "",
@@ -52,19 +52,19 @@ describe("epics/fileReadsEpic", () => {
           fields: ["name", "ext"],
           sort: [
             { field: "name", direction: "asc" },
-            { field: "$score", direction: "desc" }
-          ]
+            { field: "$score", direction: "desc" },
+          ],
         },
         query: "",
         tokens: [],
-        total: 0
-      }
+        total: 0,
+      },
     };
     store = mockStore(() => ({ ...state }));
     epicMiddleware.run(fileReadsEpic);
   });
 
-  afterEach(function() {
+  afterEach(function () {
     store.dispatch(A.dispose()); // tests dispose logic working
 
     store.clearActions();
@@ -76,31 +76,31 @@ describe("epics/fileReadsEpic", () => {
     );
   });
 
-  describe("when readDirDone action is dispatched", function() {
-    beforeEach(function() {
+  describe("when readDirDone action is dispatched", function () {
+    beforeEach(function () {
       const now = new Date();
 
       const rawFiles = [
         {
           filename: "nothing-changed.txt",
-          stats: statsMock({ mtime: now })
+          stats: statsMock({ mtime: now }),
         },
         {
           filename: "alice.txt",
-          stats: statsMock({ mtime: new Date() })
+          stats: statsMock({ mtime: new Date() }),
         },
         {
           filename: "not-changed-but-missing-file-reader-value.txt",
-          stats: statsMock({ mtime: now })
+          stats: statsMock({ mtime: now }),
         },
         {
           filename: "changed-file.txt",
-          stats: statsMock({ mtime: new Date() })
+          stats: statsMock({ mtime: new Date() }),
         },
         {
           filename: "bob.md",
-          stats: statsMock({ mtime: new Date() })
-        }
+          stats: statsMock({ mtime: new Date() }),
+        },
       ];
 
       const notes = {
@@ -109,27 +109,27 @@ describe("epics/fileReadsEpic", () => {
           ext: ".txt",
           id: "1",
           name: "cached-from-prior-session",
-          stats: statsMock({ mtime: now })
+          stats: statsMock({ mtime: now }),
         },
         "not-changed-but-missing-file-reader-value.txt": {
           content: undefined,
           ext: ".txt",
           id: "1",
           name: "not-changed-but-missing-file-reader-value",
-          stats: statsMock({ mtime: now })
+          stats: statsMock({ mtime: now }),
         },
         "no-longer-existing.txt": {
           ext: ".txt",
           id: "2",
           name: "no-longer-existing",
-          stats: statsMock({ mtime: new Date() })
+          stats: statsMock({ mtime: new Date() }),
         },
         "changed-file.txt": {
           ext: ".txt",
           id: "3",
           name: "changed-file-from-prior-session",
-          stats: statsMock({ mtime: new Date(0) })
-        }
+          stats: statsMock({ mtime: new Date(0) }),
+        },
       };
 
       state = {
@@ -137,15 +137,15 @@ describe("epics/fileReadsEpic", () => {
         loading: {
           status: "readingFiles",
           readyCount: 2,
-          totalCount: Object.keys(notes).length
+          totalCount: Object.keys(notes).length,
         },
-        notes
+        notes,
       };
       store.dispatch(A.readDirDone(rawFiles));
       waitsFor(() => store.getActions().length >= 5);
     });
 
-    it("should not read a file that have not changed", function() {
+    it("should not read a file that have not changed", function () {
       const action = store
         .getActions()
         .find((action: any) => action.filename === "nothing-changed.txt");
@@ -153,7 +153,7 @@ describe("epics/fileReadsEpic", () => {
       expect(action).toBe(undefined);
     });
 
-    it("should read file missing value matching file reader", function() {
+    it("should read file missing value matching file reader", function () {
       const action = store
         .getActions()
         .find(
@@ -164,7 +164,7 @@ describe("epics/fileReadsEpic", () => {
       expect(action).toBeDefined();
     });
 
-    it("should read changed file", function() {
+    it("should read changed file", function () {
       const action = store
         .getActions()
         .find(
@@ -175,7 +175,7 @@ describe("epics/fileReadsEpic", () => {
       expect(action).toBeDefined();
     });
 
-    it("should read new files", function() {
+    it("should read new files", function () {
       let action;
       action = store
         .getActions()
@@ -191,51 +191,51 @@ describe("epics/fileReadsEpic", () => {
     });
   });
 
-  describe("when file is added", function() {
+  describe("when file is added", function () {
     sharedFileSpecs(
       A.fileAdded({
         filename: "alice.txt",
-        stats: statsMock({ mtime: new Date() })
+        stats: statsMock({ mtime: new Date() }),
       })
     );
   });
 
-  describe("wen file is changed", function() {
+  describe("wen file is changed", function () {
     sharedFileSpecs(
       A.fileChanged({
         filename: "alice.txt",
-        stats: statsMock({ mtime: new Date() })
+        stats: statsMock({ mtime: new Date() }),
       })
     );
   });
 
   function sharedFileSpecs(action: Action) {
-    describe("when initial scan is done", function() {
-      beforeEach(function() {
+    describe("when initial scan is done", function () {
+      beforeEach(function () {
         state = {
           ...state,
           loading: {
             status: "readingFiles",
             readyCount: 0,
-            totalCount: 1
-          }
+            totalCount: 1,
+          },
         };
         store.clearActions();
         store.dispatch(action);
         waitsFor(() => store.getActions().length >= 1); // should have at least one more action apart from file-action
       });
 
-      it("should read file", function() {
+      it("should read file", function () {
         expect(fakeFileReader.read).toHaveBeenCalled();
       });
 
-      it("should dispatch a file-read action", function() {
+      it("should dispatch a file-read action", function () {
         const lastAction = store.getActions().slice(-1)[0];
         expect(lastAction).toEqual(
           A.fileRead({
             filename: "alice.txt",
             notePropName: "content",
-            value: "content for /notes/alice.txt"
+            value: "content for /notes/alice.txt",
           })
         );
       });

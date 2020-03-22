@@ -22,7 +22,7 @@ describe("epics/activePaneItemEpic", () => {
       listHeight: 75,
       loading: {
         status: "readDir",
-        filesCount: 0
+        filesCount: 0,
       },
       notes: {
         "alice.txt": {
@@ -30,22 +30,22 @@ describe("epics/activePaneItemEpic", () => {
           name: "alice",
           ext: "txt",
           path: "/notes/alice.txt",
-          stats: statsMock({ mtime: new Date() })
+          stats: statsMock({ mtime: new Date() }),
         },
         "bob.md": {
           id: "1",
           name: "bob",
           ext: "md",
           path: "/notes/bob.md",
-          stats: statsMock({ mtime: new Date() })
+          stats: statsMock({ mtime: new Date() }),
         },
         "cesar.txt": {
           id: "2",
           name: "cesar",
           ext: "txt",
           path: "/notes/cesar.txt",
-          stats: statsMock({ mtime: new Date() })
-        }
+          stats: statsMock({ mtime: new Date() }),
+        },
       },
       queryOriginal: "",
       rowHeight: 25,
@@ -55,19 +55,19 @@ describe("epics/activePaneItemEpic", () => {
         items: [
           { id: "alice.txt", score: 1.0 },
           { id: "bob.md", score: 0.9 },
-          { id: "cesar.txt", score: 0.8 }
+          { id: "cesar.txt", score: 0.8 },
         ],
         options: {
           fields: ["name", "ext"],
           sort: [
             { field: "name", direction: "asc" },
-            { field: "$score", direction: "desc" }
-          ]
+            { field: "$score", direction: "desc" },
+          ],
         },
         query: "",
         tokens: [],
-        total: 3
-      }
+        total: 3,
+      },
     };
 
     jasmine.useRealClock();
@@ -85,8 +85,8 @@ describe("epics/activePaneItemEpic", () => {
     store.clearActions();
   });
 
-  describe("when active pane item is changed due to non-package interaction (e.g. open recent file or such)", function() {
-    beforeEach(function() {
+  describe("when active pane item is changed due to non-package interaction (e.g. open recent file or such)", function () {
+    beforeEach(function () {
       Date.now.andReturn(500); // a non-package interaction should occur after a significant amount of time since last event
 
       waitsForPromise(() => {
@@ -96,15 +96,15 @@ describe("epics/activePaneItemEpic", () => {
       });
     });
 
-    it("should dispatch action to select matching note", function() {
+    it("should dispatch action to select matching note", function () {
       expect(store.getActions().slice(-1)[0]).toEqual(
         A.changedActivePaneItem("/notes/bob.md")
       );
     });
   });
 
-  describe("when active pane item is changed due to interaction with plugin, e.g. select note (=> preview)", function() {
-    beforeEach(function() {
+  describe("when active pane item is changed due to interaction with plugin, e.g. select note (=> preview)", function () {
+    beforeEach(function () {
       waitsForPromise(() => {
         return atom.workspace.open("/notes/untitled.md").then(() => {
           jasmine.Clock.tick(1000);
@@ -112,13 +112,13 @@ describe("epics/activePaneItemEpic", () => {
       });
     });
 
-    it("should not dispatch any action", function() {
+    it("should not dispatch any action", function () {
       expect(store.getActions()).toEqual([]);
     });
   });
 
-  describe("when active pane item is the preview editor", function() {
-    beforeEach(function() {
+  describe("when active pane item is the preview editor", function () {
+    beforeEach(function () {
       waitsForPromise(() => {
         return atom.workspace.open("/notes/bob.md").then(() => {
           atom.workspace.getActiveTextEditor().getTitle = () =>
@@ -128,7 +128,7 @@ describe("epics/activePaneItemEpic", () => {
       });
     });
 
-    it("should not dispatch any action", function() {
+    it("should not dispatch any action", function () {
       expect(store.getActions()).toEqual([]);
     });
   });

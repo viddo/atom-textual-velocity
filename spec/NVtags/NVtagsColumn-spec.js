@@ -18,7 +18,7 @@ describe("NVtagsColumn", () => {
       expect(cellContent).toEqual(jasmine.any(Array));
       expect(cellContent[0]).toEqual({
         attrs: jasmine.any(Object),
-        content: "beep"
+        content: "beep",
       });
     });
 

@@ -6,7 +6,7 @@ import columnHeadersReducer from "../../lib/reducers/columnHeadersReducer";
 xdescribe("reducers/columnHeadersReducer", () => {
   let state;
 
-  it("should return defaults when state is missing", function() {
+  it("should return defaults when state is missing", function () {
     state = columnHeadersReducer(state, A.readDirDone([]));
     expect(state).toEqual(jasmine.any(Array));
     expect(state.length).toEqual(2);
@@ -16,7 +16,7 @@ xdescribe("reducers/columnHeadersReducer", () => {
     expect(state[0].width).toEqual(jasmine.any(Number));
   });
 
-  it("should exclude hidden columns", function() {
+  it("should exclude hidden columns", function () {
     state = columnHeadersReducer(state, A.changeHiddenColumns(["summary"]));
     expect(state).toEqual(jasmine.any(Array));
     expect(state.length).toEqual(1);
