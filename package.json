@@ -63,7 +63,8 @@
     "reselect": "4.0.0",
     "rxjs": "6.5.5",
     "sifter": "0.6.0",
-    "tempy": "0.5.0"
+    "tempy": "0.5.0",
+    "snyk": "^1.316.1"
   },
   "optionalDependencies": {
     "bplist": "0.0.4",
@@ -96,6 +97,9 @@
     "flow-typed": "npm-run-all -s flow-typed:install flow-typed:rm_devdeps",
     "flow-typed:install": "flow-typed install --overwrite",
     "flow-typed:rm_devdeps": "(rm flow-typed/npm/babel*; rm flow-typed/npm/eslint*; ) || true",
-    "update-build-package": "curl -s -O https://raw.githubusercontent.com/atom/ci/master/build-package.sh"
-  }
+    "update-build-package": "curl -s -O https://raw.githubusercontent.com/atom/ci/master/build-package.sh",
+    "snyk-protect": "snyk protect",
+    "prepublish": "npm run snyk-protect"
+  },
+  "snyk": true
 }
