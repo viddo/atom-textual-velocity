@@ -57,7 +57,7 @@
     "moment": "2.26.0",
     "react": "16.13.1",
     "react-dom": "16.13.1",
-    "react-redux": "7.2.0",
+    "react-redux": "7.2.1",
     "redux": "4.0.5",
     "redux-observable": "1.2.0",
     "reselect": "4.0.0",
