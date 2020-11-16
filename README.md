@@ -1,5 +1,17 @@
 # Textual Velocity
 
+**Archive notice:**
+
+🌅  As of Nov 2020 I am actively migrating away from this project to using [Org Mode](http://orgmode.org/) instead. The project and repository will be archived soon thereafter to reflect this.
+
+It has been a good run of ~5 years building and using this myself! I hope you have found it as useful as me during this time. Alas, I have outgrown my own project and decided to continue on a more standardized platform going forward. 
+
+That said, I am not satisfied with any of the existing options out there (Org Mode included) and still contemplating alternatives. I intend to build something better, someday, but don't have the time and energy right now. Time will tell.
+
+Thanks.
+
+---
+
 Your mental notes at your fingertips!
 
 For those of you who used [Notational Velocity](http://notational.net/) or [nvAlt](http://brettterpstra.com/projects/nvAlt/) should feel right at home: it's intended to be an alternative to those applications but with the benefits of the [Atom](https://atom.io/) ecosystem.
