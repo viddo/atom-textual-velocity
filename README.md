@@ -1,4 +1,16 @@
-# Textual Velocity [![Travis Build Status](http://travis-ci.org/viddo/atom-textual-velocity.png?branch=master)](http://travis-ci.org/viddo/atom-textual-velocity) [![CircleCI Build status](https://circleci.com/gh/viddo/atom-textual-velocity/tree/master.png?style=shield&circle-token=:circle-token)](https://circleci.com/gh/viddo/atom-textual-velocity) [![David dependency management](https://david-dm.org/viddo/atom-textual-velocity.svg)](https://david-dm.org/viddo/atom-textual-velocity) [![Code Climate](https://codeclimate.com/github/viddo/atom-textual-velocity/badges/gpa.svg)](https://codeclimate.com/github/viddo/atom-textual-velocity) 
+# Textual Velocity
+
+**Archive notice:**
+
+🌅  As of Nov 2020 I am actively migrating away from this project to using [Org Mode](http://orgmode.org/) instead. The project and repository will be archived soon thereafter to reflect this.
+
+It has been a good run of ~5 years building and using this myself! I hope you have found it as useful as me during this time. Alas, I have outgrown my own project and decided to continue on a more standardized platform going forward. 
+
+That said, I am not satisfied with any of the existing options out there (Org Mode included) and still contemplating alternatives. I intend to build something better, someday, but don't have the time and energy right now. Time will tell.
+
+Thanks.
+
+---
 
 Your mental notes at your fingertips!
 
