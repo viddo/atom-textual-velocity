@@ -4,6 +4,8 @@ This project adheres to [Semantic Versioning](http://semver.org/) and [keepachan
 
 
 ## [unreleased]
+
+## [0.23.0] - 2020-11-15
 #### Changed
 - Update 3rd-party deps to latest stable versions
 - Remove now unused 3rd-party dev services
