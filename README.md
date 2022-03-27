@@ -2,11 +2,9 @@
 
 **Archive notice:**
 
-🌅  As of Nov 2020 I am actively migrating away from this project to using [Org Mode](http://orgmode.org/) instead. The project and repository will be archived soon thereafter to reflect this.
+It has been a good run of ~5 years building and using this myself! I hope you have found it as useful as me during this time. Alas, I have outgrown my own project and decided to continue on a more supported platform going forward. As of January 2022 I'm using https://dendron.so/ (plugin for VSCode) which mostly does what this plugin did for Atom (and more).
 
-It has been a good run of ~5 years building and using this myself! I hope you have found it as useful as me during this time. Alas, I have outgrown my own project and decided to continue on a more standardized platform going forward. 
-
-That said, I am not satisfied with any of the existing options out there (Org Mode included) and still contemplating alternatives. I intend to build something better, someday, but don't have the time and energy right now. Time will tell.
+That said, I am not satisfied with any of the existing options out there and still contemplating alternatives. I intend to build something better, someday, but don't have the time or energy right now. Time will tell.
 
 Thanks.
 
